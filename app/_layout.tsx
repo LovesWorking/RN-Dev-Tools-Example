@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
+import { useSyncQueries } from "tanstack-query-dev-tools-expo-plugin";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { DevToolsBubble } from "react-native-react-query-devtools";
@@ -20,6 +21,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const queryClient = new QueryClient();
+  useSyncQueries({ queryClient });
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
