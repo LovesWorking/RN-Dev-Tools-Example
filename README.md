@@ -14,5 +14,8 @@ This is just a simple example using the latest Expo release with my react-native
 
 
 
-https://github.com/user-attachments/assets/b20d6e06-65bd-4f2a-8d03-d25776f4a74b
+
+
+
+https://github.com/user-attachments/assets/e5ebe67c-9946-4d19-8dc0-3a28aa42528a
 
