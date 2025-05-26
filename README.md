@@ -6,6 +6,10 @@ Enhanced developer tools for React Native applications, supporting React Query D
 
 https://github.com/user-attachments/assets/fce3cba3-b30a-409a-8f8f-db2bd28579be
 
+
+https://github.com/user-attachments/assets/24183264-fff2-4e7d-86f7-2775362cf485
+
+
 ## ✨ Features
 
 - 🔄 Real-time React Query state monitoring
