@@ -39,7 +39,7 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
       <ActionButton
         disabled={queryStatus === "pending"}
         onClick={() => {
-          invalidate({ query });
+          invalidate({ query, queryClient });
         }}
         bgColorClass="btnInvalidate"
         text="Invalidate"
