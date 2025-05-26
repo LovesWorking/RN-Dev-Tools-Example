@@ -13,6 +13,8 @@ import { usePokemon } from "../_hooks/usePokemon";
 import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
 import { pokemonStore } from "./_layout";
+import { StorageDemo } from "@/components/StorageDemo";
+import { EnvDemo } from "@/components/EnvDemo";
 
 export const HomeScreen = () => {
   const [pokemonName, setPokemonName] = useState("pikachu");
@@ -124,10 +126,12 @@ export const HomeScreen = () => {
             onSubmitEditing={handleSearch}
           />
           <TouchableOpacity
-            style={styles.searchButton}
+            style={[
+              styles.searchButton,
+              { opacity: isLoading || isChangingPokemon ? 0.7 : 1 },
+            ]}
             onPress={handleSearch}
             disabled={isLoading || isChangingPokemon}
-            opacity={isLoading || isChangingPokemon ? 0.7 : 1}
           >
             <Ionicons name="search" size={22} color="#fff" />
           </TouchableOpacity>
@@ -240,6 +244,12 @@ export const HomeScreen = () => {
             </ThemedView>
           )
         )}
+
+        {/* Storage Demo Section */}
+        <StorageDemo />
+
+        {/* Environment Variables Demo Section */}
+        <EnvDemo />
       </ThemedView>
     </ParallaxScrollView>
   );

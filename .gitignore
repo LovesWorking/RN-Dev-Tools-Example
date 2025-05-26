@@ -29,10 +29,14 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# local env files (commented out for example repo)
+# .env*.local
 
 # typescript
 *.tsbuildinfo
+
+# Android/iOS build directories
+android/
+ios/
 
 app-example
