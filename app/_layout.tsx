@@ -14,11 +14,11 @@ import * as Clipboard from "expo-clipboard";
 // import { useSyncQueries } from "tanstack-query-dev-tools-expo-plugin";
 import { useSyncQueriesExternal } from "react-query-external-sync";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { DevToolsBubble } from "react-native-react-query-devtools";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { storage } from "../storage/mmkv";
+import { DevToolsBubble } from "./dev-tools-bubble";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -68,17 +68,17 @@ export default function RootLayout() {
       // Public environment variables are automatically loaded
     },
     // Storage monitoring with CRUD operations
-    mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
-    asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring
-    secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
-    secureStorageKeys: [
-      "userToken",
-      "refreshToken",
-      "biometricKey",
-      "deviceId",
-      "userPreferences",
-      "authSecret",
-    ], // SecureStore keys to monitor
+    // mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
+    // asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring
+    // secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
+    // secureStorageKeys: [
+    //   "userToken",
+    //   "refreshToken",
+    //   "biometricKey",
+    //   "deviceId",
+    //   "userPreferences",
+    //   "authSecret",
+    // ], // SecureStore keys to monitor
   });
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
