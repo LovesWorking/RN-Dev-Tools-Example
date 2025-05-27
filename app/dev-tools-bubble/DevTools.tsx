@@ -6,7 +6,12 @@ import {
   StyleSheet,
   PanResponderInstance,
 } from "react-native";
-import { Query, Mutation } from "@tanstack/react-query";
+import {
+  Query,
+  Mutation,
+  onlineManager,
+  useQueryClient,
+} from "@tanstack/react-query";
 import QueriesList from "./_components/devtools/QueriesList";
 import Svg, { Path } from "react-native-svg";
 import MutationsList from "./_components/devtools/MutationsList";
@@ -23,6 +28,7 @@ export default function DevTools({
   onSelectionChange,
   panResponder,
 }: Props) {
+  const queryClient = useQueryClient();
   const [showQueries, setShowQueries] = useState(true);
   const [selectedQuery, setSelectedQuery] = useState<Query | undefined>(
     undefined
@@ -30,6 +36,7 @@ export default function DevTools({
   const [selectedMutation, setSelectedMutation] = useState<
     Mutation<unknown, Error, unknown, unknown> | undefined
   >(undefined);
+  const [isOffline, setIsOffline] = useState(!onlineManager.isOnline());
 
   // Clear selections when switching tabs
   const handleTabChange = (newShowQueries: boolean) => {
@@ -38,6 +45,24 @@ export default function DevTools({
       setSelectedMutation(undefined);
     }
     setShowQueries(newShowQueries);
+  };
+
+  // Handle network toggle
+  const handleToggleNetwork = () => {
+    const newOfflineState = !isOffline;
+    setIsOffline(newOfflineState);
+    onlineManager.setOnline(!newOfflineState);
+  };
+
+  // Handle cache clearing
+  const handleClearCache = () => {
+    if (showQueries) {
+      queryClient.getQueryCache().clear();
+      setSelectedQuery(undefined);
+    } else {
+      queryClient.getMutationCache().clear();
+      setSelectedMutation(undefined);
+    }
   };
 
   // Notify parent when selection state changes
@@ -72,6 +97,9 @@ export default function DevTools({
           setShowDevTools={setShowDevTools}
           onTabChange={handleTabChange}
           panResponder={panResponder}
+          isOffline={isOffline}
+          onToggleNetwork={handleToggleNetwork}
+          onClearCache={handleClearCache}
         />
         {showQueries ? (
           <QueriesList

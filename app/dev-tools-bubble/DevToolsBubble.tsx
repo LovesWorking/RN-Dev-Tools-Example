@@ -37,11 +37,15 @@ export function DevToolsBubble({ bubbleStyle, onCopy }: DevToolsBubbleProps) {
   const [currentHeight, setCurrentHeight] = useState(
     hasSelection ? expandedHeight : defaultHeight
   );
+  const currentHeightRef = useRef(
+    hasSelection ? expandedHeight : defaultHeight
+  );
 
   // Update height when selection changes
   React.useEffect(() => {
     const targetHeight = hasSelection ? expandedHeight : defaultHeight;
     setCurrentHeight(targetHeight);
+    currentHeightRef.current = targetHeight;
     Animated.timing(heightAnim, {
       toValue: targetHeight,
       duration: 300,
@@ -60,15 +64,16 @@ export function DevToolsBubble({ bubbleStyle, onCopy }: DevToolsBubbleProps) {
         );
       },
       onPanResponderGrant: () => {
-        // Stop any ongoing animations
+        // Stop any ongoing animations and sync the ref with current animated value
         heightAnim.stopAnimation((value) => {
           setCurrentHeight(value);
+          currentHeightRef.current = value;
           heightAnim.setValue(value);
         });
       },
       onPanResponderMove: (evt, gestureState) => {
-        // Invert the gesture since we want dragging up to increase height
-        const newHeight = currentHeight - gestureState.dy;
+        // Use the ref value which is always current
+        const newHeight = currentHeightRef.current - gestureState.dy;
 
         // Clamp the height between min and max
         const clampedHeight = Math.max(
@@ -78,21 +83,27 @@ export function DevToolsBubble({ bubbleStyle, onCopy }: DevToolsBubbleProps) {
         heightAnim.setValue(clampedHeight);
       },
       onPanResponderRelease: (evt, gestureState) => {
-        // Calculate the final height
+        // Calculate the final height using the ref
         const finalHeight = Math.max(
           minHeight,
-          Math.min(maxHeight, currentHeight - gestureState.dy)
+          Math.min(maxHeight, currentHeightRef.current - gestureState.dy)
         );
 
-        // Update the current height state
+        // Update both state and ref immediately
         setCurrentHeight(finalHeight);
+        currentHeightRef.current = finalHeight;
 
-        // Animate to the final height
+        // Animate to the final height and ensure sync
         Animated.timing(heightAnim, {
           toValue: finalHeight,
           duration: 200,
           useNativeDriver: false,
-        }).start();
+        }).start(() => {
+          // Ensure the animated value and state are perfectly synced after animation
+          heightAnim.setValue(finalHeight);
+          setCurrentHeight(finalHeight);
+          currentHeightRef.current = finalHeight;
+        });
       },
     })
   ).current;

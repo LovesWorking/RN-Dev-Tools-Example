@@ -7,6 +7,8 @@ import {
   PanResponderInstance,
 } from "react-native";
 import QueryStatusCount from "./QueryStatusCount";
+import NetworkToggleButton from "./NetworkToggleButton";
+import ClearCacheButton from "./ClearCacheButton";
 
 interface Props {
   showQueries: boolean;
@@ -14,6 +16,9 @@ interface Props {
   setShowDevTools: React.Dispatch<React.SetStateAction<boolean>>;
   onTabChange?: (showQueries: boolean) => void;
   panResponder?: PanResponderInstance;
+  isOffline: boolean;
+  onToggleNetwork: () => void;
+  onClearCache: () => void;
 }
 
 export default function DevToolsHeader({
@@ -22,6 +27,9 @@ export default function DevToolsHeader({
   setShowDevTools,
   onTabChange,
   panResponder,
+  isOffline,
+  onToggleNetwork,
+  onClearCache,
 }: Props) {
   const handleTabChange = (newShowQueries: boolean) => {
     if (onTabChange) {
@@ -102,6 +110,13 @@ export default function DevToolsHeader({
             </Text>
           </TouchableOpacity>
         </View>
+
+        <ClearCacheButton
+          type={showQueries ? "queries" : "mutations"}
+          onClear={onClearCache}
+        />
+
+        <NetworkToggleButton isOffline={isOffline} onToggle={onToggleNetwork} />
 
         <QueryStatusCount />
       </View>

@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Query } from "@tanstack/react-query";
-import { FlatList, View, StyleSheet, SafeAreaView, Text } from "react-native";
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  PanResponder,
+  Animated,
+  Dimensions,
+} from "react-native";
 import QueryRow from "./QueryRow";
 import useAllQueries from "../_hooks/useAllQueries";
 import QueryInformation from "./QueryInformation";
@@ -16,6 +25,66 @@ export default function QueriesList({
 }: Props) {
   // Holds all queries
   const allQueries = useAllQueries();
+
+  // Height management for resizable query information panel
+  const screenHeight = Dimensions.get("window").height;
+  const defaultInfoHeight = screenHeight * 0.4; // 40% of screen height
+  const minInfoHeight = 150;
+  const maxInfoHeight = screenHeight * 0.7; // 70% of screen height
+
+  const infoHeightAnim = useRef(new Animated.Value(defaultInfoHeight)).current;
+  const [currentInfoHeight, setCurrentInfoHeight] = useState(defaultInfoHeight);
+  const currentInfoHeightRef = useRef(defaultInfoHeight);
+
+  // Pan responder for dragging the query information panel
+  const infoPanResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        return (
+          Math.abs(gestureState.dy) > Math.abs(gestureState.dx) &&
+          Math.abs(gestureState.dy) > 10
+        );
+      },
+      onPanResponderGrant: () => {
+        infoHeightAnim.stopAnimation((value) => {
+          setCurrentInfoHeight(value);
+          currentInfoHeightRef.current = value;
+          infoHeightAnim.setValue(value);
+        });
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // Use the ref value which is always current
+        const newHeight = currentInfoHeightRef.current - gestureState.dy;
+        const clampedHeight = Math.max(
+          minInfoHeight,
+          Math.min(maxInfoHeight, newHeight)
+        );
+        infoHeightAnim.setValue(clampedHeight);
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        const finalHeight = Math.max(
+          minInfoHeight,
+          Math.min(
+            maxInfoHeight,
+            currentInfoHeightRef.current - gestureState.dy
+          )
+        );
+        setCurrentInfoHeight(finalHeight);
+        currentInfoHeightRef.current = finalHeight;
+
+        Animated.timing(infoHeightAnim, {
+          toValue: finalHeight,
+          duration: 200,
+          useNativeDriver: false,
+        }).start(() => {
+          // Ensure the animated value and state are perfectly synced after animation
+          infoHeightAnim.setValue(finalHeight);
+          setCurrentInfoHeight(finalHeight);
+          currentInfoHeightRef.current = finalHeight;
+        });
+      },
+    })
+  ).current;
 
   // Function to handle query selection
   const handleQuerySelect = (query: Query) => {
@@ -54,12 +123,20 @@ export default function QueriesList({
         )}
       </View>
       {selectedQuery && (
-        <View style={styles.queryInformation}>
-          <QueryInformation
-            selectedQuery={selectedQuery}
-            setSelectedQuery={setSelectedQuery}
-          />
-        </View>
+        <Animated.View
+          style={[styles.queryInformation, { height: infoHeightAnim }]}
+        >
+          {/* Drag handle for resizing */}
+          <View style={styles.dragHandle} {...infoPanResponder.panHandlers}>
+            <View style={styles.dragIndicator} />
+          </View>
+          <View style={styles.queryInfoContent}>
+            <QueryInformation
+              selectedQuery={selectedQuery}
+              setSelectedQuery={setSelectedQuery}
+            />
+          </View>
+        </Animated.View>
       )}
     </SafeAreaView>
   );
@@ -73,7 +150,6 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     width: "100%",
-    height: "25%",
     backgroundColor: "#ffffff",
   },
   listContent: {
@@ -90,6 +166,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   queryInformation: {
-    height: "75%",
+    borderTopWidth: 2,
+    borderTopColor: "#d0d5dd",
+    backgroundColor: "#ffffff",
+  },
+  dragHandle: {
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+  },
+  dragIndicator: {
+    width: 50,
+    height: 4,
+    backgroundColor: "#98a2b3",
+    borderRadius: 2,
+    opacity: 0.8,
+  },
+  queryInfoContent: {
+    flex: 1,
   },
 });
