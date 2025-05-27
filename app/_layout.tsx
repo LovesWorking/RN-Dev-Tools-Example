@@ -68,17 +68,17 @@ export default function RootLayout() {
       // Public environment variables are automatically loaded
     },
     // Storage monitoring with CRUD operations
-    mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
-    asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring
-    secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
-    secureStorageKeys: [
-      "userToken",
-      "refreshToken",
-      "biometricKey",
-      "deviceId",
-      "userPreferences",
-      "authSecret",
-    ], // SecureStore keys to monitor
+    // mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
+    // asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring
+    // secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
+    // secureStorageKeys: [
+    //   "userToken",
+    //   "refreshToken",
+    //   "biometricKey",
+    //   "deviceId",
+    //   "userPreferences",
+    //   "authSecret",
+    // ], // SecureStore keys to monitor
   });
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({

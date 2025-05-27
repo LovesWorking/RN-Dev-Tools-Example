@@ -1,54 +1,58 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Query } from "@tanstack/react-query";
-import { ScrollView, View, StyleSheet, SafeAreaView, LayoutChangeEvent } from "react-native";
-import QueryButton from "./QueryButton";
+import { FlatList, View, StyleSheet, SafeAreaView, Text } from "react-native";
+import QueryRow from "./QueryRow";
 import useAllQueries from "../_hooks/useAllQueries";
 import QueryInformation from "./QueryInformation";
-export default function QueriesList() {
-  const [selectedQuery, setSelectedQuery] = useState<Query | undefined>(undefined);
-  const [itemPositions, setItemPositions] = useState<{ [key: number]: { y: number, height: number } }>({});
+
+interface Props {
+  selectedQuery: Query | undefined;
+  setSelectedQuery: React.Dispatch<React.SetStateAction<Query | undefined>>;
+}
+
+export default function QueriesList({
+  selectedQuery,
+  setSelectedQuery,
+}: Props) {
   // Holds all queries
   const allQueries = useAllQueries();
-  const scrollViewRef = useRef<ScrollView>(null);
-  // Function to handle layout and capture each item's position
-  const handleItemLayout = (event: LayoutChangeEvent, index: number) => {
-    const { y, height } = event.nativeEvent.layout;
-    setItemPositions(prevPositions => ({
-      ...prevPositions,
-      [index]: { y, height }
-    }));
-  };
-  // Function to scroll to the selected query
-  const handleQuerySelect = (query: Query, index: number) => {
-    // If deselecting (i.e., clicking the same query), just update the state without scrolling
+
+  // Function to handle query selection
+  const handleQuerySelect = (query: Query) => {
+    // If deselecting (i.e., clicking the same query), just update the state
     if (query === selectedQuery) {
       setSelectedQuery(undefined);
       return;
     }
     setSelectedQuery(query); // Update the selected query
-    // Scroll the ScrollView to the selected item's position
-    if (scrollViewRef.current && itemPositions[index]) {
-      const itemY = itemPositions[index].y;
-      scrollViewRef.current.scrollTo({
-        y: itemY,
-        animated: true,
-      });
-    }
   };
+
+  const renderItem = ({ item }: { item: Query }) => (
+    <QueryRow
+      query={item}
+      isSelected={selectedQuery === item}
+      onSelect={handleQuerySelect}
+    />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} ref={scrollViewRef}>
-        {allQueries.map((query, index) => (
-          <View key={index} onLayout={(event) => handleItemLayout(event, index)}>
-            <QueryButton
-              selected={selectedQuery}
-              setSelected={() => handleQuerySelect(query, index)}
-              query={query}
-            />
+      <View style={styles.listContainer}>
+        {allQueries.length > 0 ? (
+          <FlatList
+            data={allQueries}
+            renderItem={renderItem}
+            keyExtractor={(item, index) =>
+              `${JSON.stringify(item.queryKey)}-${index}`
+            }
+            contentContainerStyle={styles.listContent}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No queries found</Text>
           </View>
-        ))}
-      </ScrollView>
+        )}
+      </View>
       {selectedQuery && (
         <View style={styles.queryInformation}>
           <QueryInformation
@@ -60,16 +64,30 @@ export default function QueriesList() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
   },
-  scrollView: {
+  listContainer: {
     flex: 1,
-    flexDirection: "column",
     width: "100%",
     height: "25%",
+    backgroundColor: "#ffffff",
+  },
+  listContent: {
+    flexGrow: 1,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  emptyText: {
+    color: "#6b7280",
+    fontSize: 16,
   },
   queryInformation: {
     height: "75%",

@@ -93,11 +93,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flexDirection: "row",
     flexWrap: "wrap",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 4,
+    gap: 8,
+    padding: 8,
   },
   headerText: {
     textAlign: "left",
     backgroundColor: "#EAECF0",
-    padding: 4,
+    padding: 8,
     width: "100%",
+    fontWeight: "500",
+    marginBottom: 8,
   },
 });

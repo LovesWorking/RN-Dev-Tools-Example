@@ -5,9 +5,11 @@ import { CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
 import { getMutationStatusColors } from "../_util/mutationStatusToColorClass";
 import { displayValue } from "./displayValue";
 interface Props {
-  mutation: Mutation<unknown, Error, void, unknown>;
-  setSelected: React.Dispatch<React.SetStateAction<Mutation | undefined>>;
-  selected: Mutation | undefined;
+  mutation: Mutation<unknown, Error, unknown, unknown>;
+  setSelected: React.Dispatch<
+    React.SetStateAction<Mutation<unknown, Error, unknown, unknown> | undefined>
+  >;
+  selected: Mutation<unknown, Error, unknown, unknown> | undefined;
 }
 export default function MutationButton({
   mutation,

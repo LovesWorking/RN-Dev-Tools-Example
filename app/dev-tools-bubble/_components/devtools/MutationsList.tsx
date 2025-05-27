@@ -5,8 +5,17 @@ import MutationButton from "./MutationButton";
 import MutationInformation from "./MutationInformation";
 import useAllMutations from "../_hooks/useAllMutations";
 
-export default function MutationsList() {
-  const [selectedMutation, setSelectedMutation] = useState<Mutation>();
+interface Props {
+  selectedMutation: Mutation<unknown, Error, unknown, unknown> | undefined;
+  setSelectedMutation: React.Dispatch<
+    React.SetStateAction<Mutation<unknown, Error, unknown, unknown> | undefined>
+  >;
+}
+
+export default function MutationsList({
+  selectedMutation,
+  setSelectedMutation,
+}: Props) {
   const { mutations: allmutations } = useAllMutations();
 
   return (
