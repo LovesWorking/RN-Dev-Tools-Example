@@ -40,3 +40,7 @@ android/
 ios/
 
 app-example
+
+# yalc
+.yalc/
+yalc.lock

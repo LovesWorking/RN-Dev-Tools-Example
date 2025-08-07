@@ -3,6 +3,8 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -19,7 +21,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { storage } from "../storage/mmkv";
 import { DevToolsBubble } from "./dev-tools-bubble";
-
+import {
+  createEnvVarConfig,
+  Environment,
+  envVar,
+  RnBetterDevToolsBubble,
+  setMaxSentryEvents,
+  setupSentryEventListeners,
+  UserRole,
+} from "react-native-react-query-devtools";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -96,32 +106,71 @@ export default function RootLayout() {
     initializeDefaultStorageValues();
   }, []);
 
+  const requiredEnvVars = createEnvVarConfig([
+    // 🟢 GREEN - Valid variables
+    envVar("EXPO_PUBLIC_API_URL").exists(), // ✓ Exists
+
+    envVar("EXPO_PUBLIC_DEBUG_MODE")
+      .withType("boolean")
+      .withDescription("Enable debug logging")
+      .build(), // ✓ Correct type
+
+    envVar("EXPO_PUBLIC_MAX_RETRIES").withType("number").build(), // ✓ Correct type
+
+    envVar("EXPO_PUBLIC_ENVIRONMENT").withValue("development").build(), // ✓ Correct value
+
+    // 🟠 ORANGE - Wrong values (exists but incorrect)
+    envVar("EXPO_PUBLIC_API_VERSION")
+      .withValue("v2")
+      .withDescription("API version (should be v2)")
+      .build(), // ⚠ Wrong value
+
+    envVar("EXPO_PUBLIC_REGION").withValue("us-east-1").build(), // ⚠ Wrong value
+
+    // 🔴 RED - Wrong types (exists but wrong type)
+    envVar("EXPO_PUBLIC_FEATURE_FLAGS")
+      .withDescription("Feature flags configuration object")
+      .withType("object")
+      .build(), // ⚠ Wrong type
+
+    envVar("EXPO_PUBLIC_PORT").withType("number").build(), // ⚠ Wrong type
+
+    // 🔴 RED - Missing variables
+    envVar("EXPO_PUBLIC_SENTRY_DSN").exists(), // ⚠ Missing
+
+    envVar("EXPO_PUBLIC_ANALYTICS_KEY")
+      .withDescription("Analytics service API key")
+      .withType("string")
+      .build(), // ⚠ Missing
+
+    envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
+  ]);
+  const userRole: UserRole = "admin";
+  const environment: Environment = "local";
   if (!loaded) {
     return null;
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-      <DevToolsBubble
-        onCopy={async (text) => {
-          try {
-            console.log("Attempting to copy:", text);
-            await Clipboard.setStringAsync(text);
-            console.log("Copy successful");
-            return true;
-          } catch (error) {
-            console.error("Failed to copy to clipboard:", error);
-            return false;
-          }
-        }}
-      />
-    </QueryClientProvider>
+    <GestureHandlerRootView>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+        {/* <RnBetterDevToolsBubble
+          queryClient={queryClient}
+          environment={environment}
+          userRole={userRole}
+          requiredEnvVars={requiredEnvVars}
+          hideQueryButton
+        /> */}
+      </QueryClientProvider>{" "}
+    </GestureHandlerRootView>
   );
 }
