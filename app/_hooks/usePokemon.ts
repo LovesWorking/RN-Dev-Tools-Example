@@ -42,8 +42,14 @@ const fetchPokemon = async (pokemonName: string): Promise<PokemonData> => {
 
 export const usePokemon = (pokemonName: string) => {
   return useQuery({
-    queryKey: [`Pokemon-${pokemonName}`],
+    queryKey: ['pokemon', pokemonName],
     queryFn: () => fetchPokemon(pokemonName),
     enabled: pokemonName.length > 0,
+    // Keep data in cache longer
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    // Don't refetch on reconnect/focus during development
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };

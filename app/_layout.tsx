@@ -3,7 +3,6 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { useSyncQueriesExternal } from "react-query-external-sync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
@@ -14,7 +13,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { QueryClientWrapper } from "@/app/_components/QueryClientWrapper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
@@ -30,8 +30,35 @@ import { storage } from "@/storage/mmkv";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-// Create QueryClient as a singleton outside the component
-const queryClient = new QueryClient();
+// Create QueryClient as a true singleton that survives hot reloads
+// Store it in global to persist across module reloads
+declare global {
+  var __queryClient: QueryClient | undefined;
+}
+
+if (!global.__queryClient) {
+  console.log("🚀 Creating NEW QueryClient (first load)");
+  global.__queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // Keep cache for 5 minutes even if component unmounts
+        gcTime: 1000 * 60 * 5,
+        // Keep data fresh for 30 seconds
+        staleTime: 1000 * 30,
+        // Retry failed requests
+        retry: 1,
+        // Refetch on mount if data is stale
+        refetchOnMount: "always",
+        // Don't refetch on window focus in development
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+} else {
+  console.log("♻️ Reusing existing QueryClient (hot reload)");
+}
+
+const queryClient = global.__queryClient;
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -86,38 +113,13 @@ export default function RootLayout() {
     envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
   ]);
 
-  useSyncQueriesExternal({
-    queryClient,
-    socketURL: "http://localhost:42831",
-    deviceName: Platform.OS,
-    platform: Platform.OS,
-    deviceId: Platform.OS,
-    extraDeviceInfo: {
-      "test-device-info": "test123",
-    },
-    enableLogs: false,
-    envVariables: {
-      "test-env-var": "test",
-    },
-    mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
-    asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring (import AsyncStorage from '@react-native-async-storage/async-storage')
-    secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
-    secureStorageKeys: [
-      "sessionToken",
-      "auth.session",
-      "auth.email",
-      "auth.last_sync",
-      "knock_push_token",
-    ], // SecureStore keys to monitor
-  });
-
   if (!loaded) {
     return null;
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientWrapper queryClient={queryClient}>
         <View style={{ flex: 1 }}>
           <LinearGradient
             colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
@@ -140,7 +142,7 @@ export default function RootLayout() {
             </ThemeProvider>
           </LinearGradient>
         </View>
-      </QueryClientProvider>
+      </QueryClientWrapper>
     </GestureHandlerRootView>
   );
 }

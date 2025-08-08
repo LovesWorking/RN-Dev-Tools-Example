@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   StyleSheet,
   ScrollView,
@@ -10,38 +10,39 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import { Ionicons } from '@expo/vector-icons';
-import { usePokemon } from './_hooks/usePokemon';
-import { PokemonTheme } from '@/constants/PokemonTheme';
-import { getTypeColor } from './_utils/pokemonTypeColors';
-import * as Haptics from 'expo-haptics';
-import { pokemonNames, searchPokemon } from './_data/pokemonNames';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import ReanimatedAnimated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
-  withTiming, 
-  runOnJS, 
-  interpolate 
-} from 'react-native-reanimated';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+import { Ionicons } from "@expo/vector-icons";
+import { usePokemon } from "./_hooks/usePokemon";
+import { PokemonTheme } from "@/constants/PokemonTheme";
+import { getTypeColor } from "./_utils/pokemonTypeColors";
+import * as Haptics from "expo-haptics";
+import { pokemonNames, searchPokemon } from "./_data/pokemonNames";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import ReanimatedAnimated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  runOnJS,
+  interpolate,
+} from "react-native-reanimated";
+import { useQueryClient } from "@tanstack/react-query";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;
 
 // Pokemon Card Component with Swipe
-function PokemonCardSwipeable({ 
-  pokemonId, 
-  index, 
-  isActive, 
-  onSwipe, 
-  shimmerAnim, 
-  floatAnim, 
+function PokemonCardSwipeable({
+  pokemonId,
+  index,
+  isActive,
+  onSwipe,
+  shimmerAnim,
+  floatAnim,
   cardGlowAnim,
-  onTypeChange 
+  onTypeChange,
 }: {
   pokemonId: string;
   index: number;
@@ -53,14 +54,14 @@ function PokemonCardSwipeable({
   onTypeChange?: (type: string) => void;
 }) {
   const { data, isLoading } = usePokemon(pokemonId);
-  
+
   // Gesture values
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(index === 0 ? 1 : 1 - index * 0.05);
   const gestureRotation = useSharedValue(0);
   const opacity = useSharedValue(index === 0 ? 1 : index < 3 ? 0.8 : 0);
-  
+
   // Set initial position based on stack - cards staggered behind
   React.useEffect(() => {
     if (index === 0) {
@@ -82,22 +83,22 @@ function PokemonCardSwipeable({
       opacity.value = 0;
     }
   }, [index]);
-  
+
   const gesture = Gesture.Pan()
     .enabled(isActive)
     .onUpdate((e) => {
-      'worklet';
+      "worklet";
       if (!isActive) return;
-      
+
       translateX.value = e.translationX;
       translateY.value = e.translationY / 4 + index * -10;
-      
+
       gestureRotation.value = interpolate(
         e.translationX,
         [-width, 0, width],
         [-30, 0, 30]
       );
-      
+
       opacity.value = interpolate(
         Math.abs(e.translationX),
         [0, width],
@@ -105,23 +106,26 @@ function PokemonCardSwipeable({
       );
     })
     .onEnd((e) => {
-      'worklet';
+      "worklet";
       if (!isActive) return;
-      
+
       const SWIPE_THRESHOLD = width * 0.3;
       const VELOCITY_THRESHOLD = 500;
-      
-      const shouldSwipe = Math.abs(e.translationX) > SWIPE_THRESHOLD || 
-                         Math.abs(e.velocityX) > VELOCITY_THRESHOLD;
-      
+
+      const shouldSwipe =
+        Math.abs(e.translationX) > SWIPE_THRESHOLD ||
+        Math.abs(e.velocityX) > VELOCITY_THRESHOLD;
+
       if (shouldSwipe) {
         const direction = e.translationX > 0 ? 1 : -1;
-        
-        translateX.value = withTiming(width * 1.5 * direction, { duration: 300 });
+
+        translateX.value = withTiming(width * 1.5 * direction, {
+          duration: 300,
+        });
         translateY.value = withTiming(-100, { duration: 300 });
         gestureRotation.value = withTiming(direction * 45, { duration: 300 });
         opacity.value = withTiming(0, { duration: 300 });
-        
+
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
         runOnJS(onSwipe)();
       } else {
@@ -131,7 +135,7 @@ function PokemonCardSwipeable({
         opacity.value = withSpring(index === 0 ? 1 : index === 1 ? 0.9 : 0.8);
       }
     });
-  
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: translateX.value },
@@ -143,18 +147,19 @@ function PokemonCardSwipeable({
     zIndex: 100 - index * 10,
     elevation: 20 - index * 2,
   }));
-  
-  const mainType = data?.types?.[0] || 'normal';
-  const gradientColors = PokemonTheme.gradients[mainType as keyof typeof PokemonTheme.gradients] 
-    || PokemonTheme.gradients.normal;
-  
+
+  const mainType = data?.types?.[0] || "normal";
+  const gradientColors =
+    PokemonTheme.gradients[mainType as keyof typeof PokemonTheme.gradients] ||
+    PokemonTheme.gradients.normal;
+
   // Notify parent of type change when this card is active
   React.useEffect(() => {
     if (isActive && data?.types?.[0] && onTypeChange) {
       onTypeChange(data.types[0]);
     }
   }, [isActive, data?.types, onTypeChange]);
-  
+
   if (isLoading || !data) {
     return (
       <AnimatedReanimatedView style={[styles.pokemonCard, animatedStyle]}>
@@ -172,7 +177,7 @@ function PokemonCardSwipeable({
       </AnimatedReanimatedView>
     );
   }
-  
+
   return (
     <GestureDetector gesture={gesture}>
       <AnimatedReanimatedView style={[styles.pokemonCard, animatedStyle]}>
@@ -200,7 +205,7 @@ function PokemonCardSwipeable({
                         outputRange: [-width * 1.5, width * 1.5],
                       }),
                     },
-                    { rotate: '25deg' },
+                    { rotate: "25deg" },
                     { scaleY: 3 },
                   ],
                 },
@@ -209,25 +214,27 @@ function PokemonCardSwipeable({
             >
               <LinearGradient
                 colors={[
-                  'transparent',
-                  'transparent',
-                  'rgba(255,182,193,0.15)',
-                  'rgba(255,218,185,0.2)',
-                  'rgba(255,255,224,0.25)',
-                  'rgba(144,238,144,0.2)',
-                  'rgba(173,216,230,0.25)',
-                  'rgba(221,160,221,0.2)',
-                  'rgba(255,182,193,0.15)',
-                  'transparent',
-                  'transparent'
+                  "transparent",
+                  "transparent",
+                  "rgba(255,182,193,0.15)",
+                  "rgba(255,218,185,0.2)",
+                  "rgba(255,255,224,0.25)",
+                  "rgba(144,238,144,0.2)",
+                  "rgba(173,216,230,0.25)",
+                  "rgba(221,160,221,0.2)",
+                  "rgba(255,182,193,0.15)",
+                  "transparent",
+                  "transparent",
                 ]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                locations={[0, 0.1, 0.25, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1]}
+                locations={[
+                  0, 0.1, 0.25, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1,
+                ]}
                 style={styles.shimmerGradient}
               />
             </Animated.View>
-            
+
             {/* Additional prismatic layer */}
             <Animated.View
               style={[
@@ -240,7 +247,7 @@ function PokemonCardSwipeable({
                         outputRange: [-width * 1.2, width * 1.2],
                       }),
                     },
-                    { rotate: '-15deg' },
+                    { rotate: "-15deg" },
                     { scaleY: 2.5 },
                   ],
                   opacity: shimmerAnim.interpolate({
@@ -253,18 +260,18 @@ function PokemonCardSwipeable({
             >
               <LinearGradient
                 colors={[
-                  'transparent',
-                  'rgba(255,0,255,0.1)',
-                  'rgba(0,255,255,0.1)',
-                  'rgba(255,255,0,0.1)',
-                  'transparent'
+                  "transparent",
+                  "rgba(255,0,255,0.1)",
+                  "rgba(0,255,255,0.1)",
+                  "rgba(255,255,0,0.1)",
+                  "transparent",
                 ]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.shimmerGradient}
               />
             </Animated.View>
-            
+
             <BlurView intensity={10} tint="light" style={styles.cardContent}>
               {/* Card border frame - Pokemon card style */}
               <View style={styles.cardFrame}>
@@ -272,21 +279,24 @@ function PokemonCardSwipeable({
               </View>
               {/* Card Header with HP */}
               <View style={styles.cardHeader}>
-                <Text style={styles.pokemonNameHeader}>{data.name.toUpperCase()}</Text>
+                <Text style={styles.pokemonNameHeader}>
+                  {data.name.toUpperCase()}
+                </Text>
                 <View style={styles.hpContainer}>
                   <Text style={styles.hpText}>HP</Text>
-                  <Text style={styles.hpValue}>{data.stats.find((s: any) => s.name === 'hp')?.value || 100}</Text>
+                  <Text style={styles.hpValue}>
+                    {data.stats.find((s: any) => s.name === "hp")?.value || 100}
+                  </Text>
                 </View>
               </View>
-              
-              
+
               {/* Pokemon Image Container with art frame */}
               <View style={styles.artFrame}>
                 <LinearGradient
                   colors={[
                     `${getTypeColor(mainType)}22`,
-                    'transparent',
-                    `${getTypeColor(mainType)}11`
+                    "transparent",
+                    `${getTypeColor(mainType)}11`,
                   ]}
                   style={styles.artBackground}
                 />
@@ -298,11 +308,11 @@ function PokemonCardSwipeable({
                         styles.pokemonImage,
                         {
                           transform: [
-                            { 
+                            {
                               scale: cardGlowAnim.interpolate({
                                 inputRange: [0, 1],
                                 outputRange: [1, 1.08],
-                              })
+                              }),
                             },
                           ],
                         },
@@ -320,17 +330,13 @@ function PokemonCardSwipeable({
                 </View>
                 <Text style={styles.stageName}>Basic Pokémon</Text>
               </View>
-              
-              
+
               {/* Types */}
               <View style={styles.typesContainer}>
                 {data.types.map((type: string) => (
                   <LinearGradient
                     key={type}
-                    colors={[
-                      getTypeColor(type),
-                      `${getTypeColor(type)}CC`
-                    ]}
+                    colors={[getTypeColor(type), `${getTypeColor(type)}CC`]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.typeBadge}
@@ -339,31 +345,61 @@ function PokemonCardSwipeable({
                   </LinearGradient>
                 ))}
               </View>
-              
+
               {/* Attack Moves */}
               <View style={styles.movesContainer}>
                 <View style={styles.moveRow}>
                   <View style={styles.energyBadge}>
-                    <View style={[styles.energyIcon, { backgroundColor: getTypeColor(mainType) }]} />
+                    <View
+                      style={[
+                        styles.energyIcon,
+                        { backgroundColor: getTypeColor(mainType) },
+                      ]}
+                    />
                   </View>
                   <Text style={styles.moveName}>Quick Attack</Text>
-                  <Text style={styles.moveDamage}>{data.stats.find((s: any) => s.name === 'attack')?.value || 50}</Text>
+                  <Text style={styles.moveDamage}>
+                    {data.stats.find((s: any) => s.name === "attack")?.value ||
+                      50}
+                  </Text>
                 </View>
                 <View style={styles.moveRow}>
                   <View style={styles.energyBadge}>
-                    <View style={[styles.energyIcon, { backgroundColor: getTypeColor(mainType) }]} />
-                    <View style={[styles.energyIcon, { backgroundColor: getTypeColor(mainType) }]} />
+                    <View
+                      style={[
+                        styles.energyIcon,
+                        { backgroundColor: getTypeColor(mainType) },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.energyIcon,
+                        { backgroundColor: getTypeColor(mainType) },
+                      ]}
+                    />
                   </View>
                   <Text style={styles.moveName}>Special Attack</Text>
-                  <Text style={styles.moveDamage}>{(data.stats.find((s: any) => s.name === 'attack')?.value || 50) * 2}</Text>
+                  <Text style={styles.moveDamage}>
+                    {(data.stats.find((s: any) => s.name === "attack")?.value ||
+                      50) * 2}
+                  </Text>
                 </View>
               </View>
-              
+
               {/* Bottom Stats Bar */}
               <View style={styles.bottomStats}>
                 <View style={styles.weaknessResistance}>
                   <Text style={styles.statMiniLabel}>Weakness</Text>
-                  <View style={[styles.typeMini, { backgroundColor: getTypeColor(data.types[1] || mainType) }]} />
+                  <View
+                    style={[
+                      styles.typeMini,
+                      {
+                        backgroundColor: getTypeColor(
+                          data.types[1] || mainType
+                        ),
+                      },
+                    ]}
+                  />
                 </View>
                 <View style={styles.weaknessResistance}>
                   <Text style={styles.statMiniLabel}>Retreat</Text>
@@ -372,21 +408,21 @@ function PokemonCardSwipeable({
                   </View>
                 </View>
               </View>
-              
+
               {/* Card Set Info and Rarity */}
               <View style={styles.cardSetInfo}>
                 <Text style={styles.cardSetText}>1st Edition</Text>
                 <Text style={styles.raritySymbol}>★</Text>
                 <Text style={styles.cardNumber}>{data.id}/151</Text>
               </View>
-              
+
               {/* Copyright */}
               <Text style={styles.copyright}>©2024 Pokémon TCG</Text>
-              
+
               {/* Swipe hint indicators */}
               {isActive && (
                 <>
-                  <Animated.View 
+                  <Animated.View
                     style={[
                       styles.swipeHint,
                       styles.swipeHintLeft,
@@ -398,10 +434,14 @@ function PokemonCardSwipeable({
                       },
                     ]}
                   >
-                    <Ionicons name="chevron-back" size={20} color="rgba(255,255,255,0.5)" />
+                    <Ionicons
+                      name="chevron-back"
+                      size={20}
+                      color="rgba(255,255,255,0.5)"
+                    />
                   </Animated.View>
-                  
-                  <Animated.View 
+
+                  <Animated.View
                     style={[
                       styles.swipeHint,
                       styles.swipeHintRight,
@@ -413,7 +453,11 @@ function PokemonCardSwipeable({
                       },
                     ]}
                   >
-                    <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color="rgba(255,255,255,0.5)"
+                    />
                   </Animated.View>
                 </>
               )}
@@ -432,38 +476,59 @@ function getRandomPokemonNames(count: number): string[] {
 }
 
 export default function PokemonScreen() {
+  const queryClient = useQueryClient();
   const [pokemonStack, setPokemonStack] = useState(() => [
-    'pikachu',
-    'charizard',
-    'blastoise',
-    'gengar',
-    'dragonite',
-    'mewtwo',
-    'lucario',
-    'garchomp',
-    'greninja',
-    'mimikyu'
+    "pikachu",
+    "charizard",
+    "blastoise",
+    "gengar",
+    "dragonite",
+    "mewtwo",
+    "lucario",
+    "garchomp",
+    "greninja",
+    "mimikyu",
   ]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [inputValue, setInputValue] = useState('');
-  const [currentPokemonType, setCurrentPokemonType] = useState<string>('electric');
+  const [inputValue, setInputValue] = useState("");
+  const [currentPokemonType, setCurrentPokemonType] =
+    useState<string>("electric");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  
+
+  // Debug function to log cache keys
+  const logCacheKeys = useCallback(() => {
+    const cache = queryClient.getQueryCache();
+    const queries = cache.getAll();
+    console.log("=== QUERY CACHE DEBUG ===");
+    console.log("Total queries in cache:", queries.length);
+    queries.forEach((query, index) => {
+      console.log(`Query ${index + 1}:`, {
+        queryKey: query.queryKey,
+        state: query.state.status,
+        dataUpdatedAt: query.state.dataUpdatedAt,
+        data: query.state.data ? "Has data" : "No data",
+      });
+    });
+    console.log("=========================");
+  }, [queryClient]);
+
   // Only keep essential animations for effects
   const floatAnim = useRef(new Animated.Value(0)).current;
   const shimmerAnim = useRef(new Animated.Value(0)).current;
   const cardGlowAnim = useRef(new Animated.Value(0)).current;
-  
+
   // Premium bubble particles with enhanced effects
   const bubbleAnims = useRef(
-    Array(60).fill(0).map(() => ({
-      x: new Animated.Value(Math.random() * width),
-      y: new Animated.Value(height + 50),
-      opacity: new Animated.Value(0),
-      scale: new Animated.Value(Math.random() * 0.6 + 0.3),
-      wobble: new Animated.Value(0),
-    }))
+    Array(60)
+      .fill(0)
+      .map(() => ({
+        x: new Animated.Value(Math.random() * width),
+        y: new Animated.Value(height + 50),
+        opacity: new Animated.Value(0),
+        scale: new Animated.Value(Math.random() * 0.6 + 0.3),
+        wobble: new Animated.Value(0),
+      }))
   ).current;
 
   useEffect(() => {
@@ -522,11 +587,11 @@ export default function PokemonScreen() {
       const duration = 5000 + Math.random() * 3000;
       const initialScale = Math.random() * 0.6 + 0.4;
       const wobbleAmount = 15 + Math.random() * 10;
-      
+
       bubble.y.setValue(height + 50);
       bubble.scale.setValue(initialScale);
       bubble.opacity.setValue(0);
-      
+
       setTimeout(() => {
         Animated.loop(
           Animated.sequence([
@@ -603,8 +668,8 @@ export default function PokemonScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setPokemonStack([inputValue.trim().toLowerCase(), ...pokemonStack]);
       setCurrentIndex(0);
-      setInputValue('');
-      
+      setInputValue("");
+
       // Trigger success animation
       Animated.sequence([
         Animated.timing(floatAnim, {
@@ -625,9 +690,9 @@ export default function PokemonScreen() {
   const getRandomPokemon = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const randomPokemon = getRandomPokemonNames(1)[0];
-    setPokemonStack(prev => [randomPokemon, ...prev]);
+    setPokemonStack((prev) => [randomPokemon, ...prev]);
     setCurrentIndex(0);
-    
+
     // Trigger dice roll animation
     Animated.sequence([
       Animated.timing(cardGlowAnim, {
@@ -647,14 +712,14 @@ export default function PokemonScreen() {
   useEffect(() => {
     if (pokemonStack.length - currentIndex < 5) {
       const newPokemon = getRandomPokemonNames(5);
-      setPokemonStack(prev => [...prev, ...newPokemon]);
+      setPokemonStack((prev) => [...prev, ...newPokemon]);
     }
   }, [currentIndex, pokemonStack.length]);
-  
+
   // Handle input change with autocomplete
   const handleInputChange = useCallback((text: string) => {
     setInputValue(text);
-    
+
     if (text.length >= 1) {
       const results = searchPokemon(text);
       setSuggestions(results);
@@ -664,89 +729,173 @@ export default function PokemonScreen() {
       setSuggestions([]);
     }
   }, []);
-  
+
   // Select a suggestion
-  const selectSuggestion = useCallback((pokemon: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setPokemonStack([pokemon, ...pokemonStack]);
-    setCurrentIndex(0);
-    setInputValue('');
-    setShowSuggestions(false);
-    setSuggestions([]);
-  }, [pokemonStack]);
+  const selectSuggestion = useCallback(
+    (pokemon: string) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setPokemonStack([pokemon, ...pokemonStack]);
+      setCurrentIndex(0);
+      setInputValue("");
+      setShowSuggestions(false);
+      setSuggestions([]);
+    },
+    [pokemonStack]
+  );
 
   return (
     <View style={styles.container}>
       {/* Premium Animated Background */}
       <LinearGradient
-        colors={['#0A0E27', '#1a1f3a', '#2d1b69']}
+        colors={["#0A0E27", "#1a1f3a", "#2d1b69"]}
         style={StyleSheet.absoluteFillObject}
       />
-      
+
       {/* Animated Background Orbs */}
-      <Animated.View style={[
-        styles.backgroundOrb,
-        styles.orb1,
-        {
-          transform: [{
-            translateY: floatAnim.interpolate({
-              inputRange: [-10, 0],
-              outputRange: [-20, 0],
-            })
-          }]
-        }
-      ]}>
+      <Animated.View
+        style={[
+          styles.backgroundOrb,
+          styles.orb1,
+          {
+            transform: [
+              {
+                translateY: floatAnim.interpolate({
+                  inputRange: [-10, 0],
+                  outputRange: [-20, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         <LinearGradient
-          colors={['rgba(147,51,234,0.3)', 'transparent']}
+          colors={["rgba(147,51,234,0.3)", "transparent"]}
           style={styles.orbGradient}
         />
       </Animated.View>
-      
-      <Animated.View style={[
-        styles.backgroundOrb,
-        styles.orb2,
-        {
-          transform: [{
-            translateX: floatAnim.interpolate({
-              inputRange: [-10, 0],
-              outputRange: [20, 0],
-            })
-          }]
-        }
-      ]}>
+
+      <Animated.View
+        style={[
+          styles.backgroundOrb,
+          styles.orb2,
+          {
+            transform: [
+              {
+                translateX: floatAnim.interpolate({
+                  inputRange: [-10, 0],
+                  outputRange: [20, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         <LinearGradient
-          colors={['rgba(59,130,246,0.3)', 'transparent']}
+          colors={["rgba(59,130,246,0.3)", "transparent"]}
           style={styles.orbGradient}
         />
       </Animated.View>
-      
+
       {/* Dynamic colored bubbles based on Pokemon */}
       {bubbleAnims.map((bubble, index) => {
         // Dynamic bubble colors based on current Pokemon type
         const typeColorMapping: { [key: string]: string[] } = {
-          fire: ['rgba(239, 68, 68, 0.3)', 'rgba(251, 146, 60, 0.3)', 'rgba(252, 211, 77, 0.3)'],
-          water: ['rgba(59, 130, 246, 0.3)', 'rgba(96, 165, 250, 0.3)', 'rgba(147, 197, 253, 0.3)'],
-          grass: ['rgba(34, 197, 94, 0.3)', 'rgba(74, 222, 128, 0.3)', 'rgba(134, 239, 172, 0.3)'],
-          electric: ['rgba(250, 204, 21, 0.3)', 'rgba(253, 224, 71, 0.3)', 'rgba(254, 240, 138, 0.3)'],
-          psychic: ['rgba(236, 72, 153, 0.3)', 'rgba(244, 114, 182, 0.3)', 'rgba(251, 182, 206, 0.3)'],
-          ice: ['rgba(165, 243, 252, 0.3)', 'rgba(207, 250, 254, 0.3)', 'rgba(224, 242, 254, 0.3)'],
-          dragon: ['rgba(147, 51, 234, 0.3)', 'rgba(168, 85, 247, 0.3)', 'rgba(196, 167, 255, 0.3)'],
-          dark: ['rgba(75, 85, 99, 0.3)', 'rgba(107, 114, 128, 0.3)', 'rgba(156, 163, 175, 0.3)'],
-          fairy: ['rgba(244, 114, 182, 0.3)', 'rgba(251, 182, 206, 0.3)', 'rgba(252, 231, 243, 0.3)'],
-          normal: ['rgba(203, 213, 225, 0.3)', 'rgba(226, 232, 240, 0.3)', 'rgba(241, 245, 249, 0.3)'],
-          fighting: ['rgba(220, 38, 38, 0.3)', 'rgba(239, 68, 68, 0.3)', 'rgba(248, 113, 113, 0.3)'],
-          flying: ['rgba(125, 211, 252, 0.3)', 'rgba(186, 230, 253, 0.3)', 'rgba(224, 242, 254, 0.3)'],
-          poison: ['rgba(168, 85, 247, 0.3)', 'rgba(196, 167, 255, 0.3)', 'rgba(221, 214, 254, 0.3)'],
-          ground: ['rgba(217, 119, 6, 0.3)', 'rgba(245, 158, 11, 0.3)', 'rgba(251, 191, 36, 0.3)'],
-          rock: ['rgba(120, 113, 108, 0.3)', 'rgba(168, 162, 158, 0.3)', 'rgba(214, 211, 209, 0.3)'],
-          bug: ['rgba(132, 204, 22, 0.3)', 'rgba(163, 230, 53, 0.3)', 'rgba(190, 242, 100, 0.3)'],
-          ghost: ['rgba(147, 51, 234, 0.3)', 'rgba(168, 85, 247, 0.3)', 'rgba(196, 167, 255, 0.3)'],
-          steel: ['rgba(148, 163, 184, 0.3)', 'rgba(203, 213, 225, 0.3)', 'rgba(226, 232, 240, 0.3)'],
+          fire: [
+            "rgba(239, 68, 68, 0.3)",
+            "rgba(251, 146, 60, 0.3)",
+            "rgba(252, 211, 77, 0.3)",
+          ],
+          water: [
+            "rgba(59, 130, 246, 0.3)",
+            "rgba(96, 165, 250, 0.3)",
+            "rgba(147, 197, 253, 0.3)",
+          ],
+          grass: [
+            "rgba(34, 197, 94, 0.3)",
+            "rgba(74, 222, 128, 0.3)",
+            "rgba(134, 239, 172, 0.3)",
+          ],
+          electric: [
+            "rgba(250, 204, 21, 0.3)",
+            "rgba(253, 224, 71, 0.3)",
+            "rgba(254, 240, 138, 0.3)",
+          ],
+          psychic: [
+            "rgba(236, 72, 153, 0.3)",
+            "rgba(244, 114, 182, 0.3)",
+            "rgba(251, 182, 206, 0.3)",
+          ],
+          ice: [
+            "rgba(165, 243, 252, 0.3)",
+            "rgba(207, 250, 254, 0.3)",
+            "rgba(224, 242, 254, 0.3)",
+          ],
+          dragon: [
+            "rgba(147, 51, 234, 0.3)",
+            "rgba(168, 85, 247, 0.3)",
+            "rgba(196, 167, 255, 0.3)",
+          ],
+          dark: [
+            "rgba(75, 85, 99, 0.3)",
+            "rgba(107, 114, 128, 0.3)",
+            "rgba(156, 163, 175, 0.3)",
+          ],
+          fairy: [
+            "rgba(244, 114, 182, 0.3)",
+            "rgba(251, 182, 206, 0.3)",
+            "rgba(252, 231, 243, 0.3)",
+          ],
+          normal: [
+            "rgba(203, 213, 225, 0.3)",
+            "rgba(226, 232, 240, 0.3)",
+            "rgba(241, 245, 249, 0.3)",
+          ],
+          fighting: [
+            "rgba(220, 38, 38, 0.3)",
+            "rgba(239, 68, 68, 0.3)",
+            "rgba(248, 113, 113, 0.3)",
+          ],
+          flying: [
+            "rgba(125, 211, 252, 0.3)",
+            "rgba(186, 230, 253, 0.3)",
+            "rgba(224, 242, 254, 0.3)",
+          ],
+          poison: [
+            "rgba(168, 85, 247, 0.3)",
+            "rgba(196, 167, 255, 0.3)",
+            "rgba(221, 214, 254, 0.3)",
+          ],
+          ground: [
+            "rgba(217, 119, 6, 0.3)",
+            "rgba(245, 158, 11, 0.3)",
+            "rgba(251, 191, 36, 0.3)",
+          ],
+          rock: [
+            "rgba(120, 113, 108, 0.3)",
+            "rgba(168, 162, 158, 0.3)",
+            "rgba(214, 211, 209, 0.3)",
+          ],
+          bug: [
+            "rgba(132, 204, 22, 0.3)",
+            "rgba(163, 230, 53, 0.3)",
+            "rgba(190, 242, 100, 0.3)",
+          ],
+          ghost: [
+            "rgba(147, 51, 234, 0.3)",
+            "rgba(168, 85, 247, 0.3)",
+            "rgba(196, 167, 255, 0.3)",
+          ],
+          steel: [
+            "rgba(148, 163, 184, 0.3)",
+            "rgba(203, 213, 225, 0.3)",
+            "rgba(226, 232, 240, 0.3)",
+          ],
         };
-        
-        const colors = typeColorMapping[currentPokemonType] || typeColorMapping.normal;
+
+        const colors =
+          typeColorMapping[currentPokemonType] || typeColorMapping.normal;
         const color = colors[index % colors.length];
-        
+
         return (
           <Animated.View
             key={`bubble-${index}`}
@@ -761,7 +910,7 @@ export default function PokemonScreen() {
                 opacity: bubble.opacity,
                 left: (index * 9) % width,
                 backgroundColor: color,
-                borderColor: color.replace('0.3', '0.5'),
+                borderColor: color.replace("0.3", "0.5"),
               },
             ]}
           />
@@ -773,25 +922,29 @@ export default function PokemonScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Premium Header */}
-        <Animated.View style={[
-          styles.headerContainer,
-          {
-            transform: [{
-              scale: floatAnim.interpolate({
-                inputRange: [-10, 0],
-                outputRange: [1.02, 1],
-              })
-            }]
-          }
-        ]}>
+        <Animated.View
+          style={[
+            styles.headerContainer,
+            {
+              transform: [
+                {
+                  scale: floatAnim.interpolate({
+                    inputRange: [-10, 0],
+                    outputRange: [1.02, 1],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <LinearGradient
-            colors={['rgba(255,215,0,0.1)', 'transparent']}
+            colors={["rgba(255,215,0,0.1)", "transparent"]}
             style={styles.headerGlow}
           />
           <View style={styles.titleContainer}>
             <View style={styles.titleBadge}>
               <LinearGradient
-                colors={['#FFD700', '#FFA500', '#FF6347']}
+                colors={["#FFD700", "#FFA500", "#FF6347"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.titleGradient}
@@ -801,21 +954,25 @@ export default function PokemonScreen() {
             </View>
             <Text style={styles.title}>POKÉDEX</Text>
             <View style={styles.titleAccent}>
-              <Animated.View style={[
-                styles.pulsingDot,
-                {
-                  opacity: cardGlowAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.3, 1],
-                  }),
-                  transform: [{
-                    scale: cardGlowAnim.interpolate({
+              <Animated.View
+                style={[
+                  styles.pulsingDot,
+                  {
+                    opacity: cardGlowAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [1, 1.5],
-                    })
-                  }]
-                }
-              ]} />
+                      outputRange: [0.3, 1],
+                    }),
+                    transform: [
+                      {
+                        scale: cardGlowAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.5],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
             </View>
           </View>
           <Text style={styles.subtitle}>Gotta Catch 'Em All!</Text>
@@ -823,53 +980,67 @@ export default function PokemonScreen() {
 
         {/* Premium Search Section */}
         <View style={styles.searchSection}>
-          <Animated.View style={[
-            styles.searchContainer,
-            {
-              transform: [{
-                translateY: floatAnim.interpolate({
-                  inputRange: [-10, 0],
-                  outputRange: [-2, 0],
-                })
-              }]
-            }
-          ]}>
-            {/* Glowing border effect */}
-            <Animated.View style={[
-              styles.searchGlowBorder,
+          <Animated.View
+            style={[
+              styles.searchContainer,
               {
-                opacity: shimmerAnim.interpolate({
-                  inputRange: [0, 0.5, 1],
-                  outputRange: [0.3, 0.8, 0.3],
-                }),
-              }
-            ]}>
+                transform: [
+                  {
+                    translateY: floatAnim.interpolate({
+                      inputRange: [-10, 0],
+                      outputRange: [-2, 0],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            {/* Glowing border effect */}
+            <Animated.View
+              style={[
+                styles.searchGlowBorder,
+                {
+                  opacity: shimmerAnim.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0.3, 0.8, 0.3],
+                  }),
+                },
+              ]}
+            >
               <LinearGradient
-                colors={['#FFD700', '#FF69B4', '#00CED1', '#FFD700']}
+                colors={["#FFD700", "#FF69B4", "#00CED1", "#FFD700"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.glowGradient}
               />
             </Animated.View>
-            
+
             <BlurView intensity={40} tint="dark" style={styles.searchBlur}>
               <LinearGradient
-                colors={['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.02)']}
+                colors={["rgba(255,255,255,0.08)", "rgba(255,255,255,0.02)"]}
                 style={styles.searchGradientOverlay}
               >
                 <View style={styles.inputWrapper}>
                   {/* Animated Search Icon */}
-                  <Animated.View style={{
-                    transform: [{
-                      rotate: shimmerAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', '360deg'],
-                      })
-                    }]
-                  }}>
-                    <Ionicons name="search-circle" size={24} color="rgba(255,215,0,0.7)" />
+                  <Animated.View
+                    style={{
+                      transform: [
+                        {
+                          rotate: shimmerAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ["0deg", "360deg"],
+                          }),
+                        },
+                      ],
+                    }}
+                  >
+                    <Ionicons
+                      name="search-circle"
+                      size={24}
+                      color="rgba(255,215,0,0.7)"
+                    />
                   </Animated.View>
-                  
+
                   <TextInput
                     style={styles.input}
                     value={inputValue}
@@ -880,7 +1051,7 @@ export default function PokemonScreen() {
                     autoCorrect={false}
                     autoCapitalize="none"
                   />
-                  
+
                   {/* Premium Action Buttons */}
                   <View style={styles.actionButtons}>
                     <TouchableOpacity
@@ -889,28 +1060,32 @@ export default function PokemonScreen() {
                       style={styles.actionButton}
                     >
                       <LinearGradient
-                        colors={['#4A90E2', '#357ABD']}
+                        colors={["#4A90E2", "#357ABD"]}
                         style={styles.gradientButton}
                       >
                         <Ionicons name="search" size={18} color="#FFFFFF" />
                       </LinearGradient>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                       onPress={getRandomPokemon}
                       activeOpacity={0.7}
                       style={styles.actionButton}
                     >
-                      <Animated.View style={{
-                        transform: [{
-                          rotate: cardGlowAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ['0deg', '180deg'],
-                          })
-                        }]
-                      }}>
+                      <Animated.View
+                        style={{
+                          transform: [
+                            {
+                              rotate: cardGlowAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ["0deg", "180deg"],
+                              }),
+                            },
+                          ],
+                        }}
+                      >
                         <LinearGradient
-                          colors={['#FFD700', '#FFA500']}
+                          colors={["#FFD700", "#FFA500"]}
                           style={styles.gradientButton}
                         >
                           <Ionicons name="dice" size={18} color="#FFFFFF" />
@@ -921,28 +1096,41 @@ export default function PokemonScreen() {
                 </View>
               </LinearGradient>
             </BlurView>
-            
+
             {/* Autocomplete Dropdown */}
             {showSuggestions && (
               <Animated.View style={styles.suggestionsContainer}>
-                <BlurView intensity={30} tint="dark" style={styles.suggestionsBlur}>
+                <BlurView
+                  intensity={30}
+                  tint="dark"
+                  style={styles.suggestionsBlur}
+                >
                   {suggestions.map((pokemon, index) => (
                     <TouchableOpacity
                       key={pokemon}
                       style={[
                         styles.suggestionItem,
-                        index === suggestions.length - 1 && styles.lastSuggestion
+                        index === suggestions.length - 1 &&
+                          styles.lastSuggestion,
                       ]}
                       onPress={() => selectSuggestion(pokemon)}
                       activeOpacity={0.7}
                     >
                       <View style={styles.suggestionContent}>
-                        <Ionicons name="sparkles" size={14} color="rgba(255,215,0,0.6)" />
+                        <Ionicons
+                          name="sparkles"
+                          size={14}
+                          color="rgba(255,215,0,0.6)"
+                        />
                         <Text style={styles.suggestionText}>
                           {pokemon.charAt(0).toUpperCase() + pokemon.slice(1)}
                         </Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.3)" />
+                      <Ionicons
+                        name="chevron-forward"
+                        size={16}
+                        color="rgba(255,255,255,0.3)"
+                      />
                     </TouchableOpacity>
                   ))}
                 </BlurView>
@@ -951,29 +1139,49 @@ export default function PokemonScreen() {
           </Animated.View>
         </View>
 
+        {/* Debug Button */}
+        <TouchableOpacity
+          onPress={logCacheKeys}
+          style={styles.debugButton}
+          activeOpacity={0.7}
+        >
+          <LinearGradient
+            colors={["rgba(255,0,0,0.2)", "rgba(255,0,0,0.1)"]}
+            style={styles.debugGradient}
+          >
+            <Ionicons name="bug" size={16} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.debugText}>Debug Cache</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
-          <View style={{ width: width - 60, height: 430, position: 'relative' }}>
-            {pokemonStack.slice(currentIndex, currentIndex + 3).map((pokemonId, stackIndex) => (
-              <PokemonCardSwipeable
-                key={`${pokemonId}-${currentIndex + stackIndex}`}
-                pokemonId={pokemonId}
-                index={stackIndex}
-                isActive={stackIndex === 0}
-                onSwipe={() => {
-                  if (stackIndex === 0) {
-                    setCurrentIndex(prev => prev + 1);
-                    // Add a new random Pokemon to the end of the stack
-                    const newPokemon = getRandomPokemonNames(1);
-                    setPokemonStack(prev => [...prev, ...newPokemon]);
-                  }
-                }}
-                onTypeChange={setCurrentPokemonType}
-                shimmerAnim={shimmerAnim}
-                floatAnim={floatAnim}
-                cardGlowAnim={cardGlowAnim}
-              />
-            )).reverse()}
+          <View
+            style={{ width: width - 60, height: 430, position: "relative" }}
+          >
+            {pokemonStack
+              .slice(currentIndex, currentIndex + 3)
+              .map((pokemonId, stackIndex) => (
+                <PokemonCardSwipeable
+                  key={`${pokemonId}-${currentIndex + stackIndex}`}
+                  pokemonId={pokemonId}
+                  index={stackIndex}
+                  isActive={stackIndex === 0}
+                  onSwipe={() => {
+                    if (stackIndex === 0) {
+                      setCurrentIndex((prev) => prev + 1);
+                      // Add a new random Pokemon to the end of the stack
+                      const newPokemon = getRandomPokemonNames(1);
+                      setPokemonStack((prev) => [...prev, ...newPokemon]);
+                    }
+                  }}
+                  onTypeChange={setCurrentPokemonType}
+                  shimmerAnim={shimmerAnim}
+                  floatAnim={floatAnim}
+                  cardGlowAnim={cardGlowAnim}
+                />
+              ))
+              .reverse()}
           </View>
         </View>
 
@@ -986,32 +1194,40 @@ export default function PokemonScreen() {
                 styles.dot,
                 i === 0 && styles.activeDot,
                 i === 0 && {
-                  transform: [{
-                    scale: cardGlowAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [1, 1.3],
-                    })
-                  }]
-                }
+                  transform: [
+                    {
+                      scale: cardGlowAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.3],
+                      }),
+                    },
+                  ],
+                },
               ]}
             />
           ))}
         </View>
-        
+
         {/* Premium Footer */}
         <View style={styles.footer}>
           <LinearGradient
-            colors={['transparent', 'rgba(255,215,0,0.05)']}
+            colors={["transparent", "rgba(255,215,0,0.05)"]}
             style={styles.footerGradient}
           >
             <Text style={styles.footerText}>Swipe to Explore</Text>
-            <Animated.View style={{
-              opacity: shimmerAnim.interpolate({
-                inputRange: [0, 0.5, 1],
-                outputRange: [0.3, 1, 0.3],
-              })
-            }}>
-              <Ionicons name="swap-horizontal" size={20} color="rgba(255,215,0,0.6)" />
+            <Animated.View
+              style={{
+                opacity: shimmerAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.3, 1, 0.3],
+                }),
+              }}
+            >
+              <Ionicons
+                name="swap-horizontal"
+                size={20}
+                color="rgba(255,215,0,0.6)"
+              />
             </Animated.View>
           </LinearGradient>
         </View>
@@ -1028,12 +1244,12 @@ const styles = StyleSheet.create({
     paddingTop: 25,
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
-    position: 'relative',
+    position: "relative",
   },
   headerGlow: {
-    position: 'absolute',
+    position: "absolute",
     top: -20,
     left: -50,
     right: -50,
@@ -1041,14 +1257,14 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   titleBadge: {
     marginRight: 10,
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   titleGradient: {
     paddingHorizontal: 8,
@@ -1056,36 +1272,36 @@ const styles = StyleSheet.create({
   },
   titleSmall: {
     fontSize: 10,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: "900",
+    color: "#FFFFFF",
     letterSpacing: 1,
   },
   titleAccent: {
     marginLeft: 10,
-    position: 'relative',
+    position: "relative",
   },
   pulsingDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FFD700',
-    shadowColor: '#FFD700',
+    backgroundColor: "#FFD700",
+    shadowColor: "#FFD700",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 4,
   },
   subtitle: {
     fontSize: 12,
-    color: 'rgba(255,215,0,0.6)',
-    fontStyle: 'italic',
+    color: "rgba(255,215,0,0.6)",
+    fontStyle: "italic",
     letterSpacing: 1,
   },
   title: {
     fontSize: 44,
-    fontWeight: '900',
-    color: '#FFD700',
+    fontWeight: "900",
+    color: "#FFD700",
     letterSpacing: 3,
-    textShadowColor: '#FF6347',
+    textShadowColor: "#FF6347",
     textShadowOffset: { width: 0, height: 3 },
     textShadowRadius: 15,
   },
@@ -1095,11 +1311,11 @@ const styles = StyleSheet.create({
     zIndex: 9998,
   },
   searchContainer: {
-    position: 'relative',
+    position: "relative",
     zIndex: 9999,
   },
   searchGlowBorder: {
-    position: 'absolute',
+    position: "absolute",
     top: -2,
     left: -2,
     right: -2,
@@ -1118,15 +1334,15 @@ const styles = StyleSheet.create({
   searchBlur: {
     height: 52,
     borderRadius: 24,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(20,20,40,0.6)',
+    overflow: "hidden",
+    backgroundColor: "rgba(20,20,40,0.6)",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: "rgba(255,255,255,0.1)",
   },
   inputWrapper: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingLeft: 15,
     paddingRight: 8,
   },
@@ -1134,18 +1350,18 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 12,
     fontSize: 15,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: "#FFFFFF",
+    fontWeight: "600",
     letterSpacing: 0.5,
   },
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   actionButton: {
     borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -1154,12 +1370,12 @@ const styles = StyleSheet.create({
   gradientButton: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   stackIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 8,
     marginTop: 15,
     marginBottom: 20,
@@ -1168,54 +1384,54 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: "rgba(255,255,255,0.3)",
   },
   activeDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FFD700',
-    shadowColor: '#FFD700',
+    backgroundColor: "#FFD700",
+    shadowColor: "#FFD700",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 4,
   },
   footer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 30,
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
   footerGradient: {
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   footerText: {
     fontSize: 11,
-    color: 'rgba(255,255,255,0.5)',
-    fontWeight: '600',
+    color: "rgba(255,255,255,0.5)",
+    fontWeight: "600",
     letterSpacing: 1,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   cardStackContainer: {
     height: 460,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
     marginTop: 0,
     zIndex: 1,
   },
   pokemonCard: {
-    position: 'absolute',
+    position: "absolute",
     width: width - 60,
     height: 430,
     borderRadius: 25,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.25,
     shadowRadius: 15,
@@ -1225,12 +1441,12 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 25,
     padding: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.4)',
+    borderColor: "rgba(255,255,255,0.4)",
   },
   shimmer: {
-    position: 'absolute',
+    position: "absolute",
     top: -50,
     left: -200,
     right: -200,
@@ -1247,95 +1463,95 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 35,
     paddingHorizontal: 15,
-    alignItems: 'center',
-    overflow: 'hidden',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    overflow: "hidden",
+    justifyContent: "space-between",
   },
   cardFrame: {
-    position: 'absolute',
+    position: "absolute",
     top: 5,
     left: 5,
     right: 5,
     bottom: 5,
     borderRadius: 18,
     borderWidth: 6,
-    borderColor: 'rgba(255, 215, 0, 0.3)',
+    borderColor: "rgba(255, 215, 0, 0.3)",
   },
   cardFrameInner: {
-    position: 'absolute',
+    position: "absolute",
     top: 3,
     left: 3,
     right: 3,
     bottom: 3,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: "rgba(255,255,255,0.2)",
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 0,
     marginTop: 3,
     marginBottom: 3,
-    width: '85%',
-    alignSelf: 'center',
+    width: "85%",
+    alignSelf: "center",
   },
   pokemonNameHeader: {
     fontSize: 16,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: "900",
+    color: "#FFFFFF",
     letterSpacing: 0.5,
-    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
   hpContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
   },
   hpText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: 'rgba(255,100,100,1)',
+    fontWeight: "bold",
+    color: "rgba(255,100,100,1)",
   },
   hpValue: {
     fontSize: 18,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: "900",
+    color: "#FFFFFF",
   },
   pokemonIdBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 38,
     right: 25,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: "rgba(0,0,0,0.4)",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.3)',
+    borderColor: "rgba(255,215,0,0.3)",
   },
   pokemonIdText: {
-    color: 'rgba(255,215,0,0.9)',
+    color: "rgba(255,215,0,0.9)",
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   artFrame: {
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.15)',
+    borderColor: "rgba(255,255,255,0.15)",
     padding: 6,
     marginHorizontal: 0,
     marginTop: 3,
     marginBottom: 3,
-    alignItems: 'center',
-    width: '80%',
-    alignSelf: 'center',
+    alignItems: "center",
+    width: "80%",
+    alignSelf: "center",
   },
   artBackground: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -1344,29 +1560,29 @@ const styles = StyleSheet.create({
   },
   stageName: {
     fontSize: 9,
-    color: 'rgba(255,255,255,0.6)',
+    color: "rgba(255,255,255,0.6)",
     marginTop: 5,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   imageContainer: {
     width: 130,
     height: 130,
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
   },
   sparkleContainer: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
   sparkle: {
-    position: 'absolute',
+    position: "absolute",
     width: 6,
     height: 6,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 3,
-    shadowColor: '#FFD700',
+    shadowColor: "#FFD700",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 4,
@@ -1376,18 +1592,18 @@ const styles = StyleSheet.create({
     height: 120,
   },
   typesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
     marginBottom: 8,
     paddingHorizontal: 0,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   typeBadge: {
     paddingHorizontal: 14,
     paddingVertical: 5,
     borderRadius: 15,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
@@ -1395,28 +1611,28 @@ const styles = StyleSheet.create({
     maxWidth: 100,
   },
   typeText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 11,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1,
   },
   movesContainer: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: "rgba(0,0,0,0.2)",
     borderRadius: 12,
     padding: 8,
     marginHorizontal: 0,
     marginBottom: 6,
     gap: 6,
-    width: '85%',
-    alignSelf: 'center',
+    width: "85%",
+    alignSelf: "center",
   },
   moveRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   energyBadge: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 3,
   },
   energyIcon: {
@@ -1424,37 +1640,37 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   moveName: {
     flex: 1,
     marginLeft: 10,
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   moveDamage: {
     fontSize: 16,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: "900",
+    color: "#FFFFFF",
     minWidth: 35,
-    textAlign: 'right',
+    textAlign: "right",
   },
   bottomStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     paddingHorizontal: 0,
     marginBottom: 8,
     marginTop: 3,
-    width: '60%',
-    alignSelf: 'center',
+    width: "60%",
+    alignSelf: "center",
   },
   weaknessResistance: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statMiniLabel: {
     fontSize: 8,
-    color: 'rgba(255,255,255,0.5)',
+    color: "rgba(255,255,255,0.5)",
     marginBottom: 3,
   },
   typeMini: {
@@ -1462,67 +1678,67 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   retreatCost: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   retreatText: {
     fontSize: 10,
-    color: 'rgba(255,255,255,0.7)',
+    color: "rgba(255,255,255,0.7)",
   },
   cardSetInfo: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 15,
     left: 25,
     right: 25,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   cardSetText: {
-    color: 'rgba(255,215,0,0.6)',
+    color: "rgba(255,215,0,0.6)",
     fontSize: 8,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
+    fontWeight: "bold",
+    fontStyle: "italic",
   },
   raritySymbol: {
     fontSize: 12,
-    color: 'rgba(255,215,0,0.8)',
+    color: "rgba(255,215,0,0.8)",
   },
   cardNumber: {
-    color: 'rgba(255,255,255,0.5)',
+    color: "rgba(255,255,255,0.5)",
     fontSize: 8,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   copyright: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 5,
-    alignSelf: 'center',
+    alignSelf: "center",
     fontSize: 6,
-    color: 'rgba(255,255,255,0.3)',
+    color: "rgba(255,255,255,0.3)",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     minHeight: 300,
   },
   loadingText: {
     marginTop: 20,
     fontSize: 18,
-    color: '#FFD700',
-    fontWeight: 'bold',
+    color: "#FFD700",
+    fontWeight: "bold",
   },
   bubble: {
-    position: 'absolute',
+    position: "absolute",
     width: 12,
     height: 12,
     borderRadius: 6,
     borderWidth: 0.5,
   },
   backgroundOrb: {
-    position: 'absolute',
+    position: "absolute",
     width: 300,
     height: 300,
     borderRadius: 150,
@@ -1540,51 +1756,75 @@ const styles = StyleSheet.create({
     borderRadius: 150,
   },
   suggestionsContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 54,
     left: 0,
     right: 0,
     zIndex: 10000,
     borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 100,
   },
   suggestionsBlur: {
-    backgroundColor: 'rgba(20,20,40,0.95)',
+    backgroundColor: "rgba(20,20,40,0.95)",
     borderWidth: 1,
-    borderColor: 'rgba(255,215,0,0.2)',
+    borderColor: "rgba(255,215,0,0.2)",
     borderRadius: 16,
   },
   suggestionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: "rgba(255,255,255,0.05)",
   },
   lastSuggestion: {
     borderBottomWidth: 0,
   },
   suggestionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   suggestionText: {
     fontSize: 15,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: "#FFFFFF",
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+  debugButton: {
+    marginHorizontal: 15,
+    marginTop: -10,
+    marginBottom: 10,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  debugGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,0,0,0.2)",
+  },
+  debugText: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.8)",
+    fontWeight: "600",
     letterSpacing: 0.5,
   },
   swipeHint: {
-    position: 'absolute',
-    top: '45%',
+    position: "absolute",
+    top: "45%",
     marginTop: -10,
     zIndex: 20,
   },
