@@ -3,6 +3,10 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { useSyncQueriesExternal } from "react-query-external-sync";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
+
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -14,16 +18,15 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import {
   createEnvVarConfig,
   Environment,
   envVar,
   RnBetterDevToolsBubble,
-  setMaxSentryEvents,
-  setupSentryEventListeners,
   UserRole,
 } from "react-native-react-query-devtools";
+import { storage } from "@/storage/mmkv";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -82,6 +85,32 @@ export default function RootLayout() {
 
     envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
   ]);
+
+  useSyncQueriesExternal({
+    queryClient,
+    socketURL: "http://localhost:42831",
+    deviceName: Platform.OS,
+    platform: Platform.OS,
+    deviceId: Platform.OS,
+    extraDeviceInfo: {
+      "test-device-info": "test123",
+    },
+    enableLogs: false,
+    envVariables: {
+      "test-env-var": "test",
+    },
+    mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
+    asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring (import AsyncStorage from '@react-native-async-storage/async-storage')
+    secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
+    secureStorageKeys: [
+      "sessionToken",
+      "auth.session",
+      "auth.email",
+      "auth.last_sync",
+      "knock_push_token",
+    ], // SecureStore keys to monitor
+  });
+
   if (!loaded) {
     return null;
   }
@@ -107,7 +136,6 @@ export default function RootLayout() {
                 environment={environment}
                 userRole={userRole}
                 requiredEnvVars={requiredEnvVars}
-                hideQueryButton
               />
             </ThemeProvider>
           </LinearGradient>
