@@ -1,6 +1,5 @@
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { RequiredStorageKey } from "../../../_sections/storage/types";
-import { SentryLogsModal } from "../../../_sections/sentry";
 import { EnvVarsModal } from "../../../_sections/env/components/EnvVarsModal";
 import { StorageModal, StorageEventsModal } from "../../../_sections/storage";
 import { NetworkModal } from "../../../_sections/network";
@@ -46,13 +45,13 @@ export function DevToolsModalRouter({
 }: DevToolsModalRouterProps) {
   return (
     <>
-      <SentryLogsModal
+      {/* <SentryLogsModal
         visible={selectedSection === "sentry-logs"}
         onClose={onClose}
         getSentrySubtitle={_getSentrySubtitle}
         onBack={onBack}
         enableSharedModalDimensions={enableSharedModalDimensions}
-      />
+      /> */}
 
       <EnvVarsModal
         visible={selectedSection === "env-vars"}

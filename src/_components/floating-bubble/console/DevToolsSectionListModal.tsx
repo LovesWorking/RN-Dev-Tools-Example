@@ -1,7 +1,7 @@
 import { BaseFloatingModal } from "../modal/components/BaseFloatingModal";
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { ConsoleSectionList } from "./ConsoleSectionList";
-import { SentryLogsSection, ReactQuerySection } from "./sections";
+import { ReactQuerySection } from "./sections";
 import { EnvVarsSection } from "../../../_sections/env";
 import { StorageSection } from "../../../_sections/storage/components/StorageSection";
 import { StorageEventsSection } from "../../../_sections/storage";
@@ -71,10 +71,10 @@ export function DevToolsSectionListModal({
       headerSubtitle={undefined}
     >
       <ConsoleSectionList>
-        <SentryLogsSection
+        {/* <SentryLogsSection
           onPress={() => onSectionSelect("sentry-logs")}
           getSentrySubtitle={_getSentrySubtitle}
-        />
+        /> */}
         <EnvVarsSection
           onPress={() => onSectionSelect("env-vars")}
           envVarsSubtitle={envVarsSubtitle}
@@ -85,9 +85,13 @@ export function DevToolsSectionListModal({
           getRnBetterDevToolsSubtitle={getRnBetterDevToolsSubtitle}
         />
         <StorageSection onPress={() => onSectionSelect("storage")} />
-        <StorageEventsSection onPress={() => onSectionSelect("storage-events")} />
+        <StorageEventsSection
+          onPress={() => onSectionSelect("storage-events")}
+        />
         <NetworkSection onPress={() => onSectionSelect("network")} />
-        <BubbleSettingsSection onPress={() => onSectionSelect("bubble-settings")} />
+        <BubbleSettingsSection
+          onPress={() => onSectionSelect("bubble-settings")}
+        />
       </ConsoleSectionList>
     </BaseFloatingModal>
   );

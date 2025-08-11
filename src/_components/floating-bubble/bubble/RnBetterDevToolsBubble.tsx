@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useSentrySubtitle, SentryLogsModal } from "../../../_sections/sentry";
-import { RequiredEnvVar, useEnvVarsSubtitle, EnvVarsModal } from "../../../_sections/env";
+import {
+  RequiredEnvVar,
+  useEnvVarsSubtitle,
+  EnvVarsModal,
+} from "../../../_sections/env";
 import { StorageModal, RequiredStorageKey } from "../../../_sections/storage";
 import { BubblePresentation } from "./components/BubblePresentation";
 import type { UserRole } from "./components/UserStatus";
@@ -132,11 +135,11 @@ interface RnBetterDevToolsBubbleProps {
  * - Dev console with environment variable checking and other debugging tools
  *
  * ## Visibility Control Priority System:
- * 1. **User Preferences (Highest Priority)**: If a user has explicitly toggled a button 
+ * 1. **User Preferences (Highest Priority)**: If a user has explicitly toggled a button
  *    in the settings UI, that preference is always used
- * 2. **Developer Defaults (Props)**: If no user preference exists, the hide* props 
+ * 2. **Developer Defaults (Props)**: If no user preference exists, the hide* props
  *    determine default visibility (e.g., hide certain buttons in production)
- * 3. **Built-in Defaults**: If neither user preference nor props exist, built-in 
+ * 3. **Built-in Defaults**: If neither user preference nor props exist, built-in
  *    defaults are used (most buttons visible)
  *
  * @example
@@ -165,9 +168,8 @@ export function RnBetterDevToolsBubble({
   hideWifiToggle,
   hideEnvButton,
   hideSentryButton,
-  hideStorageButton
+  hideStorageButton,
 }: RnBetterDevToolsBubbleProps) {
-  
   // Info: Show how props and user settings interact
   useEffect(() => {
     const propsProvided = [
@@ -176,30 +178,41 @@ export function RnBetterDevToolsBubble({
       hideWifiToggle !== undefined && `hideWifiToggle=${hideWifiToggle}`,
       hideEnvButton !== undefined && `hideEnvButton=${hideEnvButton}`,
       hideSentryButton !== undefined && `hideSentryButton=${hideSentryButton}`,
-      hideStorageButton !== undefined && `hideStorageButton=${hideStorageButton}`,
+      hideStorageButton !== undefined &&
+        `hideStorageButton=${hideStorageButton}`,
     ].filter(Boolean);
-    
+
     if (propsProvided.length > 0) {
       console.info(
-        '[RnBetterDevToolsBubble] Default visibility props: ' + propsProvided.join(', ') + '. ' +
-        'Users can override these in settings.'
+        "[RnBetterDevToolsBubble] Default visibility props: " +
+          propsProvided.join(", ") +
+          ". " +
+          "Users can override these in settings."
       );
     }
-  }, [hideQueryButton, hideEnvironment, hideWifiToggle, hideEnvButton, hideSentryButton, hideStorageButton]);
-  
-  // Load visibility settings from storage
-  const { settings: visibilitySettings, reload: reloadSettings } = useBubbleVisibilitySettings({
-    hideEnvironment,
-    hideUserStatus,
+  }, [
     hideQueryButton,
+    hideEnvironment,
     hideWifiToggle,
     hideEnvButton,
     hideSentryButton,
     hideStorageButton,
-  });
+  ]);
+
+  // Load visibility settings from storage
+  const { settings: visibilitySettings, reload: reloadSettings } =
+    useBubbleVisibilitySettings({
+      hideEnvironment,
+      hideUserStatus,
+      hideQueryButton,
+      hideWifiToggle,
+      hideEnvButton,
+      hideSentryButton,
+      hideStorageButton,
+    });
 
   // Specialized hooks for different concerns following composition principles
-  const { getSentrySubtitle } = useSentrySubtitle();
+  // const { getSentrySubtitle } = useSentrySubtitle();
   const { getRnBetterDevToolsSubtitle } = useReactQueryState(queryClient);
   const envVarsSubtitle = useEnvVarsSubtitle(requiredEnvVars);
 
@@ -233,11 +246,15 @@ export function RnBetterDevToolsBubble({
   } = useModalManager();
 
   // Hide bubble when any modal is open to prevent visual overlap
-  const isAnyModalOpen = isModalOpen || isDebugModalOpen || isEnvModalOpen || isSentryModalOpen || isStorageModalOpen;
+  const isAnyModalOpen =
+    isModalOpen ||
+    isDebugModalOpen ||
+    isEnvModalOpen ||
+    isSentryModalOpen ||
+    isStorageModalOpen;
 
   // Note: We no longer wait for state restoration to show the bubble
   // The bubble should be visible immediately on app launch
-  
 
   return (
     <ErrorBoundary>
@@ -289,7 +306,7 @@ export function RnBetterDevToolsBubble({
           onClose={handleDebugModalDismiss}
           requiredEnvVars={requiredEnvVars}
           requiredStorageKeys={requiredStorageKeys}
-          getSentrySubtitle={getSentrySubtitle}
+          getSentrySubtitle={() => "Sentry subtitle disabled for now"}
           getRnBetterDevToolsSubtitle={getRnBetterDevToolsSubtitle}
           envVarsSubtitle={envVarsSubtitle}
           selectedSection={selectedSection}
@@ -316,13 +333,13 @@ export function RnBetterDevToolsBubble({
         />
 
         {/* Sentry Events Modal - Auto-opens if restored state indicates it was open */}
-        <SentryLogsModal
+        {/* <SentryLogsModal
           key="sentry-logs-modal"
           visible={isSentryModalOpen}
           onClose={handleSentryModalDismiss}
           getSentrySubtitle={getSentrySubtitle}
           enableSharedModalDimensions={enableSharedModalDimensions}
-        />
+        /> */}
 
         {/* Storage Browser Modal - Auto-opens if restored state indicates it was open */}
         <StorageModal
