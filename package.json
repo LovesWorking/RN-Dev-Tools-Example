@@ -57,7 +57,7 @@
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-mmkv": "^3.3.0",
-    "react-native-reanimated": "~3.17.4",
+    "react-native-reanimated": "~3.17.5",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "15.11.2",
@@ -76,5 +76,6 @@
     "socket.io-client": "^4.8.1",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }

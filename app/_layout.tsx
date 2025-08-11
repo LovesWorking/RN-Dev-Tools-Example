@@ -19,13 +19,13 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { Platform, View } from "react-native";
-import {
-  createEnvVarConfig,
-  Environment,
-  envVar,
-  RnBetterDevToolsBubble,
-  UserRole,
-} from "react-native-react-query-devtools";
+// import {
+//   createEnvVarConfig,
+//   Environment,
+//   envVar,
+//   RnBetterDevToolsBubble,
+//   UserRole,
+// } from "react-native-react-query-devtools";
 import { storage } from "@/storage/mmkv";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -71,47 +71,47 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-  const userRole: UserRole = "admin";
-  const environment: Environment = "local";
-  const requiredEnvVars = createEnvVarConfig([
-    // 🟢 GREEN - Valid variables
-    envVar("EXPO_PUBLIC_API_URL").exists(), // ✓ Exists
+  // const userRole: UserRole = "admin";
+  // const environment: Environment = "local";
+  // const requiredEnvVars = createEnvVarConfig([
+  //   // 🟢 GREEN - Valid variables
+  //   envVar("EXPO_PUBLIC_API_URL").exists(), // ✓ Exists
 
-    envVar("EXPO_PUBLIC_DEBUG_MODE")
-      .withType("boolean")
-      .withDescription("Enable debug logging")
-      .build(), // ✓ Correct type
+  //   envVar("EXPO_PUBLIC_DEBUG_MODE")
+  //     .withType("boolean")
+  //     .withDescription("Enable debug logging")
+  //     .build(), // ✓ Correct type
 
-    envVar("EXPO_PUBLIC_MAX_RETRIES").withType("number").build(), // ✓ Correct type
+  //   envVar("EXPO_PUBLIC_MAX_RETRIES").withType("number").build(), // ✓ Correct type
 
-    envVar("EXPO_PUBLIC_ENVIRONMENT").withValue("development").build(), // ✓ Correct value
+  //   envVar("EXPO_PUBLIC_ENVIRONMENT").withValue("development").build(), // ✓ Correct value
 
-    // 🟠 ORANGE - Wrong values (exists but incorrect)
-    envVar("EXPO_PUBLIC_API_VERSION")
-      .withValue("v2")
-      .withDescription("API version (should be v2)")
-      .build(), // ⚠ Wrong value
+  //   // 🟠 ORANGE - Wrong values (exists but incorrect)
+  //   envVar("EXPO_PUBLIC_API_VERSION")
+  //     .withValue("v2")
+  //     .withDescription("API version (should be v2)")
+  //     .build(), // ⚠ Wrong value
 
-    envVar("EXPO_PUBLIC_REGION").withValue("us-east-1").build(), // ⚠ Wrong value
+  //   envVar("EXPO_PUBLIC_REGION").withValue("us-east-1").build(), // ⚠ Wrong value
 
-    // 🔴 RED - Wrong types (exists but wrong type)
-    envVar("EXPO_PUBLIC_FEATURE_FLAGS")
-      .withDescription("Feature flags configuration object")
-      .withType("object")
-      .build(), // ⚠ Wrong type
+  //   // 🔴 RED - Wrong types (exists but wrong type)
+  //   envVar("EXPO_PUBLIC_FEATURE_FLAGS")
+  //     .withDescription("Feature flags configuration object")
+  //     .withType("object")
+  //     .build(), // ⚠ Wrong type
 
-    envVar("EXPO_PUBLIC_PORT").withType("number").build(), // ⚠ Wrong type
+  //   envVar("EXPO_PUBLIC_PORT").withType("number").build(), // ⚠ Wrong type
 
-    // 🔴 RED - Missing variables
-    envVar("EXPO_PUBLIC_SENTRY_DSN").exists(), // ⚠ Missing
+  //   // 🔴 RED - Missing variables
+  //   envVar("EXPO_PUBLIC_SENTRY_DSN").exists(), // ⚠ Missing
 
-    envVar("EXPO_PUBLIC_ANALYTICS_KEY")
-      .withDescription("Analytics service API key")
-      .withType("string")
-      .build(), // ⚠ Missing
+  //   envVar("EXPO_PUBLIC_ANALYTICS_KEY")
+  //     .withDescription("Analytics service API key")
+  //     .withType("string")
+  //     .build(), // ⚠ Missing
 
-    envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
-  ]);
+  //   envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
+  // ]);
 
   if (!loaded) {
     return null;
@@ -133,12 +133,6 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found" />
               </Stack>
               <StatusBar style="light" />
-              <RnBetterDevToolsBubble
-                queryClient={queryClient}
-                environment={environment}
-                userRole={userRole}
-                requiredEnvVars={requiredEnvVars}
-              />
             </ThemeProvider>
           </LinearGradient>
         </View>
