@@ -3,9 +3,15 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
-
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+// import * as SecureStore from "expo-secure-store";
+// import {
+//   createEnvVarConfig,
+//   Environment,
+//   envVar,
+//   RnBetterDevToolsBubble,
+//   UserRole,
+// } from "@/src";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -18,15 +24,9 @@ import { QueryClientWrapper } from "@/app/_components/QueryClientWrapper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
-import { Platform, View } from "react-native";
-// import {
-//   createEnvVarConfig,
-//   Environment,
-//   envVar,
-//   RnBetterDevToolsBubble,
-//   UserRole,
-// } from "react-native-react-query-devtools";
-import { storage } from "@/storage/mmkv";
+import { View } from "react-native";
+
+// import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble/RnBetterDevToolsBubble";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -135,6 +135,7 @@ export default function RootLayout() {
               <StatusBar style="light" />
             </ThemeProvider>
           </LinearGradient>
+          {/* <RnBetterDevToolsBubble queryClient={queryClient} /> */}
         </View>
       </QueryClientWrapper>
     </GestureHandlerRootView>

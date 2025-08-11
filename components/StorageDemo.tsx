@@ -23,8 +23,6 @@ const StorageItem: React.FC<StorageItemProps> = ({
   icon,
   color,
 }) => {
-  const queryClient = useQueryClient();
-
   // Query to read from storage using the special storage query key format
   const { data: storedValue, isLoading } = useQuery({
     queryKey: ["#storage", storageType, storageKey],
@@ -33,7 +31,7 @@ const StorageItem: React.FC<StorageItemProps> = ({
         switch (storageType) {
           case "mmkv":
             // Use async method for mock MMKV
-            return await storage.getStringAsync(storageKey);
+            return await storage.getString(storageKey);
           case "async":
             return await AsyncStorage.getItem(storageKey);
           case "secure":
@@ -108,7 +106,7 @@ const StorageInputCard: React.FC = () => {
       try {
         switch (selectedStorage) {
           case "mmkv":
-            return await storage.getStringAsync(currentOption.key);
+            return await storage.getString(currentOption.key);
           case "async":
             return await AsyncStorage.getItem(currentOption.key);
           case "secure":
@@ -129,7 +127,7 @@ const StorageInputCard: React.FC = () => {
     mutationFn: async (value: string) => {
       switch (selectedStorage) {
         case "mmkv":
-          await storage.setAsync(currentOption.key, value);
+          storage.set(currentOption.key, value);
           break;
         case "async":
           await AsyncStorage.setItem(currentOption.key, value);
@@ -158,7 +156,7 @@ const StorageInputCard: React.FC = () => {
     mutationFn: async () => {
       switch (selectedStorage) {
         case "mmkv":
-          await storage.deleteAsync(currentOption.key);
+          storage.delete(currentOption.key);
           break;
         case "async":
           await AsyncStorage.removeItem(currentOption.key);

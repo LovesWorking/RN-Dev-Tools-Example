@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -6,13 +6,13 @@ import {
   Animated,
   Dimensions,
   Image,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import { PokemonTheme } from '@/constants/PokemonTheme';
-import { getTypeColor } from '../_utils/pokemonTypeColors';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+import { PokemonTheme } from "@/constants/PokemonTheme";
+import { getTypeColor } from "../_utils/pokemonTypeColors";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface PokemonCardProps {
   pokemon: {
@@ -65,9 +65,9 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
   }, []);
 
   const mainType = pokemon.types[0];
-  const typeColor = getTypeColor(mainType);
-  const gradientColors = PokemonTheme.gradients[mainType as keyof typeof PokemonTheme.gradients] 
-    || PokemonTheme.gradients.normal;
+  const gradientColors =
+    PokemonTheme.gradients[mainType as keyof typeof PokemonTheme.gradients] ||
+    PokemonTheme.gradients.normal;
 
   return (
     <Animated.View
@@ -79,7 +79,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
             {
               rotateY: rotateAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: ['90deg', '0deg'],
+                outputRange: ["90deg", "0deg"],
               }),
             },
           ],
@@ -110,7 +110,9 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
           <View style={styles.cardContent}>
             {/* Pokemon Number */}
             <View style={styles.numberBadge}>
-              <Text style={styles.numberText}>#{String(pokemon.id).padStart(3, '0')}</Text>
+              <Text style={styles.numberText}>
+                #{String(pokemon.id).padStart(3, "0")}
+              </Text>
             </View>
 
             {/* Pokemon Image with holographic effect */}
@@ -121,7 +123,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
                 resizeMode="contain"
               />
               <LinearGradient
-                colors={['transparent', 'rgba(255,255,255,0.3)', 'transparent']}
+                colors={["transparent", "rgba(255,255,255,0.3)", "transparent"]}
                 style={styles.holographicOverlay}
               />
             </View>
@@ -134,7 +136,10 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
               {pokemon.types.map((type) => (
                 <View
                   key={type}
-                  style={[styles.typeBadge, { backgroundColor: getTypeColor(type) }]}
+                  style={[
+                    styles.typeBadge,
+                    { backgroundColor: getTypeColor(type) },
+                  ]}
                 >
                   <Text style={styles.typeText}>{type.toUpperCase()}</Text>
                 </View>
@@ -155,7 +160,9 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
 
             {/* Decorative elements */}
             <View style={styles.cornerDecoration} />
-            <View style={[styles.cornerDecoration, styles.cornerDecorationBottom]} />
+            <View
+              style={[styles.cornerDecoration, styles.cornerDecorationBottom]}
+            />
           </View>
         </BlurView>
       </LinearGradient>
@@ -180,42 +187,42 @@ const styles = StyleSheet.create({
   glassOverlay: {
     flex: 1,
     borderRadius: 28,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   cardContent: {
     flex: 1,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   numberBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     right: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   numberText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   imageContainer: {
     width: 220,
     height: 220,
     marginTop: 30,
     marginBottom: 20,
-    position: 'relative',
+    position: "relative",
   },
   pokemonImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   holographicOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -224,16 +231,16 @@ const styles = StyleSheet.create({
   },
   pokemonName: {
     fontSize: 28,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: "900",
+    color: "#FFFFFF",
     letterSpacing: 2,
     marginBottom: 15,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },
   typesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
     marginBottom: 25,
   },
@@ -242,44 +249,44 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   typeText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1,
   },
   statsPreview: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
     borderRadius: 20,
     padding: 15,
   },
   statItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statValue: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   statLabel: {
     fontSize: 10,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: "rgba(255, 255, 255, 0.7)",
     marginTop: 4,
   },
   cornerDecoration: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
     width: 30,
     height: 30,
     borderTopWidth: 3,
     borderLeftWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderColor: "rgba(255, 255, 255, 0.5)",
     borderTopLeftRadius: 10,
   },
   cornerDecorationBottom: {
@@ -295,13 +302,13 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   glowEffect: {
-    position: 'absolute',
+    position: "absolute",
     top: -20,
     left: -20,
     right: -20,
     bottom: -20,
     borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    ...PokemonTheme.shadows.neon('#FFFFFF'),
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    ...PokemonTheme.shadows.neon("#FFFFFF"),
   },
 });

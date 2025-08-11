@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   TextInput,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -975,7 +974,7 @@ export default function PokemonScreen() {
               />
             </View>
           </View>
-          <Text style={styles.subtitle}>Gotta Catch 'Em All!</Text>
+          <Text style={styles.subtitle}>Gotta Catch &apos;Em All!</Text>
         </Animated.View>
 
         {/* Premium Search Section */}

@@ -1,18 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Animated,
-  Dimensions,
-  Image,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import { PokemonTheme } from '@/constants/PokemonTheme';
-import { getTypeColor } from '../app/_utils/pokemonTypeColors';
+import React, { useEffect, useRef } from "react";
+import { StyleSheet, View, Text, Animated, Dimensions } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+import { PokemonTheme } from "@/constants/PokemonTheme";
+import { getTypeColor } from "../app/_utils/pokemonTypeColors";
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface FloatingPokemonCardProps {
   pokemon: {
@@ -35,10 +28,12 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
   const glowAnim = useRef(new Animated.Value(0)).current;
   const shimmerAnim = useRef(new Animated.Value(0)).current;
   const orbAnimations = useRef(
-    Array(6).fill(0).map(() => ({
-      rotate: new Animated.Value(0),
-      scale: new Animated.Value(1),
-    }))
+    Array(6)
+      .fill(0)
+      .map(() => ({
+        rotate: new Animated.Value(0),
+        scale: new Animated.Value(1),
+      }))
   ).current;
 
   useEffect(() => {
@@ -148,8 +143,9 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
   }, []);
 
   const mainType = pokemon.types[0];
-  const gradientColors = PokemonTheme.gradients[mainType as keyof typeof PokemonTheme.gradients] 
-    || PokemonTheme.gradients.normal;
+  const gradientColors =
+    PokemonTheme.gradients[mainType as keyof typeof PokemonTheme.gradients] ||
+    PokemonTheme.gradients.normal;
 
   return (
     <View style={styles.container}>
@@ -164,13 +160,13 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
                 {
                   rotate: orb.rotate.interpolate({
                     inputRange: [0, 1],
-                    outputRange: ['0deg', '360deg'],
+                    outputRange: ["0deg", "360deg"],
                   }),
                 },
                 { scale: orb.scale },
               ],
-              left: width / 2 - 100 + Math.cos(index * Math.PI / 3) * 150,
-              top: 200 + Math.sin(index * Math.PI / 3) * 150,
+              left: width / 2 - 100 + Math.cos((index * Math.PI) / 3) * 150,
+              top: 200 + Math.sin((index * Math.PI) / 3) * 150,
             },
           ]}
         >
@@ -188,16 +184,16 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
             transform: [
               { translateY: floatAnim },
               { scale: scaleAnim },
-              { 
+              {
                 rotateX: rotateX.interpolate({
                   inputRange: [-0.05, 0.05],
-                  outputRange: ['-3deg', '3deg'],
+                  outputRange: ["-3deg", "3deg"],
                 }),
               },
               {
                 rotateY: rotateY.interpolate({
                   inputRange: [-0.1, 0.1],
-                  outputRange: ['-5deg', '5deg'],
+                  outputRange: ["-5deg", "5deg"],
                 }),
               },
               { perspective: 1000 },
@@ -249,7 +245,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
             ]}
           >
             <LinearGradient
-              colors={['transparent', 'rgba(255,255,255,0.4)', 'transparent']}
+              colors={["transparent", "rgba(255,255,255,0.4)", "transparent"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.shimmerGradient}
@@ -264,7 +260,9 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
                   colors={PokemonTheme.gradients.aurora}
                   style={styles.numberGradient}
                 >
-                  <Text style={styles.numberText}>#{String(pokemon.id).padStart(3, '0')}</Text>
+                  <Text style={styles.numberText}>
+                    #{String(pokemon.id).padStart(3, "0")}
+                  </Text>
                 </LinearGradient>
               </View>
 
@@ -300,7 +298,11 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
                   ]}
                 >
                   <LinearGradient
-                    colors={['transparent', 'rgba(255,255,255,0.5)', 'transparent']}
+                    colors={[
+                      "transparent",
+                      "rgba(255,255,255,0.5)",
+                      "transparent",
+                    ]}
                     style={StyleSheet.absoluteFillObject}
                   />
                 </Animated.View>
@@ -319,7 +321,9 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
                   ],
                 }}
               >
-                <Text style={styles.pokemonName}>{pokemon.name.toUpperCase()}</Text>
+                <Text style={styles.pokemonName}>
+                  {pokemon.name.toUpperCase()}
+                </Text>
               </Animated.View>
 
               {/* Animated type badges */}
@@ -336,7 +340,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
                             scale: glowAnim.interpolate({
                               inputRange: [0.3, 1],
                               outputRange: [1, 1.1],
-                              extrapolate: 'clamp',
+                              extrapolate: "clamp",
                             }),
                           },
                         ],
@@ -368,7 +372,10 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
                     ]}
                   >
                     <LinearGradient
-                      colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                      colors={[
+                        "rgba(255,255,255,0.1)",
+                        "rgba(255,255,255,0.05)",
+                      ]}
                       style={styles.statGradient}
                     >
                       <Text style={styles.statValue}>{stat.value}</Text>
@@ -395,7 +402,7 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     height: 520,
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 20,
   },
   cardWrapper: {
@@ -404,33 +411,33 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   glowLayer1: {
-    position: 'absolute',
+    position: "absolute",
     top: -30,
     left: -30,
     right: -30,
     bottom: -30,
     borderRadius: 50,
-    backgroundColor: '#FFD700',
-    ...PokemonTheme.shadows.neon('#FFD700'),
+    backgroundColor: "#FFD700",
+    ...PokemonTheme.shadows.neon("#FFD700"),
   },
   glowLayer2: {
-    position: 'absolute',
+    position: "absolute",
     top: -15,
     left: -15,
     right: -15,
     bottom: -15,
     borderRadius: 40,
-    backgroundColor: '#FF00FF',
-    ...PokemonTheme.shadows.neon('#FF00FF'),
+    backgroundColor: "#FF00FF",
+    ...PokemonTheme.shadows.neon("#FF00FF"),
   },
   gradientBackground: {
     flex: 1,
     borderRadius: 30,
     padding: 2,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   shimmerOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     width: 100,
@@ -442,28 +449,28 @@ const styles = StyleSheet.create({
   glassOverlay: {
     flex: 1,
     borderRadius: 28,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   cardContent: {
     flex: 1,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   numberBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     right: 15,
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   numberGradient: {
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   numberText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   imageContainer: {
     width: 220,
@@ -472,11 +479,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   pokemonImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   holographicOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -484,16 +491,16 @@ const styles = StyleSheet.create({
   },
   pokemonName: {
     fontSize: 28,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: "900",
+    color: "#FFFFFF",
     letterSpacing: 3,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 10,
     marginBottom: 15,
   },
   typesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
     marginBottom: 25,
   },
@@ -502,65 +509,65 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   typeText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1,
   },
   statsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 15,
     marginTop: 10,
   },
   statItem: {
     borderRadius: 15,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   statGradient: {
     paddingHorizontal: 20,
     paddingVertical: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   statValue: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   statLabel: {
     fontSize: 10,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: "rgba(255, 255, 255, 0.7)",
     marginTop: 4,
   },
   energyLineTop: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
     right: 10,
     height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 1,
   },
   energyLineBottom: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 10,
     left: 10,
     right: 10,
     height: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 1,
   },
   orbitingParticle: {
-    position: 'absolute',
+    position: "absolute",
     width: 8,
     height: 8,
     borderRadius: 4,
   },
   particleGradient: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 4,
   },
 });
