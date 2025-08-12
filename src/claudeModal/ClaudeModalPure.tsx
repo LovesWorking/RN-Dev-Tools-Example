@@ -394,7 +394,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
 };
 
 // Pure JS Corner Handle Component
-const CornerHandle = ({ position, isActive }: { position: string; isActive: boolean }) => {
+const CornerHandle = ({ position, isActive }: { position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'; isActive: boolean }) => {
   return (
     <View
       style={[
@@ -464,6 +464,8 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   const offsetY = useRef(0);
   const sHeight = useRef(0);
   const sWidth = useRef(0);
+  const animationFrameRef = useRef<number | null>(null); // For RAF throttling
+  const pendingAnimationUpdate = useRef<any>(null); // Store pending updates
 
   // Load persisted state
   useEffect(() => {
@@ -491,6 +493,15 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
     loadState();
   }, [persistenceKey, enablePersistence, animatedHeight, animatedPosition]);
+
+  // Cleanup RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
   // Save state on changes
   useEffect(() => {
@@ -533,6 +544,42 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
       lastUpdateTimeRef.current = now;
     }
   }, []);
+
+  // Optimized animated value update using RAF
+  const updateAnimatedValues = useCallback((updates: {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+  }) => {
+    // Store the pending update
+    pendingAnimationUpdate.current = updates;
+    
+    // If we don't have a frame scheduled, schedule one
+    if (!animationFrameRef.current) {
+      animationFrameRef.current = requestAnimationFrame(() => {
+        // Apply all pending updates at once
+        if (pendingAnimationUpdate.current) {
+          const { x, y, width, height } = pendingAnimationUpdate.current;
+          
+          // Batch all animated value updates
+          if (x !== undefined && y !== undefined) {
+            animatedPosition.setValue({ x, y });
+          }
+          if (width !== undefined) {
+            animatedWidth.setValue(width);
+          }
+          if (height !== undefined) {
+            animatedFloatingHeight.setValue(height);
+          }
+        }
+        
+        // Clear the frame reference
+        animationFrameRef.current = null;
+        pendingAnimationUpdate.current = null;
+      });
+    }
+  }, [animatedPosition, animatedWidth, animatedFloatingHeight]);
 
   // Create resize PanResponder for bottom sheet
   const resizePanResponder = useMemo(
@@ -643,7 +690,11 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
       },
       onPanResponderMove: (_evt, gestureState) => {
         const { dx, dy } = gestureState;
-        const scale = 1; // No scaling in our implementation
+        
+        // Skip tiny movements to reduce calculations
+        if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+          return;
+        }
         
         // Log only every 10th move to reduce spam
         if (Math.abs(dx) % 10 < 1 || Math.abs(dy) % 10 < 1) {
@@ -658,12 +709,12 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
         switch (corner) {
           case 'topLeft': {
             updatedWidth = clamp(
-              sWidth.current - dx / scale,
+              sWidth.current - dx,
               minHeight,
               containerBounds.width - offsetX.current
             );
             updatedHeight = clamp(
-              sHeight.current - dy / scale,
+              sHeight.current - dy,
               minHeight,
               containerBounds.height - updatedY
             );
@@ -674,7 +725,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
             }
             if (updatedHeight !== sHeight.current) {
               updatedY = clamp(
-                offsetY.current + dy / scale,
+                offsetY.current + dy,
                 insets.top,
                 containerBounds.height - updatedHeight
               );
@@ -683,18 +734,18 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           }
           case 'topRight': {
             updatedWidth = clamp(
-              sWidth.current + dx / scale,
+              sWidth.current + dx,
               minHeight,
               containerBounds.width - offsetX.current
             );
             updatedHeight = clamp(
-              sHeight.current - dy / scale,
+              sHeight.current - dy,
               minHeight,
               containerBounds.height - updatedY
             );
             if (updatedHeight !== sHeight.current) {
               updatedY = clamp(
-                offsetY.current + dy / scale,
+                offsetY.current + dy,
                 insets.top,
                 containerBounds.height - updatedHeight
               );
@@ -703,12 +754,12 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           }
           case 'bottomLeft': {
             updatedWidth = clamp(
-              sWidth.current - dx / scale,
+              sWidth.current - dx,
               minHeight,
               containerBounds.width - offsetX.current
             );
             updatedHeight = clamp(
-              sHeight.current + dy / scale,
+              sHeight.current + dy,
               minHeight,
               containerBounds.height - offsetY.current
             );
@@ -721,12 +772,12 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           }
           case 'bottomRight': {
             updatedWidth = clamp(
-              sWidth.current + dx / scale,
+              sWidth.current + dx,
               minHeight,
               containerBounds.width - offsetX.current
             );
             updatedHeight = clamp(
-              sHeight.current + dy / scale,
+              sHeight.current + dy,
               minHeight,
               containerBounds.height - offsetY.current
             );
@@ -739,10 +790,13 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           console.log(`[RESIZE MOVE] Large change detected - w: ${updatedWidth}, h: ${updatedHeight}`);
         }
         
-        // IMPORTANT: Only update animated values, NOT state, to avoid re-renders
-        animatedPosition.setValue({ x: updatedX, y: updatedY });
-        animatedWidth.setValue(updatedWidth);
-        animatedFloatingHeight.setValue(updatedHeight);
+        // Use optimized RAF-based update instead of direct setValue
+        updateAnimatedValues({
+          x: updatedX,
+          y: updatedY,
+          width: updatedWidth,
+          height: updatedHeight
+        });
         
         // Store current values in ref for release
         currentDimensionsRef.current = {
@@ -765,7 +819,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
         setIsResizing(false);
       },
     });
-  }, [mode, minHeight, containerBounds, animatedPosition, animatedWidth, animatedFloatingHeight, insets.top, onDimensionsChange]); // REMOVED dimensions from deps to prevent recreation
+  }, [mode, minHeight, containerBounds, insets.top, onDimensionsChange, updateAnimatedValues]); // REMOVED dimensions from deps to prevent recreation
 
   const resizeHandlers = useMemo(() => {
     console.log('[RESIZE HANDLERS] Creating new resize handlers');
