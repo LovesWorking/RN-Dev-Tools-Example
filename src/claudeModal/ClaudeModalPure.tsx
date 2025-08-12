@@ -1,7 +1,7 @@
 /**
  * ClaudeModal - A pure JavaScript modal component for React Native
  * No native dependencies - works with Expo Go and web
- * 
+ *
  * Features:
  * - Bottom sheet mode (default)
  * - Floating/detached mode (draggable and resizable)
@@ -9,7 +9,7 @@
  * - Customizable header with title or custom components
  * - Smooth animations and gestures
  * - TypeScript support with comprehensive types
- * 
+ *
  * @author Claude
  * @version 2.0.0 - Pure JS version
  */
@@ -21,7 +21,7 @@ import React, {
   useState,
   useMemo,
   useCallback,
-} from 'react';
+} from "react";
 import {
   View,
   Text,
@@ -35,7 +35,7 @@ import {
   LayoutChangeEvent,
   Platform,
   StatusBar,
-} from 'react-native';
+} from "react-native";
 
 // ============================================================================
 // Types and Interfaces
@@ -44,7 +44,7 @@ import {
 /**
  * Modal display modes
  */
-export type ModalMode = 'bottomSheet' | 'floating';
+export type ModalMode = "bottomSheet" | "floating";
 
 /**
  * Position and dimensions for the modal in floating mode
@@ -130,15 +130,15 @@ export interface ClaudeModalProps {
 
 const getSafeAreaInsets = () => {
   // Default safe area insets for different platforms
-  const isIOS = Platform.OS === 'ios';
-  const isAndroid = Platform.OS === 'android';
-  
+  const isIOS = Platform.OS === "ios";
+  const isAndroid = Platform.OS === "android";
+
   let top = 0;
   let bottom = 0;
-  
+
   if (isIOS) {
     // iPhone X and later models have notch/dynamic island
-    const { height } = Dimensions.get('window');
+    const { height } = Dimensions.get("window");
     const hasNotch = height >= 812; // iPhone X and later
     top = hasNotch ? 44 : 20;
     bottom = hasNotch ? 34 : 0;
@@ -147,7 +147,7 @@ const getSafeAreaInsets = () => {
     top = StatusBar.currentHeight || 24;
     bottom = 0;
   }
-  
+
   return { top, bottom, left: 0, right: 0 };
 };
 
@@ -188,7 +188,7 @@ class ModalStorage {
 
   private static async getAsyncStorage() {
     try {
-      const module = await import('@react-native-async-storage/async-storage');
+      const module = await import("@react-native-async-storage/async-storage");
       return module.default;
     } catch {
       return null;
@@ -200,7 +200,7 @@ class ModalStorage {
 // Constants
 // ============================================================================
 
-const SCREEN = Dimensions.get('window');
+const SCREEN = Dimensions.get("window");
 const MIN_HEIGHT = 150;
 const DEFAULT_HEIGHT = 400;
 const THROTTLE_MS = 16; // ~60fps
@@ -218,11 +218,11 @@ const clamp = (value: number, min: number, max: number): number => {
 // Icon Components
 // ============================================================================
 
-const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
+const MaximizeIcon = ({ color = "#E5E7EB", size = 16 }) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 2,
         left: 2,
         width: size - 4,
@@ -234,7 +234,7 @@ const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 5,
         width: 2,
@@ -244,7 +244,7 @@ const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 5,
         left: 0,
         width: 2,
@@ -255,11 +255,11 @@ const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
   </View>
 );
 
-const MinimizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
+const MinimizeIcon = ({ color = "#E5E7EB", size = 16 }) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 4,
         left: 4,
         width: size - 8,
@@ -272,28 +272,28 @@ const MinimizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
   </View>
 );
 
-const CloseIcon = ({ color = '#FFFFFF', size = 16 }) => (
+const CloseIcon = ({ color = "#FFFFFF", size = 16 }) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: size / 2 - 0.75,
         left: 2,
         width: size - 4,
         height: 1.5,
         backgroundColor: color,
-        transform: [{ rotate: '45deg' }],
+        transform: [{ rotate: "45deg" }],
       }}
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: size / 2 - 0.75,
         left: 2,
         width: size - 4,
         height: 1.5,
         backgroundColor: color,
-        transform: [{ rotate: '-45deg' }],
+        transform: [{ rotate: "-45deg" }],
       }}
     />
   </View>
@@ -346,7 +346,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
     hideCloseButton = false,
   } = config;
 
-  const headerProps = mode === 'bottomSheet' && panHandlers ? panHandlers : {};
+  const headerProps = mode === "bottomSheet" && panHandlers ? panHandlers : {};
 
   return (
     <View style={[defaultStyles.header, styles.header]} {...headerProps}>
@@ -354,7 +354,9 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
       <View style={defaultStyles.headerContent}>
         <View style={defaultStyles.headerRow}>
           {customContent ? (
-            <View style={defaultStyles.customHeaderContent}>{customContent}</View>
+            <View style={defaultStyles.customHeaderContent}>
+              {customContent}
+            </View>
           ) : title ? (
             <Text style={[defaultStyles.headerTitle, styles.headerTitle]}>
               {title}
@@ -366,10 +368,13 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
             {showToggleButton && (
               <Pressable
                 onPress={onToggleMode}
-                style={[defaultStyles.controlButton, defaultStyles.toggleButton]}
+                style={[
+                  defaultStyles.controlButton,
+                  defaultStyles.toggleButton,
+                ]}
                 hitSlop={HIT_SLOP}
               >
-                {mode === 'floating' ? <MinimizeIcon /> : <MaximizeIcon />}
+                {mode === "floating" ? <MinimizeIcon /> : <MaximizeIcon />}
               </Pressable>
             )}
             {!hideCloseButton && (
@@ -394,18 +399,18 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
 };
 
 // Pure JS Corner Handle Component
-const CornerHandle = ({ position, isActive }: { position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'; isActive: boolean }) => {
+const CornerHandle = ({
+  position,
+  isActive,
+}: {
+  position: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
+  isActive: boolean;
+}) => {
   return (
-    <View
-      style={[
-        defaultStyles.cornerHandle,
-        defaultStyles[position],
-      ]}
-    >
-      <View style={[
-        defaultStyles.handler,
-        isActive && defaultStyles.handlerActive,
-      ]} />
+    <View style={[defaultStyles.cornerHandle, defaultStyles[position]]}>
+      <View
+        style={[defaultStyles.handler, isActive && defaultStyles.handlerActive]}
+      />
     </View>
   );
 };
@@ -420,7 +425,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   children,
   persistenceKey,
   header,
-  initialMode = 'bottomSheet',
+  initialMode = "bottomSheet",
   styles: customStyles = {},
   minHeight = MIN_HEIGHT,
   maxHeight,
@@ -451,9 +456,13 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
   // Refs
   const animatedHeight = useRef(new Animated.Value(panelHeight)).current;
-  const animatedPosition = useRef(new Animated.ValueXY({ x: dimensions.left, y: dimensions.top })).current;
+  const animatedPosition = useRef(
+    new Animated.ValueXY({ x: dimensions.left, y: dimensions.top })
+  ).current;
   const animatedWidth = useRef(new Animated.Value(dimensions.width)).current;
-  const animatedFloatingHeight = useRef(new Animated.Value(dimensions.height)).current;
+  const animatedFloatingHeight = useRef(
+    new Animated.Value(dimensions.height)
+  ).current;
   const startHeightRef = useRef(panelHeight);
   const currentHeightRef = useRef(panelHeight);
   const lastUpdateTimeRef = useRef(0);
@@ -485,7 +494,10 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
         }
         if (savedState.dimensions) {
           setDimensions(savedState.dimensions);
-          animatedPosition.setValue({ x: savedState.dimensions.left, y: savedState.dimensions.top });
+          animatedPosition.setValue({
+            x: savedState.dimensions.left,
+            y: savedState.dimensions.top,
+          });
         }
       }
       setIsStateLoaded(true);
@@ -517,14 +529,21 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
     const timeoutId = setTimeout(saveState, 500);
     return () => clearTimeout(timeoutId);
-  }, [mode, panelHeight, dimensions, persistenceKey, enablePersistence, isStateLoaded]);
+  }, [
+    mode,
+    panelHeight,
+    dimensions,
+    persistenceKey,
+    enablePersistence,
+    isStateLoaded,
+  ]);
 
   // Update animated values
   useEffect(() => {
     currentHeightRef.current = panelHeight;
     animatedHeight.setValue(panelHeight);
   }, [panelHeight, animatedHeight]);
-  
+
   // Update animated dimensions for floating mode
   useEffect(() => {
     currentDimensionsRef.current = dimensions; // Keep ref in sync
@@ -534,7 +553,14 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
       animatedFloatingHeight.setValue(dimensions.height);
       animatedPosition.setValue({ x: dimensions.left, y: dimensions.top });
     }
-  }, [dimensions, animatedWidth, animatedFloatingHeight, animatedPosition, isResizing, isDragging]);
+  }, [
+    dimensions,
+    animatedWidth,
+    animatedFloatingHeight,
+    animatedPosition,
+    isResizing,
+    isDragging,
+  ]);
 
   // Throttled update function
   const throttledUpdateHeight = useCallback((height: number) => {
@@ -546,47 +572,45 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   }, []);
 
   // Optimized animated value update using RAF
-  const updateAnimatedValues = useCallback((updates: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  }) => {
-    // Store the pending update
-    pendingAnimationUpdate.current = updates;
-    
-    // If we don't have a frame scheduled, schedule one
-    if (!animationFrameRef.current) {
-      animationFrameRef.current = requestAnimationFrame(() => {
-        // Apply all pending updates at once
-        if (pendingAnimationUpdate.current) {
-          const { x, y, width, height } = pendingAnimationUpdate.current;
-          
-          // Batch all animated value updates
-          if (x !== undefined && y !== undefined) {
-            animatedPosition.setValue({ x, y });
+  const updateAnimatedValues = useCallback(
+    (updates: { x?: number; y?: number; width?: number; height?: number }) => {
+      // Store the pending update
+      pendingAnimationUpdate.current = updates;
+
+      // If we don't have a frame scheduled, schedule one
+      if (!animationFrameRef.current) {
+        animationFrameRef.current = requestAnimationFrame(() => {
+          // Apply all pending updates at once
+          if (pendingAnimationUpdate.current) {
+            const { x, y, width, height } = pendingAnimationUpdate.current;
+
+            // Batch all animated value updates
+            if (x !== undefined && y !== undefined) {
+              animatedPosition.setValue({ x, y });
+            }
+            if (width !== undefined) {
+              animatedWidth.setValue(width);
+            }
+            if (height !== undefined) {
+              animatedFloatingHeight.setValue(height);
+            }
           }
-          if (width !== undefined) {
-            animatedWidth.setValue(width);
-          }
-          if (height !== undefined) {
-            animatedFloatingHeight.setValue(height);
-          }
-        }
-        
-        // Clear the frame reference
-        animationFrameRef.current = null;
-        pendingAnimationUpdate.current = null;
-      });
-    }
-  }, [animatedPosition, animatedWidth, animatedFloatingHeight]);
+
+          // Clear the frame reference
+          animationFrameRef.current = null;
+          pendingAnimationUpdate.current = null;
+        });
+      }
+    },
+    [animatedPosition, animatedWidth, animatedFloatingHeight]
+  );
 
   // Create resize PanResponder for bottom sheet
   const resizePanResponder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => mode === 'bottomSheet',
-        onMoveShouldSetPanResponder: () => mode === 'bottomSheet',
+        onStartShouldSetPanResponder: () => mode === "bottomSheet",
+        onMoveShouldSetPanResponder: () => mode === "bottomSheet",
         onPanResponderGrant: () => {
           setIsResizing(true);
           startHeightRef.current = currentHeightRef.current;
@@ -610,23 +634,29 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           setIsResizing(false);
         },
       }),
-    [mode, minHeight, effectiveMaxHeight, throttledUpdateHeight, dimensions, onDimensionsChange, animatedHeight]
+    [
+      mode,
+      minHeight,
+      effectiveMaxHeight,
+      throttledUpdateHeight,
+      dimensions,
+      onDimensionsChange,
+      animatedHeight,
+    ]
   );
 
   // Create drag PanResponder for floating mode
   const dragPanResponder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => mode === 'floating',
-        onMoveShouldSetPanResponder: () => mode === 'floating',
+        onStartShouldSetPanResponder: () => mode === "floating",
+        onMoveShouldSetPanResponder: () => mode === "floating",
         onPanResponderGrant: () => {
-          console.log('[DRAG START] Starting drag');
           setIsDragging(true);
           const currentPos = {
             x: (animatedPosition.x as any).__getValue(),
             y: (animatedPosition.y as any).__getValue(),
           };
-          console.log('[DRAG START] Current position:', currentPos);
           startPositionRef.current = currentPos;
           animatedPosition.setOffset(startPositionRef.current);
           animatedPosition.setValue({ x: 0, y: 0 });
@@ -636,23 +666,25 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           { useNativeDriver: false }
         ),
         onPanResponderRelease: () => {
-          console.log('[DRAG END] Releasing drag');
           setIsDragging(false);
           animatedPosition.flattenOffset();
           const currentX = (animatedPosition.x as any).__getValue();
           const currentY = (animatedPosition.y as any).__getValue();
           const currentDims = currentDimensionsRef.current;
-          
-          console.log('[DRAG END] Current animated position:', { x: currentX, y: currentY });
-          console.log('[DRAG END] Current dimensions:', currentDims);
-          
-          const clampedX = clamp(currentX, 0, containerBounds.width - currentDims.width);
-          const clampedY = clamp(currentY, insets.top, containerBounds.height - currentDims.height);
-          
-          console.log('[DRAG END] Clamped position:', { x: clampedX, y: clampedY });
-          
+
+          const clampedX = clamp(
+            currentX,
+            0,
+            containerBounds.width - currentDims.width
+          );
+          const clampedY = clamp(
+            currentY,
+            insets.top,
+            containerBounds.height - currentDims.height
+          );
+
           animatedPosition.setValue({ x: clampedX, y: clampedY });
-          
+
           const newDimensions = {
             ...currentDims,
             left: clampedX,
@@ -662,7 +694,6 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           onDimensionsChange?.(newDimensions);
         },
         onPanResponderTerminate: () => {
-          console.log('[DRAG TERMINATE] Drag terminated');
           setIsDragging(false);
           animatedPosition.flattenOffset();
         },
@@ -671,169 +702,163 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   );
 
   // Create resize handles for floating mode - matching original DragResizable logic
-  const createResizeHandler = useCallback((corner: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight') => {
-    return PanResponder.create({
-      onStartShouldSetPanResponder: () => mode === 'floating',
-      onMoveShouldSetPanResponder: () => mode === 'floating',
-      onPanResponderGrant: () => {
-        const currentDims = currentDimensionsRef.current; // Use ref instead of stale closure
-        console.log(`[RESIZE START] Corner: ${corner}`);
-        console.log(`[RESIZE START] Current dimensions from ref:`, currentDims);
-        setIsResizing(true);
-        // Store initial values like the original implementation
-        sHeight.current = currentDims.height;
-        sWidth.current = currentDims.width;
-        offsetX.current = currentDims.left;
-        offsetY.current = currentDims.top;
-        startDimensionsRef.current = { ...currentDims };
-        console.log(`[RESIZE START] Stored refs - w: ${sWidth.current}, h: ${sHeight.current}, x: ${offsetX.current}, y: ${offsetY.current}`);
-      },
-      onPanResponderMove: (_evt, gestureState) => {
-        const { dx, dy } = gestureState;
-        
-        // Skip tiny movements to reduce calculations
-        if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
-          return;
-        }
-        
-        // Log only every 10th move to reduce spam
-        if (Math.abs(dx) % 10 < 1 || Math.abs(dy) % 10 < 1) {
-          console.log(`[RESIZE MOVE] Corner: ${corner}, dx: ${dx.toFixed(1)}, dy: ${dy.toFixed(1)}`);
-        }
-        
-        let updatedWidth = sWidth.current;
-        let updatedHeight = sHeight.current;
-        let updatedX = offsetX.current;
-        let updatedY = offsetY.current;
+  const createResizeHandler = useCallback(
+    (corner: "topLeft" | "topRight" | "bottomLeft" | "bottomRight") => {
+      return PanResponder.create({
+        onStartShouldSetPanResponder: () => mode === "floating",
+        onMoveShouldSetPanResponder: () => mode === "floating",
+        onPanResponderGrant: () => {
+          const currentDims = currentDimensionsRef.current; // Use ref instead of stale closure
+          setIsResizing(true);
+          // Store initial values like the original implementation
+          sHeight.current = currentDims.height;
+          sWidth.current = currentDims.width;
+          offsetX.current = currentDims.left;
+          offsetY.current = currentDims.top;
+          startDimensionsRef.current = { ...currentDims };
+        },
+        onPanResponderMove: (_evt, gestureState) => {
+          const { dx, dy } = gestureState;
 
-        switch (corner) {
-          case 'topLeft': {
-            updatedWidth = clamp(
-              sWidth.current - dx,
-              minHeight,
-              containerBounds.width - offsetX.current
-            );
-            updatedHeight = clamp(
-              sHeight.current - dy,
-              minHeight,
-              containerBounds.height - updatedY
-            );
-            
-            // Only update position if dimensions actually changed
-            if (updatedWidth !== sWidth.current) {
-              updatedX = offsetX.current + (sWidth.current - updatedWidth);
-            }
-            if (updatedHeight !== sHeight.current) {
-              updatedY = clamp(
-                offsetY.current + dy,
-                insets.top,
-                containerBounds.height - updatedHeight
+          // Skip tiny movements to reduce calculations
+          if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+            return;
+          }
+
+          let updatedWidth = sWidth.current;
+          let updatedHeight = sHeight.current;
+          let updatedX = offsetX.current;
+          let updatedY = offsetY.current;
+
+          switch (corner) {
+            case "topLeft": {
+              updatedWidth = clamp(
+                sWidth.current - dx,
+                minHeight,
+                containerBounds.width - offsetX.current
               );
-            }
-            break;
-          }
-          case 'topRight': {
-            updatedWidth = clamp(
-              sWidth.current + dx,
-              minHeight,
-              containerBounds.width - offsetX.current
-            );
-            updatedHeight = clamp(
-              sHeight.current - dy,
-              minHeight,
-              containerBounds.height - updatedY
-            );
-            if (updatedHeight !== sHeight.current) {
-              updatedY = clamp(
-                offsetY.current + dy,
-                insets.top,
-                containerBounds.height - updatedHeight
+              updatedHeight = clamp(
+                sHeight.current - dy,
+                minHeight,
+                containerBounds.height - updatedY
               );
+
+              // Only update position if dimensions actually changed
+              if (updatedWidth !== sWidth.current) {
+                updatedX = offsetX.current + (sWidth.current - updatedWidth);
+              }
+              if (updatedHeight !== sHeight.current) {
+                updatedY = clamp(
+                  offsetY.current + dy,
+                  insets.top,
+                  containerBounds.height - updatedHeight
+                );
+              }
+              break;
             }
-            break;
-          }
-          case 'bottomLeft': {
-            updatedWidth = clamp(
-              sWidth.current - dx,
-              minHeight,
-              containerBounds.width - offsetX.current
-            );
-            updatedHeight = clamp(
-              sHeight.current + dy,
-              minHeight,
-              containerBounds.height - offsetY.current
-            );
-            
-            // Only update X if width actually changed
-            if (updatedWidth !== sWidth.current) {
-              updatedX = offsetX.current + (sWidth.current - updatedWidth);
+            case "topRight": {
+              updatedWidth = clamp(
+                sWidth.current + dx,
+                minHeight,
+                containerBounds.width - offsetX.current
+              );
+              updatedHeight = clamp(
+                sHeight.current - dy,
+                minHeight,
+                containerBounds.height - updatedY
+              );
+              if (updatedHeight !== sHeight.current) {
+                updatedY = clamp(
+                  offsetY.current + dy,
+                  insets.top,
+                  containerBounds.height - updatedHeight
+                );
+              }
+              break;
             }
-            break;
+            case "bottomLeft": {
+              updatedWidth = clamp(
+                sWidth.current - dx,
+                minHeight,
+                containerBounds.width - offsetX.current
+              );
+              updatedHeight = clamp(
+                sHeight.current + dy,
+                minHeight,
+                containerBounds.height - offsetY.current
+              );
+
+              // Only update X if width actually changed
+              if (updatedWidth !== sWidth.current) {
+                updatedX = offsetX.current + (sWidth.current - updatedWidth);
+              }
+              break;
+            }
+            case "bottomRight": {
+              updatedWidth = clamp(
+                sWidth.current + dx,
+                minHeight,
+                containerBounds.width - offsetX.current
+              );
+              updatedHeight = clamp(
+                sHeight.current + dy,
+                minHeight,
+                containerBounds.height - offsetY.current
+              );
+              break;
+            }
           }
-          case 'bottomRight': {
-            updatedWidth = clamp(
-              sWidth.current + dx,
-              minHeight,
-              containerBounds.width - offsetX.current
-            );
-            updatedHeight = clamp(
-              sHeight.current + dy,
-              minHeight,
-              containerBounds.height - offsetY.current
-            );
-            break;
-          }
-        }
-        
-        // Log only for debugging major changes
-        if (Math.abs(updatedWidth - sWidth.current) > 50 || Math.abs(updatedHeight - sHeight.current) > 50) {
-          console.log(`[RESIZE MOVE] Large change detected - w: ${updatedWidth}, h: ${updatedHeight}`);
-        }
-        
-        // Use optimized RAF-based update instead of direct setValue
-        updateAnimatedValues({
-          x: updatedX,
-          y: updatedY,
-          width: updatedWidth,
-          height: updatedHeight
-        });
-        
-        // Store current values in ref for release
-        currentDimensionsRef.current = {
-          width: updatedWidth,
-          height: updatedHeight,
-          left: updatedX,
-          top: updatedY,
-        };
-      },
-      onPanResponderRelease: () => {
-        const finalDims = currentDimensionsRef.current;
-        console.log(`[RESIZE END] Corner: ${corner}, Final dimensions:`, finalDims);
-        setIsResizing(false);
-        // Update state only on release to avoid flashing
-        setDimensions(finalDims);
-        onDimensionsChange?.(finalDims);
-      },
-      onPanResponderTerminate: () => {
-        console.log(`[RESIZE TERMINATE] Corner: ${corner}`);
-        setIsResizing(false);
-      },
-    });
-  }, [mode, minHeight, containerBounds, insets.top, onDimensionsChange, updateAnimatedValues]); // REMOVED dimensions from deps to prevent recreation
+
+          // Use optimized RAF-based update instead of direct setValue
+          updateAnimatedValues({
+            x: updatedX,
+            y: updatedY,
+            width: updatedWidth,
+            height: updatedHeight,
+          });
+
+          // Store current values in ref for release
+          currentDimensionsRef.current = {
+            width: updatedWidth,
+            height: updatedHeight,
+            left: updatedX,
+            top: updatedY,
+          };
+        },
+        onPanResponderRelease: () => {
+          const finalDims = currentDimensionsRef.current;
+          setIsResizing(false);
+          // Update state only on release to avoid flashing
+          setDimensions(finalDims);
+          onDimensionsChange?.(finalDims);
+        },
+        onPanResponderTerminate: () => {
+          setIsResizing(false);
+        },
+      });
+    },
+    [
+      mode,
+      minHeight,
+      containerBounds,
+      insets.top,
+      onDimensionsChange,
+      updateAnimatedValues,
+    ]
+  ); // REMOVED dimensions from deps to prevent recreation
 
   const resizeHandlers = useMemo(() => {
-    console.log('[RESIZE HANDLERS] Creating new resize handlers');
     return {
-      topLeft: createResizeHandler('topLeft'),
-      topRight: createResizeHandler('topRight'),
-      bottomLeft: createResizeHandler('bottomLeft'),
-      bottomRight: createResizeHandler('bottomRight'),
+      topLeft: createResizeHandler("topLeft"),
+      topRight: createResizeHandler("topRight"),
+      bottomLeft: createResizeHandler("bottomLeft"),
+      bottomRight: createResizeHandler("bottomRight"),
     };
   }, [createResizeHandler]);
 
   // Toggle mode
   const toggleMode = useCallback(() => {
-    const newMode = mode === 'bottomSheet' ? 'floating' : 'bottomSheet';
+    const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
     setMode(newMode);
     onModeChange?.(newMode);
   }, [mode, onModeChange]);
@@ -849,16 +874,19 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
   // Animated styles
   const animatedBorderStyle = {
-    borderColor: isDragging || isResizing ? 'rgba(34, 197, 94, 1)' : 'rgba(255, 255, 255, 0.1)',
+    borderColor:
+      isDragging || isResizing
+        ? "rgba(34, 197, 94, 1)"
+        : "rgba(255, 255, 255, 0.1)",
     borderWidth: isDragging || isResizing ? 2 : 1,
-    shadowColor: isDragging || isResizing ? 'rgba(34, 197, 94, 0.6)' : '#000',
+    shadowColor: isDragging || isResizing ? "rgba(34, 197, 94, 0.6)" : "#000",
     shadowOpacity: isDragging || isResizing ? 0.8 : 0.3,
     shadowRadius: isDragging || isResizing ? 12 : 8,
     elevation: isDragging || isResizing ? 20 : 16,
   };
 
   // Render floating mode
-  if (mode === 'floating') {
+  if (mode === "floating") {
     return (
       <View
         style={[defaultStyles.container, customStyles.container]}
@@ -893,18 +921,36 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
               {children}
             </View>
           </View>
-          
+
           {/* Corner resize handles - matching original DragResizable */}
-          <View {...resizeHandlers.topLeft.panHandlers} style={[defaultStyles.cornerHandleWrapper, { top: -8, left: -8 }]}>
+          <View
+            {...resizeHandlers.topLeft.panHandlers}
+            style={[defaultStyles.cornerHandleWrapper, { top: -8, left: -8 }]}
+          >
             <CornerHandle position="topLeft" isActive={isResizing} />
           </View>
-          <View {...resizeHandlers.topRight.panHandlers} style={[defaultStyles.cornerHandleWrapper, { top: -8, right: -8 }]}>
+          <View
+            {...resizeHandlers.topRight.panHandlers}
+            style={[defaultStyles.cornerHandleWrapper, { top: -8, right: -8 }]}
+          >
             <CornerHandle position="topRight" isActive={isResizing} />
           </View>
-          <View {...resizeHandlers.bottomLeft.panHandlers} style={[defaultStyles.cornerHandleWrapper, { bottom: -8, left: -8 }]}>
+          <View
+            {...resizeHandlers.bottomLeft.panHandlers}
+            style={[
+              defaultStyles.cornerHandleWrapper,
+              { bottom: -8, left: -8 },
+            ]}
+          >
             <CornerHandle position="bottomLeft" isActive={isResizing} />
           </View>
-          <View {...resizeHandlers.bottomRight.panHandlers} style={[defaultStyles.cornerHandleWrapper, { bottom: -8, right: -8 }]}>
+          <View
+            {...resizeHandlers.bottomRight.panHandlers}
+            style={[
+              defaultStyles.cornerHandleWrapper,
+              { bottom: -8, right: -8 },
+            ]}
+          >
             <CornerHandle position="bottomRight" isActive={isResizing} />
           </View>
         </Animated.View>
@@ -953,7 +999,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
 const defaultStyles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -962,62 +1008,62 @@ const defaultStyles = StyleSheet.create({
     elevation: 2000,
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     zIndex: 2000,
     elevation: 2000,
   },
   bottomSheetModal: {
-    backgroundColor: '#2A2A2A',
+    backgroundColor: "#2A2A2A",
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   floatingModal: {
-    position: 'absolute',
-    backgroundColor: '#2A2A2A',
+    position: "absolute",
+    backgroundColor: "#2A2A2A",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   header: {
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#171717',
+    overflow: "hidden",
+    backgroundColor: "#171717",
   },
   dragIndicatorContainer: {
     height: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#171717',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#171717",
   },
   dragIndicator: {
     width: 32,
     height: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 1.5,
   },
   dragIndicatorActive: {
-    backgroundColor: 'rgba(34, 197, 94, 0.8)',
+    backgroundColor: "rgba(34, 197, 94, 0.8)",
     height: 4,
   },
   headerContent: {
@@ -1025,36 +1071,36 @@ const defaultStyles = StyleSheet.create({
     paddingTop: 2,
     paddingBottom: 2,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.06)',
-    backgroundColor: '#171717',
+    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    backgroundColor: "#171717",
   },
   headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     minHeight: 32,
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
     flex: 1,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: '#9CA3AF',
-    textAlign: 'center',
-    fontWeight: '400',
+    color: "#9CA3AF",
+    textAlign: "center",
+    fontWeight: "400",
     paddingTop: 4,
     paddingBottom: 2,
   },
   customHeaderContent: {
     flex: 1,
     minHeight: 32,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   headerControls: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 6,
     paddingRight: 4,
     marginLeft: 12,
@@ -1063,29 +1109,29 @@ const defaultStyles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
   },
   toggleButton: {
-    backgroundColor: 'rgba(156, 163, 175, 0.1)',
-    borderColor: 'rgba(156, 163, 175, 0.2)',
+    backgroundColor: "rgba(156, 163, 175, 0.1)",
+    borderColor: "rgba(156, 163, 175, 0.2)",
   },
   closeButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderColor: 'rgba(239, 68, 68, 0.2)',
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderColor: "rgba(239, 68, 68, 0.2)",
   },
   content: {
     flex: 1,
-    overflow: 'hidden',
-    backgroundColor: '#2A2A2A',
+    overflow: "hidden",
+    backgroundColor: "#2A2A2A",
   },
   cornerHandle: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 1,
   },
   cornerHandleWrapper: {
-    position: 'absolute',
+    position: "absolute",
     width: 30,
     height: 30,
     zIndex: 1000,
@@ -1109,11 +1155,11 @@ const defaultStyles = StyleSheet.create({
   handler: {
     width: 16,
     height: 16,
-    backgroundColor: '#0EA5E9', // Match original accent color
+    backgroundColor: "#0EA5E9", // Match original accent color
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
-    shadowColor: '#000',
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1123,8 +1169,8 @@ const defaultStyles = StyleSheet.create({
     elevation: 5,
   },
   handlerActive: {
-    backgroundColor: '#22C55E',
-    shadowColor: '#22C55E',
+    backgroundColor: "#22C55E",
+    shadowColor: "#22C55E",
     shadowOpacity: 0.6,
     shadowRadius: 8,
     elevation: 10,
