@@ -5,6 +5,7 @@ import { QueryBrowserModal } from "./QueryBrowserModal";
 import { DataEditorModal } from "./DataEditorModal";
 import { MutationBrowserModal } from "./MutationBrowserModal";
 import { MutationEditorModal } from "./MutationEditorModal";
+import { useEffect } from "react";
 
 interface ReactQueryModalProps {
   visible: boolean;
@@ -55,32 +56,36 @@ export function ReactQueryModal({
     onFilterChange,
     enableSharedModalDimensions,
   };
+  const showQueryBrowserModal = visible && !inDetail && isQueryMode;
+  const showMutationBrowserModal = visible && !inDetail && isMutationMode;
+  const showDataEditorModal = visible && inDetail && !!selectedQuery;
+  const showMutationEditorModal = visible && inDetail && !!selectedMutation;
 
   return (
     <>
       <QueryBrowserModal
-        visible={visible && !inDetail && isQueryMode}
+        visible={showQueryBrowserModal}
         selectedQueryKey={selectedQueryKey}
         onQuerySelect={onQuerySelect}
         onTabChange={onTabChange}
         {...commonProps}
       />
       <MutationBrowserModal
-        visible={visible && !inDetail && isMutationMode}
+        visible={showMutationBrowserModal}
         selectedMutationId={selectedMutationId}
         onMutationSelect={onMutationSelect}
         onTabChange={onTabChange}
         {...commonProps}
       />
       <DataEditorModal
-        visible={visible && inDetail && !!selectedQuery}
+        visible={showDataEditorModal}
         selectedQueryKey={selectedQueryKey}
         onQuerySelect={onQuerySelect}
         onTabChange={onTabChange}
         {...commonProps}
       />
       <MutationEditorModal
-        visible={visible && inDetail && !!selectedMutation}
+        visible={showMutationEditorModal}
         selectedMutationId={selectedMutationId}
         onMutationSelect={onMutationSelect}
         onTabChange={onTabChange}

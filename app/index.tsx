@@ -28,6 +28,8 @@ import ReanimatedAnimated, {
   interpolate,
 } from "react-native-reanimated";
 import { useQueryClient } from "@tanstack/react-query";
+import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble";
+import { useModalManager } from "@/src/_sections/react-query/hooks";
 
 const { width, height } = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;
@@ -744,6 +746,12 @@ export default function PokemonScreen() {
 
   return (
     <View style={styles.container}>
+      <RnBetterDevToolsBubble
+        queryClient={queryClient}
+        environment={"local"}
+        userRole={"admin"}
+      />
+
       {/* Premium Animated Background */}
       <LinearGradient
         colors={["#0A0E27", "#1a1f3a", "#2d1b69"]}

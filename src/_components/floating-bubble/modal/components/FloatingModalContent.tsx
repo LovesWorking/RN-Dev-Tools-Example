@@ -11,9 +11,12 @@ import { GestureType } from "react-native-gesture-handler";
 // Stable constants moved to module scope to prevent re-renders
 const MIN_HEIGHT = 150;
 const MIN_WIDTH = 300;
-const RESIZE_HANDLERS: Array<
-  "bottomLeft" | "bottomRight" | "topLeft" | "topRight"
-> = ["bottomLeft", "bottomRight", "topLeft", "topRight"];
+const RESIZE_HANDLERS: (
+  | "bottomLeft"
+  | "bottomRight"
+  | "topLeft"
+  | "topRight"
+)[] = ["bottomLeft", "bottomRight", "topLeft", "topRight"];
 
 interface FloatingModalContentProps {
   isFloatingMode: boolean;
@@ -98,7 +101,7 @@ export const FloatingModalContent = ({
     // Floating Mode - Draggable and resizable
     return (
       <View
-        style={styles.container}
+        style={[styles.container, { zIndex: 2000, elevation: 2000 }]}
         onLayout={(event) => {
           const { width, height } = event.nativeEvent.layout;
           onContainerLayout({ width, height });
@@ -138,7 +141,10 @@ export const FloatingModalContent = ({
   // Bottom Sheet Mode - Traditional modal
   return (
     <View
-      style={[styles.overlay, { paddingTop: insets.top }]}
+      style={[
+        styles.overlay,
+        { paddingTop: insets.top, zIndex: 2000, elevation: 2000 },
+      ]}
       pointerEvents="box-none"
     >
       <Animated.View

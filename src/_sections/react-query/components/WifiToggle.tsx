@@ -2,11 +2,7 @@ import { TouchableOpacity } from "react-native";
 import { Wifi, WifiOff } from "lucide-react-native";
 import { useWifiState } from "../hooks/useWifiState";
 
-interface WifiToggleProps {
-  isDragging: boolean;
-}
-
-export function WifiToggle({ isDragging }: WifiToggleProps) {
+export function WifiToggle() {
   const { isOnline, handleWifiToggle } = useWifiState();
   return (
     <TouchableOpacity
@@ -18,7 +14,6 @@ export function WifiToggle({ isDragging }: WifiToggleProps) {
       } for React Query`}
       onPress={handleWifiToggle}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      disabled={isDragging}
       activeOpacity={0.7}
       style={{
         paddingVertical: 6,

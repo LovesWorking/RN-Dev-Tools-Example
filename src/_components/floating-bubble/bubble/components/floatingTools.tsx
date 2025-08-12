@@ -1,10 +1,12 @@
-import React, {
+import {
   useEffect,
   useMemo,
   useRef,
   useState,
   useContext,
   createContext,
+  useCallback,
+  Children,
 } from "react";
 import {
   Animated,
@@ -98,17 +100,17 @@ function useFloatingToolsSafeArea(): {
   right: number;
 } {
   // Initialize on first use
-  React.useEffect(() => {
+  useEffect(() => {
     initializeSafeAreaContext();
   }, []);
 
   // Default fallback insets
-  const [fallbackInsets, setFallbackInsets] = React.useState(
+  const [fallbackInsets, setFallbackInsets] = useState(
     getFallbackSafeAreaInsets
   );
 
   // Update fallback insets on dimension changes
-  React.useEffect(() => {
+  useEffect(() => {
     const updateInsets = () => {
       setFallbackInsets(getFallbackSafeAreaInsets());
     };
@@ -283,7 +285,7 @@ function useFloatingToolsPosition({
     if (enabled) initializeStorage();
   }, [enabled]);
 
-  const savePosition = React.useCallback(
+  const savePosition = useCallback(
     async (x: number, y: number) => {
       if (!enabled) return;
       try {
@@ -298,7 +300,7 @@ function useFloatingToolsPosition({
     [enabled]
   );
 
-  const debouncedSavePosition = React.useCallback(
+  const debouncedSavePosition = useCallback(
     (x: number, y: number) => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(() => savePosition(x, y), 500) as any;
@@ -306,7 +308,7 @@ function useFloatingToolsPosition({
     [savePosition]
   );
 
-  const loadPosition = React.useCallback(async (): Promise<{
+  const loadPosition = useCallback(async (): Promise<{
     x: number;
     y: number;
   } | null> => {
@@ -327,7 +329,7 @@ function useFloatingToolsPosition({
     return null;
   }, [enabled]);
 
-  const validatePosition = React.useCallback(
+  const validatePosition = useCallback(
     (position: { x: number; y: number }) => {
       const { width: screenWidth, height: screenHeight } =
         Dimensions.get("window");
@@ -738,7 +740,7 @@ export function FloatingTools({
 
   // Compose actions row with automatic dividers
   const actions = useMemo(
-    () => interleaveWithDividers(React.Children.toArray(children)),
+    () => interleaveWithDividers(Children.toArray(children)),
     [children]
   );
 

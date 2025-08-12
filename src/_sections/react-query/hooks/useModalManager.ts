@@ -20,9 +20,9 @@ export function useModalManager() {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [isStateRestored, setIsStateRestored] = useState(false); // Default to false to prevent clearing state before restoration
-  const [activeTab, setActiveTab] = useState<
-    "queries" | "mutations"
-  >("queries");
+  const [activeTab, setActiveTab] = useState<"queries" | "mutations">(
+    "queries"
+  );
   const [selectedMutationId, setSelectedMutationId] = useState<
     number | undefined
   >(undefined);
@@ -48,7 +48,7 @@ export function useModalManager() {
     const restoreState = async () => {
       // Don't set to false again if already restoring
       if (isStateRestored) return;
-      
+
       try {
         const savedState = await loadSavedState();
 

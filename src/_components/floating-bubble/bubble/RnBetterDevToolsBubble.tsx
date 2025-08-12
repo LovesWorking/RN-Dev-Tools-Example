@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
@@ -6,20 +7,28 @@ import {
   EnvVarsModal,
 } from "../../../_sections/env";
 import { StorageModal, RequiredStorageKey } from "../../../_sections/storage";
-import { BubblePresentation } from "./components/BubblePresentation";
-import type { UserRole } from "./components/UserStatus";
+
+import {
+  FloatingTools,
+  type UserRole,
+  EnvironmentIndicator,
+  UserStatus,
+} from "./components/FloatingTools";
 import type { Environment } from "../../../_sections/env";
 import { ErrorBoundary } from "../../../_shared/ui/components/ErrorBoundary";
 import {
   ReactQueryModal,
   useReactQueryState,
   useModalManager,
+  WifiToggle,
 } from "../../../_sections/react-query";
 import { DevToolsConsole } from "../console/DevToolsConsole";
 import { useBubbleVisibilitySettings } from "./hooks/useBubbleVisibilitySettings";
+import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
+import { DatabaseIcon, BugIcon, ServerIcon } from "@/src/_shared/icons/lucide-icons";
 
 // Re-export types that developers will need
-export type { UserRole } from "./components/UserStatus";
+export type { UserRole } from "./components/FloatingTools";
 export type { Environment, RequiredEnvVar } from "../../../_sections/env";
 export type { RequiredStorageKey } from "../../../_sections/storage";
 
@@ -45,7 +54,7 @@ interface RnBetterDevToolsBubbleProps {
    * Used to display environment indicator in the bubble
    * @example "local" | "dev" | "qa" | "staging" | "prod"
    */
-  environment?: Environment;
+  environment: Environment;
 
   /**
    * Array of required environment variables to check
@@ -233,7 +242,6 @@ export function RnBetterDevToolsBubble({
     handleModalDismiss,
     handleDebugModalDismiss,
     handleEnvModalDismiss,
-    handleSentryModalDismiss,
     handleStorageModalDismiss,
     handleQuerySelect,
     handleQueryPress,
@@ -259,29 +267,75 @@ export function RnBetterDevToolsBubble({
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        {/* Bubble Presentation - Encapsulates all UI logic internally */}
-        {/* Hidden when modals are open to prevent visual conflicts */}
-        {!isAnyModalOpen && (
-          <BubblePresentation
-            key="bubble-presentation"
-            environment={environment}
-            userRole={userRole}
-            onStatusPress={handleStatusPress}
-            onQueryPress={handleQueryPress}
-            onEnvPress={handleEnvPress}
-            onSentryPress={handleSentryPress}
-            onStoragePress={handleStoragePress}
-            config={{
-              showEnvironment: !visibilitySettings.hideEnvironment,
-              showUserStatus: !hideUserStatus, // Never allow hiding user status
-              showQueryButton: !visibilitySettings.hideQueryButton,
-              showWifiToggle: !visibilitySettings.hideWifiToggle,
-              showEnvButton: !visibilitySettings.hideEnvButton,
-              showSentryButton: !visibilitySettings.hideSentryButton,
-              showStorageButton: !visibilitySettings.hideStorageButton,
-            }}
-          />
-        )}
+        {/* Floating Tools - Always mounted for stable tree; hidden via opacity/pointerEvents when modals open */}
+        <View
+          pointerEvents={isAnyModalOpen ? "none" : "auto"}
+          style={{ opacity: isAnyModalOpen ? 0 : 1 }}
+        >
+          <FloatingTools enablePositionPersistence>
+            {visibilitySettings.hideEnvironment ? null : (
+              <EnvironmentIndicator environment={environment!} />
+            )}
+
+            {userRole ? (
+              <UserStatus userRole={userRole} onPress={handleStatusPress} />
+            ) : null}
+
+            {visibilitySettings.hideQueryButton ? null : (
+              <Pressable
+                accessibilityLabel="React Query"
+                accessibilityHint="View React Query"
+                sentry-label="ignore user interaction"
+                onPress={handleQueryPress}
+                style={styles.queryButton}
+                hitSlop={8}
+              >
+                <TanstackLogo />
+              </Pressable>
+            )}
+
+            {visibilitySettings.hideEnvButton ? null : (
+              <Pressable
+                accessibilityLabel="Environment Variables"
+                accessibilityHint="View Environment Variables"
+                sentry-label="ignore user interaction"
+                onPress={handleEnvPress}
+                style={styles.iconButton}
+                hitSlop={8}
+              >
+                <ServerIcon size={16} color="#10B981" />
+              </Pressable>
+            )}
+
+            {visibilitySettings.hideSentryButton ? null : (
+              <Pressable
+                accessibilityLabel="Sentry Events"
+                accessibilityHint="View Sentry Events"
+                sentry-label="ignore user interaction"
+                onPress={handleSentryPress}
+                style={styles.iconButton}
+                hitSlop={8}
+              >
+                <BugIcon size={16} color="#EF4444" />
+              </Pressable>
+            )}
+
+            {visibilitySettings.hideStorageButton ? null : (
+              <Pressable
+                accessibilityLabel="Storage Browser"
+                accessibilityHint="View Storage Browser"
+                sentry-label="ignore user interaction"
+                onPress={handleStoragePress}
+                style={styles.iconButton}
+                hitSlop={8}
+              >
+                <DatabaseIcon size={16} color="#3B82F6" />
+              </Pressable>
+            )}
+
+            {visibilitySettings.hideWifiToggle ? null : <WifiToggle />}
+          </FloatingTools>
+        </View>
 
         {/* Floating Data Editor Modal - Auto-opens if restored state indicates it was open */}
         <ReactQueryModal
@@ -347,9 +401,31 @@ export function RnBetterDevToolsBubble({
           visible={isStorageModalOpen}
           onClose={handleStorageModalDismiss}
           enableSharedModalDimensions={enableSharedModalDimensions}
-          requiredStorageKeys={requiredEnvVars}
+          requiredStorageKeys={requiredStorageKeys}
         />
       </QueryClientProvider>
     </ErrorBoundary>
   );
 }
+const styles = StyleSheet.create({
+  queryButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
