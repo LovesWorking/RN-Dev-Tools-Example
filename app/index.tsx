@@ -34,7 +34,7 @@ import {
   ChatGPTModal,
   useChatGPTModalPersistence,
 } from "@/chatgptModal/ChatGPTModal";
-import { ClaudeModal } from "@/src/claudeModal/ClaudeModal";
+import { ClaudeModal } from "@/src/claudeModal/ClaudeModalPure";
 
 const { width, height } = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;

@@ -16,14 +16,16 @@ import {
   ViewStyle,
   Animated as RNAnimated,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Reanimated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+// NOTE: Pure React Native only – no reanimated, no RNGH, no safe-area-context
 import { CornerResizeHandle } from "@/src/_components/floating-bubble/modal/components/CornerResizeHandle";
+
+// Debug logging toggle
+const DEBUG_LOG = true;
+const log = (...args: any[]) => {
+  if (DEBUG_LOG) {
+    console.log("[ChatGPTModal]", ...args);
+  }
+};
 
 /**
  * ChatGPTModal — A single-file, reusable modal with bottom sheet and floating window modes.
@@ -220,7 +222,7 @@ function useModalInternalState({
   minHeight,
   defaultSheetHeight,
 }: UseModalInternalStateArgs) {
-  const insets = useSafeAreaInsets();
+  const insets = { top: 0, bottom: 0 };
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
     Dimensions.get("window");
 
@@ -251,10 +253,12 @@ function useModalInternalState({
       try {
         const raw = await storage.getItem(STORAGE_KEYS.state(storageKey));
         if (!raw) {
+          log("No persisted state found for", storageKey);
           setIsLoaded(true);
           return;
         }
         const parsed = JSON.parse(raw) as PersistedState;
+        log("Loaded persisted state", parsed);
         if (cancelled) return;
 
         // Validate dimensions within screen bounds
@@ -290,6 +294,7 @@ function useModalInternalState({
         );
       } catch (_err) {
         // ignore and continue with defaults
+        log("Error loading persisted state", _err);
       } finally {
         if (!cancelled) setIsLoaded(true);
       }
@@ -318,12 +323,14 @@ function useModalInternalState({
       };
       const toSave = { ...state, ...(next ?? {}) } as PersistedState;
       try {
+        log("Saving state", toSave);
         await storage.setItem(
           STORAGE_KEYS.state(storageKey),
           JSON.stringify(toSave)
         );
       } catch (_err) {
         // ignore
+        log("Error saving state", _err);
       }
     },
     [storageKey, storage, mode, floatingDimensions, sheetHeight]
@@ -346,6 +353,7 @@ function useModalInternalState({
   // Respond to dimension changes (screen rotate)
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", ({ window }) => {
+      log("Dimensions change", window.width, window.height);
       const newWidth = Math.max(
         minWidth,
         Math.min(floatingDimensions.width, window.width)
@@ -369,6 +377,7 @@ function useModalInternalState({
         top: newTop,
       };
       setFloatingDimensions(dims);
+      log("Adjusted dims due to screen change", dims);
       saveDebounced({ floatingDimensions: dims });
 
       const maxSheet = window.height - insets.top;
@@ -426,7 +435,7 @@ function useBottomSheetResize({
   setHeight: (h: number) => void;
   minHeight: number;
 }) {
-  const insets = useSafeAreaInsets();
+  const insets = { top: 0, bottom: 0 };
   const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
   const animatedHeight = useRef(new RNAnimated.Value(height)).current;
@@ -475,7 +484,7 @@ function useBottomSheetResize({
 }
 
 // =======================
-// Internal: DragResizable (Reanimated + RNGH)
+// Internal: DragResizable (Pure RN PanResponder + Animated)
 // =======================
 
 type DragResizableHandlers =
@@ -512,9 +521,9 @@ function DragResizable({
     "topRight",
   ] as DragResizableHandlers[],
   renderHandler = ({ handler }: { handler: DragResizableHandlers }) => (
-    <Reanimated.View style={[dragStyles.cornerHandle, dragStyles[handler]]}>
+    <View style={[dragStyles.cornerHandle, dragStyles[handler]]}>
       <View style={[dragStyles.handler]} />
-    </Reanimated.View>
+    </View>
   ),
 }: {
   heightBound: number;
@@ -540,210 +549,247 @@ function DragResizable({
   resizeHandlers?: DragResizableHandlers[];
   renderHandler?: (prop: { handler: DragResizableHandlers }) => React.ReactNode;
 }) {
-  const boxX = useSharedValue(left);
-  const boxY = useSharedValue(top);
-  const boxHeight = useSharedValue(height);
-  const boxWidth = useSharedValue(width);
+  // Animated values
+  const boxX = useRef(new RNAnimated.Value(left)).current;
+  const boxY = useRef(new RNAnimated.Value(top)).current;
+  const boxHeight = useRef(new RNAnimated.Value(height)).current;
+  const boxWidth = useRef(new RNAnimated.Value(width)).current;
 
-  const offsetX = useSharedValue(0);
-  const offsetY = useSharedValue(0);
-  const sHeight = useSharedValue(0);
-  const sWidth = useSharedValue(0);
+  const posRef = useRef({ left, top, width, height });
+  const startRef = useRef({ x: 0, y: 0, left, top, width, height });
 
-  const gestureHandler = Gesture.Pan()
-    .enabled(isDraggable)
-    .onStart(() => {
-      "worklet";
-      offsetX.value = boxX.value;
-      offsetY.value = boxY.value;
-      if (onDragStart) runOnJS(onDragStart)();
-    })
-    .onUpdate((ev) => {
-      "worklet";
-      boxX.value = clamp(
-        offsetX.value + ev.translationX / scale,
-        0,
-        widthBound - boxWidth.value
-      );
-      boxY.value = clamp(
-        offsetY.value + ev.translationY / scale,
-        topInset,
-        heightBound - boxHeight.value
-      );
-    })
-    .onEnd(() => {
-      "worklet";
-      if (onDragEnd) {
-        runOnJS(onDragEnd)({
-          width: boxWidth.value,
-          height: boxHeight.value,
-          left: boxX.value,
-          top: boxY.value,
-        });
-      }
-    })
-    .minDistance(10)
-    .minPointers(1)
-    .maxPointers(1);
+  // Hit-testing helpers for corner handles (absolute/screen coords)
+  const HANDLE_SIZE = 28;
+  const HANDLE_OFFSET = 6; // same as visual offset
+  const isPointInRect = (x: number, y: number, rx: number, ry: number, rw: number, rh: number) =>
+    x >= rx && x <= rx + rw && y >= ry && y <= ry + rh;
+  const isPointInAnyHandle = (pageX: number, pageY: number) => {
+    const { left: px, top: py, width: pw, height: ph } = posRef.current;
+    const topLeft = { x: px + HANDLE_OFFSET, y: py + HANDLE_OFFSET };
+    const topRight = { x: px + pw - HANDLE_OFFSET - HANDLE_SIZE, y: py + HANDLE_OFFSET };
+    const bottomLeft = { x: px + HANDLE_OFFSET, y: py + ph - HANDLE_OFFSET - HANDLE_SIZE };
+    const bottomRight = { x: px + pw - HANDLE_OFFSET - HANDLE_SIZE, y: py + ph - HANDLE_OFFSET - HANDLE_SIZE };
+    return (
+      isPointInRect(pageX, pageY, topLeft.x, topLeft.y, HANDLE_SIZE, HANDLE_SIZE) ||
+      isPointInRect(pageX, pageY, topRight.x, topRight.y, HANDLE_SIZE, HANDLE_SIZE) ||
+      isPointInRect(pageX, pageY, bottomLeft.x, bottomLeft.y, HANDLE_SIZE, HANDLE_SIZE) ||
+      isPointInRect(pageX, pageY, bottomRight.x, bottomRight.y, HANDLE_SIZE, HANDLE_SIZE)
+    );
+  };
 
-  const tapGesture = Gesture.Tap()
-    .numberOfTaps(1)
-    .onEnd(() => {
-      "worklet";
-      if (onTap) runOnJS(onTap)();
-    });
-
-  const createResizeHandler = useCallback(
-    (corner: DragResizableHandlers) => {
-      return Gesture.Pan()
-        .enabled(isResizable)
-        .onStart(() => {
-          "worklet";
-          sHeight.value = boxHeight.value;
-          sWidth.value = boxWidth.value;
-          offsetX.value = boxX.value;
-          offsetY.value = boxY.value;
-          if (onResizeStart) runOnJS(onResizeStart)();
-        })
-        .onUpdate((ev) => {
-          "worklet";
-          let updatedWidth = sWidth.value;
-          let updatedHeight = sHeight.value;
-          let updatedX = offsetX.value;
-          let updatedY = offsetY.value;
-
-          switch (corner) {
-            case "topLeft": {
-              updatedWidth = clamp(
-                sWidth.value - ev.translationX / scale,
-                minWidth,
-                widthBound - offsetX.value
-              );
-              updatedHeight = clamp(
-                sHeight.value - ev.translationY / scale,
-                minHeight,
-                heightBound - updatedY
-              );
-              if (updatedWidth !== sWidth.value) {
-                updatedX = offsetX.value + (sWidth.value - updatedWidth);
-              }
-              if (updatedHeight !== sHeight.value) {
-                updatedY = clamp(
-                  offsetY.value + ev.translationY / scale,
-                  topInset,
-                  heightBound - updatedHeight
-                );
-              }
-              break;
-            }
-            case "topRight": {
-              updatedWidth = clamp(
-                sWidth.value + ev.translationX / scale,
-                minWidth,
-                widthBound - offsetX.value
-              );
-              updatedHeight = clamp(
-                sHeight.value - ev.translationY / scale,
-                minHeight,
-                heightBound - updatedY
-              );
-              if (updatedHeight !== sHeight.value) {
-                updatedY = clamp(
-                  offsetY.value + ev.translationY / scale,
-                  topInset,
-                  heightBound - updatedHeight
-                );
-              }
-              break;
-            }
-            case "bottomLeft": {
-              updatedWidth = clamp(
-                sWidth.value - ev.translationX / scale,
-                minWidth,
-                widthBound - offsetX.value
-              );
-              updatedHeight = clamp(
-                sHeight.value + ev.translationY / scale,
-                minHeight,
-                heightBound - offsetY.value
-              );
-              if (updatedWidth !== sWidth.value) {
-                updatedX = offsetX.value + (sWidth.value - updatedWidth);
-              }
-              break;
-            }
-            case "bottomRight": {
-              updatedWidth = clamp(
-                sWidth.value + ev.translationX / scale,
-                minWidth,
-                widthBound - offsetX.value
-              );
-              updatedHeight = clamp(
-                sHeight.value + ev.translationY / scale,
-                minHeight,
-                heightBound - offsetY.value
-              );
-              break;
-            }
-          }
-
-          boxWidth.value = updatedWidth;
-          boxHeight.value = updatedHeight;
-          boxX.value = updatedX;
-          boxY.value = updatedY;
-        })
-        .onEnd(() => {
-          "worklet";
-          if (onResizeEnd) {
-            runOnJS(onResizeEnd)({
-              width: boxWidth.value,
-              height: boxHeight.value,
-              left: boxX.value,
-              top: boxY.value,
-            });
-          }
-        })
-        .minDistance(0)
-        .minPointers(1)
-        .maxPointers(1);
-    },
+  // Drag PanResponder
+  const dragResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponderCapture: () => false,
+        onStartShouldSetPanResponder: (evt) => {
+          // If press begins on a corner handle region, do NOT start drag
+          const { pageX, pageY } = (evt.nativeEvent as any) ?? { pageX: 0, pageY: 0 };
+          const onHandle = isPointInAnyHandle(pageX, pageY);
+          log("DRAG shouldSet?", { pageX, pageY, onHandle, isDraggable });
+          return isDraggable && !onHandle;
+        },
+        onMoveShouldSetPanResponder: () => isDraggable,
+        onPanResponderGrant: (_evt, gesture) => {
+          log("DRAG grant", {
+            x0: gesture.x0,
+            y0: gesture.y0,
+            pos: posRef.current,
+          });
+          onDragStart?.();
+          startRef.current = {
+            x: gesture.x0,
+            y: gesture.y0,
+            left: posRef.current.left,
+            top: posRef.current.top,
+            width: posRef.current.width,
+            height: posRef.current.height,
+          };
+        },
+        onPanResponderMove: (_evt, gesture) => {
+          const dx = gesture.moveX - startRef.current.x;
+          const dy = gesture.moveY - startRef.current.y;
+          const nextLeft = clamp(
+            startRef.current.left + dx / scale,
+            0,
+            widthBound - posRef.current.width
+          );
+          const nextTop = clamp(
+            startRef.current.top + dy / scale,
+            topInset,
+            heightBound - posRef.current.height
+          );
+          boxX.setValue(nextLeft);
+          boxY.setValue(nextTop);
+          posRef.current.left = nextLeft;
+          posRef.current.top = nextTop;
+          log("DRAG move", { nextLeft, nextTop });
+        },
+        onPanResponderRelease: () => {
+          log("DRAG release", posRef.current);
+          onDragEnd?.({ ...posRef.current });
+        },
+      }),
     [
-      onResizeStart,
-      scale,
-      minWidth,
-      widthBound,
-      minHeight,
       heightBound,
-      onResizeEnd,
+      widthBound,
+      isDraggable,
+      onDragStart,
+      onDragEnd,
+      scale,
       topInset,
     ]
   );
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: boxX.value }, { translateY: boxY.value }],
-    height: boxHeight.value,
-    width: boxWidth.value,
-    position: "absolute",
-  }));
+  // Resize PanResponders per-corner
+  const makeResizeResponder = useCallback(
+    (corner: DragResizableHandlers) =>
+      PanResponder.create({
+        onStartShouldSetPanResponderCapture: () => true,
+        onStartShouldSetPanResponder: () => isResizable,
+        onMoveShouldSetPanResponder: () => isResizable,
+        onPanResponderGrant: (_evt, gesture) => {
+          log("RESIZE grant", {
+            corner,
+            x0: gesture.x0,
+            y0: gesture.y0,
+            pos: posRef.current,
+          });
+          onResizeStart?.();
+          startRef.current = {
+            x: gesture.x0,
+            y: gesture.y0,
+            left: posRef.current.left,
+            top: posRef.current.top,
+            width: posRef.current.width,
+            height: posRef.current.height,
+          };
+        },
+        onPanResponderMove: (_evt, gesture) => {
+          const dx = (gesture.moveX - startRef.current.x) / scale;
+          const dy = (gesture.moveY - startRef.current.y) / scale;
+
+          let newLeft = startRef.current.left;
+          let newTop = startRef.current.top;
+          let newWidth = startRef.current.width;
+          let newHeight = startRef.current.height;
+
+          if (corner === "topLeft") {
+            newWidth = clamp(
+              startRef.current.width - dx,
+              minWidth,
+              widthBound - startRef.current.left
+            );
+            newHeight = clamp(
+              startRef.current.height - dy,
+              minHeight,
+              heightBound - startRef.current.top
+            );
+            newLeft =
+              startRef.current.left + (startRef.current.width - newWidth);
+            newTop = clamp(
+              startRef.current.top + dy,
+              topInset,
+              heightBound - newHeight
+            );
+          } else if (corner === "topRight") {
+            newWidth = clamp(
+              startRef.current.width + dx,
+              minWidth,
+              widthBound - startRef.current.left
+            );
+            newHeight = clamp(
+              startRef.current.height - dy,
+              minHeight,
+              heightBound - startRef.current.top
+            );
+            newTop = clamp(
+              startRef.current.top + dy,
+              topInset,
+              heightBound - newHeight
+            );
+          } else if (corner === "bottomLeft") {
+            newWidth = clamp(
+              startRef.current.width - dx,
+              minWidth,
+              widthBound - startRef.current.left
+            );
+            newHeight = clamp(
+              startRef.current.height + dy,
+              minHeight,
+              heightBound - startRef.current.top
+            );
+            newLeft =
+              startRef.current.left + (startRef.current.width - newWidth);
+          } else if (corner === "bottomRight") {
+            newWidth = clamp(
+              startRef.current.width + dx,
+              minWidth,
+              widthBound - startRef.current.left
+            );
+            newHeight = clamp(
+              startRef.current.height + dy,
+              minHeight,
+              heightBound - startRef.current.top
+            );
+          }
+
+          boxX.setValue(newLeft);
+          boxY.setValue(newTop);
+          boxWidth.setValue(newWidth);
+          boxHeight.setValue(newHeight);
+          posRef.current = {
+            left: newLeft,
+            top: newTop,
+            width: newWidth,
+            height: newHeight,
+          };
+          log("RESIZE move", { corner, ...posRef.current });
+        },
+        onPanResponderRelease: () => {
+          log("RESIZE release", { corner, pos: posRef.current });
+          onResizeEnd?.({ ...posRef.current });
+        },
+      }),
+    [
+      isResizable,
+      onResizeStart,
+      onResizeEnd,
+      minWidth,
+      widthBound,
+      minHeight,
+      heightBound,
+      scale,
+      topInset,
+    ]
+  );
+
+  const animatedStyle = {
+    transform: [{ translateX: boxX }, { translateY: boxY }],
+    height: boxHeight,
+    width: boxWidth,
+    position: "absolute" as const,
+  };
 
   return (
-    <Reanimated.View style={[animatedStyle, style]}>
-      <GestureDetector
-        gesture={Gesture.Simultaneous(gestureHandler, tapGesture)}
-      >
-        {children}
-      </GestureDetector>
-      {isResizable && showHandles
+    <RNAnimated.View
+      style={[animatedStyle, style]}
+      {...dragResponder.panHandlers}
+    >
+      {children}
+      {isResizable
         ? resizeHandlers.map((handler) => (
-            <GestureDetector
+            <View
               key={handler}
-              gesture={createResizeHandler(handler)}
+              style={[dragStyles.handleHitBox, dragStyles[handler]]}
+              {...(makeResizeResponder(handler).panHandlers as any)}
+              pointerEvents="box-only"
             >
-              {renderHandler?.({ handler })}
-            </GestureDetector>
+              <CornerResizeHandle handler={handler} isActive={false} />
+            </View>
           ))
         : null}
-    </Reanimated.View>
+    </RNAnimated.View>
   );
 }
 
@@ -751,6 +797,12 @@ const dragStyles = StyleSheet.create({
   cornerHandle: {
     position: "absolute",
     zIndex: 1,
+  },
+  handleHitBox: {
+    position: "absolute",
+    width: 28,
+    height: 28,
+    zIndex: 1000,
   },
   topLeft: { left: 6, top: 6 },
   topRight: { right: 6, top: 6 },
@@ -878,7 +930,7 @@ function FloatingWindow({
   panelStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
 }) {
-  const insets = useSafeAreaInsets();
+  const insets = { top: 0, bottom: 0 };
   if (!visible) return null;
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -910,19 +962,17 @@ function FloatingWindow({
         }}
         style={styles.dragResizableContainer}
         renderHandler={({ handler }) => (
-          <Reanimated.View
-            style={[dragStyles.cornerHandle, dragStyles[handler]]}
-          >
+          <View style={[dragStyles.cornerHandle, dragStyles[handler]]}>
             <View
               style={[
                 dragStyles.handler,
                 isActive && { backgroundColor: "#22C55E" },
               ]}
             />
-          </Reanimated.View>
+          </View>
         )}
       >
-        <Reanimated.View
+        <RNAnimated.View
           style={[
             styles.panel,
             styles.panelFloating,
@@ -934,7 +984,7 @@ function FloatingWindow({
             isResizing,
           })}
           <View style={[styles.content, contentStyle]}>{children}</View>
-        </Reanimated.View>
+        </RNAnimated.View>
       </DragResizable>
     </View>
   );
@@ -957,7 +1007,7 @@ function BottomSheet({
   panelStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
 }) {
-  const insets = useSafeAreaInsets();
+  const insets = { top: 0, bottom: 0 };
   const { animatedPanelStyle, panHandlers } = useBottomSheetResize({
     enabled: false, // pan enabled when not floating; provided through header
     height,
@@ -1022,7 +1072,7 @@ export function ChatGPTModal({
     const insets = { top: 0, bottom: 0 };
     return { width, height: height - insets.top - insets.bottom };
   });
-  const insets = useSafeAreaInsets();
+  const insets = { top: 0, bottom: 0 };
 
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", ({ window }) => {
@@ -1051,12 +1101,14 @@ export function ChatGPTModal({
   // Event relays
   const handleToggleMode = useCallback(() => {
     const next = mode === "sheet" ? "floating" : "sheet";
+    log("Toggle mode", { from: mode, to: next });
     setMode(next);
     onModeChange?.(next);
   }, [mode, onModeChange, setMode]);
 
   const handleDims = useCallback(
     (d: PersistedPanelDimensions) => {
+      log("Update dims from child", d);
       setFloatingDimensions(d);
       onPositionChange?.({ left: d.left, top: d.top });
       onSizeChange?.({ width: d.width, height: d.height });
