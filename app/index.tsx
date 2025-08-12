@@ -30,11 +30,8 @@ import ReanimatedAnimated, {
 } from "react-native-reanimated";
 import { useQueryClient } from "@tanstack/react-query";
 import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble";
-import {
-  ChatGPTModal,
-  useChatGPTModalPersistence,
-} from "@/chatgptModal/ChatGPTModal";
-import { ClaudeModal } from "@/src/claudeModal/ClaudeModalPure";
+import ClaudeModalOriginal from "@/src/claudeModal/ClaudeModalOriginal";
+import ClaudeModalPure from "@/src/claudeModal/ClaudeModalPure";
 import ModalPerformanceComparison from "@/src/claudeModal/ModalPerformanceComparison";
 
 const { width, height } = Dimensions.get("window");
@@ -485,20 +482,10 @@ function getRandomPokemonNames(count: number): string[] {
 
 export default function PokemonScreen() {
   const queryClient = useQueryClient();
-  const {
-    visible: devModalVisible,
-    setVisible: setDevModalVisible,
-    restoreState: restoreDevModal,
-  } = useChatGPTModalPersistence({
-    storageKey: "demo-chatgpt-modal",
-    autoRestoreVisible: true,
-  });
-  const [claudeModalVisible, setClaudeModalVisible] = useState(false);
+  // Modal states for our modal versions
+  const [originalModalVisible, setOriginalModalVisible] = useState(false);
+  const [baselineModalVisible, setBaselineModalVisible] = useState(false);
   const [performanceTestVisible, setPerformanceTestVisible] = useState(false);
-
-  useEffect(() => {
-    restoreDevModal();
-  }, [restoreDevModal]);
   const [pokemonStack, setPokemonStack] = useState(() => [
     "pikachu",
     "charizard",
@@ -1169,51 +1156,7 @@ export default function PokemonScreen() {
           </Animated.View>
         </View>
 
-        {/* Debug Button */}
-        <TouchableOpacity
-          onPress={logCacheKeys}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(255,0,0,0.2)", "rgba(255,0,0,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons name="bug" size={16} color="rgba(255,255,255,0.8)" />
-            <Text style={styles.debugText}>Debug Cache</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        {/* Test Button: Open ChatGPTModal example (placed under Debug Cache) */}
-        <TouchableOpacity
-          onPress={() => setDevModalVisible(true)}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(0,150,0,0.25)", "rgba(0,150,0,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons name="bug" size={16} color="rgba(255,255,255,0.8)" />
-            <Text style={styles.debugText}>Open Dev Modal</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        
-        {/* Test Button: Open ClaudeModal */}
-        <TouchableOpacity
-          onPress={() => setClaudeModalVisible(true)}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(0,100,200,0.25)", "rgba(0,100,200,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons name="layers" size={16} color="rgba(255,255,255,0.8)" />
-            <Text style={styles.debugText}>Open Claude Modal</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        
-        {/* Test Button: Performance Comparison */}
+        {/* Performance Test Button */}
         <TouchableOpacity
           onPress={() => setPerformanceTestVisible(true)}
           style={styles.debugButton}
@@ -1227,6 +1170,37 @@ export default function PokemonScreen() {
             <Text style={styles.debugText}>Performance Test</Text>
           </LinearGradient>
         </TouchableOpacity>
+        
+        {/* Original Modal Button */}
+        <TouchableOpacity
+          onPress={() => setOriginalModalVisible(true)}
+          style={styles.debugButton}
+          activeOpacity={0.7}
+        >
+          <LinearGradient
+            colors={["rgba(150,150,150,0.25)", "rgba(150,150,150,0.1)"]}
+            style={styles.debugGradient}
+          >
+            <Ionicons name="cube-outline" size={16} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.debugText}>Open Original Modal</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        
+        {/* Baseline Modal Button */}
+        <TouchableOpacity
+          onPress={() => setBaselineModalVisible(true)}
+          style={styles.debugButton}
+          activeOpacity={0.7}
+        >
+          <LinearGradient
+            colors={["rgba(0,100,200,0.25)", "rgba(0,100,200,0.1)"]}
+            style={styles.debugGradient}
+          >
+            <Ionicons name="layers" size={16} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.debugText}>Open Baseline Modal</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        
 
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
@@ -1306,30 +1280,14 @@ export default function PokemonScreen() {
           </LinearGradient>
         </View>
       </ScrollView>
-      {/* Example ChatGPTModal instance */}
-      <ChatGPTModal
-        key="demo-chatgpt-modal"
-        visible={devModalVisible}
-        onClose={() => setDevModalVisible(false)}
-        storageKey="demo-chatgpt-modal"
-        title="Dev Tools Modal"
-        subtitle="Bottom sheet or detach to float"
-      >
-        <View style={{ flex: 1, padding: 16 }}>
-          <Text style={{ color: "#FFFFFF" }}>
-            This is a demo content area for the reusable modal.
-          </Text>
-        </View>
-      </ChatGPTModal>
-      
-      {/* ClaudeModal Test Instance */}
-      <ClaudeModal
-        visible={claudeModalVisible}
-        onClose={() => setClaudeModalVisible(false)}
-        persistenceKey="test-claude-modal"
+      {/* Original Modal (Unoptimized) */}
+      <ClaudeModalOriginal
+        visible={originalModalVisible}
+        onClose={() => setOriginalModalVisible(false)}
+        persistenceKey="original-modal"
         header={{
-          title: 'Claude Modal',
-          subtitle: 'Drag to resize, toggle to float!',
+          title: 'Original Modal',
+          subtitle: 'No optimizations - Baseline performance',
           showToggleButton: true,
         }}
         initialHeight={400}
@@ -1337,53 +1295,61 @@ export default function PokemonScreen() {
       >
         <ScrollView style={{ flex: 1, padding: 20 }}>
           <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
-            🎉 Welcome to ClaudeModal!
+            📦 Original Modal (Unoptimized)
           </Text>
           <Text style={{ color: '#E5E7EB', fontSize: 14, lineHeight: 20, marginBottom: 20 }}>
-            This is a powerful, flexible modal component with many features:
+            This is the original implementation without any performance optimizations.
           </Text>
-          
           <View style={{ marginBottom: 15 }}>
-            <Text style={{ color: '#FFD700', fontSize: 16, fontWeight: '600', marginBottom: 10 }}>
-              ✨ Features
+            <Text style={{ color: '#FF6B6B', fontSize: 16, fontWeight: '600', marginBottom: 10 }}>
+              ⚠️ No Optimizations
             </Text>
             <Text style={{ color: '#9CA3AF', fontSize: 14, lineHeight: 20 }}>
-              • Drag the header to resize in bottom sheet mode{'\n'}
-              • Toggle between bottom sheet and floating modes{'\n'}
-              • In floating mode: drag to move, resize from corners{'\n'}
-              • State persistence across app restarts{'\n'}
-              • Smooth animations and gestures{'\n'}
-              • Full TypeScript support
-            </Text>
-          </View>
-          
-          <View style={{ marginBottom: 15 }}>
-            <Text style={{ color: '#60A5FA', fontSize: 16, fontWeight: '600', marginBottom: 10 }}>
-              🎮 Try These Actions
-            </Text>
-            <Text style={{ color: '#9CA3AF', fontSize: 14, lineHeight: 20 }}>
-              1. Drag the header up/down to resize{'\n'}
-              2. Click the maximize icon to switch to floating mode{'\n'}
-              3. In floating mode, drag the modal around{'\n'}
-              4. Resize from any corner in floating mode{'\n'}
-              5. Close and reopen - it remembers everything!
-            </Text>
-          </View>
-          
-          <View style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', borderRadius: 8, padding: 12, marginTop: 10 }}>
-            <Text style={{ color: '#22C55E', fontSize: 14, fontWeight: '600' }}>
-              💡 Pro Tip
-            </Text>
-            <Text style={{ color: '#86EFAC', fontSize: 13, marginTop: 5 }}>
-              This modal persists its state using the key "test-claude-modal". 
-              Your position, size, and mode will be saved!
+              • Callbacks recreated on every render{'\n'}
+              • No component memoization{'\n'}
+              • No RAF throttling{'\n'}
+              • Basic implementation
             </Text>
           </View>
         </ScrollView>
-      </ClaudeModal>
+      </ClaudeModalOriginal>
+      
+      {/* Baseline Modal (Previous Optimized) */}
+      <ClaudeModalPure
+        visible={baselineModalVisible}
+        onClose={() => setBaselineModalVisible(false)}
+        persistenceKey="baseline-modal"
+        header={{
+          title: 'Baseline Modal',
+          subtitle: 'Stable callbacks + Memoization',
+          showToggleButton: true,
+        }}
+        initialHeight={400}
+        enablePersistence={true}
+      >
+        <ScrollView style={{ flex: 1, padding: 20 }}>
+          <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
+            ⚡ Baseline Modal (Optimized)
+          </Text>
+          <Text style={{ color: '#E5E7EB', fontSize: 14, lineHeight: 20, marginBottom: 20 }}>
+            This version includes our core performance optimizations.
+          </Text>
+          <View style={{ marginBottom: 15 }}>
+            <Text style={{ color: '#60A5FA', fontSize: 16, fontWeight: '600', marginBottom: 10 }}>
+              ✅ Optimizations
+            </Text>
+            <Text style={{ color: '#9CA3AF', fontSize: 14, lineHeight: 20 }}>
+              • Stable callbacks (useStableCallback){'\n'}
+              • Memoized components{'\n'}
+              • RAF throttling for resize{'\n'}
+              • ~5-10% better than Original
+            </Text>
+          </View>
+        </ScrollView>
+      </ClaudeModalPure>
       
       {/* Performance Test Modal */}
-      <ClaudeModal
+      <ClaudeModalPure
         visible={performanceTestVisible}
         onClose={() => setPerformanceTestVisible(false)}
         persistenceKey="performance-test-modal"
@@ -1397,7 +1363,7 @@ export default function PokemonScreen() {
         enablePersistence={true}
       >
         <ModalPerformanceComparison />
-      </ClaudeModal>
+      </ClaudeModalPure>
     </View>
   );
 }
