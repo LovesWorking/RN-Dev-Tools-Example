@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StyleSheet,
   ScrollView,
@@ -29,7 +30,6 @@ import ReanimatedAnimated, {
 } from "react-native-reanimated";
 import { useQueryClient } from "@tanstack/react-query";
 import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble";
-import { useModalManager } from "@/src/_sections/react-query/hooks";
 
 const { width, height } = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;
@@ -499,19 +499,21 @@ export default function PokemonScreen() {
 
   // Debug function to log cache keys
   const logCacheKeys = useCallback(() => {
-    const cache = queryClient.getQueryCache();
-    const queries = cache.getAll();
-    console.log("=== QUERY CACHE DEBUG ===");
-    console.log("Total queries in cache:", queries.length);
-    queries.forEach((query, index) => {
-      console.log(`Query ${index + 1}:`, {
-        queryKey: query.queryKey,
-        state: query.state.status,
-        dataUpdatedAt: query.state.dataUpdatedAt,
-        data: query.state.data ? "Has data" : "No data",
-      });
-    });
-    console.log("=========================");
+    // Clear async storage keys and values
+    AsyncStorage.clear();
+    // const cache = queryClient.getQueryCache();
+    // const queries = cache.getAll();
+    // console.log("=== QUERY CACHE DEBUG ===");
+    // console.log("Total queries in cache:", queries.length);
+    // queries.forEach((query, index) => {
+    //   console.log(`Query ${index + 1}:`, {
+    //     queryKey: query.queryKey,
+    //     state: query.state.status,
+    //     dataUpdatedAt: query.state.dataUpdatedAt,
+    //     data: query.state.data ? "Has data" : "No data",
+    //   });
+    // });
+    // console.log("=========================");
   }, [queryClient]);
 
   // Only keep essential animations for effects
