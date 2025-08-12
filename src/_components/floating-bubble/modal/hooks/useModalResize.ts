@@ -1,16 +1,10 @@
-import { useEffect } from "react";
-import { Dimensions } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  runOnJS,
-  clamp,
-} from "react-native-reanimated";
+import { useRef, useMemo, useEffect, useCallback } from "react";
+import { Animated, PanResponder, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MIN_HEIGHT = 150;
+const THROTTLE_MS = 16; // ~60fps
 
 interface UseModalResizeProps {
   isFloatingMode: boolean;
@@ -29,50 +23,92 @@ export const useModalResize = ({
   const insets = useSafeAreaInsets();
   const MAX_HEIGHT = SCREEN_HEIGHT - insets.top;
 
-  // Reanimated shared values for smooth resizing
-  const sharedHeight = useSharedValue(panelHeight);
-  const offsetHeight = useSharedValue(0);
+  // Use Animated.Value for smooth height transitions
+  const animatedHeight = useRef(new Animated.Value(panelHeight)).current;
+  
+  // Use refs to track values without causing re-renders
+  const startHeightRef = useRef(panelHeight);
+  const currentHeightRef = useRef(panelHeight);
+  const isFloatingModeRef = useRef(isFloatingMode);
+  const setIsResizingRef = useRef(setIsResizing);
+  const updatePanelHeightRef = useRef(updatePanelHeight);
+  const lastUpdateTimeRef = useRef(0);
 
-  // Update shared value when state changes
+  // Update refs when values change
   useEffect(() => {
-    sharedHeight.value = panelHeight;
-  }, [panelHeight, sharedHeight]);
+    currentHeightRef.current = panelHeight;
+    animatedHeight.setValue(panelHeight);
+  }, [panelHeight, animatedHeight]);
 
-  // Header-based resize gesture for bottom sheet mode
-  const resizeGesture = Gesture.Pan()
-    .enabled(!isFloatingMode)
-    .onBegin(() => {
-      "worklet";
-      offsetHeight.value = sharedHeight.value;
-      runOnJS(setIsResizing)(true);
-    })
-    .onUpdate((event) => {
-      "worklet";
-      // Bottom sheet: dragging up (negative dy) increases height
-      const newHeight = offsetHeight.value - event.translationY;
-      const clampedHeight = clamp(newHeight, MIN_HEIGHT, MAX_HEIGHT);
-      sharedHeight.value = clampedHeight;
+  useEffect(() => {
+    isFloatingModeRef.current = isFloatingMode;
+  }, [isFloatingMode]);
 
-      // Update React state on JS thread
-      runOnJS(updatePanelHeight)(clampedHeight);
-    })
-    .onEnd(() => {
-      "worklet";
-      // Final height is already set via runOnJS
-      runOnJS(setIsResizing)(false);
-    })
-    .onFinalize(() => {
-      "worklet";
-      runOnJS(setIsResizing)(false);
-    });
+  useEffect(() => {
+    setIsResizingRef.current = setIsResizing;
+  }, [setIsResizing]);
 
-  // Animated style for smooth height transitions
-  const animatedPanelStyle = useAnimatedStyle(() => ({
-    height: sharedHeight.value,
-  }));
+  useEffect(() => {
+    updatePanelHeightRef.current = updatePanelHeight;
+  }, [updatePanelHeight]);
 
+  // Throttled update function to reduce React state updates
+  const throttledUpdateHeight = useCallback((height: number) => {
+    const now = Date.now();
+    if (now - lastUpdateTimeRef.current >= THROTTLE_MS) {
+      updatePanelHeightRef.current(height);
+      lastUpdateTimeRef.current = now;
+    }
+  }, []);
+
+  // Create PanResponder ONCE and never recreate it
+  const panResponder = useMemo(
+    () => {
+      return PanResponder.create({
+        onStartShouldSetPanResponder: (_evt, _gestureState) => {
+          return !isFloatingModeRef.current;
+        },
+        onMoveShouldSetPanResponder: (_evt, _gestureState) => {
+          return !isFloatingModeRef.current;
+        },
+        onPanResponderGrant: (_evt, _gestureState) => {
+          setIsResizingRef.current(true);
+          // Capture the current height at the start of gesture
+          startHeightRef.current = currentHeightRef.current;
+        },
+        onPanResponderMove: (_evt, gestureState) => {
+          // Bottom sheet: dragging up (negative dy) increases height
+          const newHeight = startHeightRef.current - gestureState.dy;
+          const clampedHeight = Math.max(
+            MIN_HEIGHT,
+            Math.min(newHeight, MAX_HEIGHT)
+          );
+          
+          // Always update animated value for smooth visual feedback
+          animatedHeight.setValue(clampedHeight);
+          currentHeightRef.current = clampedHeight;
+          
+          // Throttle React state updates to improve performance
+          throttledUpdateHeight(clampedHeight);
+        },
+        onPanResponderRelease: (_evt, _gestureState) => {
+          setIsResizingRef.current(false);
+          // Ensure final height is saved
+          updatePanelHeightRef.current(currentHeightRef.current);
+        },
+        onPanResponderTerminate: (_evt, _gestureState) => {
+          setIsResizingRef.current(false);
+        },
+      });
+    },
+    [animatedHeight, MAX_HEIGHT, throttledUpdateHeight] // Only depend on stable values
+  );
+
+  // Return pan handlers and animated style
   return {
-    resizeGesture,
-    animatedPanelStyle,
+    panHandlers: panResponder.panHandlers,
+    animatedPanelStyle: {
+      height: animatedHeight,
+    },
   };
 };

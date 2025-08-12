@@ -1,12 +1,10 @@
 import { ReactNode } from "react";
-import { View, StyleSheet, ViewStyle } from "react-native";
-import Animated, { AnimatedStyleProp } from "react-native-reanimated";
+import { View, StyleSheet, ViewStyle, Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DragResizable } from "./DragResizable";
 import { FloatingModalHeader } from "./FloatingModalHeader";
 import { CornerResizeHandle } from "./CornerResizeHandle";
 import { PanelDimensions } from "../../../../_sections/react-query/utils/modalStorageOperations";
-import { GestureType } from "react-native-gesture-handler";
 
 // Stable constants moved to module scope to prevent re-renders
 const MIN_HEIGHT = 150;
@@ -28,9 +26,9 @@ interface FloatingModalContentProps {
   children: ReactNode;
   panelDimensions: PanelDimensions;
   containerBounds: { width: number; height: number };
-  resizeGesture?: GestureType;
-  animatedPanelStyle?: AnimatedStyleProp<ViewStyle>;
-  animatedBorderStyle?: AnimatedStyleProp<ViewStyle>;
+  panHandlers?: any; // PanResponder handlers
+  animatedPanelStyle?: ViewStyle | { height: Animated.Value };
+  animatedBorderStyle?: any; // Animated styles for border
   onToggleFloatingMode: () => void;
   onClose: () => void;
   onDragStart: () => void;
@@ -51,7 +49,7 @@ export const FloatingModalContent = ({
   children,
   panelDimensions,
   containerBounds,
-  resizeGesture,
+  panHandlers,
   animatedPanelStyle,
   animatedBorderStyle,
   onToggleFloatingMode,
@@ -88,7 +86,7 @@ export const FloatingModalContent = ({
         showToggleButton={showToggleButton}
         customHeaderContent={customHeaderContent}
         headerSubtitle={headerSubtitle}
-        resizeGesture={resizeGesture}
+        panHandlers={panHandlers}
         onToggleFloatingMode={onToggleFloatingMode}
         onClose={onClose}
         hideCloseButton={hideCloseButton}

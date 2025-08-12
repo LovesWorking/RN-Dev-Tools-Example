@@ -11,7 +11,6 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import "react-native-reanimated";
 import { QueryClient } from "@tanstack/react-query";
 import { QueryClientWrapper } from "@/app/_components/QueryClientWrapper";
 import { useColorScheme } from "@/hooks/useColorScheme";

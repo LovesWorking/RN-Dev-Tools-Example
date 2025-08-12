@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { GestureDetector, GestureType } from "react-native-gesture-handler";
 import { Maximize2, Minimize2, X } from "lucide-react-native";
 
 const HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 };
@@ -11,7 +10,7 @@ interface FloatingModalHeaderProps {
   showToggleButton: boolean;
   customHeaderContent?: ReactNode;
   headerSubtitle?: string;
-  resizeGesture?: GestureType;
+  panHandlers?: any; // PanResponder handlers for resize
   onToggleFloatingMode: () => void;
   onClose: () => void;
   hideCloseButton?: boolean;
@@ -82,22 +81,6 @@ const SubtitleSection = ({ subtitle }: { subtitle: string }) => (
   </View>
 );
 
-// Utilizes Render Props pattern: Wrapper component that conditionally applies gesture detection
-const GestureWrapper = ({
-  shouldApplyGesture,
-  gesture,
-  children,
-}: {
-  shouldApplyGesture: boolean;
-  gesture?: GestureType;
-  children: ReactNode;
-}) => {
-  if (shouldApplyGesture && gesture) {
-    return <GestureDetector gesture={gesture}>{children}</GestureDetector>;
-  }
-  return <>{children}</>;
-};
-
 // Main component: Serves as composition coordinator, orchestrating smaller components
 export const FloatingModalHeader = ({
   isFloatingMode,
@@ -105,13 +88,16 @@ export const FloatingModalHeader = ({
   showToggleButton,
   customHeaderContent,
   headerSubtitle,
-  resizeGesture,
+  panHandlers,
   onToggleFloatingMode,
   onClose,
   hideCloseButton,
 }: FloatingModalHeaderProps) => {
-  const headerContent = (
-    <View style={styles.header}>
+  // Apply pan handlers only in bottom sheet mode for resize
+  const headerProps = !isFloatingMode && panHandlers ? panHandlers : {};
+
+  return (
+    <View style={styles.header} {...headerProps}>
       <DragIndicator isResizing={isResizing} />
       <View style={styles.headerContent}>
         <View style={styles.mainHeaderRow}>
@@ -129,15 +115,6 @@ export const FloatingModalHeader = ({
         {headerSubtitle && <SubtitleSection subtitle={headerSubtitle} />}
       </View>
     </View>
-  );
-
-  return (
-    <GestureWrapper
-      shouldApplyGesture={!isFloatingMode}
-      gesture={resizeGesture}
-    >
-      {headerContent}
-    </GestureWrapper>
   );
 };
 

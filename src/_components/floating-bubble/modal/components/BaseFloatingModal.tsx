@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { useAnimatedStyle } from "react-native-reanimated";
+import { ReactNode, useRef, useEffect } from "react";
+import { Animated } from "react-native";
 import { useModalState, useModalResize } from "../hooks";
 import { FloatingModalContent } from "./FloatingModalContent";
 import { PanelDimensions } from "../../../../_sections/react-query/utils/modalStorageOperations";
@@ -29,7 +29,7 @@ export function BaseFloatingModal({
   const modalState = useModalState({ storagePrefix });
 
   // Extract resize functionality to custom hook
-  const { resizeGesture, animatedPanelStyle } = useModalResize({
+  const { panHandlers, animatedPanelStyle } = useModalResize({
     isFloatingMode: modalState.isFloatingMode,
     panelHeight: modalState.panelHeight,
     isResizing: modalState.isResizing,
@@ -37,24 +37,68 @@ export function BaseFloatingModal({
     updatePanelHeight: modalState.updatePanelHeight,
   });
 
-  // Animated border style for drag/resize feedback (only for floating mode)
-  const animatedBorderStyle = useAnimatedStyle(() => {
-    const normalBorder = "rgba(255, 255, 255, 0.1)";
-    const activeBorder = "rgba(34, 197, 94, 1)";
-    // Only show green border when in floating mode and actively dragging/resizing
+  // Animated values for border style feedback
+  const borderColorAnim = useRef(new Animated.Value(0)).current;
+  const borderWidthAnim = useRef(new Animated.Value(1)).current;
+  const shadowOpacityAnim = useRef(new Animated.Value(0.3)).current;
+  const shadowRadiusAnim = useRef(new Animated.Value(8)).current;
+
+  // Animate border style based on drag/resize state
+  useEffect(() => {
     const isActive =
       modalState.isFloatingMode &&
       (modalState.isDragging || modalState.isResizing);
 
-    return {
-      borderColor: isActive ? activeBorder : normalBorder,
-      borderWidth: isActive ? 2 : 1,
-      shadowColor: isActive ? "rgba(34, 197, 94, 0.6)" : "#000",
-      shadowOpacity: isActive ? 0.8 : 0.3,
-      shadowRadius: isActive ? 12 : 8,
-      elevation: isActive ? 20 : 16,
-    };
-  });
+    Animated.parallel([
+      Animated.timing(borderColorAnim, {
+        toValue: isActive ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(borderWidthAnim, {
+        toValue: isActive ? 2 : 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(shadowOpacityAnim, {
+        toValue: isActive ? 0.8 : 0.3,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(shadowRadiusAnim, {
+        toValue: isActive ? 12 : 8,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [
+    modalState.isFloatingMode,
+    modalState.isDragging,
+    modalState.isResizing,
+    borderColorAnim,
+    borderWidthAnim,
+    shadowOpacityAnim,
+    shadowRadiusAnim,
+  ]);
+
+  // Animated border style for drag/resize feedback (only for floating mode)
+  const animatedBorderStyle = {
+    borderColor: borderColorAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["rgba(255, 255, 255, 0.1)", "rgba(34, 197, 94, 1)"],
+    }),
+    borderWidth: borderWidthAnim,
+    shadowColor: borderColorAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["#000", "rgba(34, 197, 94, 0.6)"],
+    }),
+    shadowOpacity: shadowOpacityAnim,
+    shadowRadius: shadowRadiusAnim,
+    elevation: borderColorAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [16, 20],
+    }),
+  };
 
   // Event handlers for drag/resize operations
   const handleDragEnd = (dimensions: PanelDimensions) => {
@@ -92,7 +136,7 @@ export function BaseFloatingModal({
       headerSubtitle={headerSubtitle}
       panelDimensions={modalState.panelDimensions}
       containerBounds={modalState.containerBounds}
-      resizeGesture={resizeGesture}
+      panHandlers={panHandlers}
       animatedPanelStyle={animatedPanelStyle}
       animatedBorderStyle={animatedBorderStyle}
       onToggleFloatingMode={modalState.toggleFloatingMode}
