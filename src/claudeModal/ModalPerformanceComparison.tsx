@@ -14,39 +14,29 @@ import {
   Dimensions,
 } from 'react-native';
 import ClaudeModalPure from './ClaudeModalPure';
+import ClaudeModalOptimized from './ClaudeModalOptimized';
 import { BaseFloatingModal } from '../_components/floating-bubble/modal/components/BaseFloatingModal';
+import { JSFPSMonitor, JSFPSResult } from './utils/JSFPSMonitor';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-interface FrameData {
-  timestamp: number;
-  fps: number;
-}
-
 interface BenchmarkResult {
-  modalType: 'pure' | 'original';
-  frameData: FrameData[];
-  avgFps: number;
-  minFps: number;
-  maxFps: number;
-  droppedFrames: number;
-  totalFrames: number;
+  modalType: 'pure' | 'optimized' | 'original';
+  fpsData: JSFPSResult;
   duration: number;
   timestamp: number;
 }
 
 export const ModalPerformanceComparison: React.FC = () => {
   const [results, setResults] = useState<BenchmarkResult[]>([]);
-  const [activeModal, setActiveModal] = useState<'none' | 'pure' | 'original'>('none');
+  const [activeModal, setActiveModal] = useState<'none' | 'pure' | 'optimized' | 'original'>('none');
   const [currentFps, setCurrentFps] = useState(0);
   const [testProgress, setTestProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   
-  // Refs for performance tracking
-  const frameDataRef = useRef<FrameData[]>([]);
-  const animationIdRef = useRef<number | null>(null);
-  const lastFrameTimeRef = useRef<number>(0);
-  const frameCountRef = useRef<number>(0);
+  // FPS Monitor instance
+  const fpsMonitorRef = useRef<JSFPSMonitor | null>(null);
+  const progressIntervalRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const testDurationRef = useRef<number>(5000); // 5 seconds per test
   
@@ -57,66 +47,66 @@ export const ModalPerformanceComparison: React.FC = () => {
   const animRotate = useRef(new Animated.Value(0)).current;
   const animOpacity = useRef(new Animated.Value(1)).current;
 
-  // Create intensive animations to stress test
+  // Create MORE intensive animations to stress test JS thread
   const runStressAnimations = useCallback(() => {
-    // Multiple parallel animations to stress the system
+    // Multiple parallel animations with shorter durations for more stress
     Animated.loop(
       Animated.parallel([
-        // X-axis movement
+        // Fast X-axis movement
         Animated.sequence([
           Animated.timing(animX, {
             toValue: SCREEN_WIDTH / 2,
-            duration: 500,
+            duration: 100, // Much faster
             useNativeDriver: true,
           }),
           Animated.timing(animX, {
             toValue: -SCREEN_WIDTH / 2,
-            duration: 500,
+            duration: 100,
             useNativeDriver: true,
           }),
         ]),
-        // Y-axis movement
+        // Fast Y-axis movement
         Animated.sequence([
           Animated.timing(animY, {
-            toValue: 100,
-            duration: 300,
+            toValue: 150,
+            duration: 75,
             useNativeDriver: true,
           }),
           Animated.timing(animY, {
-            toValue: -100,
-            duration: 300,
+            toValue: -150,
+            duration: 75,
             useNativeDriver: true,
           }),
         ]),
-        // Scale animation
+        // Rapid scale changes
         Animated.sequence([
           Animated.timing(animScale, {
-            toValue: 1.5,
-            duration: 400,
+            toValue: 2,
+            duration: 50,
             useNativeDriver: true,
           }),
           Animated.timing(animScale, {
-            toValue: 0.5,
-            duration: 400,
+            toValue: 0.3,
+            duration: 50,
             useNativeDriver: true,
           }),
         ]),
-        // Rotation
+        // Fast rotation
         Animated.timing(animRotate, {
           toValue: 360,
-          duration: 1000,
+          duration: 200,
           useNativeDriver: true,
         }),
-        // Opacity pulse
+        // Rapid opacity flashing
         Animated.sequence([
           Animated.timing(animOpacity, {
-            toValue: 0.3,
-            duration: 200,
+            toValue: 0.1,
+            duration: 25,
             useNativeDriver: true,
           }),
           Animated.timing(animOpacity, {
             toValue: 1,
-            duration: 200,
+            duration: 25,
             useNativeDriver: true,
           }),
         ]),
@@ -124,74 +114,77 @@ export const ModalPerformanceComparison: React.FC = () => {
     ).start();
   }, [animX, animY, animScale, animRotate, animOpacity]);
 
-  // Core FPS measurement function
-  const measureFrame = useCallback((timestamp: number, modalType: 'pure' | 'original') => {
-    if (!startTimeRef.current) {
-      startTimeRef.current = timestamp;
-      lastFrameTimeRef.current = timestamp;
-    }
-
-    const deltaTime = timestamp - lastFrameTimeRef.current;
-    const elapsed = timestamp - startTimeRef.current;
-    
-    // Calculate FPS from frame delta
-    if (deltaTime > 0) {
-      const fps = Math.min(1000 / deltaTime, 60); // Cap at 60 FPS
-      frameDataRef.current.push({
-        timestamp: elapsed,
-        fps,
-      });
-      
-      // Update display every 10 frames
-      frameCountRef.current++;
-      if (frameCountRef.current % 10 === 0) {
-        setCurrentFps(Math.round(fps));
+  // Initialize FPS monitor on mount
+  useEffect(() => {
+    fpsMonitorRef.current = new JSFPSMonitor();
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
       }
-    }
+    };
+  }, []);
+
+  // Heavy JS work to stress the thread
+  const stressJSThread = useCallback(() => {
+    let stressInterval: NodeJS.Timeout;
     
-    lastFrameTimeRef.current = timestamp;
+    // Create heavy computation work
+    stressInterval = setInterval(() => {
+      // Simulate heavy JS work
+      const start = Date.now();
+      let counter = 0;
+      // Run for ~5ms per iteration
+      while (Date.now() - start < 5) {
+        counter += Math.sqrt(Math.random() * 1000000);
+      }
+    }, 10);
     
-    // Update progress
-    const progress = Math.min((elapsed / testDurationRef.current) * 100, 100);
-    setTestProgress(progress);
-    
-    // Continue or stop
-    if (elapsed < testDurationRef.current) {
-      animationIdRef.current = requestAnimationFrame((t) => measureFrame(t, modalType));
-    } else {
-      stopBenchmark(modalType);
-    }
+    return () => clearInterval(stressInterval);
   }, []);
 
   // Start benchmark
-  const startBenchmark = useCallback((modalType: 'pure' | 'original') => {
+  const startBenchmark = useCallback((modalType: 'pure' | 'optimized' | 'original') => {
     console.log(`Starting ${modalType} modal benchmark`);
     
     // Reset state
-    frameDataRef.current = [];
-    frameCountRef.current = 0;
-    startTimeRef.current = 0;
-    lastFrameTimeRef.current = 0;
+    startTimeRef.current = Date.now();
     setCurrentFps(0);
     setTestProgress(0);
     setIsRunning(true);
     setActiveModal(modalType);
     
+    // Start FPS monitoring
+    if (fpsMonitorRef.current) {
+      fpsMonitorRef.current.startTracking();
+    }
+    
     // Start animations
     runStressAnimations();
     
-    // Start frame measurement
-    animationIdRef.current = requestAnimationFrame((t) => measureFrame(t, modalType));
-  }, [measureFrame, runStressAnimations]);
+    // Start JS thread stress
+    const cleanup = stressJSThread();
+    
+    // Update progress and live FPS
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current;
+      const progress = Math.min((elapsed / testDurationRef.current) * 100, 100);
+      setTestProgress(progress);
+      
+      if (progress >= 100) {
+        cleanup(); // Stop JS stress
+        stopBenchmark(modalType);
+      }
+    }, 100) as unknown as number;
+  }, [runStressAnimations, stressJSThread]);
 
   // Stop benchmark
-  const stopBenchmark = useCallback((modalType: 'pure' | 'original') => {
+  const stopBenchmark = useCallback((modalType: 'pure' | 'optimized' | 'original') => {
     console.log(`Stopping ${modalType} modal benchmark`);
     
-    // Cancel animation frame
-    if (animationIdRef.current) {
-      cancelAnimationFrame(animationIdRef.current);
-      animationIdRef.current = null;
+    // Clear progress interval
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
     }
     
     // Stop all animations
@@ -208,33 +201,23 @@ export const ModalPerformanceComparison: React.FC = () => {
     animRotate.setValue(0);
     animOpacity.setValue(1);
     
-    // Calculate statistics
-    const frames = frameDataRef.current;
-    if (frames.length > 0) {
-      const fpsValues = frames.map(f => f.fps);
-      const avgFps = fpsValues.reduce((a, b) => a + b, 0) / fpsValues.length;
-      const minFps = Math.min(...fpsValues);
-      const maxFps = Math.max(...fpsValues);
-      const droppedFrames = fpsValues.filter(fps => fps < 55).length;
+    // Get FPS statistics
+    if (fpsMonitorRef.current) {
+      const fpsData = fpsMonitorRef.current.stopAndGetData();
+      const duration = Date.now() - startTimeRef.current;
       
       const result: BenchmarkResult = {
         modalType,
-        frameData: frames,
-        avgFps,
-        minFps,
-        maxFps,
-        droppedFrames,
-        totalFrames: frames.length,
-        duration: frames[frames.length - 1]?.timestamp || 0,
+        fpsData,
+        duration,
         timestamp: Date.now(),
       };
       
       setResults(prev => [...prev, result]);
       console.log(`${modalType} benchmark result:`, {
-        avgFps: avgFps.toFixed(1),
-        minFps: minFps.toFixed(1),
-        maxFps: maxFps.toFixed(1),
-        droppedFrames,
+        avgFps: fpsData.averageFPS.toFixed(1),
+        minFps: fpsData.minFPS.toFixed(1),
+        maxFps: fpsData.maxFPS.toFixed(1),
       });
     }
     
@@ -245,7 +228,7 @@ export const ModalPerformanceComparison: React.FC = () => {
     setTestProgress(0);
   }, [animX, animY, animScale, animRotate, animOpacity]);
 
-  // Run both tests sequentially
+  // Run all tests sequentially
   const runComparison = useCallback(async () => {
     // Clear previous results
     setResults([]);
@@ -253,6 +236,17 @@ export const ModalPerformanceComparison: React.FC = () => {
     // Test Pure JS Modal
     await new Promise<void>((resolve) => {
       startBenchmark('pure');
+      setTimeout(() => {
+        resolve();
+      }, testDurationRef.current + 1000);
+    });
+    
+    // Wait a bit between tests
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Test Optimized Modal
+    await new Promise<void>((resolve) => {
+      startBenchmark('optimized');
       setTimeout(() => {
         resolve();
       }, testDurationRef.current + 1000);
@@ -272,42 +266,59 @@ export const ModalPerformanceComparison: React.FC = () => {
 
   // Format results for display
   const formatResult = (result: BenchmarkResult) => ({
-    'Average FPS': result.avgFps.toFixed(1),
-    'Min FPS': result.minFps.toFixed(1),
-    'Max FPS': result.maxFps.toFixed(1),
-    'Dropped Frames': `${result.droppedFrames} / ${result.totalFrames}`,
-    'Drop Rate': `${((result.droppedFrames / result.totalFrames) * 100).toFixed(1)}%`,
+    'Average FPS': result.fpsData.averageFPS.toFixed(1),
+    'Min FPS': result.fpsData.minFPS.toFixed(1),
+    'Max FPS': result.fpsData.maxFPS.toFixed(1),
     'Duration': `${(result.duration / 1000).toFixed(1)}s`,
   });
 
   // Compare results
   const getComparison = () => {
     const pureResult = results.find(r => r.modalType === 'pure');
+    const optimizedResult = results.find(r => r.modalType === 'optimized');
     const originalResult = results.find(r => r.modalType === 'original');
     
-    if (!pureResult || !originalResult) return null;
+    if (!pureResult) return null;
     
-    const fpsDiff = pureResult.avgFps - originalResult.avgFps;
-    const dropDiff = originalResult.droppedFrames - pureResult.droppedFrames;
+    // Find best performer
+    const allResults = [pureResult, optimizedResult, originalResult].filter(Boolean) as BenchmarkResult[];
+    const bestResult = allResults.reduce((best, current) => 
+      current.fpsData.averageFPS > best.fpsData.averageFPS ? current : best
+    );
+    
+    const getModalName = (type: string) => {
+      switch(type) {
+        case 'pure': return 'Pure JS';
+        case 'optimized': return 'Optimized (Stable Callbacks)';
+        case 'original': return 'Original Modal';
+        default: return type;
+      }
+    };
     
     return {
-      winner: fpsDiff > 0 ? 'Pure JS' : 'Original',
-      fpsDiff: Math.abs(fpsDiff).toFixed(1),
-      dropDiff: Math.abs(dropDiff),
-      betterBy: fpsDiff > 0 
-        ? `${fpsDiff.toFixed(1)} FPS faster`
-        : `${Math.abs(fpsDiff).toFixed(1)} FPS faster`,
+      winner: getModalName(bestResult.modalType),
+      avgFps: bestResult.fpsData.averageFPS.toFixed(1),
+      improvement: optimizedResult && pureResult ? 
+        ((optimizedResult.fpsData.averageFPS - pureResult.fpsData.averageFPS) / pureResult.fpsData.averageFPS * 100).toFixed(1) : '0',
     };
   };
 
-  // Cleanup on unmount
+  // Update live FPS display while running
   useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (isRunning && fpsMonitorRef.current) {
+      // Update FPS display every 200ms
+      intervalId = setInterval(() => {
+        const currentFps = fpsMonitorRef.current?.getCurrentFPS() || 0;
+        setCurrentFps(currentFps);
+      }, 200);
+    }
     return () => {
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
+      if (intervalId) {
+        clearInterval(intervalId);
       }
     };
-  }, []);
+  }, [isRunning]);
 
   const comparison = getComparison();
 
@@ -360,17 +371,21 @@ export const ModalPerformanceComparison: React.FC = () => {
           ]}
         />
         
-        {/* Additional elements for more stress */}
-        {[...Array(3)].map((_, i) => (
+        {/* Many more elements for much more stress on JS thread */}
+        {[...Array(10)].map((_, i) => (
           <Animated.View
             key={i}
             style={[
               styles.smallBox,
               {
                 transform: [
-                  { translateX: Animated.multiply(animX, (i + 1) * 0.3) },
-                  { translateY: Animated.multiply(animY, (i + 1) * 0.3) },
-                  { scale: animScale },
+                  { translateX: Animated.multiply(animX, (i + 1) * 0.2) },
+                  { translateY: Animated.multiply(animY, (i + 1) * 0.2) },
+                  { scale: Animated.multiply(animScale, 0.8 + (i * 0.05)) },
+                  { rotate: animRotate.interpolate({
+                    inputRange: [0, 360],
+                    outputRange: [`${i * 36}deg`, `${360 + i * 36}deg`],
+                  })},
                 ],
                 opacity: animOpacity,
               },
@@ -405,19 +420,27 @@ export const ModalPerformanceComparison: React.FC = () => {
 
           <View style={styles.buttonRow}>
             <Pressable
-              style={[styles.button, isRunning && styles.buttonDisabled]}
+              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
               onPress={() => startBenchmark('pure')}
               disabled={isRunning}
             >
-              <Text style={styles.buttonText}>Test Pure JS Only</Text>
+              <Text style={styles.buttonTextSmall}>Pure JS</Text>
             </Pressable>
             
             <Pressable
-              style={[styles.button, isRunning && styles.buttonDisabled]}
+              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
+              onPress={() => startBenchmark('optimized')}
+              disabled={isRunning}
+            >
+              <Text style={styles.buttonTextSmall}>Optimized</Text>
+            </Pressable>
+            
+            <Pressable
+              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
               onPress={() => startBenchmark('original')}
               disabled={isRunning}
             >
-              <Text style={styles.buttonText}>Test Original Only</Text>
+              <Text style={styles.buttonTextSmall}>Original</Text>
             </Pressable>
           </View>
 
@@ -426,7 +449,9 @@ export const ModalPerformanceComparison: React.FC = () => {
             <View style={styles.currentTest}>
               <View style={styles.recordingDot} />
               <Text style={styles.currentTestText}>
-                Testing {activeModal === 'pure' ? 'Pure JS' : 'Original'} Modal...
+                Testing {activeModal === 'pure' ? 'Pure JS' : 
+                         activeModal === 'optimized' ? 'Optimized' : 
+                         'Original'} Modal...
               </Text>
             </View>
           )}
@@ -450,7 +475,9 @@ export const ModalPerformanceComparison: React.FC = () => {
                 {results.map((result, index) => (
                   <View key={index} style={styles.resultCard}>
                     <Text style={styles.resultCardTitle}>
-                      {result.modalType === 'pure' ? '⚡ Pure JS Modal' : '📦 Original Modal'}
+                      {result.modalType === 'pure' ? '⚡ Pure JS' : 
+                       result.modalType === 'optimized' ? '🚀 Optimized' : 
+                       '📦 Original'}
                     </Text>
                     {Object.entries(formatResult(result)).map(([key, value]) => (
                       <View key={key} style={styles.resultRow}>
@@ -469,14 +496,16 @@ export const ModalPerformanceComparison: React.FC = () => {
                 <Text style={styles.sectionTitle}>🏆 Winner</Text>
                 <View style={styles.winnerCard}>
                   <Text style={styles.winnerName}>
-                    {comparison.winner === 'Pure JS' ? '⚡ Pure JS Modal' : '📦 Original Modal'}
+                    🏆 {comparison.winner}
                   </Text>
                   <Text style={styles.winnerStats}>
-                    {comparison.betterBy}
+                    Average FPS: {comparison.avgFps}
                   </Text>
-                  <Text style={styles.winnerDetail}>
-                    {comparison.dropDiff} fewer dropped frames
-                  </Text>
+                  {comparison.improvement !== '0' && (
+                    <Text style={styles.winnerDetail}>
+                      Optimized is {comparison.improvement}% better than Pure JS
+                    </Text>
+                  )}
                 </View>
               </View>
             )}
@@ -490,7 +519,7 @@ export const ModalPerformanceComparison: React.FC = () => {
         visible={activeModal === 'pure'}
         onClose={() => stopBenchmark('pure')}
         header={{
-          title: 'Pure JS Modal Test',
+          title: 'Pure JS Modal',
           subtitle: `FPS: ${currentFps}`,
         }}
         persistenceKey="benchmark-pure-modal"
@@ -498,6 +527,20 @@ export const ModalPerformanceComparison: React.FC = () => {
       >
         <TestContent />
       </ClaudeModalPure>
+
+      {/* Optimized Modal */}
+      <ClaudeModalOptimized
+        visible={activeModal === 'optimized'}
+        onClose={() => stopBenchmark('optimized')}
+        header={{
+          title: 'Optimized Modal',
+          subtitle: `FPS: ${currentFps} | Stable Callbacks`,
+        }}
+        persistenceKey="benchmark-optimized-modal"
+        initialMode="bottomSheet"
+      >
+        <TestContent />
+      </ClaudeModalOptimized>
 
       {/* Original Modal */}
       <BaseFloatingModal
@@ -575,6 +618,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontWeight: '600',
+  },
+  buttonSmall: {
+    flex: 1,
+  },
+  buttonTextSmall: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 14,
   },
   clearButton: {
     paddingHorizontal: 12,

@@ -35,8 +35,10 @@ import {
   useChatGPTModalPersistence,
 } from "@/chatgptModal/ChatGPTModal";
 import { ClaudeModal } from "@/src/claudeModal/ClaudeModalPure";
+import ModalPerformanceComparison from "@/src/claudeModal/ModalPerformanceComparison";
 
 const { width, height } = Dimensions.get("window");
+const SCREEN = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;
 
 // Pokemon Card Component with Swipe
@@ -492,6 +494,7 @@ export default function PokemonScreen() {
     autoRestoreVisible: true,
   });
   const [claudeModalVisible, setClaudeModalVisible] = useState(false);
+  const [performanceTestVisible, setPerformanceTestVisible] = useState(false);
 
   useEffect(() => {
     restoreDevModal();
@@ -1209,6 +1212,21 @@ export default function PokemonScreen() {
             <Text style={styles.debugText}>Open Claude Modal</Text>
           </LinearGradient>
         </TouchableOpacity>
+        
+        {/* Test Button: Performance Comparison */}
+        <TouchableOpacity
+          onPress={() => setPerformanceTestVisible(true)}
+          style={styles.debugButton}
+          activeOpacity={0.7}
+        >
+          <LinearGradient
+            colors={["rgba(255,100,0,0.25)", "rgba(255,100,0,0.1)"]}
+            style={styles.debugGradient}
+          >
+            <Ionicons name="speedometer" size={16} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.debugText}>Performance Test</Text>
+          </LinearGradient>
+        </TouchableOpacity>
 
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
@@ -1362,6 +1380,23 @@ export default function PokemonScreen() {
             </Text>
           </View>
         </ScrollView>
+      </ClaudeModal>
+      
+      {/* Performance Test Modal */}
+      <ClaudeModal
+        visible={performanceTestVisible}
+        onClose={() => setPerformanceTestVisible(false)}
+        persistenceKey="performance-test-modal"
+        header={{
+          title: 'Modal Performance Test',
+          subtitle: 'Compare Pure JS vs Optimized',
+          showToggleButton: true,
+        }}
+        initialHeight={600}
+        maxHeight={SCREEN.height * 0.9}
+        enablePersistence={true}
+      >
+        <ModalPerformanceComparison />
       </ClaudeModal>
     </View>
   );
