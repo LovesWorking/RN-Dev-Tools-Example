@@ -9,10 +9,10 @@ const getStatusRank = (q: Query) =>
   q.state.fetchStatus !== "idle"
     ? 0
     : !q.getObserversCount()
-      ? 3
-      : q.isStale()
-        ? 2
-        : 1;
+    ? 3
+    : q.isStale()
+    ? 2
+    : 1;
 
 const dateSort: SortFn = (a, b) =>
   a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1;
@@ -37,30 +37,34 @@ function useAllQueries() {
   const queryClient = useQueryClient();
   const [queries, setQueries] = useState<Query[]>(() => {
     // Initialize with current queries to avoid flash
-    const initial = queryClient.getQueryCache().getAll()
-      .filter(query => !isStorageQuery(query.queryKey))
+    const initial = queryClient
+      .getQueryCache()
+      .getAll()
+      .filter((query) => !isStorageQuery(query.queryKey))
       .sort(statusAndDateSort);
     return initial;
   });
-  
+
   // Track query states using a Map for O(1) lookups
   const queryStatesRef = useRef<Map<string, Query["state"]>>(new Map());
-  const updateTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const updateTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
 
   // Memoized callback to check if queries need update
   const hasQueriesChanged = useCallback((newQueries: Query[]): boolean => {
     const statesMap = queryStatesRef.current;
-    
+
     // Quick length check first
     if (newQueries.length !== statesMap.size) {
       return true;
     }
-    
+
     // Check if any query state has changed
     for (const query of newQueries) {
       const prevState = statesMap.get(query.queryHash);
       if (!prevState) return true;
-      
+
       // Compare only relevant state properties for rendering
       if (
         prevState.dataUpdatedAt !== query.state.dataUpdatedAt ||
@@ -72,28 +76,28 @@ function useAllQueries() {
         return true;
       }
     }
-    
+
     return false;
   }, []);
 
   // Memoized update function
   const updateQueries = useCallback(() => {
     const allQueries = queryClient.getQueryCache().getAll();
-    
+
     // Filter out storage queries
     const nonStorageQueries = allQueries.filter(
       (query) => !isStorageQuery(query.queryKey)
     );
-    
+
     // Check if update is needed
     if (hasQueriesChanged(nonStorageQueries)) {
       // Update states map
       const newStatesMap = new Map<string, Query["state"]>();
-      nonStorageQueries.forEach(q => {
+      nonStorageQueries.forEach((q) => {
         newStatesMap.set(q.queryHash, q.state);
       });
       queryStatesRef.current = newStatesMap;
-      
+
       // Sort and update
       const sortedQueries = [...nonStorageQueries].sort(statusAndDateSort);
       setQueries(sortedQueries);
@@ -108,20 +112,24 @@ function useAllQueries() {
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
       // Only process events that affect query list
       if (
-        event.type === 'added' || 
-        event.type === 'removed' || 
-        event.type === 'updated'
+        event.type === "added" ||
+        event.type === "removed" ||
+        event.type === "updated"
       ) {
         // Skip storage queries
-        if ('query' in event && event.query && isStorageQuery(event.query.queryKey)) {
+        if (
+          "query" in event &&
+          event.query &&
+          isStorageQuery(event.query.queryKey)
+        ) {
           return;
         }
-        
+
         // Debounce updates to batch rapid changes
         if (updateTimerRef.current) {
           clearTimeout(updateTimerRef.current);
         }
-        
+
         updateTimerRef.current = setTimeout(() => {
           updateQueries();
         }, 10); // Small delay to batch updates

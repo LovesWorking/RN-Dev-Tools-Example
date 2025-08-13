@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import {
   Database,
@@ -23,7 +24,6 @@ import {
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "../utils/formatRelativeTime";
 // import Clipboard from "@react-native-clipboard/clipboard"; // Removed due to missing dependency
-import { Alert } from "react-native";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
 
@@ -45,16 +45,16 @@ interface KeyStats {
   lastSeen: Date;
   latestEvent: AsyncStorageEvent | null;
   currentValue: unknown;
-  history: Array<{
+  history: {
     action: string;
     value: unknown;
     timestamp: Date;
-  }>;
-  valueChanges: Array<{
+  }[];
+  valueChanges: {
     from: unknown;
     to: unknown;
     timestamp: Date;
-  }>;
+  }[];
 }
 
 export function StorageEventDetailModal({
@@ -68,7 +68,7 @@ export function StorageEventDetailModal({
   const [keyStats, setKeyStats] = useState<KeyStats | null>(null);
   const [showValueChanges, setShowValueChanges] = useState(true);
   const [showOperationHistory, setShowOperationHistory] = useState(true);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Force re-render every 10 seconds for relative times
   const [, setTick] = useState(0);

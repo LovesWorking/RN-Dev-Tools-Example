@@ -1,16 +1,11 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { BaseFloatingModal } from "../../../_components/floating-bubble/modal";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlashList } from "@shopify/flash-list";
 import { ScrollView } from "react-native-gesture-handler";
-import { Database, Activity, Pause, Play, Trash2, Filter } from "lucide-react-native";
+import { Database, Pause, Play, Trash2, Filter } from "lucide-react-native";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
 import {
   startListening,
@@ -37,7 +32,14 @@ interface StorageKeyConversation {
   events: AsyncStorageEvent[];
   totalOperations: number;
   currentValue: unknown;
-  valueType: 'string' | 'number' | 'boolean' | 'null' | 'undefined' | 'object' | 'array';
+  valueType:
+    | "string"
+    | "number"
+    | "boolean"
+    | "null"
+    | "undefined"
+    | "object"
+    | "array";
 }
 
 export function StorageEventsModal({
@@ -48,33 +50,38 @@ export function StorageEventsModal({
 }: StorageEventsModalProps) {
   const [events, setEvents] = useState<AsyncStorageEvent[]>([]);
   const [isListening, setIsListening] = useState(false);
-  const [selectedConversation, setSelectedConversation] = useState<StorageKeyConversation | null>(null);
+  const [selectedConversation, setSelectedConversation] =
+    useState<StorageKeyConversation | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(new Set([devToolsStorageKeys.base]));
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
+    new Set([devToolsStorageKeys.base])
+  );
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Force re-render every 10 seconds to update relative times
   const [tick, setTick] = useState(0);
-  
+
   // Load saved filter patterns
   useEffect(() => {
     const loadFilters = async () => {
       try {
-        const saved = await AsyncStorage.getItem(devToolsStorageKeys.storage.filters());
+        const saved = await AsyncStorage.getItem(
+          devToolsStorageKeys.storage.filters()
+        );
         if (saved) {
           const patterns = JSON.parse(saved);
           setIgnoredPatterns(new Set(patterns));
         }
       } catch (error) {
-        console.warn('Failed to load storage filters:', error);
+        console.warn("Failed to load storage filters:", error);
       }
     };
-    
+
     if (visible) {
       loadFilters();
     }
   }, [visible]);
-  
+
   // Save filter patterns when they change
   useEffect(() => {
     const saveFilters = async () => {
@@ -84,22 +91,22 @@ export function StorageEventsModal({
           JSON.stringify(Array.from(ignoredPatterns))
         );
       } catch (error) {
-        console.warn('Failed to save storage filters:', error);
+        console.warn("Failed to save storage filters:", error);
       }
     };
-    
+
     if (visible && ignoredPatterns.size > 0) {
       saveFilters();
     }
   }, [ignoredPatterns, visible]);
-  
+
   useEffect(() => {
     if (visible && events.length > 0) {
       intervalRef.current = setInterval(() => {
-        setTick(prev => prev + 1);
+        setTick((prev) => prev + 1);
       }, 10000); // Update every 10 seconds
     }
-    
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -112,13 +119,17 @@ export function StorageEventsModal({
 
     // Add listener for AsyncStorage events
     const unsubscribe = addListener((event: AsyncStorageEvent) => {
-      console.log('[StorageEventsModal] Received event:', event.action, event.data);
+      console.log(
+        "[StorageEventsModal] Received event:",
+        event.action,
+        event.data
+      );
       // Add unique ID to each event
       const eventWithId = {
         ...event,
-        id: `${event.timestamp.getTime()}-${Math.random()}`
+        id: `${event.timestamp.getTime()}-${Math.random()}`,
       };
-      setEvents(prev => [eventWithId, ...prev.slice(0, 999)]); // Keep last 1000 events
+      setEvents((prev) => [eventWithId, ...prev.slice(0, 999)]); // Keep last 1000 events
     });
 
     // Check initial listening state
@@ -132,11 +143,11 @@ export function StorageEventsModal({
 
   const handleToggleListening = useCallback(async () => {
     if (isListening) {
-      console.log('[StorageEventsModal] Stopping listener');
+      console.log("[StorageEventsModal] Stopping listener");
       stopListening();
       setIsListening(false);
     } else {
-      console.log('[StorageEventsModal] Starting listener');
+      console.log("[StorageEventsModal] Starting listener");
       await startListening();
       setIsListening(true);
     }
@@ -147,12 +158,15 @@ export function StorageEventsModal({
     setSelectedConversation(null);
   }, []);
 
-  const handleConversationPress = useCallback((conversation: StorageKeyConversation) => {
-    setSelectedConversation(conversation);
-  }, []);
+  const handleConversationPress = useCallback(
+    (conversation: StorageKeyConversation) => {
+      setSelectedConversation(conversation);
+    },
+    []
+  );
 
   const handleTogglePattern = useCallback((pattern: string) => {
-    setIgnoredPatterns(prev => {
+    setIgnoredPatterns((prev) => {
       const next = new Set(prev);
       if (next.has(pattern)) {
         next.delete(pattern);
@@ -164,7 +178,7 @@ export function StorageEventsModal({
   }, []);
 
   const handleAddPattern = useCallback((pattern: string) => {
-    setIgnoredPatterns(prev => new Set([...prev, pattern]));
+    setIgnoredPatterns((prev) => new Set([...prev, pattern]));
   }, []);
 
   const handleToggleFilters = useCallback(() => {
@@ -173,7 +187,7 @@ export function StorageEventsModal({
 
   const parseValue = (value: unknown): unknown => {
     if (value === null || value === undefined) return value;
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       try {
         return JSON.parse(value);
       } catch {
@@ -183,36 +197,38 @@ export function StorageEventsModal({
     return value;
   };
 
-  const getValueType = (value: unknown): StorageKeyConversation['valueType'] => {
+  const getValueType = (
+    value: unknown
+  ): StorageKeyConversation["valueType"] => {
     const parsed = parseValue(value);
-    if (parsed === null) return 'null';
-    if (parsed === undefined) return 'undefined';
-    if (Array.isArray(parsed)) return 'array';
-    if (typeof parsed === 'boolean') return 'boolean';
-    if (typeof parsed === 'number') return 'number';
-    if (typeof parsed === 'string') return 'string';
-    if (typeof parsed === 'object') return 'object';
-    return 'undefined';
+    if (parsed === null) return "null";
+    if (parsed === undefined) return "undefined";
+    if (Array.isArray(parsed)) return "array";
+    if (typeof parsed === "boolean") return "boolean";
+    if (typeof parsed === "number") return "number";
+    if (typeof parsed === "string") return "string";
+    if (typeof parsed === "object") return "object";
+    return "undefined";
   };
 
   // Group events by key and create conversations
   const conversations = useMemo(() => {
     const keyMap = new Map<string, StorageKeyConversation>();
-    
-    events.forEach(event => {
+
+    events.forEach((event) => {
       if (!event.data?.key) return;
-      
+
       const key = event.data.key;
-      
+
       // Filter out keys that match ignored patterns
-      const shouldIgnore = Array.from(ignoredPatterns).some(pattern => 
+      const shouldIgnore = Array.from(ignoredPatterns).some((pattern) =>
         key.includes(pattern)
       );
-      
+
       if (shouldIgnore) return;
-      
+
       const existing = keyMap.get(key);
-      
+
       if (!existing) {
         keyMap.set(key, {
           key,
@@ -225,7 +241,7 @@ export function StorageEventsModal({
       } else {
         existing.events.push(event);
         existing.totalOperations++;
-        
+
         // Update last event if this one is newer
         if (event.timestamp > existing.lastEvent.timestamp) {
           existing.lastEvent = event;
@@ -234,34 +250,35 @@ export function StorageEventsModal({
         }
       }
     });
-    
+
     // Convert to array and sort by last updated
-    return Array.from(keyMap.values()).sort((a, b) => 
-      b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
+    return Array.from(keyMap.values()).sort(
+      (a, b) =>
+        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
     );
   }, [events, tick, ignoredPatterns]); // Include ignoredPatterns in dependencies
 
   const getActionColor = (action: string) => {
     switch (action) {
-      case 'setItem':
-      case 'multiSet':
-        return '#10B981'; // Green for write
-      case 'removeItem':
-      case 'multiRemove':
-      case 'clear':
-        return '#EF4444'; // Red for delete
-      case 'mergeItem':
-      case 'multiMerge':
-        return '#3B82F6'; // Blue for merge
+      case "setItem":
+      case "multiSet":
+        return "#10B981"; // Green for write
+      case "removeItem":
+      case "multiRemove":
+      case "clear":
+        return "#EF4444"; // Red for delete
+      case "mergeItem":
+      case "multiMerge":
+        return "#3B82F6"; // Blue for merge
       default:
-        return '#6B7280';
+        return "#6B7280";
     }
   };
 
   // FlashList optimization constants
   const ESTIMATED_ITEM_SIZE = 80;
   const END_REACHED_THRESHOLD = 0.8;
-  
+
   // Stable keyExtractor for FlashList
   const keyExtractor = useCallback((item: StorageKeyConversation) => {
     return item.key;
@@ -269,18 +286,24 @@ export function StorageEventsModal({
 
   // Stable getItemType for FlashList optimization
   const getItemType = useCallback(() => {
-    return 'conversation';
+    return "conversation";
   }, []);
 
   // Create stable ref for event handler
-  const selectConversationRef = useRef<((conversation: StorageKeyConversation) => void) | undefined>(undefined);
+  const selectConversationRef = useRef<
+    ((conversation: StorageKeyConversation) => void) | undefined
+  >(undefined);
   selectConversationRef.current = handleConversationPress;
 
   // Memoized renderItem to prevent re-creation
   const renderItem = useMemo(() => {
-    return ({ item }: { item: StorageKeyConversation }) => {
+    const StorageConversationItem = ({
+      item,
+    }: {
+      item: StorageKeyConversation;
+    }) => {
       const parsed = parseValue(item.currentValue);
-      
+
       return (
         <TouchableOpacity
           style={styles.conversationItem}
@@ -289,29 +312,42 @@ export function StorageEventsModal({
           sentry-label="ignore storage conversation item"
         >
           <View style={styles.conversationRow}>
-            {/* Key name and metadata row */}
             <View style={styles.conversationMain}>
               <Text style={styles.conversationKey} numberOfLines={1}>
                 {item.key}
               </Text>
-              
-              {/* Metadata row */}
+
               <View style={styles.conversationMeta}>
                 <View style={styles.metaLeft}>
                   <Text style={styles.metaText}>
-                    {item.totalOperations} {item.totalOperations === 1 ? 'operation' : 'operations'}
+                    {item.totalOperations}{" "}
+                    {item.totalOperations === 1 ? "operation" : "operations"}
                   </Text>
                   <Text style={styles.metaDot}>•</Text>
-                  <ValueTypeBadge 
-                    type={item.valueType} 
+                  <ValueTypeBadge
+                    type={item.valueType}
                     value={parsed}
                     size="small"
                   />
                 </View>
-                
+
                 <View style={styles.metaRight}>
-                  <View style={[styles.actionBadge, { backgroundColor: `${getActionColor(item.lastEvent.action)}20` }]}>
-                    <Text style={[styles.actionText, { color: getActionColor(item.lastEvent.action) }]}>
+                  <View
+                    style={[
+                      styles.actionBadge,
+                      {
+                        backgroundColor: `${getActionColor(
+                          item.lastEvent.action
+                        )}20`,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.actionText,
+                        { color: getActionColor(item.lastEvent.action) },
+                      ]}
+                    >
                       {item.lastEvent.action}
                     </Text>
                   </View>
@@ -326,6 +362,8 @@ export function StorageEventsModal({
         </TouchableOpacity>
       );
     };
+    StorageConversationItem.displayName = "StorageConversationItem";
+    return StorageConversationItem;
   }, [tick]); // Re-render when tick changes to update relative times
 
   const storagePrefix = enableSharedModalDimensions
@@ -339,7 +377,7 @@ export function StorageEventsModal({
         <Text style={styles.headerStatsText}>{conversations.length} keys</Text>
         {isListening && <View style={styles.listeningIndicator} />}
       </View>
-      
+
       {/* Action buttons in header */}
       <View style={styles.headerActions}>
         <TouchableOpacity
@@ -347,7 +385,7 @@ export function StorageEventsModal({
           onPress={handleToggleListening}
           style={[
             styles.headerActionButton,
-            isListening ? styles.stopButton : styles.startButton
+            isListening ? styles.stopButton : styles.startButton,
           ]}
         >
           {isListening ? (
@@ -362,7 +400,7 @@ export function StorageEventsModal({
           onPress={handleToggleFilters}
           style={[
             styles.headerActionButton,
-            showFilters && styles.filterButtonActive
+            showFilters && styles.filterButtonActive,
           ]}
         >
           <Filter size={14} color={showFilters ? "#3B82F6" : "#6B7280"} />
@@ -439,10 +477,9 @@ export function StorageEventsModal({
             <Database size={32} color="#374151" />
             <Text style={styles.emptyTitle}>No storage activity</Text>
             <Text style={styles.emptyText}>
-              {isListening 
-                ? 'Waiting for AsyncStorage operations...' 
-                : 'Start listening to capture storage events'
-              }
+              {isListening
+                ? "Waiting for AsyncStorage operations..."
+                : "Start listening to capture storage events"}
             </Text>
           </View>
         ) : (

@@ -1,19 +1,19 @@
 /**
  * Modal Performance Comparison
- * 
+ *
  * Tests three versions of the modal with increasing optimizations:
- * 
+ *
  * 1. ORIGINAL (ClaudeModalOriginal) - The unoptimized baseline
  *    - No performance optimizations
  *    - Basic implementation
  *    - Expected: Lowest FPS
- * 
+ *
  * 2. BASELINE/PURE (ClaudeModalPure) - Previous optimized version
  *    - Stable callbacks (useStableCallback)
  *    - Memoized components
  *    - RAF throttling
  *    - Expected: ~5-10% better than Original
- * 
+ *
  */
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
@@ -41,9 +41,9 @@ interface BenchmarkResult {
 
 export const ModalPerformanceComparison: React.FC = () => {
   const [results, setResults] = useState<BenchmarkResult[]>([]);
-  const [activeModal, setActiveModal] = useState<
-    "none" | "pure" | "original"
-  >("none");
+  const [activeModal, setActiveModal] = useState<"none" | "pure" | "original">(
+    "none"
+  );
   const [currentFps, setCurrentFps] = useState(0);
   const [testProgress, setTestProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -140,16 +140,15 @@ export const ModalPerformanceComparison: React.FC = () => {
 
   // Heavy JS work to stress the thread
   const stressJSThread = useCallback(() => {
-    let stressInterval: NodeJS.Timeout;
+    let stressInterval: ReturnType<typeof setInterval>;
 
     // Create heavy computation work
     stressInterval = setInterval(() => {
       // Simulate heavy JS work
       const start = Date.now();
-      let counter = 0;
       // Run for ~5ms per iteration
       while (Date.now() - start < 5) {
-        counter += Math.sqrt(Math.random() * 1000000);
+        // Do nothing
       }
     }, 10);
 
@@ -327,7 +326,7 @@ export const ModalPerformanceComparison: React.FC = () => {
 
   // Update live FPS display while running
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+    let intervalId: ReturnType<typeof setInterval>;
     if (isRunning && fpsMonitorRef.current) {
       // Update FPS display every 200ms
       intervalId = setInterval(() => {
@@ -483,7 +482,6 @@ export const ModalPerformanceComparison: React.FC = () => {
             >
               <Text style={styles.buttonTextSmall}>Baseline</Text>
             </Pressable>
-
           </View>
 
           {/* Current test indicator */}
@@ -549,7 +547,8 @@ export const ModalPerformanceComparison: React.FC = () => {
                   </Text>
                   {comparison.improvement !== "0" && (
                     <Text style={styles.winnerDetail}>
-                      Split Architecture is {comparison.improvement}% better than Pure Baseline
+                      Split Architecture is {comparison.improvement}% better
+                      than Pure Baseline
                     </Text>
                   )}
                 </View>

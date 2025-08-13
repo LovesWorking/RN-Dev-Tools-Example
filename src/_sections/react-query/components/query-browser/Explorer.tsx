@@ -14,6 +14,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { copyToClipboard } from "../../../../_shared/clipboard/copyToClipboard";
+import { NebulaInput } from "../shared/NebulaInput";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const CHUNK_SIZE = 100;
@@ -99,6 +100,15 @@ const CopyButton = React.memo(({ value }: { value: JsonValue }) => {
     </TouchableOpacity>
   );
 });
+// State for tracking focused inputs [[memory:4875251]]
+const InputFocusContext = React.createContext<{
+  focusedPath: string | null;
+  setFocusedPath: (path: string | null) => void;
+}>({
+  focusedPath: null,
+  setFocusedPath: () => {},
+});
+
 // Memoized DeleteItemButton component [[memory:4875251]]
 const DeleteItemButton = React.memo(
   ({
@@ -256,6 +266,8 @@ export default function Explorer({
   itemsDeletable,
 }: Props) {
   const queryClient = useQueryClient();
+  const [focusedPath, setFocusedPath] = useState<string | null>(null);
+  const isRootExplorer = !dataPath || dataPath.length === 0;
 
   // Explorer's section is expanded or collapsed
   const [isExpanded, setIsExpanded] = useState(
@@ -467,7 +479,6 @@ export default function Explorer({
         )}
         {subEntryPages.length === 0 && (
           <View style={styles.flexRowGapFullWidth}>
-            <Text style={styles.text344054}>{label}:</Text>
             {editable &&
             activeQuery !== undefined &&
             (valueType === "string" ||
@@ -477,12 +488,11 @@ export default function Explorer({
                 {editable &&
                   activeQuery &&
                   (valueType === "string" || valueType === "number") && (
-                    <View style={styles.inputContainer}>
-                      <TextInput
-                        sentry-label="ignore devtools data input field"
+                    <View style={styles.nebulaInputWrapper}>
+                      <NebulaInput
+                        label={label}
                         accessibilityLabel="Data input field for editing values"
                         style={[
-                          styles.textInput,
                           valueType === "number"
                             ? styles.textNumber
                             : styles.textString,
@@ -498,7 +508,6 @@ export default function Explorer({
                         onChangeText={(newValue) =>
                           handleChange(valueType === "number", newValue)
                         }
-                        placeholderTextColor="#6B7280"
                       />
                       {valueType === "number" && (
                         <View style={styles.numberInputButtons}>
@@ -518,9 +527,9 @@ export default function Explorer({
                             <Svg
                               fill="none"
                               viewBox="0 0 24 24"
-                              stroke="#6B7280"
-                              width={12}
-                              height={12}
+                              stroke="#9333EA"
+                              width={14}
+                              height={14}
                             >
                               <Path
                                 d="M4.5 15.75l7.5-7.5 7.5 7.5"
@@ -544,9 +553,9 @@ export default function Explorer({
                             <Svg
                               fill="none"
                               viewBox="0 0 24 24"
-                              stroke="#6B7280"
-                              width={12}
-                              height={12}
+                              stroke="#9333EA"
+                              width={14}
+                              height={14}
                             >
                               <Path
                                 strokeLinecap="round"
@@ -569,7 +578,10 @@ export default function Explorer({
                 )}
               </>
             ) : (
-              <Text style={styles.displayValueText}>{displayValue(value)}</Text>
+              <>
+                <Text style={styles.text344054}>{label}:</Text>
+                <Text style={styles.displayValueText}>{displayValue(value)}</Text>
+              </>
             )}
             {editable && itemsDeletable && activeQuery !== undefined && (
               <DeleteItemButton
@@ -595,41 +607,41 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   buttonStyle2: {
-    backgroundColor: "rgba(249, 115, 22, 0.1)",
+    backgroundColor: "rgba(251, 146, 60, 0.08)",
     borderWidth: 1,
-    borderColor: "rgba(249, 115, 22, 0.2)",
-    borderRadius: 4,
+    borderColor: "rgba(251, 146, 60, 0.2)",
+    borderRadius: 6,
     flexDirection: "row",
     padding: 0,
     alignItems: "center",
     justifyContent: "center",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     position: "relative",
     zIndex: 10,
   },
   buttonStyle1: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    backgroundColor: "rgba(239, 68, 68, 0.08)",
     borderColor: "rgba(239, 68, 68, 0.2)",
     borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 6,
     padding: 0,
     alignItems: "center",
     justifyContent: "center",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     position: "relative",
   },
   buttonStyle: {
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderWidth: 1,
-    borderColor: "rgba(107, 114, 128, 0.2)",
-    borderRadius: 4,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 6,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     position: "relative",
   },
   expanderIcon: {
@@ -731,6 +743,15 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.06)",
     marginTop: 2,
   },
+  textNumber: {
+    color: "#60A5FA",
+    fontWeight: "600",
+    fontFamily: "monospace",
+  },
+  textString: {
+    color: "#E5E7EB",
+    fontFamily: "monospace",
+  },
   flexRowGapFullWidth: {
     flexDirection: "row",
     width: "100%",
@@ -744,49 +765,106 @@ const styles = StyleSheet.create({
     fontSize: 12,
     minWidth: 50,
   },
-  inputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    height: 36,
-    margin: 2,
-    paddingVertical: 8,
-    paddingLeft: 12,
-    paddingRight: 8,
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    flex: 1,
-  },
-  textNumber: {
-    color: "#3B82F6",
-    fontWeight: "500",
-  },
-  textInput: {
-    flex: 1,
-    marginRight: 8,
-    paddingBottom: 2,
-    paddingTop: 2,
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontFamily: "monospace",
-    fontWeight: "500",
-  },
-  textString: {},
   numberInputButtons: {
+    position: "absolute",
+    right: 10,
+    top: "50%",
+    transform: [{ translateY: -14 }],
     flexDirection: "row",
+    gap: 4,
+    zIndex: 10,
   },
   touchableButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: "rgba(23, 23, 23, 0.8)",
     borderWidth: 1,
-    borderColor: "rgba(107, 114, 128, 0.2)",
+    borderColor: "rgba(255, 255, 255, 0.05)",
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 4,
+    marginLeft: 2,
+    boxShadow: "-2px -2px 6px rgba(51, 68, 255, 0.1), 2px 2px 6px rgba(255, 51, 102, 0.1)",
+  },
+  nebulaInputWrapper: {
+    flex: 1,
+    position: "relative",
+    marginHorizontal: 4,
+    marginVertical: 2,
+  },
+  displayValueText: {
+    flex: 1,
+    color: "#9333EA",
+    fontWeight: "500",
+    fontFamily: "monospace",
+    fontSize: 13,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "rgba(23, 23, 23, 0.6)",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.05)",
+    boxShadow: "-2px -2px 5px rgba(51, 68, 255, 0.08), 2px 2px 5px rgba(255, 51, 102, 0.08)",
+  },
+  // New redesigned styles (kept for future use)
+  dataRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    minHeight: 44,
+    gap: 12,
+  },
+  dataLabel: {
+    color: "#9CA3AF",
+    fontSize: 13,
+    fontWeight: "500",
+    minWidth: 80,
+    flexShrink: 0,
+  },
+  dataValueContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inputWithActions: {
+    flex: 1,
+    position: "relative",
+  },
+  numberControls: {
+    position: "absolute",
+    right: 8,
+    top: "50%",
+    transform: [{ translateY: -16 }],
+    flexDirection: "column",
+    gap: 2,
+  },
+  numberButton: {
+    width: 32,
+    height: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.06)",
+  },
+  readOnlyValue: {
+    color: "#E5E7EB",
+    fontSize: 13,
+    fontFamily: "monospace",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.05)",
+    flex: 1,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    gap: 6,
+    paddingLeft: 8,
   },
   booleanContainer: {
     flexDirection: "row",
@@ -803,19 +881,6 @@ const styles = StyleSheet.create({
     color: "#F59E0B",
     fontWeight: "500",
     fontFamily: "monospace",
-  },
-  displayValueText: {
-    flex: 1,
-    color: "#10B981",
-    fontWeight: "500",
-    fontFamily: "monospace",
-    fontSize: 12,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    backgroundColor: "rgba(16, 185, 129, 0.05)",
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "rgba(16, 185, 129, 0.1)",
   },
   modernToggleButton: {
     flexDirection: "row",

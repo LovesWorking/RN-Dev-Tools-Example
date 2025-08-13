@@ -225,6 +225,7 @@ function initializeStorage(): void {
   if (hasInitializedStorage) return;
   hasInitializedStorage = true;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const asyncStorageModule = require("@react-native-async-storage/async-storage");
     AsyncStorageImpl = asyncStorageModule.default || asyncStorageModule;
   } catch {
