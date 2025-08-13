@@ -1,5 +1,5 @@
 import { HardDrive } from "lucide-react-native";
-import { ConsoleSection } from "../../../_components/floating-bubble/console/ConsoleSection";
+import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
 import { useStorageQueryCounts } from "../../react-query/hooks/useStorageQueryCounts";
 
 interface StorageSectionProps {
@@ -27,14 +27,15 @@ export function StorageSection({ onPress }: StorageSectionProps) {
   };
 
   return (
-    <ConsoleSection
+    <CyberpunkConsoleSection
       id="storage"
       title="Storage"
       subtitle={getStorageSubtitle()}
       icon={HardDrive}
-      iconColor="#10B981"
-      iconBackgroundColor="rgba(16, 185, 129, 0.1)"
+      iconColor="#00FF88"
+      iconBackgroundColor="rgba(0, 255, 136, 0.1)"
       onPress={onPress}
+      index={2}
     />
   );
 }

@@ -1,6 +1,6 @@
 import { ScrollView } from "react-native";
 import { Settings } from "lucide-react-native";
-import { ConsoleSection } from "../../../_components/floating-bubble/console/ConsoleSection";
+import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
 import { EnvVarsContent } from "./EnvVarsContent";
 import { RequiredEnvVar } from "../types";
 
@@ -19,7 +19,7 @@ export function EnvVarsSection({
   envVarsSubtitle,
 }: EnvVarsSectionProps) {
   return (
-    <ConsoleSection
+    <CyberpunkConsoleSection
       id="env-vars"
       title="Environment Variables"
       subtitle={envVarsSubtitle}
@@ -27,6 +27,7 @@ export function EnvVarsSection({
       iconColor="#10B981"
       iconBackgroundColor="rgba(16, 185, 129, 0.1)"
       onPress={onPress}
+      index={0}
     />
   );
 }

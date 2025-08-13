@@ -1,9 +1,10 @@
-import { BaseFloatingModal } from "../../../_components/floating-bubble/modal/components/BaseFloatingModal";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { View, Text } from "react-native";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
+import { useState, useCallback } from "react";
 
 interface EnvVarsModalProps {
   visible: boolean;
@@ -26,6 +27,12 @@ export function EnvVarsModal({
   onBack,
   enableSharedModalDimensions = false,
 }: EnvVarsModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
+
   if (!visible) return null;
 
   const renderHeaderContent = () => (
@@ -54,15 +61,19 @@ export function EnvVarsModal({
     : devToolsStorageKeys.env.modal();
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <EnvVarsDetailContent requiredEnvVars={requiredEnvVars} />
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }

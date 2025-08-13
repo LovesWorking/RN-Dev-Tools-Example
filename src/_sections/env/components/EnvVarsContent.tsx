@@ -4,7 +4,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { useDynamicEnv } from "../hooks";
 import { RequiredEnvVar } from "../types";
 import { processEnvVars, calculateStats, getSubtitle } from "../utils";
-import { EnvVarStatsSection, EnvVarSection } from ".";
+import { EnvVarSection } from "./EnvVarSection";
+import { CyberpunkEnvVarStats } from "./CyberpunkEnvVarStats";
 import { displayValue } from "../../../_shared/utils/displayValue";
 
 interface EnvVarsContentProps {
@@ -45,7 +46,7 @@ export function EnvVarsContent({ requiredEnvVars }: EnvVarsContentProps) {
   return (
     <View style={styles.container}>
       {/* Stats Section */}
-      <EnvVarStatsSection stats={stats} />
+      <CyberpunkEnvVarStats stats={stats} />
 
       {/* Required Variables Section */}
       <EnvVarSection
@@ -101,11 +102,14 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   helpText: {
-    color: "#6B7280",
+    color: "#00FFFF",
     fontSize: 9,
     textAlign: "center",
     paddingHorizontal: 4,
-    marginTop: 4,
+    marginTop: 8,
     lineHeight: 12,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    opacity: 0.5,
   },
 });

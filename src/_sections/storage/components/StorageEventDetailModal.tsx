@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { BaseFloatingModal } from "../../../_components/floating-bubble/modal";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import {
   View,
@@ -65,10 +65,15 @@ export function StorageEventDetailModal({
   onBack,
   enableSharedModalDimensions = false,
 }: StorageEventDetailModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [keyStats, setKeyStats] = useState<KeyStats | null>(null);
   const [showValueChanges, setShowValueChanges] = useState(true);
   const [showOperationHistory, setShowOperationHistory] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   // Force re-render every 10 seconds for relative times
   const [, setTick] = useState(0);
@@ -249,7 +254,7 @@ export function StorageEventDetailModal({
     }
   };
 
-  const storagePrefix = enableSharedModalDimensions
+  const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
     : `${devToolsStorageKeys.storage.eventsModal()}_detail`;
 
@@ -340,13 +345,17 @@ export function StorageEventDetailModal({
   const latestEvent = keyStats?.latestEvent || event;
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={persistenceKey}
+      header={{
+        showToggleButton: true,
+        customContent: renderHeaderContent()
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <ScrollView
         style={styles.container}
@@ -735,7 +744,7 @@ export function StorageEventDetailModal({
           </View>
         )}
       </ScrollView>
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }
 

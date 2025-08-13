@@ -1,4 +1,5 @@
-import { BaseFloatingModal } from "../../../_components/floating-bubble/modal";
+import { useState, useCallback } from "react";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
@@ -21,9 +22,15 @@ export function StorageModal({
   enableSharedModalDimensions = false,
   requiredStorageKeys = [],
 }: StorageModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
+
   if (!visible) return null;
 
-  const storagePrefix = enableSharedModalDimensions
+  const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.storage.modal();
 
@@ -61,19 +68,23 @@ export function StorageModal({
   );
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={persistenceKey}
+      header={{
+        showToggleButton: true,
+        customContent: renderHeaderContent()
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <StorageBrowserMode 
         selectedQuery={undefined}
         onQuerySelect={() => {}}
         requiredStorageKeys={requiredStorageKeys} 
       />
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }

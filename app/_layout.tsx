@@ -17,11 +17,6 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { View } from "react-native";
-import {
-  RnBetterDevToolsBubble,
-  UserRole,
-} from "@/src/_components/floating-bubble/bubble";
-import { createEnvVarConfig, Environment, envVar } from "@/src/_sections/env";
 
 // import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble/RnBetterDevToolsBubble";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -68,47 +63,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-  const userRole: UserRole = "admin";
-  const environment: Environment = "local";
-  const requiredEnvVars = createEnvVarConfig([
-    // 🟢 GREEN - Valid variables
-    envVar("EXPO_PUBLIC_API_URL").exists(), // ✓ Exists
-
-    envVar("EXPO_PUBLIC_DEBUG_MODE")
-      .withType("boolean")
-      .withDescription("Enable debug logging")
-      .build(), // ✓ Correct type
-
-    envVar("EXPO_PUBLIC_MAX_RETRIES").withType("number").build(), // ✓ Correct type
-
-    envVar("EXPO_PUBLIC_ENVIRONMENT").withValue("development").build(), // ✓ Correct value
-
-    // 🟠 ORANGE - Wrong values (exists but incorrect)
-    envVar("EXPO_PUBLIC_API_VERSION")
-      .withValue("v2")
-      .withDescription("API version (should be v2)")
-      .build(), // ⚠ Wrong value
-
-    envVar("EXPO_PUBLIC_REGION").withValue("us-east-1").build(), // ⚠ Wrong value
-
-    // 🔴 RED - Wrong types (exists but wrong type)
-    envVar("EXPO_PUBLIC_FEATURE_FLAGS")
-      .withDescription("Feature flags configuration object")
-      .withType("object")
-      .build(), // ⚠ Wrong type
-
-    envVar("EXPO_PUBLIC_PORT").withType("number").build(), // ⚠ Wrong type
-
-    // 🔴 RED - Missing variables
-    envVar("EXPO_PUBLIC_SENTRY_DSN").exists(), // ⚠ Missing
-
-    envVar("EXPO_PUBLIC_ANALYTICS_KEY")
-      .withDescription("Analytics service API key")
-      .withType("string")
-      .build(), // ⚠ Missing
-
-    envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
-  ]);
 
   if (!loaded) {
     return null;
@@ -132,12 +86,6 @@ export default function RootLayout() {
               <StatusBar style="light" />
             </ThemeProvider>
           </LinearGradient>
-          <RnBetterDevToolsBubble
-            queryClient={queryClient}
-            requiredEnvVars={requiredEnvVars}
-            userRole={userRole}
-            environment={environment}
-          />
         </View>
       </QueryClientWrapper>
     </GestureHandlerRootView>

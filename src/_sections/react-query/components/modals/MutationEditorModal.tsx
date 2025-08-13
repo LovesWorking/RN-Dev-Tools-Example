@@ -1,8 +1,12 @@
 import { Mutation } from "@tanstack/react-query";
-import { BaseFloatingModal } from "../../../../_components/floating-bubble/modal/components/BaseFloatingModal";
+import {
+  ClaudeModal,
+  ModalMode,
+} from "../../../../claudeModal/ClaudeModalPure";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { MutationEditorMode } from "../MutationEditorMode";
+import { useState, useCallback } from "react";
 
 interface MutationEditorModalProps {
   visible: boolean;
@@ -24,6 +28,11 @@ export function MutationEditorModal({
   enableSharedModalDimensions = false,
 }: MutationEditorModalProps) {
   const selectedMutation = useGetMutationById(selectedMutationId);
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   const renderHeaderContent = () => (
     <ReactQueryModalHeader
@@ -41,14 +50,22 @@ export function MutationEditorModal({
   if (!visible || !selectedMutation) return null;
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
-      <MutationEditorMode selectedMutation={selectedMutation} />
-    </BaseFloatingModal>
+      <MutationEditorMode
+        selectedMutation={selectedMutation}
+        isFloatingMode={modalMode === "floating"}
+      />
+    </ClaudeModal>
   );
 }

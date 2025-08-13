@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { BaseFloatingModal } from "../../../_components/floating-bubble/modal";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -48,6 +48,7 @@ export function StorageEventsModal({
   onBack,
   enableSharedModalDimensions = false,
 }: StorageEventsModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [events, setEvents] = useState<AsyncStorageEvent[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [selectedConversation, setSelectedConversation] =
@@ -57,6 +58,10 @@ export function StorageEventsModal({
     new Set([devToolsStorageKeys.base])
   );
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   // Force re-render every 10 seconds to update relative times
   const [tick, setTick] = useState(0);
@@ -437,20 +442,24 @@ export function StorageEventsModal({
   // Show filter view if filters are active
   if (showFilters) {
     return (
-      <BaseFloatingModal
+      <ClaudeModal
         visible={visible}
         onClose={onClose}
-        storagePrefix={storagePrefix}
-        showToggleButton={true}
-        customHeaderContent={
-          <View style={styles.headerContainer}>
-            <BackButton onPress={() => setShowFilters(false)} />
-            <View style={styles.headerInfo}>
-              <Text style={styles.headerTitle}>Filter Storage Events</Text>
+        persistenceKey={storagePrefix}
+        header={{
+          customContent: (
+            <View style={styles.headerContainer}>
+              <BackButton onPress={() => setShowFilters(false)} />
+              <View style={styles.headerInfo}>
+                <Text style={styles.headerTitle}>Filter Storage Events</Text>
+              </View>
             </View>
-          </View>
-        }
-        headerSubtitle={undefined}
+          ),
+          showToggleButton: true,
+        }}
+        onModeChange={handleModeChange}
+        enablePersistence={true}
+        initialMode="bottomSheet"
       >
         <StorageFilterView
           ignoredPatterns={ignoredPatterns}
@@ -458,18 +467,22 @@ export function StorageEventsModal({
           onAddPattern={handleAddPattern}
           onBack={() => setShowFilters(false)}
         />
-      </BaseFloatingModal>
+      </ClaudeModal>
     );
   }
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <View style={styles.container}>
         {conversations.length === 0 ? (
@@ -498,7 +511,7 @@ export function StorageEventsModal({
           />
         )}
       </View>
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }
 

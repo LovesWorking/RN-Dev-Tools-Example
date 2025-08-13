@@ -1,6 +1,7 @@
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { ExpandableSectionHeader } from "../../../_shared/ui/components/ExpandableSectionHeader";
+import { GalaxyButton } from "./GalaxyButton";
 
 // Stable constants moved to module scope to prevent re-renders [[memory:4875251]]
 
@@ -29,12 +30,7 @@ export function ConsoleSection({
   onPress,
 }: ConsoleSectionProps) {
   return (
-    <Pressable
-      sentry-label="ignore devtools console section"
-      onPress={onPress}
-      style={styles.sectionCard}
-      android_ripple={{ color: "rgba(255, 255, 255, 0.1)" }}
-    >
+    <GalaxyButton onPress={onPress} style={styles.sectionCard}>
       <View style={styles.sectionCardContent}>
         <ExpandableSectionHeader
           title={title}
@@ -46,17 +42,12 @@ export function ConsoleSection({
           onPress={onPress}
         />
       </View>
-    </Pressable>
+    </GalaxyButton>
   );
 }
 
 const styles = StyleSheet.create({
   sectionCard: {
-    backgroundColor: "#1F1F1F", // Match ExpandableSection background
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)", // Match ExpandableSection border
-    overflow: "hidden",
     marginBottom: 16, // Match ExpandableSection spacing
   },
 

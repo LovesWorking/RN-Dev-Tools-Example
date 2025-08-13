@@ -347,7 +347,7 @@ function useFloatingToolsPosition({
       } as const;
       return clamped;
     },
-    [visibleHandleWidth, bubbleHeight, bubbleWidth]
+    [visibleHandleWidth, bubbleHeight]
   );
 
   useEffect(() => {

@@ -1,8 +1,12 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import { BaseFloatingModal } from "../../../../_components/floating-bubble/modal/components/BaseFloatingModal";
+import {
+  ClaudeModal,
+  ModalMode,
+} from "../../../../claudeModal/ClaudeModalPure";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { DataEditorMode } from "../DataEditorMode";
+import { useState, useCallback } from "react";
 
 interface DataEditorModalProps {
   visible: boolean;
@@ -28,6 +32,11 @@ export function DataEditorModal({
   onTabChange,
 }: DataEditorModalProps) {
   const selectedQuery = useGetQueryByQueryKey(selectedQueryKey);
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   const renderHeaderContent = () => (
     <ReactQueryModalHeader
@@ -45,14 +54,22 @@ export function DataEditorModal({
   if (!visible || !selectedQuery) return null;
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
-      <DataEditorMode selectedQuery={selectedQuery} />
-    </BaseFloatingModal>
+      <DataEditorMode
+        selectedQuery={selectedQuery}
+        isFloatingMode={modalMode === "floating"}
+      />
+    </ClaudeModal>
   );
 }

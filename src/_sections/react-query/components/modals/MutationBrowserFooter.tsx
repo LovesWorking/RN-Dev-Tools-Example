@@ -27,7 +27,7 @@ export function MutationBrowserFooter({
     <View
       style={[
         styles.filterFooter,
-        { paddingBottom: insets.bottom + 8 },
+        { paddingBottom: !isFloatingMode ? insets.bottom + 8 : 0 },
         // Remove border radius when docked to bottom
         !isFloatingMode && styles.dockedFooter,
       ]}

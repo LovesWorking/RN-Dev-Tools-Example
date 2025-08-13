@@ -1,5 +1,6 @@
+import { useState, useCallback } from "react";
 import { Text, View } from "react-native";
-import { BaseFloatingModal } from "../modal/components/BaseFloatingModal";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { BubbleSettingsDetail, type BubbleVisibilitySettings } from "../../../_sections/settings";
 import { ChevronLeft, Settings } from "lucide-react-native";
 import { TouchableOpacity } from "react-native";
@@ -19,9 +20,15 @@ export function BubbleSettingsModal({
   enableSharedModalDimensions = false,
   onSettingsChange,
 }: BubbleSettingsModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
+
   if (!visible) return null;
 
-  const storagePrefix = enableSharedModalDimensions
+  const persistenceKey = enableSharedModalDimensions
     ? "@dev_tools_console_modal"
     : "@bubble_settings_modal";
 
@@ -66,15 +73,20 @@ export function BubbleSettingsModal({
   );
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle="Configure bubble buttons"
+      persistenceKey={persistenceKey}
+      header={{
+        showToggleButton: true,
+        customContent: renderHeaderContent(),
+        subtitle: "Configure bubble buttons"
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <BubbleSettingsDetail onSettingsChange={onSettingsChange} />
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }

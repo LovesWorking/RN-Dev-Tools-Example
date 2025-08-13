@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -19,7 +19,7 @@ import {
   XCircle,
   Clock
 } from 'lucide-react-native';
-import { BaseFloatingModal } from '../../../_components/floating-bubble/modal/components/BaseFloatingModal';
+import { ClaudeModal, ModalMode } from '../../../claudeModal/ClaudeModalPure';
 import { BackButton } from '../../../_shared/ui/components/BackButton';
 import { devToolsStorageKeys } from '../../../_shared/storage/devToolsStorageKeys';
 import { NetworkEventItemCompact } from './NetworkEventItemCompact';
@@ -59,6 +59,7 @@ function NetworkModalInner({
   onBack,
   enableSharedModalDimensions = false,
 }: NetworkModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const {
     events,
     stats,
@@ -73,6 +74,10 @@ function NetworkModalInner({
   const [showFilterView, setShowFilterView] = useState(false);
   const [searchText, setSearchText] = useState('');
   const flatListRef = useRef<FlashList<NetworkEvent>>(null);
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   // Simple handlers - no useCallback needed per rule2
   const handleEventPress = (event: NetworkEvent) => {
@@ -184,7 +189,7 @@ function NetworkModalInner({
     </View>
   );
 
-  const storagePrefix = enableSharedModalDimensions
+  const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.network.modal();
 
@@ -193,13 +198,17 @@ function NetworkModalInner({
   // Show detail view if an event is selected
   if (selectedEvent) {
     return (
-      <BaseFloatingModal
+      <ClaudeModal
         visible={visible}
         onClose={onClose}
-        storagePrefix={storagePrefix}
-        showToggleButton={true}
-        customHeaderContent={renderHeaderContent()}
-        headerSubtitle={undefined}
+        persistenceKey={persistenceKey}
+        header={{
+          showToggleButton: true,
+          customContent: renderHeaderContent()
+        }}
+        onModeChange={handleModeChange}
+        enablePersistence={true}
+        initialMode="bottomSheet"
       >
         <View style={styles.container}>
           <NetworkEventDetailView
@@ -207,18 +216,22 @@ function NetworkModalInner({
             onBack={handleBack}
           />
         </View>
-      </BaseFloatingModal>
+      </ClaudeModal>
     );
   }
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={persistenceKey}
+      header={{
+        showToggleButton: true,
+        customContent: renderHeaderContent()
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <View style={styles.container}>
         {/* Show filter view if active */}
@@ -284,7 +297,7 @@ function NetworkModalInner({
           </>
         )}
       </View>
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }
 

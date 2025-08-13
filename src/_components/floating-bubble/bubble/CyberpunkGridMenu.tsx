@@ -11,8 +11,7 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
+import { CyberpunkGlitchBackground } from "./CyberpunkGlitchBackground";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
 import {
   DatabaseIcon,
@@ -33,9 +32,6 @@ interface MagneticGridMenuProps {
   isWifiEnabled?: boolean;
   buttonPosition?: { x: number; y: number };
 }
-
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export function CyberpunkGridMenu({
   onQueryPress,
@@ -64,13 +60,15 @@ export function CyberpunkGridMenu({
     pulse: useSharedValue(0),
     shadowIntensity: useSharedValue(0),
     matrixGlow: useSharedValue(0),
+    glitchX: useSharedValue(0),
+    glitchY: useSharedValue(0),
+    glitchOpacity: useSharedValue(0),
+    glitchScale: useSharedValue(1),
   }));
 
   const backdropOpacity = useSharedValue(0);
   const scanlinePosition = useSharedValue(0);
   const glitchEffect = useSharedValue(0);
-  const matrixRain = useSharedValue(0);
-  const codeScroll = useSharedValue(0);
 
   const getHexPosition = (index: number) => {
     const angle = (index * Math.PI * 2) / 6;
@@ -82,33 +80,13 @@ export function CyberpunkGridMenu({
   };
 
   const handleOpen = () => {
-    backdropOpacity.value = withTiming(0.98, { duration: 300 });
-
-    // Matrix rain effect
-    matrixRain.value = withRepeat(
-      withTiming(1, { 
-        duration: 2000, 
-        easing: Easing.linear 
-      }),
-      -1,
-      false
-    );
-
-    // Code scrolling effect
-    codeScroll.value = withRepeat(
-      withTiming(1, { 
-        duration: 5000, 
-        easing: Easing.linear 
-      }),
-      -1,
-      false
-    );
+    backdropOpacity.value = withTiming(0.9, { duration: 300 });
 
     // Start scanline animation
     scanlinePosition.value = withRepeat(
-      withTiming(1, { 
-        duration: 4000, 
-        easing: Easing.inOut(Easing.quad) 
+      withTiming(1, {
+        duration: 4000,
+        easing: Easing.inOut(Easing.quad),
       }),
       -1,
       true
@@ -140,7 +118,10 @@ export function CyberpunkGridMenu({
       item.translateY.value = withDelay(
         delay,
         withSequence(
-          withTiming(pos.y + 100, { duration: 400, easing: Easing.in(Easing.quad) }),
+          withTiming(pos.y + 100, {
+            duration: 400,
+            easing: Easing.in(Easing.quad),
+          }),
           withSpring(pos.y, {
             damping: 6,
             stiffness: 120,
@@ -171,7 +152,7 @@ export function CyberpunkGridMenu({
       );
 
       item.opacity.value = withDelay(
-        delay, 
+        delay,
         withSequence(
           withTiming(0.2, { duration: 50 }),
           withTiming(1, { duration: 30 }),
@@ -191,43 +172,84 @@ export function CyberpunkGridMenu({
         })
       );
 
-      // Continuous pulse effect
-      item.pulse.value = withDelay(
-        delay + 300,
+      // Simplified pulse - only for first 3 items
+      if (index < 3) {
+        item.pulse.value = withDelay(
+          delay + 300,
+          withRepeat(
+            withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+            -1,
+            true
+          )
+        );
+      }
+
+      // Simplified Matrix glow - less frequent
+      if (index === 0 || index === 3) {
+        // Only glow 2 items
+        item.matrixGlow.value = withDelay(
+          delay + 400,
+          withRepeat(
+            withSequence(
+              withTiming(0, { duration: 4000 }),
+              withTiming(1, { duration: 300 }),
+              withTiming(0, { duration: 300 })
+            ),
+            -1,
+            false
+          )
+        );
+      }
+
+      // Advanced glitch effect animation
+      item.glitchOpacity.value = withDelay(
+        delay + 500,
         withRepeat(
           withSequence(
-            withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.sin) }),
-            withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.sin) })
+            withTiming(0, { duration: 3000 + index * 500 }),
+            withTiming(1, { duration: 50 }),
+            withTiming(0, { duration: 30 }),
+            withTiming(0.8, { duration: 40 }),
+            withTiming(0, { duration: 20 }),
+            withTiming(0.6, { duration: 30 }),
+            withTiming(0, { duration: 50 })
           ),
           -1,
           false
         )
       );
 
-      // Matrix glow effect
-      item.matrixGlow.value = withDelay(
-        delay + 400,
-        withRepeat(
-          withSequence(
-            withTiming(0, { duration: 2000 + Math.random() * 1000 }),
-            withTiming(1, { duration: 200 }),
-            withTiming(0.7, { duration: 100 }),
-            withTiming(1, { duration: 150 }),
-            withTiming(0, { duration: 300 })
-          ),
-          -1,
-          false
-        )
-      );
-
-      // Random glitch for each item
-      item.glitch.value = withRepeat(
+      // Glitch displacement animation
+      item.glitchX.value = withRepeat(
         withSequence(
-          withTiming(0, { duration: Math.random() * 4000 + 3000 }),
-          withTiming(1, { duration: 20 }),
-          withTiming(0, { duration: 30 }),
-          withTiming(1, { duration: 25 }),
+          withTiming(0, { duration: 4000 + index * 300 }),
+          withTiming(5, { duration: 20 }),
+          withTiming(-5, { duration: 20 }),
+          withTiming(3, { duration: 20 }),
           withTiming(0, { duration: 20 })
+        ),
+        -1,
+        false
+      );
+
+      item.glitchY.value = withRepeat(
+        withSequence(
+          withTiming(0, { duration: 3500 + index * 400 }),
+          withTiming(-3, { duration: 30 }),
+          withTiming(2, { duration: 20 }),
+          withTiming(0, { duration: 30 })
+        ),
+        -1,
+        false
+      );
+
+      // Glitch scale effect
+      item.glitchScale.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 5000 + index * 200 }),
+          withTiming(1.02, { duration: 20 }),
+          withTiming(0.98, { duration: 20 }),
+          withTiming(1, { duration: 20 })
         ),
         -1,
         false
@@ -256,25 +278,15 @@ export function CyberpunkGridMenu({
     opacity: 0.3,
   }));
 
-  const matrixRainStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: matrixRain.value * (screenHeight + 200) - 200,
-      },
-    ],
-  }));
-
   const itemAnimatedStyles = items.map((item) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const animatedStyle = useAnimatedStyle(() => {
-      const glitchX = item.glitch.value * (Math.random() - 0.5) * 15;
-      const glitchY = item.glitch.value * (Math.random() - 0.5) * 15;
       const pulseScale = interpolate(item.pulse.value, [0, 1], [1, 1.05]);
-      
+
       return {
         transform: [
-          { translateX: item.translateX.value + item.magnetX.value + glitchX },
-          { translateY: item.translateY.value + item.magnetY.value + glitchY },
+          { translateX: item.translateX.value + item.magnetX.value },
+          { translateY: item.translateY.value + item.magnetY.value },
           { scale: item.scale.value * pulseScale },
           { rotate: `${item.rotation.value}deg` },
         ],
@@ -286,7 +298,7 @@ export function CyberpunkGridMenu({
     const shadowStyle = useAnimatedStyle(() => {
       const intensity = item.shadowIntensity.value;
       const glow = item.matrixGlow.value;
-      
+
       return {
         shadowOpacity: intensity * (0.8 + glow * 0.2),
         shadowRadius: 20 + glow * 30,
@@ -294,7 +306,19 @@ export function CyberpunkGridMenu({
       };
     });
 
-    return { animatedStyle, shadowStyle };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const glitchStyle = useAnimatedStyle(() => {
+      return {
+        opacity: item.glitchOpacity.value,
+        transform: [
+          { translateX: item.glitchX.value },
+          { translateY: item.glitchY.value },
+          { scale: item.glitchScale.value },
+        ],
+      };
+    });
+
+    return { animatedStyle, shadowStyle, glitchStyle };
   });
 
   const menuItems = [
@@ -364,56 +388,13 @@ export function CyberpunkGridMenu({
 
   return (
     <View style={styles.container}>
+      {/* Background with Matrix Bubbles */}
       <Animated.View style={[styles.backdrop, backdropStyle]}>
         <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
-        
-        {/* Matrix rain effect - Multiple layers */}
-        <Animated.View style={[styles.matrixRain, matrixRainStyle]} pointerEvents="none">
-          <Text style={styles.matrixText}>
-            {'01001101 01000001 01010100 01010010 01001001 01011000\n'.repeat(100)}
-            {'10110010 11100101 10101010 11110000 00001111 01010101\n'.repeat(100)}
-          </Text>
-        </Animated.View>
-        
-        {/* Secondary matrix rain with different timing */}
-        <Animated.View 
-          style={[
-            styles.matrixRain, 
-            matrixRainStyle,
-            { opacity: 0.02, left: 50 }
-          ]} 
-          pointerEvents="none"
-        >
-          <Text style={[styles.matrixText, { color: '#FF00FF' }]}>
-            {'11001100 00110011 10101010 01010101 11110000 00001111\n'.repeat(80)}
-          </Text>
-        </Animated.View>
-        
-        {/* Multiple scanlines */}
-        <Animated.View style={[styles.scanline, scanlineStyle]} pointerEvents="none" />
-        <Animated.View 
-          style={[
-            styles.scanline, 
-            scanlineStyle,
-            { backgroundColor: '#FF00FF', opacity: 0.15, height: 1 }
-          ]} 
-          pointerEvents="none" 
-        />
-        <Animated.View 
-          style={[
-            styles.scanline, 
-            scanlineStyle,
-            { backgroundColor: '#00FF88', opacity: 0.1, height: 3, shadowRadius: 30 }
-          ]} 
-          pointerEvents="none" 
-        />
-        
-        {/* Grid pattern overlay with glow */}
-        <View style={styles.gridPattern} pointerEvents="none" />
-        
-        {/* Digital noise overlay */}
-        <View style={styles.digitalNoise} pointerEvents="none" />
       </Animated.View>
+
+      {/* Cyberpunk glitch background */}
+      <CyberpunkGlitchBackground />
 
       <View
         style={[
@@ -425,7 +406,8 @@ export function CyberpunkGridMenu({
         ]}
       >
         {menuItems.map((item, index) => {
-          const { animatedStyle, shadowStyle } = itemAnimatedStyles[index];
+          const { animatedStyle, shadowStyle, glitchStyle } =
+            itemAnimatedStyles[index];
 
           return (
             <Animated.View
@@ -433,51 +415,51 @@ export function CyberpunkGridMenu({
               style={[styles.itemWrapper, animatedStyle]}
             >
               {/* Epic neo-morphic shadow layers */}
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.shadowLayer,
                   styles.shadowLayerDark,
                   shadowStyle,
-                  { 
-                    shadowColor: '#000000',
-                  }
-                ]} 
+                  {
+                    shadowColor: "#000000",
+                  },
+                ]}
               />
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.shadowLayer,
                   styles.shadowLayerLight,
                   shadowStyle,
-                  { 
+                  {
                     shadowColor: item.primaryColor,
-                  }
-                ]} 
+                  },
+                ]}
               />
-              
+
               {/* Multi-layer neo-morphic glow effect */}
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.outerGlow,
                   shadowStyle,
-                  { 
+                  {
                     shadowColor: item.primaryColor,
                     backgroundColor: `${item.primaryColor}08`,
-                  }
-                ]} 
+                  },
+                ]}
               />
-              
+
               {/* Additional glow ring */}
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.glowRing,
                   shadowStyle,
-                  { 
+                  {
                     borderColor: `${item.primaryColor}40`,
                     shadowColor: item.primaryColor,
-                  }
-                ]} 
+                  },
+                ]}
               />
-              
+
               <Pressable
                 onPress={item.onPress}
                 onPressIn={() => {
@@ -496,6 +478,26 @@ export function CyberpunkGridMenu({
                     withTiming(1, { duration: 100 }),
                     withTiming(0, { duration: 400 })
                   );
+                  // Intense glitch on press
+                  items[index].glitchOpacity.value = withSequence(
+                    withTiming(1, { duration: 20 }),
+                    withTiming(0, { duration: 30 }),
+                    withTiming(0.9, { duration: 20 }),
+                    withTiming(0, { duration: 40 }),
+                    withTiming(0.7, { duration: 30 }),
+                    withTiming(0, { duration: 50 })
+                  );
+                  items[index].glitchX.value = withSequence(
+                    withTiming(8, { duration: 20 }),
+                    withTiming(-8, { duration: 20 }),
+                    withTiming(5, { duration: 20 }),
+                    withTiming(0, { duration: 30 })
+                  );
+                  items[index].glitchScale.value = withSequence(
+                    withTiming(1.05, { duration: 20 }),
+                    withTiming(0.95, { duration: 20 }),
+                    withTiming(1, { duration: 30 })
+                  );
                 }}
                 onPressOut={() => {
                   items[index].scale.value = withSpring(1);
@@ -504,67 +506,119 @@ export function CyberpunkGridMenu({
                 }}
                 style={styles.hexItem}
               >
-                <LinearGradient
-                  colors={["rgba(0,0,0,0.98)", "rgba(10,10,10,0.95)", "rgba(20,20,20,0.92)"]}
-                  style={styles.innerGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  {/* Matrix-style blur backdrop */}
-                  <View style={styles.blurContainer}>
-                    <BlurView intensity={10} tint="dark" style={StyleSheet.absoluteFillObject} />
-                  </View>
-                  
+                <View style={styles.innerGradient}>
+                  {/* Gradient effect layers */}
+                  <View style={styles.gradientLayer1} />
+                  <View style={styles.gradientLayer2} />
+
+                  {/* Glitch overlay layer */}
+                  <Animated.View
+                    style={[
+                      styles.glitchOverlay,
+                      glitchStyle,
+                      {
+                        backgroundColor: `${item.primaryColor}20`,
+                        borderColor: item.primaryColor,
+                      },
+                    ]}
+                    pointerEvents="none"
+                  >
+                    <View style={styles.glitchContent}>
+                      {item.icon}
+                      <Text
+                        style={[
+                          styles.glitchText,
+                          { color: item.primaryColor },
+                        ]}
+                      >
+                        {"_"}
+                        {item.label}
+                        {"_"}
+                      </Text>
+                    </View>
+                  </Animated.View>
+
                   {/* Cyber border with corner accents */}
-                  <View 
+                  <View
                     style={[
                       styles.cyberBorder,
-                      { 
+                      {
                         borderColor: `${item.primaryColor}80`,
                         shadowColor: item.primaryColor,
-                      }
+                      },
                     ]}
                   >
                     {/* Corner accent pieces */}
-                    <View style={[styles.cornerAccent, styles.cornerTL, { backgroundColor: item.primaryColor }]} />
-                    <View style={[styles.cornerAccent, styles.cornerTR, { backgroundColor: item.secondaryColor }]} />
-                    <View style={[styles.cornerAccent, styles.cornerBL, { backgroundColor: item.secondaryColor }]} />
-                    <View style={[styles.cornerAccent, styles.cornerBR, { backgroundColor: item.primaryColor }]} />
-                    
+                    <View
+                      style={[
+                        styles.cornerAccent,
+                        styles.cornerTL,
+                        { backgroundColor: item.primaryColor },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.cornerAccent,
+                        styles.cornerTR,
+                        { backgroundColor: item.secondaryColor },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.cornerAccent,
+                        styles.cornerBL,
+                        { backgroundColor: item.secondaryColor },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.cornerAccent,
+                        styles.cornerBR,
+                        { backgroundColor: item.primaryColor },
+                      ]}
+                    />
+
                     {/* Scanning line effect */}
-                    <View 
+                    <View
                       style={[
                         styles.scanEffect,
-                        { backgroundColor: `${item.accentColor}30` }
-                      ]} 
+                        { backgroundColor: `${item.accentColor}30` },
+                      ]}
                     />
-                    
+
                     {/* Content container */}
                     <View style={styles.contentContainer}>
                       {/* Icon without background, just glow */}
-                      <View style={styles.iconWrapper}>
-                        {item.icon}
-                      </View>
-                      
+                      <View style={styles.iconWrapper}>{item.icon}</View>
+
                       {/* Matrix-style text labels */}
                       <View style={styles.labelContainer}>
-                        <Text style={[styles.label, { color: item.primaryColor }]}>
+                        <Text
+                          style={[styles.label, { color: item.primaryColor }]}
+                        >
                           {item.label}
                         </Text>
-                        <Text style={[styles.sublabel, { color: item.accentColor }]}>
+                        <Text
+                          style={[styles.sublabel, { color: item.accentColor }]}
+                        >
                           {item.sublabel}
                         </Text>
                       </View>
                     </View>
-                    
+
                     {/* Data stream effect */}
                     <View style={styles.dataStream}>
-                      <Text style={[styles.dataStreamText, { color: `${item.primaryColor}40` }]}>
-                        {'010101'}
+                      <Text
+                        style={[
+                          styles.dataStreamText,
+                          { color: `${item.primaryColor}40` },
+                        ]}
+                      >
+                        {"010101"}
                       </Text>
                     </View>
                   </View>
-                </LinearGradient>
+                </View>
               </Pressable>
             </Animated.View>
           );
@@ -581,23 +635,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.98)",
-  },
-  matrixRain: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    opacity: 0.05,
-  },
-  matrixText: {
-    color: "#00FF00",
-    fontSize: 11,
-    fontFamily: "monospace",
-    letterSpacing: 10,
-    lineHeight: 16,
-    textShadowColor: "#00FF00",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
   scanline: {
     position: "absolute",
@@ -653,10 +691,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
+    backgroundColor: "rgba(0,0,0,0.98)",
+    position: "relative",
   },
-  blurContainer: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.3,
+  gradientLayer1: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(10,10,10,0.95)",
+    opacity: 0.7,
+  },
+  gradientLayer2: {
+    position: "absolute",
+    top: "30%",
+    left: "30%",
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(20,20,20,0.92)",
+    opacity: 0.5,
+    borderTopLeftRadius: 50,
   },
   cyberBorder: {
     width: 101,
@@ -798,5 +853,32 @@ const styles = StyleSheet.create({
       rgba(255, 0, 255, 0.1) 3deg,
       transparent 4deg
     )`,
+  },
+  glitchOverlay: {
+    position: "absolute",
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    borderRadius: 6,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  glitchContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 6,
+  },
+  glitchText: {
+    fontSize: 11,
+    fontWeight: "900",
+    letterSpacing: 2,
+    fontFamily: "monospace",
+    marginLeft: 6,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
 });

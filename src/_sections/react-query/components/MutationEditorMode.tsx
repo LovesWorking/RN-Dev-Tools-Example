@@ -8,10 +8,12 @@ import { useMutationActionButtons } from "../hooks/useMutationActionButtons";
 
 interface MutationEditorModeProps {
   selectedMutation: Mutation;
+  isFloatingMode: boolean;
 }
 
 export function MutationEditorMode({
   selectedMutation,
+  isFloatingMode,
 }: MutationEditorModeProps) {
   const insets = useSafeAreaInsets();
   const actionButtons = useMutationActionButtons(selectedMutation);
@@ -53,7 +55,12 @@ export function MutationEditorMode({
       </ScrollView>
 
       {/* Action Footer with Safe Area */}
-      <View style={[styles.actionFooter, { paddingBottom: insets.bottom + 8 }]}>
+      <View
+        style={[
+          styles.actionFooter,
+          { paddingBottom: isFloatingMode ? 0 : insets.bottom + 8 },
+        ]}
+      >
         <View style={styles.actionsGrid}>
           {actionButtons.map((action, index) => (
             <ActionButton

@@ -4,12 +4,11 @@ import { useCallback, useState } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
-import { BaseFloatingModal } from "../../../../_components/floating-bubble/modal/components/BaseFloatingModal";
+import { ClaudeModal, ModalMode } from "../../../../claudeModal/ClaudeModalPure";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View } from "react-native";
 import { useSharedValue, withSpring } from "react-native-reanimated";
 import { SwipeIndicator } from "./SwipeIndicator";
-import { useModalState } from "../../../../_components/floating-bubble/modal/hooks/useModalState";
 import { devToolsStorageKeys } from "../../../../_shared/storage/devToolsStorageKeys";
 
 interface MutationBrowserModalProps {
@@ -40,11 +39,11 @@ export function MutationBrowserModal({
   const activeFilter = externalActiveFilter ?? internalActiveFilter;
   const setActiveFilter = externalOnFilterChange ?? setInternalActiveFilter;
 
-  // Get floating mode state for conditional styling
+  // Track modal mode for conditional styling
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const storagePrefix = enableSharedModalDimensions
     ? devToolsStorageKeys.reactQuery.modal()
     : devToolsStorageKeys.reactQuery.mutationModal();
-  const modalState = useModalState({ storagePrefix });
 
   // Shared values for gesture tracking [[memory:4875251]]
   const translationX = useSharedValue(0);
@@ -57,6 +56,10 @@ export function MutationBrowserModal({
     },
     [onTabChange]
   );
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   const panGesture = Gesture.Pan()
     .onChange((event) => {
@@ -96,12 +99,17 @@ export function MutationBrowserModal({
   );
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <View style={{ flex: 1 }}>
         <GestureDetector gesture={panGesture}>
@@ -121,9 +129,9 @@ export function MutationBrowserModal({
         <MutationBrowserFooter
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-          isFloatingMode={modalState.isFloatingMode}
+          isFloatingMode={modalMode === "floating"}
         />
       </View>
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }

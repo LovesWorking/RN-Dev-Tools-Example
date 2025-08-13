@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { BaseFloatingModal } from "../../../_components/floating-bubble/modal/components/BaseFloatingModal";
+import { useState, useCallback } from "react";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { SentryLogsContent } from "./SentryLogsSection";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
@@ -34,6 +34,7 @@ export function SentryLogsModal({
   onBack,
   enableSharedModalDimensions = false,
 }: SentryLogsModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [selectedEntry, setSelectedEntry] =
     useState<ConsoleTransportEntry | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
@@ -42,6 +43,10 @@ export function SentryLogsModal({
     new Set()
   );
   const [isLoggingEnabled, setIsLoggingEnabled] = useState(true);
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
 
   // Get event counts
   const { entries: filteredEntries, totalCount } = useSentryEvents({
@@ -174,18 +179,22 @@ export function SentryLogsModal({
     );
   };
 
-  const storagePrefix = enableSharedModalDimensions
+  const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.sentry.modal();
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={persistenceKey}
+      header={{
+        showToggleButton: true,
+        customContent: renderHeaderContent()
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <SentryLogsContent
         selectedEntry={selectedEntry}
@@ -218,7 +227,7 @@ export function SentryLogsModal({
         }}
         isLoggingEnabled={isLoggingEnabled}
       />
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }
 

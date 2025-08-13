@@ -17,9 +17,13 @@ interface ActionButtonConfig {
 
 interface DataEditorModeProps {
   selectedQuery: Query;
+  isFloatingMode: boolean;
 }
 
-export function DataEditorMode({ selectedQuery }: DataEditorModeProps) {
+export function DataEditorMode({
+  selectedQuery,
+  isFloatingMode,
+}: DataEditorModeProps) {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const actionButtons = useActionButtons(selectedQuery, queryClient);
@@ -62,7 +66,12 @@ export function DataEditorMode({ selectedQuery }: DataEditorModeProps) {
       </ScrollView>
 
       {/* Action Footer with Safe Area */}
-      <View style={[styles.actionFooter, { paddingBottom: insets.bottom + 8 }]}>
+      <View
+        style={[
+          styles.actionFooter,
+          { paddingBottom: isFloatingMode ? 0 : insets.bottom + 8 },
+        ]}
+      >
         <View style={styles.actionsGrid}>
           {actionButtons.map((action: ActionButtonConfig, index: number) => (
             <ActionButton

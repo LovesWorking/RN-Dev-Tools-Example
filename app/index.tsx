@@ -29,10 +29,15 @@ import ReanimatedAnimated, {
   interpolate,
 } from "react-native-reanimated";
 import { useQueryClient } from "@tanstack/react-query";
-import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble";
+import {
+  RnBetterDevToolsBubble,
+  UserRole,
+} from "@/src/_components/floating-bubble/bubble";
 import ClaudeModalOriginal from "@/src/claudeModal/ClaudeModalOriginal";
 import ClaudeModalPure from "@/src/claudeModal/ClaudeModalPure";
 import ModalPerformanceComparison from "@/src/claudeModal/ModalPerformanceComparison";
+import { Environment } from "@/src/newDevTools/floatingTools";
+import { createEnvVarConfig, envVar } from "@/src/_sections/env";
 
 const { width, height } = Dimensions.get("window");
 const SCREEN = Dimensions.get("window");
@@ -753,13 +758,54 @@ export default function PokemonScreen() {
     },
     [pokemonStack]
   );
+  const userRole: UserRole = "admin";
+  const environment: Environment = "local";
+  const requiredEnvVars = createEnvVarConfig([
+    // 🟢 GREEN - Valid variables
+    envVar("EXPO_PUBLIC_API_URL").exists(), // ✓ Exists
 
+    envVar("EXPO_PUBLIC_DEBUG_MODE")
+      .withType("boolean")
+      .withDescription("Enable debug logging")
+      .build(), // ✓ Correct type
+
+    envVar("EXPO_PUBLIC_MAX_RETRIES").withType("number").build(), // ✓ Correct type
+
+    envVar("EXPO_PUBLIC_ENVIRONMENT").withValue("development").build(), // ✓ Correct value
+
+    // 🟠 ORANGE - Wrong values (exists but incorrect)
+    envVar("EXPO_PUBLIC_API_VERSION")
+      .withValue("v2")
+      .withDescription("API version (should be v2)")
+      .build(), // ⚠ Wrong value
+
+    envVar("EXPO_PUBLIC_REGION").withValue("us-east-1").build(), // ⚠ Wrong value
+
+    // 🔴 RED - Wrong types (exists but wrong type)
+    envVar("EXPO_PUBLIC_FEATURE_FLAGS")
+      .withDescription("Feature flags configuration object")
+      .withType("object")
+      .build(), // ⚠ Wrong type
+
+    envVar("EXPO_PUBLIC_PORT").withType("number").build(), // ⚠ Wrong type
+
+    // 🔴 RED - Missing variables
+    envVar("EXPO_PUBLIC_SENTRY_DSN").exists(), // ⚠ Missing
+
+    envVar("EXPO_PUBLIC_ANALYTICS_KEY")
+      .withDescription("Analytics service API key")
+      .withType("string")
+      .build(), // ⚠ Missing
+
+    envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
+  ]);
   return (
     <View style={styles.container}>
       <RnBetterDevToolsBubble
         queryClient={queryClient}
-        environment={"local"}
-        userRole={"admin"}
+        environment={environment}
+        userRole={userRole}
+        requiredEnvVars={requiredEnvVars}
       />
 
       {/* Premium Animated Background */}
@@ -1166,11 +1212,15 @@ export default function PokemonScreen() {
             colors={["rgba(255,100,0,0.25)", "rgba(255,100,0,0.1)"]}
             style={styles.debugGradient}
           >
-            <Ionicons name="speedometer" size={16} color="rgba(255,255,255,0.8)" />
+            <Ionicons
+              name="speedometer"
+              size={16}
+              color="rgba(255,255,255,0.8)"
+            />
             <Text style={styles.debugText}>Performance Test</Text>
           </LinearGradient>
         </TouchableOpacity>
-        
+
         {/* Original Modal Button */}
         <TouchableOpacity
           onPress={() => setOriginalModalVisible(true)}
@@ -1181,11 +1231,15 @@ export default function PokemonScreen() {
             colors={["rgba(150,150,150,0.25)", "rgba(150,150,150,0.1)"]}
             style={styles.debugGradient}
           >
-            <Ionicons name="cube-outline" size={16} color="rgba(255,255,255,0.8)" />
+            <Ionicons
+              name="cube-outline"
+              size={16}
+              color="rgba(255,255,255,0.8)"
+            />
             <Text style={styles.debugText}>Open Original Modal</Text>
           </LinearGradient>
         </TouchableOpacity>
-        
+
         {/* Baseline Modal Button */}
         <TouchableOpacity
           onPress={() => setBaselineModalVisible(true)}
@@ -1200,7 +1254,6 @@ export default function PokemonScreen() {
             <Text style={styles.debugText}>Open Baseline Modal</Text>
           </LinearGradient>
         </TouchableOpacity>
-        
 
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
@@ -1286,76 +1339,116 @@ export default function PokemonScreen() {
         onClose={() => setOriginalModalVisible(false)}
         persistenceKey="original-modal"
         header={{
-          title: 'Original Modal',
-          subtitle: 'No optimizations - Baseline performance',
+          title: "Original Modal",
+          subtitle: "No optimizations - Baseline performance",
           showToggleButton: true,
         }}
         initialHeight={400}
         enablePersistence={true}
       >
         <ScrollView style={{ flex: 1, padding: 20 }}>
-          <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
+          <Text
+            style={{
+              color: "#FFFFFF",
+              fontSize: 18,
+              fontWeight: "bold",
+              marginBottom: 15,
+            }}
+          >
             📦 Original Modal (Unoptimized)
           </Text>
-          <Text style={{ color: '#E5E7EB', fontSize: 14, lineHeight: 20, marginBottom: 20 }}>
-            This is the original implementation without any performance optimizations.
+          <Text
+            style={{
+              color: "#E5E7EB",
+              fontSize: 14,
+              lineHeight: 20,
+              marginBottom: 20,
+            }}
+          >
+            This is the original implementation without any performance
+            optimizations.
           </Text>
           <View style={{ marginBottom: 15 }}>
-            <Text style={{ color: '#FF6B6B', fontSize: 16, fontWeight: '600', marginBottom: 10 }}>
+            <Text
+              style={{
+                color: "#FF6B6B",
+                fontSize: 16,
+                fontWeight: "600",
+                marginBottom: 10,
+              }}
+            >
               ⚠️ No Optimizations
             </Text>
-            <Text style={{ color: '#9CA3AF', fontSize: 14, lineHeight: 20 }}>
-              • Callbacks recreated on every render{'\n'}
-              • No component memoization{'\n'}
-              • No RAF throttling{'\n'}
-              • Basic implementation
+            <Text style={{ color: "#9CA3AF", fontSize: 14, lineHeight: 20 }}>
+              • Callbacks recreated on every render{"\n"}• No component
+              memoization{"\n"}• No RAF throttling{"\n"}• Basic implementation
             </Text>
           </View>
         </ScrollView>
       </ClaudeModalOriginal>
-      
+
       {/* Baseline Modal (Previous Optimized) */}
       <ClaudeModalPure
         visible={baselineModalVisible}
         onClose={() => setBaselineModalVisible(false)}
         persistenceKey="baseline-modal"
         header={{
-          title: 'Baseline Modal',
-          subtitle: 'Stable callbacks + Memoization',
+          title: "Baseline Modal",
+          subtitle: "Stable callbacks + Memoization",
           showToggleButton: true,
         }}
         initialHeight={400}
         enablePersistence={true}
       >
         <ScrollView style={{ flex: 1, padding: 20 }}>
-          <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
+          <Text
+            style={{
+              color: "#FFFFFF",
+              fontSize: 18,
+              fontWeight: "bold",
+              marginBottom: 15,
+            }}
+          >
             ⚡ Baseline Modal (Optimized)
           </Text>
-          <Text style={{ color: '#E5E7EB', fontSize: 14, lineHeight: 20, marginBottom: 20 }}>
+          <Text
+            style={{
+              color: "#E5E7EB",
+              fontSize: 14,
+              lineHeight: 20,
+              marginBottom: 20,
+            }}
+          >
             This version includes our core performance optimizations.
           </Text>
           <View style={{ marginBottom: 15 }}>
-            <Text style={{ color: '#60A5FA', fontSize: 16, fontWeight: '600', marginBottom: 10 }}>
+            <Text
+              style={{
+                color: "#60A5FA",
+                fontSize: 16,
+                fontWeight: "600",
+                marginBottom: 10,
+              }}
+            >
               ✅ Optimizations
             </Text>
-            <Text style={{ color: '#9CA3AF', fontSize: 14, lineHeight: 20 }}>
-              • Stable callbacks (useStableCallback){'\n'}
-              • Memoized components{'\n'}
-              • RAF throttling for resize{'\n'}
-              • ~5-10% better than Original
+            <Text style={{ color: "#9CA3AF", fontSize: 14, lineHeight: 20 }}>
+              • Stable callbacks (useStableCallback){"\n"}• Memoized components
+              {"\n"}• RAF throttling for resize{"\n"}• ~5-10% better than
+              Original
             </Text>
           </View>
         </ScrollView>
       </ClaudeModalPure>
-      
+
       {/* Performance Test Modal */}
       <ClaudeModalPure
         visible={performanceTestVisible}
         onClose={() => setPerformanceTestVisible(false)}
         persistenceKey="performance-test-modal"
         header={{
-          title: 'Modal Performance Test',
-          subtitle: 'Compare Pure JS vs Optimized',
+          title: "Modal Performance Test",
+          subtitle: "Compare Pure JS vs Optimized",
           showToggleButton: true,
         }}
         initialHeight={600}

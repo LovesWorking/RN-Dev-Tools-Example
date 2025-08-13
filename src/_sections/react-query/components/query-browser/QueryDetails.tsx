@@ -11,7 +11,12 @@ export default function QueryDetails({ query }: Props) {
     return null;
   }
   // Convert the timestamp to a Date object and format it
-  const lastUpdated = new Date(query.state.dataUpdatedAt).toLocaleTimeString();
+  const lastUpdated = new Date(query.state.dataUpdatedAt).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
 
   return (
     <View style={styles.minWidth}>
@@ -42,29 +47,37 @@ export default function QueryDetails({ query }: Props) {
 const styles = StyleSheet.create({
   minWidth: {
     minWidth: 200,
-    backgroundColor: "#171717",
-    borderRadius: 8,
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(6, 182, 212, 0.3)",
     overflow: "hidden",
+    shadowColor: "#06B6D4",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   headerText: {
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
-    padding: 12,
+    backgroundColor: "rgba(6, 182, 212, 0.1)",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     fontWeight: "600",
-    fontSize: 14,
-    color: "#FFFFFF",
+    fontSize: 12,
+    color: "#06B6D4",
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.05)",
+    borderBottomColor: "rgba(6, 182, 212, 0.2)",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: "monospace",
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.02)",
+    borderBottomColor: "rgba(51, 65, 85, 0.4)",
   },
   flexOne: {
     flex: 1,
@@ -72,20 +85,30 @@ const styles = StyleSheet.create({
   },
   queryKeyText: {
     fontSize: 12,
-    color: "#F9FAFB",
+    color: "#F1F5F9",
     fontFamily: "monospace",
-    lineHeight: 16,
+    lineHeight: 18,
     flexShrink: 1,
+    backgroundColor: "rgba(8, 145, 178, 0.1)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "rgba(8, 145, 178, 0.3)",
   },
   labelText: {
-    fontSize: 12,
-    color: "#9CA3AF",
-    fontWeight: "500",
+    fontSize: 10,
+    color: "#94A3B8",
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: "monospace",
   },
   valueText: {
     fontSize: 12,
-    color: "#FFFFFF",
-    fontWeight: "600",
+    color: "#E2E8F0",
+    fontWeight: "500",
     fontVariant: ["tabular-nums"],
+    fontFamily: "monospace",
   },
 });

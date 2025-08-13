@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { ConsoleSection } from "../../../_components/floating-bubble/console/ConsoleSection";
+import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
 import { TanstackLogo } from "./query-browser/svgs";
 
 interface ReactQuerySectionProps {
@@ -23,14 +23,15 @@ export function ReactQuerySection({
   getRnBetterDevToolsSubtitle,
 }: ReactQuerySectionProps) {
   return (
-    <ConsoleSection
+    <CyberpunkConsoleSection
       id="rn-better-dev-tools"
       title="React Query"
       subtitle={getRnBetterDevToolsSubtitle()}
       icon={TanstackIcon as any}
-      iconColor="#00AAFF"
-      iconBackgroundColor="rgba(0, 170, 255, 0.1)"
+      iconColor="#FF006E"
+      iconBackgroundColor="rgba(255, 0, 110, 0.1)"
       onPress={onPress}
+      index={1}
     />
   );
 }

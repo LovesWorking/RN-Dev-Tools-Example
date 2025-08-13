@@ -1,4 +1,4 @@
-import { BaseFloatingModal } from "../modal/components/BaseFloatingModal";
+import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { ConsoleSectionList } from "./ConsoleSectionList";
 import { ReactQuerySection } from "./sections";
@@ -9,6 +9,7 @@ import { NetworkSection } from "../../../_sections/network";
 import { BubbleSettingsSection } from "../../../_sections/settings";
 import { SectionType } from "./DevToolsModalRouter";
 import { Text, View } from "react-native";
+import { useState, useCallback } from "react";
 
 interface DevToolsSectionListModalProps {
   visible: boolean;
@@ -35,6 +36,12 @@ export function DevToolsSectionListModal({
   envVarsSubtitle,
   enableSharedModalDimensions = false,
 }: DevToolsSectionListModalProps) {
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    setModalMode(mode);
+  }, []);
+
   if (!visible) return null;
 
   const storagePrefix = enableSharedModalDimensions
@@ -62,13 +69,17 @@ export function DevToolsSectionListModal({
   );
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
-      headerSubtitle={undefined}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <ConsoleSectionList>
         {/* <SentryLogsSection
@@ -93,6 +104,6 @@ export function DevToolsSectionListModal({
           onPress={() => onSectionSelect("bubble-settings")}
         />
       </ConsoleSectionList>
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }

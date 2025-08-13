@@ -346,7 +346,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
     hideCloseButton = false,
   } = config;
 
-  const headerProps = mode === "bottomSheet" && panHandlers ? panHandlers : {};
+  const headerProps = panHandlers ? panHandlers : {};
 
   return (
     <View style={[defaultStyles.header, styles.header]} {...headerProps}>
@@ -908,11 +908,12 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
             animatedBorderStyle,
           ]}
         >
-          <View {...dragPanResponder.panHandlers} style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
             <ModalHeader
               mode={mode}
               isResizing={isResizing}
               config={header}
+              panHandlers={dragPanResponder.panHandlers}
               onToggleMode={toggleMode}
               onClose={onClose}
               styles={customStyles}
@@ -925,33 +926,33 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           {/* Corner resize handles - matching original DragResizable */}
           <View
             {...resizeHandlers.topLeft.panHandlers}
-            style={[defaultStyles.cornerHandleWrapper, { top: -8, left: -8 }]}
+            style={[defaultStyles.cornerHandleWrapper, { top: 4, left: 4 }]}
           >
-            <CornerHandle position="topLeft" isActive={isResizing} />
+            <CornerHandle position="topLeft" isActive={isDragging || isResizing} />
           </View>
           <View
             {...resizeHandlers.topRight.panHandlers}
-            style={[defaultStyles.cornerHandleWrapper, { top: -8, right: -8 }]}
+            style={[defaultStyles.cornerHandleWrapper, { top: 4, right: 4 }]}
           >
-            <CornerHandle position="topRight" isActive={isResizing} />
+            <CornerHandle position="topRight" isActive={isDragging || isResizing} />
           </View>
           <View
             {...resizeHandlers.bottomLeft.panHandlers}
             style={[
               defaultStyles.cornerHandleWrapper,
-              { bottom: -8, left: -8 },
+              { bottom: 4, left: 4 },
             ]}
           >
-            <CornerHandle position="bottomLeft" isActive={isResizing} />
+            <CornerHandle position="bottomLeft" isActive={isDragging || isResizing} />
           </View>
           <View
             {...resizeHandlers.bottomRight.panHandlers}
             style={[
               defaultStyles.cornerHandleWrapper,
-              { bottom: -8, right: -8 },
+              { bottom: 4, right: 4 },
             ]}
           >
-            <CornerHandle position="bottomRight" isActive={isResizing} />
+            <CornerHandle position="bottomRight" isActive={isDragging || isResizing} />
           </View>
         </Animated.View>
       </View>
@@ -1137,43 +1138,41 @@ const defaultStyles = StyleSheet.create({
     zIndex: 1000,
   },
   topLeft: {
-    left: -8,
-    top: -8,
+    left: 4,
+    top: 4,
   },
   topRight: {
-    right: -8,
-    top: -8,
+    right: 4,
+    top: 4,
   },
   bottomLeft: {
-    left: -8,
-    bottom: -8,
+    left: 4,
+    bottom: 4,
   },
   bottomRight: {
-    right: -8,
-    bottom: -8,
+    right: 4,
+    bottom: 4,
   },
   handler: {
-    width: 16,
-    height: 16,
-    backgroundColor: "#0EA5E9", // Match original accent color
-    borderRadius: 8,
+    width: 20,
+    height: 20,
+    backgroundColor: "transparent", // Invisible by default
+    borderRadius: 10,
+    borderWidth: 0,
+    borderColor: "transparent",
+  },
+  handlerActive: {
+    backgroundColor: "rgba(34, 197, 94, 0.1)", // Green background when active
+    borderColor: "rgba(34, 197, 94, 1)", // Green border when active
     borderWidth: 2,
-    borderColor: "#FFFFFF",
-    shadowColor: "#000",
+    shadowColor: "rgba(34, 197, 94, 0.6)",
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  handlerActive: {
-    backgroundColor: "#22C55E",
-    shadowColor: "#22C55E",
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
-    elevation: 10,
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 4,
   },
 });
 

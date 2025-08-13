@@ -1,15 +1,14 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import { BaseFloatingModal } from "../../../../_components/floating-bubble/modal/components/BaseFloatingModal";
+import {
+  ClaudeModal,
+  ModalMode,
+} from "../../../../claudeModal/ClaudeModalPure";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { QueryBrowserMode } from "../QueryBrowserMode";
 import { QueryBrowserFooter } from "./QueryBrowserFooter";
 import { useState, useCallback } from "react";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { View } from "react-native";
-import { useSharedValue, withSpring } from "react-native-reanimated";
-import { SwipeIndicator } from "./SwipeIndicator";
-import { useModalState } from "../../../../_components/floating-bubble/modal/hooks/useModalState";
 import { devToolsStorageKeys } from "../../../../_shared/storage/devToolsStorageKeys";
 
 interface QueryBrowserModalProps {
@@ -45,49 +44,16 @@ export function QueryBrowserModal({
   const activeFilter = externalActiveFilter ?? internalActiveFilter;
   const setActiveFilter = externalOnFilterChange ?? setInternalActiveFilter;
 
-  // Get floating mode state for conditional styling
+  // Track modal mode for conditional styling
+  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const storagePrefix = enableSharedModalDimensions
     ? devToolsStorageKeys.reactQuery.modal()
     : devToolsStorageKeys.reactQuery.browserModal();
-  const modalState = useModalState({ storagePrefix });
 
-  // Shared values for gesture tracking [[memory:4875251]]
-  const translationX = useSharedValue(0);
-
-  const handleSwipeNavigation = useCallback(
-    (direction: "left" | "right") => {
-      if (direction === "left") {
-        onTabChange("mutations");
-      }
-    },
-    [onTabChange]
-  );
-
-  const panGesture = Gesture.Pan()
-    .onChange((event) => {
-      // Update translation for visual feedback
-      translationX.value = event.translationX;
-    })
-    .onEnd((event) => {
-      const { translationX: eventTranslationX, velocityX } = event;
-      const swipeThreshold = 80; // Match EDGE_THRESHOLD from SwipeIndicator
-      const velocityThreshold = 500;
-
-      // Reset visual feedback with spring animation
-      translationX.value = withSpring(0);
-
-      if (
-        Math.abs(eventTranslationX) > swipeThreshold ||
-        Math.abs(velocityX) > velocityThreshold
-      ) {
-        if (eventTranslationX > 0 || velocityX > 0) {
-          handleSwipeNavigation("right");
-        } else {
-          handleSwipeNavigation("left");
-        }
-      }
-    })
-    .runOnJS(true);
+  const handleModeChange = useCallback((mode: ModalMode) => {
+    console.log("mode", mode === "floating");
+    setModalMode(mode);
+  }, []);
 
   if (!visible) return null;
 
@@ -101,34 +67,30 @@ export function QueryBrowserModal({
   );
 
   return (
-    <BaseFloatingModal
+    <ClaudeModal
       visible={visible}
       onClose={onClose}
-      storagePrefix={storagePrefix}
-      showToggleButton={true}
-      customHeaderContent={renderHeaderContent()}
+      persistenceKey={storagePrefix}
+      header={{
+        customContent: renderHeaderContent(),
+        showToggleButton: true,
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
     >
       <View style={{ flex: 1 }}>
-        <GestureDetector gesture={panGesture}>
-          <View style={{ flex: 1 }}>
-            <SwipeIndicator
-              translationX={translationX}
-              canSwipeLeft={true}
-              canSwipeRight={false}
-            />
-            <QueryBrowserMode
-              selectedQuery={selectedQuery}
-              onQuerySelect={onQuerySelect}
-              activeFilter={activeFilter}
-            />
-          </View>
-        </GestureDetector>
+        <QueryBrowserMode
+          selectedQuery={selectedQuery}
+          onQuerySelect={onQuerySelect}
+          activeFilter={activeFilter}
+        />
         <QueryBrowserFooter
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-          isFloatingMode={modalState.isFloatingMode}
+          isFloatingMode={modalMode === "floating"}
         />
       </View>
-    </BaseFloatingModal>
+    </ClaudeModal>
   );
 }

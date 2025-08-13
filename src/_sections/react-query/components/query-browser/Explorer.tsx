@@ -1,41 +1,34 @@
 import React, { useState, useMemo, useCallback, useRef } from "react";
 import { JsonValue } from "../../types/types";
 import { Query, QueryKey, useQueryClient } from "@tanstack/react-query";
-import { CopiedCopier, Copier, ErrorCopier, List, Trash } from "./svgs";
 import { updateNestedDataByPath } from "../../utils/updateNestedDataByPath";
 import { displayValue } from "../../../../_shared/utils/displayValue";
 import deleteItem from "../../utils/actions/deleteItem";
 import Svg, { Path } from "react-native-svg";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { copyToClipboard } from "../../../../_shared/clipboard/copyToClipboard";
-import { NebulaInput } from "../shared/NebulaInput";
+import { CyberpunkInput } from "../shared/CyberpunkInput";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const CHUNK_SIZE = 100;
 const HIT_SLOP_OPTIMIZED = { top: 8, bottom: 8, left: 8, right: 8 };
 
-const EXPANDER_SIZE = 16;
+const EXPANDER_SIZE = 14;
 
 // Optimized chunking function moved to module scope [[memory:4875251]]
 const chunkArray = <T extends { label: string; value: JsonValue }>(
-  array: Array<T>,
+  array: T[],
   size: number = CHUNK_SIZE
-): Array<Array<T>> => {
+): T[][] => {
   if (size < 1 || array.length === 0) return [];
-  const result: Array<Array<T>> = [];
+  const result: T[][] = [];
   for (let i = 0; i < array.length; i += size) {
     result.push(array.slice(i, i + size));
   }
   return result;
 };
 // Memoized Expander component for performance [[memory:4875251]]
-const Expander = React.memo(({ expanded }: { expanded: boolean }) => {
+const Expander = React.memo(({ expanded, isFocused = false }: { expanded: boolean; isFocused?: boolean }) => {
   return (
     <View
       style={[
@@ -46,10 +39,16 @@ const Expander = React.memo(({ expanded }: { expanded: boolean }) => {
       <Svg
         width={EXPANDER_SIZE}
         height={EXPANDER_SIZE}
-        viewBox="0 0 16 16"
-        fill="#6B7280"
+        viewBox="0 0 24 24"
+        fill="none"
       >
-        <Path d="M6 12l4-4-4-4" strokeWidth={2} stroke="#6B7280" />
+        <Path 
+          d={expanded ? "M6 9l6 6 6-6" : "M9 6l6 6-6 6"}
+          stroke={isFocused ? "#00FFFF" : "#9CA3AF"} 
+          strokeWidth={2} 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        />
       </Svg>
     </View>
   );
@@ -57,7 +56,7 @@ const Expander = React.memo(({ expanded }: { expanded: boolean }) => {
 type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
 
 // Memoized CopyButton component optimized with ref pattern [[memory:4875251]]
-const CopyButton = React.memo(({ value }: { value: JsonValue }) => {
+const CopyButton = React.memo(({ value, isFocused = false }: { value: JsonValue; isFocused?: boolean }) => {
   const [copyState, setCopyState] = useState<CopyState>("NoCopy");
   const valueRef = useRef(value);
   valueRef.current = value;
@@ -83,30 +82,60 @@ const CopyButton = React.memo(({ value }: { value: JsonValue }) => {
   return (
     <TouchableOpacity
       sentry-label="ignore devtools copy button"
-      style={styles.buttonStyle}
+      style={[styles.buttonStyle, isFocused && styles.buttonStyleFocused]}
       aria-label={
         copyState === "NoCopy"
           ? "Copy object to clipboard"
           : copyState === "SuccessCopy"
-            ? "Object copied to clipboard"
-            : "Error copying object to clipboard"
+          ? "Object copied to clipboard"
+          : "Error copying object to clipboard"
       }
       onPress={copyState === "NoCopy" ? handleCopy : undefined}
       hitSlop={HIT_SLOP_OPTIMIZED}
+      activeOpacity={0.7}
     >
-      {copyState === "NoCopy" && <Copier />}
-      {copyState === "SuccessCopy" && <CopiedCopier theme="light" />}
-      {copyState === "ErrorCopy" && <ErrorCopier />}
+      {copyState === "NoCopy" && (
+        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+            stroke={isFocused ? "#06B6D4" : "#64748B"}
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </Svg>
+      )}
+      {copyState === "SuccessCopy" && (
+        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M9 11l3 3 8-8"
+            stroke="#10B981"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="M20 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h9"
+            stroke="#10B981"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </Svg>
+      )}
+      {copyState === "ErrorCopy" && (
+        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"
+            stroke="#EF4444"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </Svg>
+      )}
     </TouchableOpacity>
   );
-});
-// State for tracking focused inputs [[memory:4875251]]
-const InputFocusContext = React.createContext<{
-  focusedPath: string | null;
-  setFocusedPath: (path: string | null) => void;
-}>({
-  focusedPath: null,
-  setFocusedPath: () => {},
 });
 
 // Memoized DeleteItemButton component [[memory:4875251]]
@@ -114,9 +143,11 @@ const DeleteItemButton = React.memo(
   ({
     dataPath,
     activeQuery,
+    isFocused = false,
   }: {
-    dataPath: Array<string>;
+    dataPath: string[];
     activeQuery: Query<unknown, Error, unknown, QueryKey> | undefined;
+    isFocused?: boolean;
   }) => {
     const queryClient = useQueryClient();
     const dataPathRef = useRef(dataPath);
@@ -139,11 +170,20 @@ const DeleteItemButton = React.memo(
       <TouchableOpacity
         sentry-label="ignore devtools explorer delete button"
         onPress={handleDelete}
-        style={styles.buttonStyle1}
+        style={[styles.deleteButton, isFocused && styles.deleteButtonFocused]}
         accessibilityLabel="Delete item"
         hitSlop={HIT_SLOP_OPTIMIZED}
+        activeOpacity={0.7}
       >
-        <Trash />
+        <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
+            stroke={isFocused ? "#06B6D4" : "#64748B"}
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </Svg>
       </TouchableOpacity>
     );
   }
@@ -153,9 +193,11 @@ const ClearArrayButton = React.memo(
   ({
     dataPath,
     activeQuery,
+    isFocused = false,
   }: {
-    dataPath: Array<string>;
+    dataPath: string[];
     activeQuery: Query<unknown, Error, unknown, QueryKey> | undefined;
+    isFocused?: boolean;
   }) => {
     const queryClient = useQueryClient();
     const dataPathRef = useRef(dataPath);
@@ -175,12 +217,21 @@ const ClearArrayButton = React.memo(
     return (
       <TouchableOpacity
         sentry-label="ignore devtools explorer clear button"
-        style={styles.buttonStyle2}
+        style={[styles.clearButton, isFocused && styles.clearButtonFocused]}
         aria-label="Remove all items"
         onPress={handleClear}
         hitSlop={HIT_SLOP_OPTIMIZED}
+        activeOpacity={0.7}
       >
-        <List />
+        <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M21 10H7m14-6H7m14 12H7m14 6H7M3 10h.01M3 6h.01M3 14h.01M3 18h.01"
+            stroke={isFocused ? "#06B6D4" : "#64748B"}
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </Svg>
       </TouchableOpacity>
     );
   }
@@ -192,7 +243,7 @@ const ToggleValueButton = React.memo(
     activeQuery,
     value,
   }: {
-    dataPath: Array<string>;
+    dataPath: string[];
     activeQuery: Query<unknown, Error, unknown, QueryKey> | undefined;
     value: JsonValue;
   }) => {
@@ -230,6 +281,7 @@ const ToggleValueButton = React.memo(
         style={styles.modernToggleButton}
         onPress={handleClick}
         hitSlop={HIT_SLOP_OPTIMIZED}
+        activeOpacity={0.8}
       >
         <View style={styles.toggleIconContainer}>
           <View style={[styles.toggleIconSmall, iconStyle]} />
@@ -250,9 +302,9 @@ type Props = {
   editable?: boolean;
   label: string;
   value: JsonValue;
-  defaultExpanded?: Array<string>;
+  defaultExpanded?: string[];
   activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined;
-  dataPath?: Array<string>;
+  dataPath?: string[];
   itemsDeletable?: boolean;
 };
 // Optimized Explorer component following rule2 guidelines [[memory:4875251]]
@@ -266,8 +318,13 @@ export default function Explorer({
   itemsDeletable,
 }: Props) {
   const queryClient = useQueryClient();
-  const [focusedPath, setFocusedPath] = useState<string | null>(null);
-  const isRootExplorer = !dataPath || dataPath.length === 0;
+  const [isRowFocused, setIsRowFocused] = useState(false);
+  
+  // Determine if this is a main section
+  const isMainSection = useMemo(() => {
+    const upperLabel = label.toUpperCase();
+    return ['DATA', 'QUERY', 'QUERYKEY', 'TYPES', 'STATS', 'OPTIONS', 'OBSERVERS'].includes(upperLabel);
+  }, [label]);
 
   // Explorer's section is expanded or collapsed
   const [isExpanded, setIsExpanded] = useState(
@@ -275,7 +332,7 @@ export default function Explorer({
   );
   // Remove unnecessary useCallback - simple state setter [[memory:4875251]]
   const toggleExpanded = () => setIsExpanded((old) => !old);
-  const [expandedPages, setExpandedPages] = useState<Array<number>>([]);
+  const [expandedPages, setExpandedPages] = useState<number[]>([]);
 
   // Optimized subEntries computation with early returns and limited processing [[memory:4875251]]
   const subEntries = useMemo(() => {
@@ -371,15 +428,25 @@ export default function Explorer({
       <View style={styles.fullWidthMarginRight}>
         {subEntryPages.length > 0 && (
           <>
-            <View style={styles.flexRowItemsCenterGap}>
+            <View style={[
+              styles.flexRowItemsCenterGap,
+              isMainSection && styles.flexRowItemsCenterGapMain,
+            ]}>
               <TouchableOpacity
                 sentry-label="ignore devtools explorer expander button"
                 style={styles.expanderButton}
                 onPress={toggleExpanded}
                 hitSlop={HIT_SLOP_OPTIMIZED}
+                activeOpacity={0.6}
               >
-                <Expander expanded={isExpanded} />
-                <Text style={styles.labelText}>{label}</Text>
+                <Expander expanded={isExpanded} isFocused={isRowFocused} />
+                <Text style={[
+                  styles.labelText,
+                  isRowFocused && styles.labelTextFocused,
+                  isMainSection && styles.labelTextMain,
+                ]}>
+                  {label.toUpperCase()}
+                </Text>
                 <Text style={styles.textGray500}>{`${
                   String(valueType).toLowerCase() === "iterable"
                     ? "(Iterable) "
@@ -390,17 +457,19 @@ export default function Explorer({
               </TouchableOpacity>
               {editable && (
                 <View style={styles.flexRowGapItemsCenter}>
-                  <CopyButton value={value} />
+                  <CopyButton value={value} isFocused={isRowFocused} />
                   {itemsDeletable && activeQuery !== undefined && (
                     <DeleteItemButton
                       activeQuery={activeQuery}
                       dataPath={currentDataPath}
+                      isFocused={isRowFocused}
                     />
                   )}
                   {valueType === "array" && activeQuery !== undefined && (
                     <ClearArrayButton
                       activeQuery={activeQuery}
                       dataPath={currentDataPath}
+                      isFocused={isRowFocused}
                     />
                   )}
                 </View>
@@ -409,7 +478,10 @@ export default function Explorer({
             {isExpanded && (
               <>
                 {subEntryPages.length === 1 && (
-                  <View style={styles.singleEntryContainer}>
+                  <View style={[
+                    styles.singleEntryContainer,
+                    isMainSection && styles.singleEntryContainerMain,
+                  ]}>
                     {subEntries.map((entry, index) => (
                       <Explorer
                         key={entry.label + index}
@@ -489,7 +561,7 @@ export default function Explorer({
                   activeQuery &&
                   (valueType === "string" || valueType === "number") && (
                     <View style={styles.nebulaInputWrapper}>
-                      <NebulaInput
+                      <CyberpunkInput
                         label={label}
                         accessibilityLabel="Data input field for editing values"
                         style={[
@@ -508,65 +580,30 @@ export default function Explorer({
                         onChangeText={(newValue) =>
                           handleChange(valueType === "number", newValue)
                         }
+                        onFocus={() => setIsRowFocused(true)}
+                        onBlur={() => setIsRowFocused(false)}
+                        showNumberControls={valueType === "number"}
+                        onIncrement={() =>
+                          handleChange(
+                            true,
+                            String(typeof value === "number" ? value + 1 : 1)
+                          )
+                        }
+                        onDecrement={() =>
+                          handleChange(
+                            true,
+                            String(typeof value === "number" ? value - 1 : -1)
+                          )
+                        }
+                        showDeleteButton={itemsDeletable}
+                        onDelete={() => {
+                          deleteItem({
+                            queryClient,
+                            activeQuery,
+                            dataPath: currentDataPath,
+                          });
+                        }}
                       />
-                      {valueType === "number" && (
-                        <View style={styles.numberInputButtons}>
-                          <TouchableOpacity
-                            sentry-label="ignore devtools explorer number increment"
-                            style={styles.touchableButton}
-                            onPressIn={() =>
-                              handleChange(
-                                true,
-                                String(
-                                  typeof value === "number" ? value + 1 : 1
-                                )
-                              )
-                            }
-                            hitSlop={HIT_SLOP_OPTIMIZED}
-                          >
-                            <Svg
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="#9333EA"
-                              width={14}
-                              height={14}
-                            >
-                              <Path
-                                d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                                strokeWidth={2}
-                              />
-                            </Svg>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            sentry-label="ignore devtools explorer number decrement"
-                            style={styles.touchableButton}
-                            onPressIn={() =>
-                              handleChange(
-                                true,
-                                String(
-                                  typeof value === "number" ? value - 1 : -1
-                                )
-                              )
-                            }
-                            hitSlop={HIT_SLOP_OPTIMIZED}
-                          >
-                            <Svg
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="#9333EA"
-                              width={14}
-                              height={14}
-                            >
-                              <Path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                              />
-                            </Svg>
-                          </TouchableOpacity>
-                        </View>
-                      )}
                     </View>
                   )}
                 {valueType === "boolean" && (
@@ -579,14 +616,18 @@ export default function Explorer({
               </>
             ) : (
               <>
-                <Text style={styles.text344054}>{label}:</Text>
-                <Text style={styles.displayValueText}>{displayValue(value)}</Text>
+                <Text style={styles.text344054}>{label.toUpperCase()}</Text>
+                <Text style={styles.displayValueText}>
+                  {displayValue(value)}
+                </Text>
               </>
             )}
-            {editable && itemsDeletable && activeQuery !== undefined && (
+            {editable && itemsDeletable && activeQuery !== undefined && 
+              valueType !== "string" && valueType !== "number" && (
               <DeleteItemButton
                 activeQuery={activeQuery}
                 dataPath={currentDataPath}
+                isFocused={isRowFocused}
               />
             )}
           </View>
@@ -596,53 +637,55 @@ export default function Explorer({
   );
 }
 const styles = StyleSheet.create({
-  buttonStyle3: {
-    backgroundColor: "transparent",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 16,
-    height: 16,
-    position: "relative",
-    zIndex: 10,
-  },
-  buttonStyle2: {
-    backgroundColor: "rgba(251, 146, 60, 0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(251, 146, 60, 0.2)",
-    borderRadius: 6,
-    flexDirection: "row",
-    padding: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    width: 28,
-    height: 28,
-    position: "relative",
-    zIndex: 10,
-  },
-  buttonStyle1: {
-    backgroundColor: "rgba(239, 68, 68, 0.08)",
-    borderColor: "rgba(239, 68, 68, 0.2)",
-    borderWidth: 1,
-    borderRadius: 6,
-    padding: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    width: 28,
-    height: 28,
-    position: "relative",
-  },
   buttonStyle: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: "rgba(50, 50, 50, 0.6)",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    borderRadius: 6,
+    borderColor: "rgba(100, 100, 100, 0.6)",
+    borderRadius: 3,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: 28,
-    height: 28,
+    width: 24,
+    height: 24,
     position: "relative",
+  },
+  buttonStyleFocused: {
+    borderColor: "rgba(0, 255, 255, 0.6)",
+    backgroundColor: "rgba(0, 255, 255, 0.05)",
+  },
+  deleteButton: {
+    backgroundColor: "rgba(0, 255, 255, 0.05)",
+    borderColor: "rgba(0, 255, 255, 0.2)",
+    borderWidth: 1,
+    borderRadius: 3,
+    padding: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 24,
+    height: 24,
+    position: "relative",
+  },
+  deleteButtonFocused: {
+    borderColor: "rgba(0, 255, 255, 0.6)",
+    backgroundColor: "rgba(0, 255, 255, 0.1)",
+  },
+  clearButton: {
+    backgroundColor: "rgba(50, 50, 50, 0.6)",
+    borderWidth: 1,
+    borderColor: "rgba(100, 100, 100, 0.6)",
+    borderRadius: 3,
+    flexDirection: "row",
+    padding: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 24,
+    height: 24,
+    position: "relative",
+    zIndex: 10,
+  },
+  clearButtonFocused: {
+    borderColor: "rgba(0, 255, 255, 0.6)",
+    backgroundColor: "rgba(0, 255, 255, 0.05)",
   },
   expanderIcon: {
     width: 16,
@@ -652,7 +695,7 @@ const styles = StyleSheet.create({
     marginRight: 2,
   },
   expanded: {
-    transform: [{ rotate: "90deg" }],
+    transform: [{ rotate: "0deg" }],
   },
   collapsed: {
     transform: [{ rotate: "0deg" }],
@@ -663,6 +706,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     width: "100%",
+    marginVertical: 1,
   },
   fullWidthMarginRight: {
     position: "relative",
@@ -673,40 +717,59 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 1,
-    paddingHorizontal: 2,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     marginVertical: 1,
+    borderRadius: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  flexRowItemsCenterGapMain: {
+    backgroundColor: "rgba(20, 20, 25, 0.4)",
+    borderLeftWidth: 2,
+    borderLeftColor: "rgba(148, 163, 184, 0.3)",
   },
   expanderButton: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "transparent",
-    padding: 2,
-    gap: 4,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    gap: 6,
     borderWidth: 0,
-    minHeight: 24,
+    minHeight: 28,
   },
   labelText: {
-    color: "#F9FAFB",
-    fontSize: 14,
-    fontWeight: "500",
+    color: "#9CA3AF",
+    fontSize: 10,
+    fontWeight: "600",
     marginRight: 6,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+  },
+  labelTextFocused: {
+    color: "#00FFFF",
+  },
+  labelTextMain: {
+    color: "#CBD5E1",
+    fontSize: 11,
   },
   textGray500: {
-    color: "#9CA3AF",
-    fontSize: 11,
+    color: "#6B7280",
+    fontSize: 10,
     fontWeight: "400",
+    fontFamily: "monospace",
   },
   pageRangeText: {
-    color: "#F9FAFB",
-    fontSize: 12,
-    fontWeight: "500",
+    color: "#9CA3AF",
+    fontSize: 10,
+    fontWeight: "600",
     fontFamily: "monospace",
   },
   flexRowGapItemsCenter: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 4,
     paddingLeft: 4,
   },
   singleEntryContainer: {
@@ -714,14 +777,20 @@ const styles = StyleSheet.create({
     marginTop: 2,
     paddingLeft: 4,
     borderLeftWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderLeftColor: "rgba(100, 100, 100, 0.3)",
+  },
+  singleEntryContainerMain: {
+    borderLeftColor: "rgba(148, 163, 184, 0.25)",
   },
   multiEntryContainer: {
     marginLeft: 4,
     marginTop: 2,
     paddingLeft: 4,
     borderLeftWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderLeftColor: "rgba(100, 100, 100, 0.3)",
+  },
+  multiEntryContainerMain: {
+    borderLeftColor: "rgba(148, 163, 184, 0.25)",
   },
   relativeOutlineNone: {
     position: "relative",
@@ -729,19 +798,21 @@ const styles = StyleSheet.create({
   pageExpanderButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "transparent",
-    padding: 4,
-    gap: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    gap: 6,
+    borderRadius: 4,
     borderWidth: 0,
     marginBottom: 4,
-    minHeight: 24,
+    minHeight: 28,
   },
   entriesContainer: {
     marginLeft: 4,
     paddingLeft: 4,
-    borderLeftWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
     marginTop: 2,
+    borderLeftWidth: 1,
+    borderLeftColor: "rgba(100, 100, 100, 0.3)",
   },
   textNumber: {
     color: "#60A5FA",
@@ -757,54 +828,65 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginVertical: 2,
-    gap: 6,
+    gap: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
   },
   text344054: {
-    color: "#F9FAFB",
-    fontWeight: "500",
-    fontSize: 12,
-    minWidth: 50,
+    color: "#9CA3AF",
+    fontWeight: "600",
+    fontSize: 10,
+    minWidth: 60,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   numberInputButtons: {
     position: "absolute",
-    right: 10,
+    right: 8,
     top: "50%",
-    transform: [{ translateY: -14 }],
+    transform: [{ translateY: -18 }],
     flexDirection: "row",
     gap: 4,
     zIndex: 10,
   },
   touchableButton: {
-    width: 26,
-    height: 26,
-    borderRadius: 8,
-    backgroundColor: "rgba(23, 23, 23, 0.8)",
+    width: 36,
+    height: 36,
+    borderRadius: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(107, 114, 128, 0.4)",
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 2,
-    boxShadow: "-2px -2px 6px rgba(51, 68, 255, 0.1), 2px 2px 6px rgba(255, 51, 102, 0.1)",
+  },
+  touchableButtonFocused: {
+    borderColor: "#00FFFF",
+    shadowColor: "#00FFFF",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 3,
   },
   nebulaInputWrapper: {
     flex: 1,
+    width: "100%",
     position: "relative",
-    marginHorizontal: 4,
-    marginVertical: 2,
   },
   displayValueText: {
     flex: 1,
-    color: "#9333EA",
-    fontWeight: "500",
+    color: "#E5E5E5",
+    fontWeight: "400",
     fontFamily: "monospace",
-    fontSize: 13,
-    paddingVertical: 8,
+    fontSize: 12,
+    paddingVertical: 6,
     paddingHorizontal: 10,
-    backgroundColor: "rgba(23, 23, 23, 0.6)",
-    borderRadius: 8,
+    backgroundColor: "rgba(30, 30, 30, 0.6)",
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
-    boxShadow: "-2px -2px 5px rgba(51, 68, 255, 0.08), 2px 2px 5px rgba(255, 51, 102, 0.08)",
+    borderColor: "rgba(100, 100, 100, 0.6)",
+    minHeight: 34,
   },
   // New redesigned styles (kept for future use)
   dataRow: {
@@ -886,15 +968,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: "rgba(30, 30, 30, 0.6)",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    paddingHorizontal: 8,
+    borderColor: "rgba(100, 100, 100, 0.6)",
+    paddingHorizontal: 10,
     paddingVertical: 6,
     marginVertical: 2,
     flex: 1,
-    height: 36,
+    minHeight: 34,
   },
   toggleIconContainer: {
     marginRight: 6,
@@ -917,10 +999,11 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   toggleLabel: {
-    color: "#F9FAFB",
+    color: "#E5E7EB",
     fontSize: 11,
-    fontWeight: "500",
+    fontWeight: "600",
     fontFamily: "monospace",
+    letterSpacing: 0.3,
   },
   toggleStatus: {
     color: "#9CA3AF",
@@ -935,31 +1018,34 @@ const styles = StyleSheet.create({
   },
   toggleBadgeText: {
     fontSize: 9,
-    fontWeight: "600",
+    fontWeight: "700",
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+    fontFamily: "monospace",
   },
   // Pre-computed toggle icon styles to avoid inline objects [[memory:4875251]]
   toggleIconTrue: {
-    backgroundColor: "#22C55E",
+    backgroundColor: "#00FFFF",
   },
   toggleIconFalse: {
     backgroundColor: "#6B7280",
   },
   // Pre-computed toggle badge styles [[memory:4875251]]
   toggleBadgeTrue: {
-    backgroundColor: "rgba(34, 197, 94, 0.1)",
-    borderColor: "rgba(34, 197, 94, 0.2)",
+    backgroundColor: "rgba(0, 255, 255, 0.1)",
+    borderColor: "rgba(0, 255, 255, 0.3)",
   },
   toggleBadgeFalse: {
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
-    borderColor: "rgba(107, 114, 128, 0.2)",
+    backgroundColor: "rgba(100, 100, 100, 0.1)",
+    borderColor: "rgba(100, 100, 100, 0.3)",
   },
   // Pre-computed toggle text styles [[memory:4875251]]
   toggleTextTrue: {
-    color: "#22C55E",
+    color: "#00FFFF",
+    fontWeight: "600",
   },
   toggleTextFalse: {
-    color: "#6B7280",
+    color: "#9CA3AF",
+    fontWeight: "500",
   },
 });

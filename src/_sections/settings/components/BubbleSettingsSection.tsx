@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from "react-native";
 import { Settings, EyeOff, Database } from "lucide-react-native";
 import { useState, useEffect } from "react";
+import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
 
 // AsyncStorage will be loaded lazily
 type AsyncStorageType = {
@@ -86,23 +87,16 @@ export function BubbleSettingsSection({ onPress }: BubbleSettingsSectionProps) {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.sectionCard}
-      onPress={onPress}
-      activeOpacity={0.7}
-      sentry-label="ignore bubble settings section"
-    >
-      <View style={styles.iconContainer}>
-        <Settings size={20} color="#10B981" />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>Bubble Visibility Settings</Text>
-        <Text style={styles.subtitle}>
-          {getVisibleCount()} of 6 buttons visible
-        </Text>
-      </View>
-      <Text style={styles.chevron}>›</Text>
-    </TouchableOpacity>
+    <CyberpunkConsoleSection
+      id="bubble-settings"
+      title="Bubble Visibility Settings"
+      subtitle={`${getVisibleCount()} of 6 buttons visible`}
+      icon={Settings}
+      iconColor="#10B981"
+      iconBackgroundColor="rgba(16, 185, 129, 0.1)"
+      onPress={onPress || (() => {})}
+      index={5}
+    />
   );
 }
 

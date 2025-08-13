@@ -1,5 +1,5 @@
 import { Globe } from 'lucide-react-native';
-import { ConsoleSection } from '../../../_components/floating-bubble/console/ConsoleSection';
+import { CyberpunkConsoleSection } from '../../../_components/floating-bubble/console/CyberpunkConsoleSection';
 import { useNetworkEvents } from '../hooks/useNetworkEvents';
 
 interface NetworkSectionProps {
@@ -34,14 +34,15 @@ export function NetworkSection({ onPress }: NetworkSectionProps) {
   };
 
   return (
-    <ConsoleSection
+    <CyberpunkConsoleSection
       id="network"
       title="Network Monitor"
       subtitle={getNetworkSubtitle()}
       icon={Globe}
-      iconColor="#8B5CF6"
-      iconBackgroundColor="rgba(139, 92, 246, 0.1)"
+      iconColor="#E040FB"
+      iconBackgroundColor="rgba(224, 64, 251, 0.1)"
       onPress={onPress}
+      index={4}
     />
   );
 }

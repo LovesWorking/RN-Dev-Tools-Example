@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, View, Dimensions } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -20,21 +20,12 @@ import {
   ReactQueryModal,
   useReactQueryState,
   useModalManager,
-  WifiToggle,
 } from "../../../_sections/react-query";
 import { DevToolsConsole } from "../console/DevToolsConsole";
-import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
-import {
-  DatabaseIcon,
-  BugIcon,
-  ServerIcon,
-  LayersIcon,
-} from "@/src/_shared/icons/lucide-icons";
-import { GridMenu } from "./GridMenu";
-import { CompactDropdownMenu } from "./CompactDropdownMenu";
-import { MagneticGridMenu } from "./MagneticGridMenu";
-import { CascadingDropdown } from "./CascadingDropdown";
+import { LayersIcon } from "@/src/_shared/icons/lucide-icons";
+import { CyberCascadeMenu } from "./CyberCascadeMenu";
 import { CyberpunkGridMenu } from "./CyberpunkGridMenu";
+import DialDevTools from "./DialDevTools";
 
 // Re-export types that developers will need
 export type { UserRole } from "../../../newDevTools/floatingTools";
@@ -73,18 +64,18 @@ export function RnBetterDevToolsBubble({
 }: RnBetterDevToolsBubbleProps) {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false); // Menu closed by default
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
-  
+
   // Menu type selection
-  type MenuType = 'grid' | 'dropdown' | 'magnetic' | 'cascading' | 'cyberpunk';
-  const [menuType, setMenuType] = useState<MenuType>('cyberpunk'); // Default to cyberpunk
-  
+  type MenuType = "cybercascade" | "cyberpunk" | "dial";
+  const [menuType, setMenuType] = useState<MenuType>("dial"); // Default to dial
+
   // Get screen dimensions
-  const { height: screenHeight } = Dimensions.get('window');
-  
+  const { height: screenHeight } = Dimensions.get("window");
+
   // Store the button position (approximate position of floating tools)
-  const [buttonPosition] = useState({ 
+  const [buttonPosition] = useState({
     x: 44, // Distance from right edge
-    y: screenHeight - 708 // Distance from bottom
+    y: screenHeight - 708, // Distance from bottom
   });
   // Info: Show how props and user settings interact
   useEffect(() => {
@@ -171,120 +162,87 @@ export function RnBetterDevToolsBubble({
             <UserStatus userRole={userRole} onPress={handleStatusPress} />
 
             {/* Test buttons for different menu types */}
-            <View style={{ flexDirection: 'column', gap: 4 }}>
-              {/* Row 1: Original favorites + Grid variations */}
-              <View style={{ flexDirection: 'row', gap: 4 }}>
-                {/* Original Grid Menu (User favorite) */}
-                <Pressable
-                  onPress={() => {
-                    setMenuType('grid');
-                    setShowFloatingMenu(true);
-                  }}
-                  style={[styles.menuButton, { backgroundColor: '#3B82F6' }]}
-                  hitSlop={8}
-                >
-                  <LayersIcon size={14} color="white" />
-                </Pressable>
-                
-                {/* Original Dropdown Menu (User favorite) */}
-                <Pressable
-                  onPress={() => {
-                    setMenuType('dropdown');
-                    setShowFloatingMenu(true);
-                  }}
-                  style={[styles.menuButton, { backgroundColor: '#EF4444' }]}
-                  hitSlop={8}
-                >
-                  <LayersIcon size={14} color="white" />
-                </Pressable>
-                
-                {/* Magnetic Grid */}
-                <Pressable
-                  onPress={() => {
-                    setMenuType('magnetic');
-                    setShowFloatingMenu(true);
-                  }}
-                  style={[styles.menuButton, { backgroundColor: '#FF6B6B' }]}
-                  hitSlop={8}
-                >
-                  <LayersIcon size={14} color="white" />
-                </Pressable>
-              </View>
-              
-              {/* Row 2: Remaining variations */}
-              <View style={{ flexDirection: 'row', gap: 4 }}>
-                {/* Cascading Dropdown */}
-                <Pressable
-                  onPress={() => {
-                    setMenuType('cascading');
-                    setShowFloatingMenu(true);
-                  }}
-                  style={[styles.menuButton, { backgroundColor: '#F59E0B' }]}
-                  hitSlop={8}
-                >
-                  <LayersIcon size={14} color="white" />
-                </Pressable>
-                
-                {/* Cyberpunk Grid */}
-                <Pressable
-                  onPress={() => {
-                    setMenuType('cyberpunk');
-                    setShowFloatingMenu(true);
-                  }}
-                  style={[styles.menuButton, { backgroundColor: '#00FFFF' }]}
-                  hitSlop={8}
-                >
-                  <LayersIcon size={14} color="white" />
-                </Pressable>
-              </View>
+            <View style={{ flexDirection: "row", gap: 4 }}>
+              {/* Cyber Cascade Menu */}
+              <Pressable
+                onPress={() => {
+                  setMenuType("cybercascade");
+                  setShowFloatingMenu(true);
+                }}
+                style={[styles.menuButton, { backgroundColor: "#00FF88" }]}
+                hitSlop={8}
+              >
+                <LayersIcon size={14} color="white" />
+              </Pressable>
+
+              {/* Cyberpunk Grid */}
+              <Pressable
+                onPress={() => {
+                  setMenuType("cyberpunk");
+                  setShowFloatingMenu(true);
+                }}
+                style={[styles.menuButton, { backgroundColor: "#00FFFF" }]}
+                hitSlop={8}
+              >
+                <LayersIcon size={14} color="white" />
+              </Pressable>
+
+              {/* Dial Menu */}
+              <Pressable
+                onPress={() => {
+                  setMenuType("dial");
+                  setShowFloatingMenu(true);
+                }}
+                style={[styles.menuButton, { backgroundColor: "#8B00FF" }]}
+                hitSlop={8}
+              >
+                <LayersIcon size={14} color="white" />
+              </Pressable>
             </View>
           </FloatingTools>
         </View>
 
         {/* Floating Dev Tools Menu - Multiple menu types */}
-        {showFloatingMenu && (() => {
-          const menuProps = {
-            buttonPosition,
-            onQueryPress: () => {
-              setShowFloatingMenu(false);
-              handleQueryPress();
-            },
-            onEnvPress: () => {
-              setShowFloatingMenu(false);
-              handleEnvPress();
-            },
-            onSentryPress: () => {
-              setShowFloatingMenu(false);
-              handleSentryPress();
-            },
-            onStoragePress: () => {
-              setShowFloatingMenu(false);
-              handleStoragePress();
-            },
-            onWifiToggle: () => {
-              setIsWifiEnabled(!isWifiEnabled);
-            },
-            onClose: () => {
-              setShowFloatingMenu(false);
-            },
-            isWifiEnabled,
-          };
+        {showFloatingMenu &&
+          (() => {
+            const menuProps = {
+              buttonPosition,
+              onQueryPress: () => {
+                setShowFloatingMenu(false);
+                handleQueryPress();
+              },
+              onEnvPress: () => {
+                setShowFloatingMenu(false);
+                handleEnvPress();
+              },
+              onSentryPress: () => {
+                setShowFloatingMenu(false);
+                handleSentryPress();
+              },
+              onStoragePress: () => {
+                setShowFloatingMenu(false);
+                handleStoragePress();
+              },
+              onWifiToggle: () => {
+                setIsWifiEnabled(!isWifiEnabled);
+              },
+              onClose: () => {
+                setShowFloatingMenu(false);
+              },
+              isWifiEnabled,
+            };
 
-          switch (menuType) {
-            case 'grid':
-              return <GridMenu {...menuProps} />;
-            case 'dropdown':
-              return <CompactDropdownMenu {...menuProps} />;
-            case 'magnetic':
-              return <MagneticGridMenu {...menuProps} />;
-            case 'cascading':
-              return <CascadingDropdown {...menuProps} />;
-            case 'cyberpunk':
-              return <CyberpunkGridMenu {...menuProps} />;
-            default:
-              return <CyberpunkGridMenu {...menuProps} />;
-          }
-        })()}
+            switch (menuType) {
+              case "cybercascade":
+                return <CyberCascadeMenu {...menuProps} />;
+              case "cyberpunk":
+                return <CyberpunkGridMenu {...menuProps} />;
+              case "dial":
+                return <DialDevTools {...menuProps} />;
+              default:
+                return <DialDevTools {...menuProps} />;
+            }
+          })()}
 
         {/* Floating Data Editor Modal - Auto-opens if restored state indicates it was open */}
         <ReactQueryModal

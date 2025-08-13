@@ -1,5 +1,6 @@
 import { View, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { CyberpunkGlitchBackground } from "../bubble/CyberpunkGlitchBackground";
 
 interface ConsoleSectionListProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export function ConsoleSectionList({ children }: ConsoleSectionListProps) {
         style={styles.sectionListContainer}
         contentContainerStyle={styles.sectionListContent}
       >
+        <CyberpunkGlitchBackground />
         {children}
       </ScrollView>
       {/* Safe area for section list */}
@@ -30,15 +32,16 @@ export function ConsoleSectionList({ children }: ConsoleSectionListProps) {
 const styles = StyleSheet.create({
   sectionListContainer: {
     flex: 1,
+    backgroundColor: "#0A0A0F",
   },
 
   sectionListContent: {
-    paddingHorizontal: 12, // Match modal contentContainer padding
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     flexGrow: 1,
   },
 
   sectionListSafeArea: {
-    backgroundColor: "#2A2A2A",
+    backgroundColor: "black",
   },
 });

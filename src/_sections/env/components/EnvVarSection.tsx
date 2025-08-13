@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { EnvVarInfo } from "../types";
-import { EnvVarCard } from "./EnvVarCard";
+import { CyberpunkEnvVarCard } from "./CyberpunkEnvVarCard";
 
 interface EnvVarSectionProps {
   title: string;
@@ -53,12 +53,13 @@ export function EnvVarSection({
         <Text style={styles.sectionCount}>{count}</Text>
       </View>
       <View style={styles.sectionContent}>
-        {vars.map((envVar) => (
-          <EnvVarCard
+        {vars.map((envVar, index) => (
+          <CyberpunkEnvVarCard
             key={envVar.key}
             envVar={envVar}
             isExpanded={expandedCards.has(envVar.key)}
             onToggle={() => toggleCardExpansion(envVar.key)}
+            index={index}
           />
         ))}
       </View>
@@ -74,34 +75,51 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: 4,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 255, 255, 0.15)",
+    marginBottom: 12,
   },
   sectionTitle: {
-    color: "#FFFFFF",
-    fontSize: 13,
+    color: "#00FFFF",
+    fontSize: 15,
     fontWeight: "600",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textShadowColor: "#00FFFF",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    opacity: 0.95,
   },
   sectionCount: {
-    color: "#9CA3AF",
-    fontSize: 11,
-    fontWeight: "500",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    color: "#00FFFF",
+    fontSize: 12,
+    fontWeight: "600",
+    backgroundColor: "rgba(0, 255, 255, 0.12)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "rgba(0, 255, 255, 0.25)",
+    fontFamily: "monospace",
   },
   sectionContent: {
     gap: 8,
   },
   emptySection: {
-    padding: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
-    borderRadius: 6,
+    padding: 20,
+    backgroundColor: "rgba(0, 255, 255, 0.02)",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(0, 255, 255, 0.1)",
     alignItems: "center",
   },
   emptySectionText: {
-    color: "#6B7280",
+    color: "#00FFFF",
     fontSize: 11,
     textAlign: "center",
+    fontFamily: "monospace",
+    opacity: 0.6,
+    letterSpacing: 0.5,
   },
 });
