@@ -1,6 +1,6 @@
 /**
  * ClaudeModal - A highly flexible, draggable, and resizable modal component for React Native
- * 
+ *
  * Features:
  * - Bottom sheet mode (default)
  * - Floating/detached mode (draggable and resizable)
@@ -8,7 +8,7 @@
  * - Customizable header with title or custom components
  * - Smooth animations and gestures
  * - TypeScript support with comprehensive types
- * 
+ *
  * @author Claude
  * @version 1.0.0
  */
@@ -20,7 +20,7 @@ import React, {
   useState,
   useMemo,
   useCallback,
-} from 'react';
+} from "react";
 import {
   View,
   Text,
@@ -32,10 +32,10 @@ import {
   ViewStyle,
   TextStyle,
   LayoutChangeEvent,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DragResizable } from '@/src/_components/floating-bubble/modal/components/DragResizable';
-import { CornerResizeHandle } from '@/src/_components/floating-bubble/modal/components/CornerResizeHandle';
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DragResizable } from "@/src/_components/floating-bubble/modal/components/DragResizable";
+import { CornerResizeHandle } from "@/src/_components/floating-bubble/modal/components/CornerResizeHandle";
 
 // ============================================================================
 // Types and Interfaces
@@ -44,7 +44,7 @@ import { CornerResizeHandle } from '@/src/_components/floating-bubble/modal/comp
 /**
  * Modal display modes
  */
-export type ModalMode = 'bottomSheet' | 'floating';
+export type ModalMode = "bottomSheet" | "floating";
 
 /**
  * Position and dimensions for the modal in floating mode
@@ -161,7 +161,7 @@ class ModalStorage {
 
   private static async getAsyncStorage() {
     try {
-      const module = await import('@react-native-async-storage/async-storage');
+      const module = await import("@react-native-async-storage/async-storage");
       return module.default;
     } catch {
       return null;
@@ -173,7 +173,7 @@ class ModalStorage {
 // Constants
 // ============================================================================
 
-const SCREEN = Dimensions.get('window');
+const SCREEN = Dimensions.get("window");
 const MIN_HEIGHT = 150;
 const DEFAULT_HEIGHT = 400;
 const THROTTLE_MS = 16; // ~60fps
@@ -191,11 +191,11 @@ const clamp = (value: number, min: number, max: number): number => {
 // Icon Components
 // ============================================================================
 
-const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
+const MaximizeIcon = ({ color = "#E5E7EB", size = 16 }) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 2,
         left: 2,
         width: size - 4,
@@ -207,7 +207,7 @@ const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 5,
         width: 2,
@@ -217,7 +217,7 @@ const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 5,
         left: 0,
         width: 2,
@@ -228,11 +228,11 @@ const MaximizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
   </View>
 );
 
-const MinimizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
+const MinimizeIcon = ({ color = "#E5E7EB", size = 16 }) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: 4,
         left: 4,
         width: size - 8,
@@ -245,28 +245,28 @@ const MinimizeIcon = ({ color = '#E5E7EB', size = 16 }) => (
   </View>
 );
 
-const CloseIcon = ({ color = '#FFFFFF', size = 16 }) => (
+const CloseIcon = ({ color = "#FFFFFF", size = 16 }) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: size / 2 - 0.75,
         left: 2,
         width: size - 4,
         height: 1.5,
         backgroundColor: color,
-        transform: [{ rotate: '45deg' }],
+        transform: [{ rotate: "45deg" }],
       }}
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: size / 2 - 0.75,
         left: 2,
         width: size - 4,
         height: 1.5,
         backgroundColor: color,
-        transform: [{ rotate: '-45deg' }],
+        transform: [{ rotate: "-45deg" }],
       }}
     />
   </View>
@@ -319,7 +319,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
     hideCloseButton = false,
   } = config;
 
-  const headerProps = mode === 'bottomSheet' && panHandlers ? panHandlers : {};
+  const headerProps = mode === "bottomSheet" && panHandlers ? panHandlers : {};
 
   return (
     <View style={[defaultStyles.header, styles.header]} {...headerProps}>
@@ -327,7 +327,9 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
       <View style={defaultStyles.headerContent}>
         <View style={defaultStyles.headerRow}>
           {customContent ? (
-            <View style={defaultStyles.customHeaderContent}>{customContent}</View>
+            <View style={defaultStyles.customHeaderContent}>
+              {customContent}
+            </View>
           ) : title ? (
             <Text style={[defaultStyles.headerTitle, styles.headerTitle]}>
               {title}
@@ -339,10 +341,13 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
             {showToggleButton && (
               <Pressable
                 onPress={onToggleMode}
-                style={[defaultStyles.controlButton, defaultStyles.toggleButton]}
+                style={[
+                  defaultStyles.controlButton,
+                  defaultStyles.toggleButton,
+                ]}
                 hitSlop={HIT_SLOP}
               >
-                {mode === 'floating' ? <MinimizeIcon /> : <MaximizeIcon />}
+                {mode === "floating" ? <MinimizeIcon /> : <MaximizeIcon />}
               </Pressable>
             )}
             {!hideCloseButton && (
@@ -366,7 +371,6 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   );
 };
 
-
 // ============================================================================
 // Main Component
 // ============================================================================
@@ -377,7 +381,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   children,
   persistenceKey,
   header,
-  initialMode = 'bottomSheet',
+  initialMode = "bottomSheet",
   styles: customStyles = {},
   minHeight = MIN_HEIGHT,
   maxHeight,
@@ -450,7 +454,14 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
     const timeoutId = setTimeout(saveState, 500);
     return () => clearTimeout(timeoutId);
-  }, [mode, panelHeight, dimensions, persistenceKey, enablePersistence, isStateLoaded]);
+  }, [
+    mode,
+    panelHeight,
+    dimensions,
+    persistenceKey,
+    enablePersistence,
+    isStateLoaded,
+  ]);
 
   // Update animated values
   useEffect(() => {
@@ -471,8 +482,8 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   const resizePanResponder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => mode === 'bottomSheet',
-        onMoveShouldSetPanResponder: () => mode === 'bottomSheet',
+        onStartShouldSetPanResponder: () => mode === "bottomSheet",
+        onMoveShouldSetPanResponder: () => mode === "bottomSheet",
         onPanResponderGrant: () => {
           setIsResizing(true);
           startHeightRef.current = currentHeightRef.current;
@@ -496,14 +507,20 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
           setIsResizing(false);
         },
       }),
-    [mode, minHeight, effectiveMaxHeight, throttledUpdateHeight, dimensions, onDimensionsChange, animatedHeight]
+    [
+      mode,
+      minHeight,
+      effectiveMaxHeight,
+      throttledUpdateHeight,
+      dimensions,
+      onDimensionsChange,
+      animatedHeight,
+    ]
   );
-
-
 
   // Toggle mode
   const toggleMode = useCallback(() => {
-    const newMode = mode === 'bottomSheet' ? 'floating' : 'bottomSheet';
+    const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
     setMode(newMode);
     onModeChange?.(newMode);
   }, [mode, onModeChange]);
@@ -519,16 +536,19 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
   // Animated styles
   const animatedBorderStyle = {
-    borderColor: isDragging || isResizing ? 'rgba(34, 197, 94, 1)' : 'rgba(255, 255, 255, 0.1)',
+    borderColor:
+      isDragging || isResizing
+        ? "rgba(34, 197, 94, 1)"
+        : "rgba(255, 255, 255, 0.1)",
     borderWidth: isDragging || isResizing ? 2 : 1,
-    shadowColor: isDragging || isResizing ? 'rgba(34, 197, 94, 0.6)' : '#000',
+    shadowColor: isDragging || isResizing ? "rgba(34, 197, 94, 0.6)" : "#000",
     shadowOpacity: isDragging || isResizing ? 0.8 : 0.3,
     shadowRadius: isDragging || isResizing ? 12 : 8,
     elevation: isDragging || isResizing ? 20 : 16,
   };
 
   // Render floating mode
-  if (mode === 'floating') {
+  if (mode === "floating") {
     return (
       <View
         style={[defaultStyles.container, customStyles.container]}
@@ -642,7 +662,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
 
 const defaultStyles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -651,62 +671,62 @@ const defaultStyles = StyleSheet.create({
     elevation: 2000,
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     zIndex: 2000,
     elevation: 2000,
   },
   bottomSheetModal: {
-    backgroundColor: '#2A2A2A',
+    backgroundColor: "#2A2A2A",
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   floatingModal: {
-    position: 'absolute',
-    backgroundColor: '#2A2A2A',
+    position: "absolute",
+    backgroundColor: "#2A2A2A",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   header: {
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#171717',
+    overflow: "hidden",
+    backgroundColor: "#171717",
   },
   dragIndicatorContainer: {
     height: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#171717',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#171717",
   },
   dragIndicator: {
     width: 32,
     height: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 1.5,
   },
   dragIndicatorActive: {
-    backgroundColor: 'rgba(34, 197, 94, 0.8)',
+    backgroundColor: "rgba(34, 197, 94, 0.8)",
     height: 4,
   },
   headerContent: {
@@ -714,36 +734,36 @@ const defaultStyles = StyleSheet.create({
     paddingTop: 2,
     paddingBottom: 2,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.06)',
-    backgroundColor: '#171717',
+    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    backgroundColor: "#171717",
   },
   headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     minHeight: 32,
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
     flex: 1,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: '#9CA3AF',
-    textAlign: 'center',
-    fontWeight: '400',
+    color: "#9CA3AF",
+    textAlign: "center",
+    fontWeight: "400",
     paddingTop: 4,
     paddingBottom: 2,
   },
   customHeaderContent: {
     flex: 1,
     minHeight: 32,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   headerControls: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 6,
     paddingRight: 4,
     marginLeft: 12,
@@ -752,22 +772,22 @@ const defaultStyles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
   },
   toggleButton: {
-    backgroundColor: 'rgba(156, 163, 175, 0.1)',
-    borderColor: 'rgba(156, 163, 175, 0.2)',
+    backgroundColor: "rgba(156, 163, 175, 0.1)",
+    borderColor: "rgba(156, 163, 175, 0.2)",
   },
   closeButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderColor: 'rgba(239, 68, 68, 0.2)',
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderColor: "rgba(239, 68, 68, 0.2)",
   },
   content: {
     flex: 1,
-    overflow: 'hidden',
-    backgroundColor: '#2A2A2A',
+    overflow: "hidden",
+    backgroundColor: "#2A2A2A",
   },
 });
 

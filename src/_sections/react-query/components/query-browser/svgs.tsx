@@ -1,14 +1,25 @@
+import { useEffect, useRef } from "react";
+import { Animated, View, Text as RNText } from "react-native";
 import Svg, {
   Path,
   Line,
   Rect,
   LinearGradient,
+  RadialGradient,
   Stop,
   Circle,
   Defs,
   Mask,
   G,
   Ellipse,
+  Text,
+  Filter,
+  FeGaussianBlur,
+  FeOffset,
+  FeFlood,
+  FeComposite,
+  FeMerge,
+  FeMergeNode,
 } from "react-native-svg";
 
 export function Trash() {
@@ -786,5 +797,871 @@ export function SentryLogo() {
         d="M40 13.26a4.67 4.67 0 0 0-8 0l-6.58 11.27a32.21 32.21 0 0 1 17.75 26.66h-4.62a27.68 27.68 0 0 0-15.46-22.72L17 39a15.92 15.92 0 0 1 9.23 12.17H15.62a.76.76 0 0 1-.62-1.11l2.94-5a10.74 10.74 0 0 0-3.36-1.9l-2.91 5a4.54 4.54 0 0 0 1.69 6.24 4.66 4.66 0 0 0 2.26.6h14.53a19.4 19.4 0 0 0-8-17.31l2.31-4A23.87 23.87 0 0 1 34.76 55h12.31a35.88 35.88 0 0 0-16.41-31.8l4.67-8a.77.77 0 0 1 1.05-.27c.53.29 20.29 34.77 20.66 35.17a.76.76 0 0 1-.68 1.13H51.6q.09 1.91 0 3.81h4.78A4.59 4.59 0 0 0 61 50.43a4.49 4.49 0 0 0-.62-2.28Z"
       />
     </Svg>
+  );
+}
+
+export function ReactQueryButton() {
+  return (
+    <svg
+      width="500"
+      height="300"
+      viewBox="0 0 500 300"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+    >
+      <defs>
+        <linearGradient
+          id="tanstack-grad"
+          x1="-666.45"
+          y1="163.28"
+          x2="-666.45"
+          y2="163.99"
+          gradientTransform="matrix(633 0 0 633 422177 -103358)"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#6BDAFF" offset="0" />
+          <stop stopColor="#F9FFB5" offset="0.32" />
+          <stop stopColor="#FFA770" offset="0.71" />
+          <stop stopColor="#FF7373" offset="1" />
+        </linearGradient>
+
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4.5" result="coloredBlur">
+            <animate
+              attributeName="stdDeviation"
+              dur="4s"
+              repeatCount="indefinite"
+              values="4; 8; 4"
+            />
+          </feGaussianBlur>
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <filter id="text-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+          <feFlood floodColor="#FF006E" result="flood" />
+          <feComposite in="flood" in2="blur" operator="in" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g>
+        <animateTransform
+          attributeName="transform"
+          type="scale"
+          from="1"
+          to="1.02"
+          dur="2.5s"
+          begin="0s"
+          repeatCount="indefinite"
+          additive="sum"
+          calcMode="spline"
+          keyTimes="0; 0.5; 1"
+          values="1; 1.02; 1"
+          keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"
+        />
+
+        <rect
+          x="25"
+          y="75"
+          width="450"
+          height="150"
+          rx="15"
+          fill="rgba(0,0,0,0.85)"
+          stroke="#FF006E"
+          strokeOpacity="0.2"
+          strokeWidth="1"
+        />
+
+        <rect
+          x="25"
+          y="75"
+          width="450"
+          height="150"
+          rx="15"
+          fill="none"
+          stroke="#FF006E"
+          strokeWidth="4"
+          filter="url(#glow)"
+        />
+
+        <rect
+          x="30"
+          y="80"
+          width="440"
+          height="140"
+          rx="10"
+          fill="none"
+          stroke="#FFFFFF"
+          strokeOpacity="0.1"
+          strokeWidth="1"
+        />
+
+        <g fill="#FF006E">
+          <rect x="35" y="85" width="20" height="4" />
+          <rect x="35" y="85" width="4" height="20" />
+          <rect x="461" y="85" width="-20" height="4" />
+          <rect x="461" y="85" width="4" height="20" />
+          <rect x="35" y="211" width="20" height="-4" />
+          <rect x="35" y="211" width="4" height="-20" />
+          <rect x="461" y="211" width="-20" height="-4" />
+          <rect x="461" y="211" width="4" height="-20" />
+        </g>
+
+        <g transform="translate(50, 110)">
+          <g transform="scale(0.12)">
+            <circle
+              cx="316.5"
+              cy="316.5"
+              r="316.5"
+              fill="url(#tanstack-grad)"
+            />
+            <g mask="url(#c)">
+              <ellipse
+                cx="89.5"
+                cy="610.5"
+                rx="214.5"
+                ry="186"
+                fill="#015064"
+                stroke="#00CFE2"
+                strokeWidth="25"
+              />
+            </g>
+            <g mask="url(#e)">
+              <ellipse
+                cx="543.5"
+                cy="610.5"
+                rx="214.5"
+                ry="186"
+                fill="#015064"
+                stroke="#00CFE2"
+                strokeWidth="25"
+              />
+            </g>
+            <g mask="url(#g)">
+              <ellipse
+                cx="89.5"
+                cy="648.5"
+                rx="214.5"
+                ry="186"
+                fill="#015064"
+                stroke="#00A8B8"
+                strokeWidth="25"
+              />
+            </g>
+            <g mask="url(#i)">
+              <ellipse
+                cx="543.5"
+                cy="648.5"
+                rx="214.5"
+                ry="186"
+                fill="#015064"
+                stroke="#00A8B8"
+                strokeWidth="25"
+              />
+            </g>
+            <g mask="url(#k)">
+              <ellipse
+                cx="89.5"
+                cy="684.5"
+                rx="214.5"
+                ry="186"
+                fill="#015064"
+                stroke="#007782"
+                strokeWidth="25"
+              />
+            </g>
+            <g mask="url(#m)">
+              <ellipse
+                cx="543.5"
+                cy="684.5"
+                rx="214.5"
+                ry="186"
+                fill="#015064"
+                stroke="#007782"
+                strokeWidth="25"
+              />
+            </g>
+            <g mask="url(#o)">
+              <path
+                fill="none"
+                stroke="#000"
+                strokeLinecap="round"
+                strokeLinejoin="bevel"
+                strokeWidth="11"
+                d="M436 403.2L431 431.8"
+              />
+              <path
+                fill="none"
+                stroke="#000"
+                strokeLinecap="round"
+                strokeLinejoin="bevel"
+                strokeWidth="11"
+                d="M291 341.5L280 403.5"
+              />
+              <path
+                fill="none"
+                stroke="#000"
+                strokeLinecap="round"
+                strokeLinejoin="bevel"
+                strokeWidth="11"
+                d="M332.9 384.1L328.6 411.2"
+              />
+              <path
+                d="M344.1 363l97.7 17.2c5.8 2.1 8.2 6.1 7.1 12.1s-4.7 9.2-11 9.9l-106-18.7-57.5-59.2c-3.2-4.8-2.9-9.1.8-12.8s8.3-4.4 13.7-2.1l55.2 53.6z"
+                fill="red"
+              />
+            </g>
+            <g mask="url(#r)">
+              <path
+                d="M192.3 203c8.1 37.3 14 73.6 17.8 109.1 3.8 35.4 2.8 75.1-3 119.2l61.2-16.7c-15.6-59-25.2-97.9-28.6-116.6s-10.8-51.9-22.1-99.6l-25.3 4.6"
+                fill="brown"
+              />
+              <g stroke="#2F8A00">
+                <path
+                  d="M195 183.9s-12.6-22.1-36.5-29.9c-15.9-5.2-34.4-1.5-55.5 11.1 15.9 14.3 29.5 22.6 40.7 24.9 16.8 3.6 51.3-6.1 51.3-6.1z"
+                  strokeWidth="13"
+                  fill="green"
+                />
+                <path
+                  d="M194.9 184.5s-47.5-8.5-83.2 15.7c-23.8 16.2-34.3 49.3-31.6 99.4 30.3-27.8 52.1-48.5 65.2-61.9 19.8-20.2 49.6-53.2 49.6-53.2z"
+                  strokeWidth="13"
+                  fill="green"
+                />
+                <path
+                  d="M195 183.9c-.8-21.9 6-38 20.6-48.2s29.8-15.4 45.5-15.3c-6.1 21.4-14.5 35.8-25.2 43.4S211.5 178 195 183.9z"
+                  strokeWidth="13"
+                  fill="green"
+                />
+                <path
+                  d="M194.9 184.5c31.9-30 64.1-39.7 96.7-29s50.8 30.4 54.6 59.1c-35.2-5.5-60.4-9.6-75.8-12.1-15.3-2.6-40.5-8.6-75.5-18z"
+                  strokeWidth="13"
+                  fill="green"
+                />
+                <path
+                  d="M194.9 184.5c35.8-7.6 65.6-.2 89.2 22s37.7 49 42.3 80.3c-39.8-9.7-68.3-23.8-85.5-42.4s-32.5-38.5-46-59.9z"
+                  strokeWidth="13"
+                  fill="green"
+                />
+                <path
+                  d="M194.9 184.5c-33.6 13.8-53.6 35.7-60.1 65.6s-3.6 63.1 8.7 99.6c27.4-40.3 43.2-69.6 47.4-88s5.6-44.1 4-77.2z"
+                  strokeWidth="13"
+                  fill="green"
+                />
+              </g>
+            </g>
+            <g mask="url(#A)">
+              <ellipse
+                cx="316.5"
+                cy="715.5"
+                rx="266"
+                ry="316.5"
+                fill="yellow"
+              />
+            </g>
+            <g mask="url(#D)">
+              <circle cx="565.5" cy="89.5" r="113.5" fill="orange" />
+            </g>
+          </g>
+
+          <g transform="translate(150, 30)">
+            <text
+              y="20"
+              fontFamily="monospace, sans-serif"
+              fontSize="32"
+              fontWeight="900"
+              letterSpacing="1.5"
+              fill="#FF006E"
+              filter="url(#text-glow)"
+            >
+              QUERY
+            </text>
+            <text
+              y="55"
+              fontFamily="monospace, sans-serif"
+              fontSize="22"
+              fontWeight="600"
+              letterSpacing="1"
+              fill="#FF80AB"
+              opacity="0.8"
+            >
+              DATABASE
+            </text>
+          </g>
+        </g>
+
+        <text
+          x="440"
+          y="210"
+          fontFamily="monospace"
+          fontSize="14"
+          fill="#FF006E"
+          opacity="0.4"
+        >
+          010101
+        </text>
+
+        <rect x="25" y="75" width="450" height="3" fill="#FF80AB" opacity="0.3">
+          <animate
+            attributeName="y"
+            dur="3s"
+            from="75"
+            to="222"
+            repeatCount="indefinite"
+          />
+        </rect>
+
+        <g
+          fontFamily="monospace, sans-serif"
+          fontSize="32"
+          fontWeight="900"
+          letterSpacing="1.5"
+        >
+          <text x="200" y="150" fill="#00FFFF" opacity="0">
+            <animate
+              attributeName="opacity"
+              values="0;0.8;0"
+              dur="3s"
+              begin="1s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="x"
+              values="200; 203; 198; 200"
+              dur="0.1s"
+              begin="1s"
+              repeatCount="indefinite"
+            />
+          </text>
+          <text x="200" y="150" fill="#FF00FF" opacity="0">
+            <animate
+              attributeName="opacity"
+              values="0;0.8;0"
+              dur="2.5s"
+              begin="0.5s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="x"
+              values="200; 197; 202; 200"
+              dur="0.1s"
+              begin="0.5s"
+              repeatCount="indefinite"
+            />
+          </text>
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+// Simplified cyberpunk border box component that exactly matches CyberpunkGridMenu
+export function CyberpunkBorderBox({
+  color = "#FF006E",
+  secondaryColor = "#FF4081",
+  accentColor = "#FF80AB",
+}) {
+  return (
+    <Svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 105 65"
+      preserveAspectRatio="none"
+      style={{ position: "absolute" }}
+    >
+      <Defs>
+        {/* Inner glow gradient for better text readability */}
+        <RadialGradient id={`innerGlow-${color}`} cx="50%" cy="50%" r="50%">
+          <Stop offset="0%" stopColor={color} stopOpacity="0.15" />
+          <Stop offset="70%" stopColor={color} stopOpacity="0.08" />
+          <Stop offset="100%" stopColor={color} stopOpacity="0.02" />
+        </RadialGradient>
+        
+        {/* Drop shadow filter */}
+        <Filter id={`shadow-${color}`}>
+          <FeGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+          <FeOffset dx="0" dy="0" result="offsetblur"/>
+          <FeFlood floodColor={color} floodOpacity="0.5"/>
+          <FeComposite in2="offsetblur" operator="in"/>
+          <FeMerge>
+            <FeMergeNode/>
+            <FeMergeNode in="SourceGraphic"/>
+          </FeMerge>
+        </Filter>
+      </Defs>
+      
+      <G>
+        {/* Background exactly like cyberBorder in CyberpunkGridMenu */}
+        <Rect
+          x="3.5"
+          y="3.5"
+          width="98"
+          height="58"
+          rx="6"
+          fill="rgba(0,0,0,0.98)"
+        />
+
+        {/* Inner glow layer for text readability */}
+        <Rect
+          x="3.5"
+          y="3.5"
+          width="98"
+          height="58"
+          rx="6"
+          fill={`url(#innerGlow-${color})`}
+        />
+
+        {/* Background tint */}
+        <Rect
+          x="3.5"
+          y="3.5"
+          width="98"
+          height="58"
+          rx="6"
+          fill={color}
+          fillOpacity={0.08}
+        />
+
+        {/* Outer thin border - more spacing from main border, 1px width */}
+        <Rect
+          x="0"
+          y="0"
+          width="105"
+          height="65"
+          rx="8"
+          fill="none"
+          stroke={color}
+          strokeOpacity={0.5}
+          strokeWidth="1"
+        />
+
+        {/* Inner shadow for depth */}
+        <Rect
+          x="3.5"
+          y="3.5"
+          width="98"
+          height="58"
+          rx="6"
+          fill="none"
+          stroke="rgba(0,0,0,0.5)"
+          strokeOpacity={0.8}
+          strokeWidth="1"
+        />
+        
+        {/* Main cyberBorder - with more gap from outer border */}
+        <Rect
+          x="3.5"
+          y="3.5"
+          width="98"
+          height="58"
+          rx="6"
+          fill="none"
+          stroke={color}
+          strokeOpacity={0.8}
+          strokeWidth="1.5"
+          filter={`url(#shadow-${color})`}
+        />
+
+        {/* Corner accents - positioned inside from the new border */}
+        {/* Top Left - vertical - primary */}
+        <Rect x="4.5" y="4.5" width="2" height="12" fill={color} />
+        {/* Top Right - horizontal - secondary */}
+        <Rect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} />
+        {/* Bottom Left - horizontal - secondary */}
+        <Rect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} />
+        {/* Bottom Right - vertical - primary */}
+        <Rect x="98.5" y="48.5" width="2" height="12" fill={color} />
+      </G>
+    </Svg>
+  );
+}
+
+// Animated Cyberpunk Border Box with multiple cool effects
+export function AnimatedCyberpunkBorderBox({
+  color = "#FF006E",
+  secondaryColor = "#FF4081",
+  accentColor = "#FF80AB",
+  animationType = "pulse", // pulse, scan, glitch, rotate, matrix
+}) {
+  const pulseAnim = useRef(new Animated.Value(0)).current;
+  const scanAnim = useRef(new Animated.Value(0)).current;
+  const glitchAnim = useRef(new Animated.Value(0)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    switch(animationType) {
+      case "pulse":
+        // Pulsing glow effect
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(pulseAnim, {
+              toValue: 1,
+              duration: 1500,
+              useNativeDriver: false,
+            }),
+            Animated.timing(pulseAnim, {
+              toValue: 0,
+              duration: 1500,
+              useNativeDriver: false,
+            }),
+          ])
+        ).start();
+        break;
+      
+      case "scan":
+        // Scanning line effect
+        Animated.loop(
+          Animated.timing(scanAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: false,
+          })
+        ).start();
+        break;
+      
+      case "glitch":
+        // Random glitch effect with more intensity
+        const glitchLoop = () => {
+          const delay = 1000 + Math.random() * 2000; // Random delay between glitches
+          Animated.sequence([
+            Animated.timing(glitchAnim, {
+              toValue: 0,
+              duration: delay,
+              useNativeDriver: false,
+            }),
+            Animated.timing(glitchAnim, {
+              toValue: 1,
+              duration: 30,
+              useNativeDriver: false,
+            }),
+            Animated.timing(glitchAnim, {
+              toValue: 0,
+              duration: 20,
+              useNativeDriver: false,
+            }),
+            Animated.timing(glitchAnim, {
+              toValue: 0.8,
+              duration: 40,
+              useNativeDriver: false,
+            }),
+            Animated.timing(glitchAnim, {
+              toValue: 0.3,
+              duration: 20,
+              useNativeDriver: false,
+            }),
+            Animated.timing(glitchAnim, {
+              toValue: 1,
+              duration: 30,
+              useNativeDriver: false,
+            }),
+            Animated.timing(glitchAnim, {
+              toValue: 0,
+              duration: 50,
+              useNativeDriver: false,
+            }),
+          ]).start(() => glitchLoop());
+        };
+        glitchLoop();
+        break;
+      
+      case "rotate":
+        // Rotating corner accents
+        Animated.loop(
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 4000,
+            useNativeDriver: false,
+          })
+        ).start();
+        break;
+    }
+  }, [animationType, pulseAnim, scanAnim, glitchAnim, rotateAnim]);
+
+  const AnimatedRect = Animated.createAnimatedComponent(Rect);
+  const AnimatedLine = Animated.createAnimatedComponent(Line);
+
+  if (animationType === "pulse") {
+    return (
+      <Svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 105 65"
+        preserveAspectRatio="none"
+        style={{ position: "absolute" }}
+      >
+        <Defs>
+          <LinearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={color} stopOpacity="0" />
+            <Stop offset="50%" stopColor={accentColor} stopOpacity="0.5" />
+            <Stop offset="100%" stopColor={secondaryColor} stopOpacity="0" />
+          </LinearGradient>
+        </Defs>
+        
+        <G>
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="rgba(0,0,0,0.98)" />
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill={color} fillOpacity={0.08} />
+          
+          {/* Animated pulsing border */}
+          <AnimatedRect
+            x="0"
+            y="0"
+            width="105"
+            height="65"
+            rx="8"
+            fill="none"
+            stroke="url(#pulseGradient)"
+            strokeWidth="2"
+            strokeOpacity={pulseAnim}
+          />
+          
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="none" stroke={color} strokeOpacity={0.8} strokeWidth="1.5" />
+          
+          {/* Animated corner accents */}
+          <AnimatedRect x="4.5" y="4.5" width="2" height="12" fill={color} opacity={pulseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.5, 1],
+          })} />
+          <AnimatedRect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} opacity={pulseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.5, 1],
+          })} />
+          <AnimatedRect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} opacity={pulseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.5, 1],
+          })} />
+          <AnimatedRect x="98.5" y="48.5" width="2" height="12" fill={color} opacity={pulseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.5, 1],
+          })} />
+        </G>
+      </Svg>
+    );
+  }
+
+  if (animationType === "scan") {
+    return (
+      <Svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 105 65"
+        preserveAspectRatio="none"
+        style={{ position: "absolute" }}
+      >
+        <Defs>
+          <LinearGradient id="scanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <Stop offset="0%" stopColor={accentColor} stopOpacity="0" />
+            <Stop offset="50%" stopColor={accentColor} stopOpacity="0.8" />
+            <Stop offset="100%" stopColor={accentColor} stopOpacity="0" />
+          </LinearGradient>
+        </Defs>
+        
+        <G>
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="rgba(0,0,0,0.98)" />
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill={color} fillOpacity={0.08} />
+          
+          {/* Scanning overlay - removed to avoid gradient issues */}
+          
+          <Rect x="0" y="0" width="105" height="65" rx="8" fill="none" stroke={color} strokeOpacity={0.5} strokeWidth="1" />
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="none" stroke={color} strokeOpacity={0.8} strokeWidth="1.5" />
+          
+          {/* Scanning line */}
+          <AnimatedLine
+            x1="3.5"
+            x2="101.5"
+            y1={scanAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [3.5, 61.5],
+            })}
+            y2={scanAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [3.5, 61.5],
+            })}
+            stroke={accentColor}
+            strokeWidth="2"
+            opacity="0.8"
+          />
+          
+          <Rect x="4.5" y="4.5" width="2" height="12" fill={color} />
+          <Rect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} />
+          <Rect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} />
+          <Rect x="98.5" y="48.5" width="2" height="12" fill={color} />
+        </G>
+      </Svg>
+    );
+  }
+
+  if (animationType === "glitch") {
+    return (
+      <Svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 105 65"
+        preserveAspectRatio="none"
+        style={{ position: "absolute" }}
+      >
+        <G>
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="rgba(0,0,0,0.98)" />
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill={color} fillOpacity={0.08} />
+          
+          {/* Multiple glitched borders for more dramatic effect */}
+          <AnimatedRect
+            x={glitchAnim.interpolate({
+              inputRange: [0, 0.3, 0.5, 0.8, 1],
+              outputRange: [0, -3, 2, -1, 4],
+            })}
+            y={glitchAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0, 1, -1],
+            })}
+            width="105"
+            height="65"
+            rx="8"
+            fill="none"
+            stroke="#00FFFF"
+            strokeOpacity={glitchAnim}
+            strokeWidth="1"
+          />
+          
+          <AnimatedRect
+            x={glitchAnim.interpolate({
+              inputRange: [0, 0.3, 0.5, 0.8, 1],
+              outputRange: [3.5, 5.5, 1.5, 4.5, 2.5],
+            })}
+            y={glitchAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [3.5, 2.5, 4.5],
+            })}
+            width="98"
+            height="58"
+            rx="6"
+            fill="none"
+            stroke="#FF00FF"
+            strokeOpacity={glitchAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0, 0.8, 0.6],
+            })}
+            strokeWidth="1.5"
+          />
+          
+          {/* Additional glitch layer */}
+          <AnimatedRect
+            x={glitchAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [3.5, 2, 5],
+            })}
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="none"
+            stroke="#FFFF00"
+            strokeOpacity={glitchAnim.interpolate({
+              inputRange: [0, 0.3, 0.8, 1],
+              outputRange: [0, 0.5, 0.3, 0],
+            })}
+            strokeWidth="1"
+          />
+          
+          <Rect x="0" y="0" width="105" height="65" rx="8" fill="none" stroke={color} strokeOpacity={0.5} strokeWidth="1" />
+          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="none" stroke={color} strokeOpacity={0.8} strokeWidth="1.5" />
+          
+          {/* Glitched corner accents */}
+          <AnimatedRect 
+            x="4.5" 
+            y={glitchAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [4.5, 3.5, 5.5],
+            })}
+            width="2" 
+            height="12" 
+            fill={glitchAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [color, "#00FFFF", "#FF00FF"],
+            })} 
+          />
+          <Rect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} />
+          <Rect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} />
+          <Rect x="98.5" y="48.5" width="2" height="12" fill={color} />
+        </G>
+      </Svg>
+    );
+  }
+
+  // Default static version
+  return <CyberpunkBorderBox color={color} secondaryColor={secondaryColor} accentColor={accentColor} />;
+}
+
+// React Native compatible version of ReactQueryButton - now uses the border box
+export function ReactQueryButtonNative() {
+  return (
+    <View style={{ width: "100%", height: "100%", position: "relative" }}>
+      {/* Border box SVG */}
+      <CyberpunkBorderBox color="#FF006E" secondaryColor="#FF4081" />
+
+      {/* Content inside the border */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 6,
+          height: "100%",
+        }}
+      >
+        {/* TanStack logo */}
+        <View style={{ width: 18, height: 18, marginRight: 6 }}>
+          <TanstackLogo />
+        </View>
+
+        {/* Text labels */}
+        <View>
+          <RNText
+            style={{
+              fontSize: 11,
+              fontWeight: "900",
+              letterSpacing: 1.5,
+              fontFamily: "monospace",
+              color: "#FF006E",
+            }}
+          >
+            QUERY
+          </RNText>
+          <RNText
+            style={{
+              fontSize: 8,
+              fontWeight: "600",
+              letterSpacing: 1,
+              fontFamily: "monospace",
+              color: "#FF80AB",
+              opacity: 0.7,
+              marginTop: -2,
+            }}
+          >
+            DATABASE
+          </RNText>
+        </View>
+      </View>
+
+      {/* Data stream text */}
+      <RNText
+        style={{
+          position: "absolute",
+          bottom: 2,
+          right: 4,
+          fontSize: 6,
+          fontFamily: "monospace",
+          color: "#FF006E",
+          opacity: 0.4,
+        }}
+      >
+        010101
+      </RNText>
+    </View>
   );
 }

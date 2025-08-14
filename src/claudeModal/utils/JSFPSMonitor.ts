@@ -91,4 +91,5 @@ export interface JSFPSResult {
   minFPS: number;
   maxFPS: number;
   averageFPS: number;
+  standardDeviation?: number;
 }

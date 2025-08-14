@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, View, Dimensions } from "react-native";
+import { Pressable, StyleSheet, View, Dimensions, Text } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
@@ -7,6 +7,7 @@ import {
   EnvVarsModal,
 } from "../../../_sections/env";
 import { StorageModal, RequiredStorageKey } from "../../../_sections/storage";
+// import { SentryLogsModal } from "../../../_sections/sentry/components/SentryLogsModal"; // Temporarily disabled - causing import errors
 
 import {
   FloatingTools,
@@ -25,6 +26,8 @@ import { DevToolsConsole } from "../console/DevToolsConsole";
 import { LayersIcon } from "@/src/_shared/icons/lucide-icons";
 import { CyberCascadeMenu } from "./CyberCascadeMenu";
 import { CyberpunkGridMenu } from "./CyberpunkGridMenu";
+import { ClaudeGridMenu } from "./ClaudeGridMenu";
+import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./DialDevTools";
 
 // Re-export types that developers will need
@@ -62,12 +65,12 @@ export function RnBetterDevToolsBubble({
   hideSentryButton,
   hideStorageButton,
 }: RnBetterDevToolsBubbleProps) {
-  const [showFloatingMenu, setShowFloatingMenu] = useState(false); // Menu closed by default
+  const [showFloatingMenu, setShowFloatingMenu] = useState(false);
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
 
   // Menu type selection
-  type MenuType = "cybercascade" | "cyberpunk" | "dial";
-  const [menuType, setMenuType] = useState<MenuType>("dial"); // Default to dial
+  type MenuType = "cybercascade" | "cyberpunk" | "claude" | "dial";
+  const [menuType, setMenuType] = useState<MenuType>("cyberpunk");
 
   // Get screen dimensions
   const { height: screenHeight } = Dimensions.get("window");
@@ -143,15 +146,59 @@ export function RnBetterDevToolsBubble({
     isModalOpen ||
     isDebugModalOpen ||
     isEnvModalOpen ||
-    isSentryModalOpen ||
+    // isSentryModalOpen || // Disabled - Sentry modal causing import issues
     isStorageModalOpen;
+
+  // Debug which modal is stuck open
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      console.log("[DEBUG] Modal states:", {
+        isModalOpen,
+        isDebugModalOpen,
+        isEnvModalOpen,
+        isSentryModalOpen,
+        isStorageModalOpen,
+      });
+    }
+  }, [isModalOpen, isDebugModalOpen, isEnvModalOpen, isSentryModalOpen, isStorageModalOpen, isAnyModalOpen]);
 
   // Note: We no longer wait for state restoration to show the bubble
   // The bubble should be visible immediately on app launch
 
+  // Emergency reset function if modals get stuck
+  const handleEmergencyReset = () => {
+    console.log("[DEBUG] Emergency reset triggered");
+    handleModalDismiss();
+    handleDebugModalDismiss();
+    handleEnvModalDismiss();
+    handleSentryModalDismiss();
+    handleStorageModalDismiss();
+    setShowFloatingMenu(false);
+  };
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
+        {/* Emergency reset button - always visible in top left when modals are stuck */}
+        {isAnyModalOpen && (
+          <Pressable
+            onPress={handleEmergencyReset}
+            style={{
+              position: "absolute",
+              top: 60,
+              left: 20,
+              zIndex: 10000,
+              backgroundColor: "rgba(255, 0, 0, 0.8)",
+              padding: 10,
+              borderRadius: 5,
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 12, fontWeight: "bold" }}>
+              Reset Modals
+            </Text>
+          </Pressable>
+        )}
+
         {/* Floating Tools - Always mounted for stable tree; hidden via opacity/pointerEvents when modals open */}
         <View
           pointerEvents={isAnyModalOpen ? "none" : "auto"}
@@ -175,13 +222,25 @@ export function RnBetterDevToolsBubble({
                 <LayersIcon size={14} color="white" />
               </Pressable>
 
-              {/* Cyberpunk Grid */}
+              {/* Cyberpunk Grid (Reanimated) */}
               <Pressable
                 onPress={() => {
                   setMenuType("cyberpunk");
                   setShowFloatingMenu(true);
                 }}
                 style={[styles.menuButton, { backgroundColor: "#00FFFF" }]}
+                hitSlop={8}
+              >
+                <LayersIcon size={14} color="white" />
+              </Pressable>
+
+              {/* Claude Grid (Pure React Native) */}
+              <Pressable
+                onPress={() => {
+                  setMenuType("claude");
+                  setShowFloatingMenu(true);
+                }}
+                style={[styles.menuButton, { backgroundColor: "#FF00FF" }]}
                 hitSlop={8}
               >
                 <LayersIcon size={14} color="white" />
@@ -216,8 +275,10 @@ export function RnBetterDevToolsBubble({
                 handleEnvPress();
               },
               onSentryPress: () => {
+                // Disabled - Sentry modal has import issues
+                console.warn("Sentry modal is temporarily disabled");
                 setShowFloatingMenu(false);
-                handleSentryPress();
+                // handleSentryPress(); // Don't open the modal
               },
               onStoragePress: () => {
                 setShowFloatingMenu(false);
@@ -237,10 +298,12 @@ export function RnBetterDevToolsBubble({
                 return <CyberCascadeMenu {...menuProps} />;
               case "cyberpunk":
                 return <CyberpunkGridMenu {...menuProps} />;
+              case "claude":
+                return <ClaudeGridMenuSVGGlitch {...menuProps} />;
               case "dial":
                 return <DialDevTools {...menuProps} />;
               default:
-                return <DialDevTools {...menuProps} />;
+                return <ClaudeGridMenu {...menuProps} />;
             }
           })()}
 
@@ -286,12 +349,12 @@ export function RnBetterDevToolsBubble({
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
 
-        {/* Sentry Events Modal - Auto-opens if restored state indicates it was open */}
+        {/* Sentry Events Modal - Temporarily disabled due to import issues */}
         {/* <SentryLogsModal
           key="sentry-logs-modal"
           visible={isSentryModalOpen}
           onClose={handleSentryModalDismiss}
-          getSentrySubtitle={getSentrySubtitle}
+          getSentrySubtitle={() => "Sentry subtitle"}
           enableSharedModalDimensions={enableSharedModalDimensions}
         /> */}
 

@@ -1,4 +1,5 @@
-import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { ConsoleSectionList } from "./ConsoleSectionList";
 import { ReactQuerySection } from "./sections";
@@ -10,6 +11,7 @@ import { BubbleSettingsSection } from "../../../_sections/settings";
 import { SectionType } from "./DevToolsModalRouter";
 import { Text, View } from "react-native";
 import { useState, useCallback } from "react";
+import { useTheme } from "../../../_themes/DevToolsThemeContext";
 
 interface DevToolsSectionListModalProps {
   visible: boolean;
@@ -37,6 +39,7 @@ export function DevToolsSectionListModal({
   enableSharedModalDimensions = false,
 }: DevToolsSectionListModalProps) {
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -60,16 +63,53 @@ export function DevToolsSectionListModal({
       }}
     >
       <Text
-        style={{ color: "#E5E7EB", fontSize: 14, fontWeight: "500", flex: 1 }}
+        style={{ 
+          color: theme.colors.text, 
+          fontSize: theme.name === "cyberpunk" ? 14 : 14, 
+          fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+          letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+          textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
+          flex: 1 
+        }}
         numberOfLines={1}
       >
-        Developer Tools Console
+        {theme.name === "cyberpunk" ? "// DEV_TOOLS_CONSOLE" : "Developer Tools Console"}
       </Text>
+      {theme.name === "cyberpunk" && (
+        <View style={{
+          flexDirection: "row",
+          gap: 3,
+          marginRight: 8,
+        }}>
+          <View style={{
+            width: 3,
+            height: 3,
+            borderRadius: 1.5,
+            backgroundColor: theme.colors.primary,
+            opacity: 0.8,
+          }} />
+          <View style={{
+            width: 3,
+            height: 3,
+            borderRadius: 1.5,
+            backgroundColor: theme.colors.primary,
+            opacity: 0.5,
+          }} />
+          <View style={{
+            width: 3,
+            height: 3,
+            borderRadius: 1.5,
+            backgroundColor: theme.colors.primary,
+            opacity: 0.3,
+          }} />
+        </View>
+      )}
     </View>
   );
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -80,6 +120,7 @@ export function DevToolsSectionListModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <ConsoleSectionList>
         {/* <SentryLogsSection
@@ -104,6 +145,6 @@ export function DevToolsSectionListModal({
           onPress={() => onSectionSelect("bubble-settings")}
         />
       </ConsoleSectionList>
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }

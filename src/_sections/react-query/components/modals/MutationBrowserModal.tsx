@@ -4,12 +4,14 @@ import { useCallback, useState } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
-import { ClaudeModal, ModalMode } from "../../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../../claudeModal/ThemedClaudeModal";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View } from "react-native";
 import { useSharedValue, withSpring } from "react-native-reanimated";
 import { SwipeIndicator } from "./SwipeIndicator";
 import { devToolsStorageKeys } from "../../../../_shared/storage/devToolsStorageKeys";
+import { useTheme } from "../../../../_themes/DevToolsThemeContext";
 
 interface MutationBrowserModalProps {
   visible: boolean;
@@ -33,6 +35,7 @@ export function MutationBrowserModal({
   enableSharedModalDimensions = false,
 }: MutationBrowserModalProps) {
   const selectedMutation = useGetMutationById(selectedMutationId);
+  const theme = useTheme();
   const [internalActiveFilter, setInternalActiveFilter] = useState<
     string | null
   >(null);
@@ -99,7 +102,7 @@ export function MutationBrowserModal({
   );
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -110,6 +113,7 @@ export function MutationBrowserModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <View style={{ flex: 1 }}>
         <GestureDetector gesture={panGesture}>
@@ -132,6 +136,6 @@ export function MutationBrowserModal({
           isFloatingMode={modalMode === "floating"}
         />
       </View>
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }

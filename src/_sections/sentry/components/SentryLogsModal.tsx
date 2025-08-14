@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
 import { SentryLogsContent } from "./SentryLogsSection";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
@@ -15,6 +16,7 @@ import {
   generateTestSentryEvents,
 } from "../utils/sentryEventListeners";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
+import { useTheme } from "../../../_themes/DevToolsThemeContext";
 
 interface SentryLogsModalProps {
   visible: boolean;
@@ -43,6 +45,7 @@ export function SentryLogsModal({
     new Set()
   );
   const [isLoggingEnabled, setIsLoggingEnabled] = useState(true);
+  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -184,7 +187,7 @@ export function SentryLogsModal({
     : devToolsStorageKeys.sentry.modal();
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -195,6 +198,7 @@ export function SentryLogsModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <SentryLogsContent
         selectedEntry={selectedEntry}
@@ -227,7 +231,7 @@ export function SentryLogsModal({
         }}
         isLoggingEnabled={isLoggingEnabled}
       />
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }
 

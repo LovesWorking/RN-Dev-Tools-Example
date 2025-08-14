@@ -84,7 +84,7 @@ export function CyberCascadeMenu({
   const handleOpen = () => {
     // Backdrop fade in
     backdropOpacity.value = withTiming(0.95, { duration: 300 });
-    
+
     // Container scale with bounce
     containerScale.value = withSequence(
       withTiming(1.1, { duration: 200 }),
@@ -93,19 +93,15 @@ export function CyberCascadeMenu({
 
     // Start continuous effects
     scanlinePosition.value = withRepeat(
-      withTiming(1, { 
+      withTiming(1, {
         duration: 3000,
-        easing: Easing.inOut(Easing.quad)
+        easing: Easing.inOut(Easing.quad),
       }),
       -1,
       false
     );
 
-    matrixRain.value = withRepeat(
-      withTiming(1, { duration: 2000 }),
-      -1,
-      false
-    );
+    matrixRain.value = withRepeat(withTiming(1, { duration: 2000 }), -1, false);
 
     // Glitch effect periodically
     glitchEffect.value = withRepeat(
@@ -226,11 +222,7 @@ export function CyberCascadeMenu({
       );
       stream.position.value = withDelay(
         i * 300,
-        withRepeat(
-          withTiming(1, { duration: 3000 }),
-          -1,
-          false
-        )
+        withRepeat(withTiming(1, { duration: 3000 }), -1, false)
       );
     });
   };
@@ -243,11 +235,7 @@ export function CyberCascadeMenu({
     transform: [
       { scale: containerScale.value },
       {
-        translateX: interpolate(
-          glitchEffect.value,
-          [0, 0.5, 1],
-          [0, -3, 3]
-        ),
+        translateX: interpolate(glitchEffect.value, [0, 0.5, 1], [0, -3, 3]),
       },
     ],
     opacity: containerScale.value,
@@ -378,10 +366,7 @@ export function CyberCascadeMenu({
           {[...Array(8)].map((_, i) => (
             <View
               key={i}
-              style={[
-                styles.matrixColumn,
-                { left: i * 30, opacity: 0.05 },
-              ]}
+              style={[styles.matrixColumn, { left: i * 30, opacity: 0.05 }]}
             >
               <Text style={styles.matrixText}>
                 {Math.random() > 0.5 ? "01" : "10"}
@@ -395,7 +380,11 @@ export function CyberCascadeMenu({
 
         {/* Gradient background */}
         <LinearGradient
-          colors={["rgba(0,0,0,0.98)", "rgba(10,10,10,0.95)", "rgba(20,20,20,0.92)"]}
+          colors={[
+            "rgba(0,0,0,0.98)",
+            "rgba(10,10,10,0.95)",
+            "rgba(20,20,20,0.92)",
+          ]}
           style={styles.gradientBg}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -404,10 +393,14 @@ export function CyberCascadeMenu({
         {/* Menu items */}
         <View style={styles.menuInner}>
           {menuItems.map((item, index) => {
-            const { itemStyle, glowStyle, glitchStyle } = itemAnimatedStyles[index];
+            const { itemStyle, glowStyle, glitchStyle } =
+              itemAnimatedStyles[index];
 
             return (
-              <Animated.View key={index} style={[styles.itemWrapper, itemStyle]}>
+              <Animated.View
+                key={index}
+                style={[styles.itemWrapper, itemStyle]}
+              >
                 {/* Glitch overlay */}
                 <Animated.View
                   style={[
@@ -422,7 +415,9 @@ export function CyberCascadeMenu({
                   onPress={item.onPress}
                   onPressIn={() => {
                     items[index].scale.value = withSpring(0.95);
-                    items[index].glowIntensity.value = withTiming(1, { duration: 100 });
+                    items[index].glowIntensity.value = withTiming(1, {
+                      duration: 100,
+                    });
                     items[index].glitchOpacity.value = withSequence(
                       withTiming(1, { duration: 20 }),
                       withTiming(0, { duration: 30 })
@@ -435,7 +430,9 @@ export function CyberCascadeMenu({
                   }}
                   onPressOut={() => {
                     items[index].scale.value = withSpring(1);
-                    items[index].glowIntensity.value = withTiming(0.3, { duration: 200 });
+                    items[index].glowIntensity.value = withTiming(0.3, {
+                      duration: 200,
+                    });
                   }}
                   style={[
                     styles.menuItem,
@@ -444,31 +441,82 @@ export function CyberCascadeMenu({
                   ]}
                 >
                   {/* Cyber border corners */}
-                  <View style={[styles.cornerAccent, styles.cornerTL, { backgroundColor: item.primaryColor }]} />
-                  <View style={[styles.cornerAccent, styles.cornerTR, { backgroundColor: item.secondaryColor }]} />
-                  <View style={[styles.cornerAccent, styles.cornerBL, { backgroundColor: item.secondaryColor }]} />
-                  <View style={[styles.cornerAccent, styles.cornerBR, { backgroundColor: item.primaryColor }]} />
+                  <View
+                    style={[
+                      styles.cornerAccent,
+                      styles.cornerTL,
+                      { backgroundColor: item.primaryColor },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.cornerAccent,
+                      styles.cornerTR,
+                      { backgroundColor: item.secondaryColor },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.cornerAccent,
+                      styles.cornerBL,
+                      { backgroundColor: item.secondaryColor },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.cornerAccent,
+                      styles.cornerBR,
+                      { backgroundColor: item.primaryColor },
+                    ]}
+                  />
 
                   {/* Content */}
                   <View style={styles.itemContent}>
-                    <View style={[styles.iconBox, { borderColor: `${item.primaryColor}40` }]}>
+                    <View
+                      style={[
+                        styles.iconBox,
+                        { borderColor: `${item.primaryColor}40` },
+                      ]}
+                    >
                       {item.icon}
                     </View>
 
                     <View style={styles.labelContainer}>
-                      <Text style={[styles.label, { color: item.primaryColor }]}>
+                      <Text
+                        style={[styles.label, { color: item.primaryColor }]}
+                      >
                         {item.label}
                       </Text>
-                      <Text style={[styles.sublabel, { color: `${item.primaryColor}99` }]}>
+                      <Text
+                        style={[
+                          styles.sublabel,
+                          { color: `${item.primaryColor}99` },
+                        ]}
+                      >
                         {item.sublabel}
                       </Text>
                     </View>
 
                     {/* Data indicator */}
                     <View style={styles.dataIndicator}>
-                      <View style={[styles.dataDot, { backgroundColor: item.primaryColor }]} />
-                      <View style={[styles.dataDot, { backgroundColor: item.secondaryColor }]} />
-                      <View style={[styles.dataDot, { backgroundColor: item.primaryColor }]} />
+                      <View
+                        style={[
+                          styles.dataDot,
+                          { backgroundColor: item.primaryColor },
+                        ]}
+                      />
+                      <View
+                        style={[
+                          styles.dataDot,
+                          { backgroundColor: item.secondaryColor },
+                        ]}
+                      />
+                      <View
+                        style={[
+                          styles.dataDot,
+                          { backgroundColor: item.primaryColor },
+                        ]}
+                      />
                     </View>
                   </View>
                 </Pressable>

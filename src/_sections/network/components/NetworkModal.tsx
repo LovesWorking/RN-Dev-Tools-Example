@@ -19,9 +19,11 @@ import {
   XCircle,
   Clock
 } from 'lucide-react-native';
-import { ClaudeModal, ModalMode } from '../../../claudeModal/ClaudeModalPure';
+import { ModalMode } from '../../../claudeModal/ClaudeModalPure';
+import { ThemedClaudeModal } from '../../../claudeModal/ThemedClaudeModal';
 import { BackButton } from '../../../_shared/ui/components/BackButton';
 import { devToolsStorageKeys } from '../../../_shared/storage/devToolsStorageKeys';
+import { useTheme } from '../../../_themes/DevToolsThemeContext';
 import { NetworkEventItemCompact } from './NetworkEventItemCompact';
 import { NetworkFilterView } from './NetworkFilterView';
 import { TickProvider } from '../../sentry/hooks/useTickEveryMinute';
@@ -60,6 +62,7 @@ function NetworkModalInner({
   enableSharedModalDimensions = false,
 }: NetworkModalProps) {
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+  const theme = useTheme();
   const {
     events,
     stats,
@@ -113,8 +116,17 @@ function NetworkModalInner({
     if (showFilterView) {
       return (
         <View style={styles.headerContainer}>
-          <BackButton onPress={() => setShowFilterView(false)} />
-          <Text style={styles.headerTitle}>Filters</Text>
+          <BackButton onPress={() => setShowFilterView(false)} color={theme.colors.text} />
+          <Text style={[styles.headerTitle, {
+            color: theme.colors.text,
+            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+            fontSize: theme.name === "cyberpunk" ? 14 : 14,
+            fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+            letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+            textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
+          }]}>
+            {theme.name === "cyberpunk" ? "// FILTERS" : "Filters"}
+          </Text>
         </View>
       );
     }
@@ -122,12 +134,21 @@ function NetworkModalInner({
     return (
       <View style={styles.headerContainer}>
         {(selectedEvent || onBack) ? (
-          <BackButton onPress={selectedEvent ? handleBack : onBack!} />
+          <BackButton onPress={selectedEvent ? handleBack : onBack!} color={theme.colors.text} />
         ) : null}
         
         <View style={styles.headerStats}>
-          <Text style={styles.headerStatsText}>{events.length}</Text>
-          {isEnabled ? <View style={styles.listeningIndicator} /> : null}
+          <Text style={[styles.headerStatsText, {
+            color: theme.colors.text,
+            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+            fontSize: theme.name === "cyberpunk" ? 12 : 14,
+            letterSpacing: theme.name === "cyberpunk" ? 0.5 : undefined,
+          }]}>
+            {theme.name === "cyberpunk" ? `[${events.length}]` : events.length}
+          </Text>
+          {isEnabled ? <View style={[styles.listeningIndicator, {
+            backgroundColor: theme.name === "cyberpunk" ? theme.colors.networkColor : "#10B981"
+          }]} /> : null}
         </View>
         
         {/* Action buttons in header */}
@@ -198,7 +219,7 @@ function NetworkModalInner({
   // Show detail view if an event is selected
   if (selectedEvent) {
     return (
-      <ClaudeModal
+      <ThemedClaudeModal
         visible={visible}
         onClose={onClose}
         persistenceKey={persistenceKey}
@@ -209,6 +230,7 @@ function NetworkModalInner({
         onModeChange={handleModeChange}
         enablePersistence={true}
         initialMode="bottomSheet"
+        enableGlitchEffects={theme.name === "cyberpunk"}
       >
         <View style={styles.container}>
           <NetworkEventDetailView
@@ -216,12 +238,12 @@ function NetworkModalInner({
             onBack={handleBack}
           />
         </View>
-      </ClaudeModal>
+      </ThemedClaudeModal>
     );
   }
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -232,6 +254,7 @@ function NetworkModalInner({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <View style={styles.container}>
         {/* Show filter view if active */}
@@ -297,7 +320,7 @@ function NetworkModalInner({
           </>
         )}
       </View>
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }
 

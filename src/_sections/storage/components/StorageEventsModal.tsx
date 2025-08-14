@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,6 +8,7 @@ import { FlashList } from "@shopify/flash-list";
 import { ScrollView } from "react-native-gesture-handler";
 import { Database, Pause, Play, Trash2, Filter } from "lucide-react-native";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
+import { useTheme } from "../../../_themes/DevToolsThemeContext";
 import {
   startListening,
   stopListening,
@@ -49,6 +51,7 @@ export function StorageEventsModal({
   enableSharedModalDimensions = false,
 }: StorageEventsModalProps) {
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+  const theme = useTheme();
   const [events, setEvents] = useState<AsyncStorageEvent[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [selectedConversation, setSelectedConversation] =
@@ -377,10 +380,19 @@ export function StorageEventsModal({
 
   const renderHeaderContent = () => (
     <View style={styles.headerContainer}>
-      {onBack && <BackButton onPress={onBack} />}
+      {onBack && <BackButton onPress={onBack} color={theme.colors.text} />}
       <View style={styles.headerStats}>
-        <Text style={styles.headerStatsText}>{conversations.length} keys</Text>
-        {isListening && <View style={styles.listeningIndicator} />}
+        <Text style={[styles.headerStatsText, { 
+          color: theme.colors.text,
+          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+          fontSize: theme.name === "cyberpunk" ? 12 : 14,
+          letterSpacing: theme.name === "cyberpunk" ? 0.5 : undefined,
+        }]}>
+          {theme.name === "cyberpunk" ? `[${conversations.length}] KEYS` : `${conversations.length} keys`}
+        </Text>
+        {isListening && <View style={[styles.listeningIndicator, {
+          backgroundColor: theme.name === "cyberpunk" ? theme.colors.success : "#10B981"
+        }]} />}
       </View>
 
       {/* Action buttons in header */}
@@ -442,7 +454,7 @@ export function StorageEventsModal({
   // Show filter view if filters are active
   if (showFilters) {
     return (
-      <ClaudeModal
+      <ThemedClaudeModal
         visible={visible}
         onClose={onClose}
         persistenceKey={storagePrefix}
@@ -467,12 +479,12 @@ export function StorageEventsModal({
           onAddPattern={handleAddPattern}
           onBack={() => setShowFilters(false)}
         />
-      </ClaudeModal>
+      </ThemedClaudeModal>
     );
   }
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -483,6 +495,7 @@ export function StorageEventsModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <View style={styles.container}>
         {conversations.length === 0 ? (
@@ -511,7 +524,7 @@ export function StorageEventsModal({
           />
         )}
       </View>
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }
 

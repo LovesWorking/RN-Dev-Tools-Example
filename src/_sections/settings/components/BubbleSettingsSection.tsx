@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from "react-native";
-import { Settings, EyeOff, Database } from "lucide-react-native";
+import { Settings, EyeOff, Database, Palette } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
+import { useDevToolsTheme } from "../../../_themes/DevToolsThemeContext";
 
 // AsyncStorage will be loaded lazily
 type AsyncStorageType = {
@@ -106,6 +107,7 @@ export function BubbleSettingsDetail({
   const [settings, setSettings] =
     useState<BubbleVisibilitySettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
+  const { theme, themeName, toggleTheme } = useDevToolsTheme();
 
   useEffect(() => {
     loadSettings();
@@ -227,10 +229,48 @@ export function BubbleSettingsDetail({
         sentry-label="ignore bubble settings scroll"
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Bubble Button Visibility</Text>
+          <Text style={styles.headerTitle}>Developer Tools Settings</Text>
           <Text style={styles.headerDescription}>
-            Configure which buttons appear in the floating dev tools bubble
+            Configure theme and bubble button visibility
           </Text>
+        </View>
+
+        {/* Theme Toggle Section */}
+        <View style={styles.themeSection}>
+          <View style={styles.settingItem}>
+            <View style={styles.settingIconContainer}>
+              <Palette size={16} color={theme.colors.primary} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Theme</Text>
+              <Text style={styles.settingDescription}>
+                {themeName === "cyberpunk" 
+                  ? "Cyberpunk theme with glitch effects" 
+                  : "Clean dark theme"}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={toggleTheme}
+              style={[
+                styles.themeToggleButton,
+                { 
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.border,
+                }
+              ]}
+            >
+              <Text style={[
+                styles.themeToggleText,
+                { color: theme.colors.text }
+              ]}>
+                {themeName === "cyberpunk" ? "CYBER" : "DARK"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.sectionDivider}>
+          <Text style={styles.sectionTitle}>Bubble Button Visibility</Text>
         </View>
 
         <View style={styles.settingsList}>
@@ -404,5 +444,37 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontSize: 11,
     fontStyle: "italic",
+  },
+  themeSection: {
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  themeToggleButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    minWidth: 70,
+    alignItems: "center",
+  },
+  themeToggleText: {
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 1,
+    fontFamily: "monospace",
+  },
+  sectionDivider: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.06)",
+  },
+  sectionTitle: {
+    color: "#9CA3AF",
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
 });

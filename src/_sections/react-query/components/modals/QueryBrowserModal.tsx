@@ -1,8 +1,6 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import {
-  ClaudeModal,
-  ModalMode,
-} from "../../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../../claudeModal/ThemedClaudeModal";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { QueryBrowserMode } from "../QueryBrowserMode";
@@ -10,6 +8,7 @@ import { QueryBrowserFooter } from "./QueryBrowserFooter";
 import { useState, useCallback } from "react";
 import { View } from "react-native";
 import { devToolsStorageKeys } from "../../../../_shared/storage/devToolsStorageKeys";
+import { useTheme } from "../../../../_themes/DevToolsThemeContext";
 
 interface QueryBrowserModalProps {
   visible: boolean;
@@ -37,6 +36,7 @@ export function QueryBrowserModal({
   onTabChange,
 }: QueryBrowserModalProps) {
   const selectedQuery = useGetQueryByQueryKey(selectedQueryKey);
+  const theme = useTheme();
   // Use external filter state if provided (for persistence), otherwise use internal state
   const [internalActiveFilter, setInternalActiveFilter] = useState<
     string | null
@@ -67,7 +67,7 @@ export function QueryBrowserModal({
   );
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -78,6 +78,7 @@ export function QueryBrowserModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <View style={{ flex: 1 }}>
         <QueryBrowserMode
@@ -91,6 +92,6 @@ export function QueryBrowserModal({
           isFloatingMode={modalMode === "floating"}
         />
       </View>
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }

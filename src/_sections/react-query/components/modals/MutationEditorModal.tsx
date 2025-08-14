@@ -1,12 +1,11 @@
 import { Mutation } from "@tanstack/react-query";
-import {
-  ClaudeModal,
-  ModalMode,
-} from "../../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../../claudeModal/ThemedClaudeModal";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { MutationEditorMode } from "../MutationEditorMode";
 import { useState, useCallback } from "react";
+import { useTheme } from "../../../../_themes/DevToolsThemeContext";
 
 interface MutationEditorModalProps {
   visible: boolean;
@@ -29,6 +28,7 @@ export function MutationEditorModal({
 }: MutationEditorModalProps) {
   const selectedMutation = useGetMutationById(selectedMutationId);
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -50,7 +50,7 @@ export function MutationEditorModal({
   if (!visible || !selectedMutation) return null;
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -61,11 +61,12 @@ export function MutationEditorModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <MutationEditorMode
         selectedMutation={selectedMutation}
         isFloatingMode={modalMode === "floating"}
       />
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }

@@ -928,31 +928,37 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
             {...resizeHandlers.topLeft.panHandlers}
             style={[defaultStyles.cornerHandleWrapper, { top: 4, left: 4 }]}
           >
-            <CornerHandle position="topLeft" isActive={isDragging || isResizing} />
+            <CornerHandle
+              position="topLeft"
+              isActive={isDragging || isResizing}
+            />
           </View>
           <View
             {...resizeHandlers.topRight.panHandlers}
             style={[defaultStyles.cornerHandleWrapper, { top: 4, right: 4 }]}
           >
-            <CornerHandle position="topRight" isActive={isDragging || isResizing} />
+            <CornerHandle
+              position="topRight"
+              isActive={isDragging || isResizing}
+            />
           </View>
           <View
             {...resizeHandlers.bottomLeft.panHandlers}
-            style={[
-              defaultStyles.cornerHandleWrapper,
-              { bottom: 4, left: 4 },
-            ]}
+            style={[defaultStyles.cornerHandleWrapper, { bottom: 4, left: 4 }]}
           >
-            <CornerHandle position="bottomLeft" isActive={isDragging || isResizing} />
+            <CornerHandle
+              position="bottomLeft"
+              isActive={isDragging || isResizing}
+            />
           </View>
           <View
             {...resizeHandlers.bottomRight.panHandlers}
-            style={[
-              defaultStyles.cornerHandleWrapper,
-              { bottom: 4, right: 4 },
-            ]}
+            style={[defaultStyles.cornerHandleWrapper, { bottom: 4, right: 4 }]}
           >
-            <CornerHandle position="bottomRight" isActive={isDragging || isResizing} />
+            <CornerHandle
+              position="bottomRight"
+              isActive={isDragging || isResizing}
+            />
           </View>
         </Animated.View>
       </View>

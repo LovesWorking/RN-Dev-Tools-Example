@@ -17,6 +17,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { View } from "react-native";
+import { DevToolsThemeProvider } from "@/src/_themes/DevToolsThemeContext";
 
 // import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble/RnBetterDevToolsBubble";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -71,22 +72,24 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientWrapper queryClient={queryClient}>
-        <View style={{ flex: 1 }}>
-          <LinearGradient
-            colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
-            style={{ flex: 1 }}
-          >
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        <DevToolsThemeProvider defaultTheme="cyberpunk">
+          <View style={{ flex: 1 }}>
+            <LinearGradient
+              colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
+              style={{ flex: 1 }}
             >
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="index" />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <StatusBar style="light" />
-            </ThemeProvider>
-          </LinearGradient>
-        </View>
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="light" />
+              </ThemeProvider>
+            </LinearGradient>
+          </View>
+        </DevToolsThemeProvider>
       </QueryClientWrapper>
     </GestureHandlerRootView>
   );

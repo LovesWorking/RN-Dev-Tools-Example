@@ -1,7 +1,7 @@
 /**
  * ClaudeModalOptimized - Performance-optimized version with stable callbacks
  * Implements Phase 2.1 optimizations from the todo list
- * 
+ *
  * Improvements:
  * - Stable callback pattern to prevent re-renders
  * - Proper RAF cancellation
@@ -139,66 +139,72 @@ class ModalStorage {
 // Icon Components (Memoized)
 // ============================================================================
 
-const MaximizeIcon = memo(({ color = "#E5E7EB", size = 16 }: { color?: string; size?: number }) => (
-  <View style={{ width: size, height: size }}>
-    <View
-      style={{
-        position: "absolute",
-        top: 2,
-        left: 2,
-        width: size - 4,
-        height: size - 4,
-        borderWidth: 1.5,
-        borderColor: color,
-        borderRadius: 2,
-      }}
-    />
-  </View>
-));
+const MaximizeIcon = memo(
+  ({ color = "#E5E7EB", size = 16 }: { color?: string; size?: number }) => (
+    <View style={{ width: size, height: size }}>
+      <View
+        style={{
+          position: "absolute",
+          top: 2,
+          left: 2,
+          width: size - 4,
+          height: size - 4,
+          borderWidth: 1.5,
+          borderColor: color,
+          borderRadius: 2,
+        }}
+      />
+    </View>
+  )
+);
 
-const MinimizeIcon = memo(({ color = "#E5E7EB", size = 16 }: { color?: string; size?: number }) => (
-  <View style={{ width: size, height: size }}>
-    <View
-      style={{
-        position: "absolute",
-        top: 4,
-        left: 4,
-        width: size - 8,
-        height: size - 8,
-        borderWidth: 1.5,
-        borderColor: color,
-        borderRadius: 2,
-      }}
-    />
-  </View>
-));
+const MinimizeIcon = memo(
+  ({ color = "#E5E7EB", size = 16 }: { color?: string; size?: number }) => (
+    <View style={{ width: size, height: size }}>
+      <View
+        style={{
+          position: "absolute",
+          top: 4,
+          left: 4,
+          width: size - 8,
+          height: size - 8,
+          borderWidth: 1.5,
+          borderColor: color,
+          borderRadius: 2,
+        }}
+      />
+    </View>
+  )
+);
 
-const CloseIcon = memo(({ color = "#FFFFFF", size = 16 }: { color?: string; size?: number }) => (
-  <View style={{ width: size, height: size }}>
-    <View
-      style={{
-        position: "absolute",
-        top: size / 2 - 0.75,
-        left: 2,
-        width: size - 4,
-        height: 1.5,
-        backgroundColor: color,
-        transform: [{ rotate: "45deg" }],
-      }}
-    />
-    <View
-      style={{
-        position: "absolute",
-        top: size / 2 - 0.75,
-        left: 2,
-        width: size - 4,
-        height: 1.5,
-        backgroundColor: color,
-        transform: [{ rotate: "-45deg" }],
-      }}
-    />
-  </View>
-));
+const CloseIcon = memo(
+  ({ color = "#FFFFFF", size = 16 }: { color?: string; size?: number }) => (
+    <View style={{ width: size, height: size }}>
+      <View
+        style={{
+          position: "absolute",
+          top: size / 2 - 0.75,
+          left: 2,
+          width: size - 4,
+          height: 1.5,
+          backgroundColor: color,
+          transform: [{ rotate: "45deg" }],
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          top: size / 2 - 0.75,
+          left: 2,
+          width: size - 4,
+          height: 1.5,
+          backgroundColor: color,
+          transform: [{ rotate: "-45deg" }],
+        }}
+      />
+    </View>
+  )
+);
 
 // ============================================================================
 // Sub-components (Memoized)
@@ -230,287 +236,321 @@ interface ModalHeaderProps {
   styles?: ModalStyles;
 }
 
-const ModalHeader = memo<ModalHeaderProps>(({
-  mode,
-  isResizing,
-  config = {},
-  panHandlers,
-  onToggleMode,
-  onClose,
-  styles = {},
-}) => {
-  const {
-    title,
-    customContent,
-    subtitle,
-    showToggleButton = true,
-    hideCloseButton = false,
-  } = config;
+const ModalHeader = memo<ModalHeaderProps>(
+  ({
+    mode,
+    isResizing,
+    config = {},
+    panHandlers,
+    onToggleMode,
+    onClose,
+    styles = {},
+  }) => {
+    const {
+      title,
+      customContent,
+      subtitle,
+      showToggleButton = true,
+      hideCloseButton = false,
+    } = config;
 
-  const headerProps = mode === "bottomSheet" && panHandlers ? panHandlers : {};
+    const headerProps =
+      mode === "bottomSheet" && panHandlers ? panHandlers : {};
 
-  return (
-    <View style={[defaultStyles.header, styles.header]} {...headerProps}>
-      <DragIndicator isResizing={isResizing} style={styles.dragIndicator} />
-      <View style={defaultStyles.headerContent}>
-        <View style={defaultStyles.headerRow}>
-          {customContent ? (
-            <View style={defaultStyles.customHeaderContent}>
-              {customContent}
+    return (
+      <View style={[defaultStyles.header, styles.header]} {...headerProps}>
+        <DragIndicator isResizing={isResizing} style={styles.dragIndicator} />
+        <View style={defaultStyles.headerContent}>
+          <View style={defaultStyles.headerRow}>
+            {customContent ? (
+              <View style={defaultStyles.customHeaderContent}>
+                {customContent}
+              </View>
+            ) : title ? (
+              <Text style={[defaultStyles.headerTitle, styles.headerTitle]}>
+                {title}
+              </Text>
+            ) : (
+              <View style={{ flex: 1 }} />
+            )}
+            <View style={defaultStyles.headerControls}>
+              {showToggleButton && (
+                <Pressable
+                  onPress={onToggleMode}
+                  style={[
+                    defaultStyles.controlButton,
+                    defaultStyles.toggleButton,
+                  ]}
+                  hitSlop={HIT_SLOP}
+                >
+                  {mode === "floating" ? <MinimizeIcon /> : <MaximizeIcon />}
+                </Pressable>
+              )}
+              {!hideCloseButton && (
+                <Pressable
+                  onPress={onClose}
+                  style={[
+                    defaultStyles.controlButton,
+                    defaultStyles.closeButton,
+                  ]}
+                  hitSlop={HIT_SLOP}
+                >
+                  <CloseIcon />
+                </Pressable>
+              )}
             </View>
-          ) : title ? (
-            <Text style={[defaultStyles.headerTitle, styles.headerTitle]}>
-              {title}
-            </Text>
-          ) : (
-            <View style={{ flex: 1 }} />
-          )}
-          <View style={defaultStyles.headerControls}>
-            {showToggleButton && (
-              <Pressable
-                onPress={onToggleMode}
-                style={[
-                  defaultStyles.controlButton,
-                  defaultStyles.toggleButton,
-                ]}
-                hitSlop={HIT_SLOP}
-              >
-                {mode === "floating" ? <MinimizeIcon /> : <MaximizeIcon />}
-              </Pressable>
-            )}
-            {!hideCloseButton && (
-              <Pressable
-                onPress={onClose}
-                style={[defaultStyles.controlButton, defaultStyles.closeButton]}
-                hitSlop={HIT_SLOP}
-              >
-                <CloseIcon />
-              </Pressable>
-            )}
           </View>
+          {subtitle && (
+            <Text style={[defaultStyles.headerSubtitle, styles.headerSubtitle]}>
+              {subtitle}
+            </Text>
+          )}
         </View>
-        {subtitle && (
-          <Text style={[defaultStyles.headerSubtitle, styles.headerSubtitle]}>
-            {subtitle}
-          </Text>
-        )}
       </View>
-    </View>
-  );
-});
+    );
+  }
+);
 
 // ============================================================================
 // Main Component with Optimizations
 // ============================================================================
 
-export const ClaudeModalOptimized: React.FC<ClaudeModalProps> = memo(({
-  visible,
-  onClose,
-  children,
-  persistenceKey,
-  header,
-  initialMode = "bottomSheet",
-  styles: customStyles = {},
-  minHeight = MIN_HEIGHT,
-  maxHeight,
-  initialHeight = DEFAULT_HEIGHT,
-  enablePersistence = true,
-  onModeChange,
-  onDimensionsChange,
-}) => {
-  const insets = useMemo(() => getSafeAreaInsets(), []);
-  const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
+export const ClaudeModalOptimized: React.FC<ClaudeModalProps> = memo(
+  ({
+    visible,
+    onClose,
+    children,
+    persistenceKey,
+    header,
+    initialMode = "bottomSheet",
+    styles: customStyles = {},
+    minHeight = MIN_HEIGHT,
+    maxHeight,
+    initialHeight = DEFAULT_HEIGHT,
+    enablePersistence = true,
+    onModeChange,
+    onDimensionsChange,
+  }) => {
+    const insets = useMemo(() => getSafeAreaInsets(), []);
+    const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
 
-  // State
-  const [isStateLoaded, setIsStateLoaded] = useState(!enablePersistence);
-  const [mode, setMode] = useState<ModalMode>(initialMode);
-  const [isResizing, setIsResizing] = useState(false);
-  const [panelHeight, setPanelHeight] = useState(initialHeight);
-  const [dimensions, setDimensions] = useState<ModalDimensions>({
-    width: SCREEN.width - 40,
-    height: DEFAULT_HEIGHT,
-    top: 100,
-    left: 20,
-  });
+    // State
+    const [isStateLoaded, setIsStateLoaded] = useState(!enablePersistence);
+    const [mode, setMode] = useState<ModalMode>(initialMode);
+    const [isResizing, setIsResizing] = useState(false);
+    const [panelHeight, setPanelHeight] = useState(initialHeight);
+    const [dimensions, setDimensions] = useState<ModalDimensions>({
+      width: SCREEN.width - 40,
+      height: DEFAULT_HEIGHT,
+      top: 100,
+      left: 20,
+    });
 
-  // Refs for animations - using useRef to prevent re-creation
-  const animatedHeight = useRef(new Animated.Value(panelHeight)).current;
-  const animatedPosition = useRef(
-    new Animated.ValueXY({ x: dimensions.left, y: dimensions.top })
-  ).current;
-  const animatedWidth = useRef(new Animated.Value(dimensions.width)).current;
-  const animatedFloatingHeight = useRef(
-    new Animated.Value(dimensions.height)
-  ).current;
+    // Refs for animations - using useRef to prevent re-creation
+    const animatedHeight = useRef(new Animated.Value(panelHeight)).current;
+    const animatedPosition = useRef(
+      new Animated.ValueXY({ x: dimensions.left, y: dimensions.top })
+    ).current;
+    const animatedWidth = useRef(new Animated.Value(dimensions.width)).current;
+    const animatedFloatingHeight = useRef(
+      new Animated.Value(dimensions.height)
+    ).current;
 
-  // Refs for tracking values
-  const startHeightRef = useRef(panelHeight);
-  const currentHeightRef = useRef(panelHeight);
-  const lastUpdateTimeRef = useRef(0);
-  const animationFrameRef = useRef<number | null>(null);
+    // Refs for tracking values
+    const startHeightRef = useRef(panelHeight);
+    const currentHeightRef = useRef(panelHeight);
+    const lastUpdateTimeRef = useRef(0);
+    const animationFrameRef = useRef<number | null>(null);
 
-  // Cleanup RAF on unmount
-  useEffect(() => {
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
-      }
-    };
-  }, []);
-
-  // Load persisted state
-  useEffect(() => {
-    if (!enablePersistence || !persistenceKey) {
-      setIsStateLoaded(true);
-      return;
-    }
-
-    let mounted = true;
-    const loadState = async () => {
-      const savedState = await ModalStorage.load(persistenceKey);
-      if (mounted && savedState) {
-        if (savedState.mode) setMode(savedState.mode);
-        if (savedState.panelHeight) {
-          setPanelHeight(savedState.panelHeight);
-          currentHeightRef.current = savedState.panelHeight;
-          animatedHeight.setValue(savedState.panelHeight);
+    // Cleanup RAF on unmount
+    useEffect(() => {
+      return () => {
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
         }
-        if (savedState.dimensions) {
-          setDimensions(savedState.dimensions);
-          animatedPosition.setValue({
-            x: savedState.dimensions.left,
-            y: savedState.dimensions.top,
-          });
-        }
+      };
+    }, []);
+
+    // Load persisted state
+    useEffect(() => {
+      if (!enablePersistence || !persistenceKey) {
+        setIsStateLoaded(true);
+        return;
       }
-      if (mounted) setIsStateLoaded(true);
-    };
 
-    loadState();
-    return () => { mounted = false; };
-  }, [persistenceKey, enablePersistence, animatedHeight, animatedPosition]);
+      let mounted = true;
+      const loadState = async () => {
+        const savedState = await ModalStorage.load(persistenceKey);
+        if (mounted && savedState) {
+          if (savedState.mode) setMode(savedState.mode);
+          if (savedState.panelHeight) {
+            setPanelHeight(savedState.panelHeight);
+            currentHeightRef.current = savedState.panelHeight;
+            animatedHeight.setValue(savedState.panelHeight);
+          }
+          if (savedState.dimensions) {
+            setDimensions(savedState.dimensions);
+            animatedPosition.setValue({
+              x: savedState.dimensions.left,
+              y: savedState.dimensions.top,
+            });
+          }
+        }
+        if (mounted) setIsStateLoaded(true);
+      };
 
-  // Save state with debounce
-  useEffect(() => {
-    if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
+      loadState();
+      return () => {
+        mounted = false;
+      };
+    }, [persistenceKey, enablePersistence, animatedHeight, animatedPosition]);
 
-    const timeoutId = setTimeout(() => {
-      ModalStorage.save(persistenceKey, {
+    // Save state with debounce
+    useEffect(() => {
+      if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
+
+      const timeoutId = setTimeout(() => {
+        ModalStorage.save(persistenceKey, {
+          mode,
+          panelHeight,
+          dimensions,
+        });
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    }, [
+      mode,
+      panelHeight,
+      dimensions,
+      persistenceKey,
+      enablePersistence,
+      isStateLoaded,
+    ]);
+
+    // Stable callbacks using our custom hook
+    const handleClose = useStableCallback(() => {
+      onClose();
+    });
+
+    const toggleMode = useStableCallback(() => {
+      const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
+      setMode(newMode);
+      onModeChange?.(newMode);
+    });
+
+    const throttledUpdateHeight = useStableCallback((height: number) => {
+      const now = Date.now();
+      if (now - lastUpdateTimeRef.current >= THROTTLE_MS) {
+        // Use RAF for smooth updates
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+        animationFrameRef.current = requestAnimationFrame(() => {
+          setPanelHeight(height);
+          animationFrameRef.current = null;
+        });
+        lastUpdateTimeRef.current = now;
+      }
+    });
+
+    // Optimized resize PanResponder for bottom sheet
+    const resizePanResponder = useMemo(
+      () =>
+        PanResponder.create({
+          onStartShouldSetPanResponder: () => mode === "bottomSheet",
+          onMoveShouldSetPanResponder: () => mode === "bottomSheet",
+          onPanResponderGrant: () => {
+            setIsResizing(true);
+            startHeightRef.current = currentHeightRef.current;
+          },
+          onPanResponderMove: (_evt, gestureState) => {
+            const newHeight = startHeightRef.current - gestureState.dy;
+            const clampedHeight = clamp(
+              newHeight,
+              minHeight,
+              effectiveMaxHeight
+            );
+            animatedHeight.setValue(clampedHeight);
+            currentHeightRef.current = clampedHeight;
+            throttledUpdateHeight(clampedHeight);
+          },
+          onPanResponderRelease: () => {
+            setIsResizing(false);
+            setPanelHeight(currentHeightRef.current);
+            onDimensionsChange?.({
+              ...dimensions,
+              height: currentHeightRef.current,
+            });
+          },
+          onPanResponderTerminate: () => {
+            setIsResizing(false);
+          },
+        }),
+      [
         mode,
-        panelHeight,
+        minHeight,
+        effectiveMaxHeight,
+        throttledUpdateHeight,
         dimensions,
-      });
-    }, 500);
+        onDimensionsChange,
+        animatedHeight,
+      ]
+    );
 
-    return () => clearTimeout(timeoutId);
-  }, [mode, panelHeight, dimensions, persistenceKey, enablePersistence, isStateLoaded]);
-
-  // Stable callbacks using our custom hook
-  const handleClose = useStableCallback(() => {
-    onClose();
-  });
-
-  const toggleMode = useStableCallback(() => {
-    const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
-    setMode(newMode);
-    onModeChange?.(newMode);
-  });
-
-  const throttledUpdateHeight = useStableCallback((height: number) => {
-    const now = Date.now();
-    if (now - lastUpdateTimeRef.current >= THROTTLE_MS) {
-      // Use RAF for smooth updates
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      animationFrameRef.current = requestAnimationFrame(() => {
-        setPanelHeight(height);
-        animationFrameRef.current = null;
-      });
-      lastUpdateTimeRef.current = now;
-    }
-  });
-
-  // Optimized resize PanResponder for bottom sheet
-  const resizePanResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => mode === "bottomSheet",
-        onMoveShouldSetPanResponder: () => mode === "bottomSheet",
-        onPanResponderGrant: () => {
-          setIsResizing(true);
-          startHeightRef.current = currentHeightRef.current;
-        },
-        onPanResponderMove: (_evt, gestureState) => {
-          const newHeight = startHeightRef.current - gestureState.dy;
-          const clampedHeight = clamp(newHeight, minHeight, effectiveMaxHeight);
-          animatedHeight.setValue(clampedHeight);
-          currentHeightRef.current = clampedHeight;
-          throttledUpdateHeight(clampedHeight);
-        },
-        onPanResponderRelease: () => {
-          setIsResizing(false);
-          setPanelHeight(currentHeightRef.current);
-          onDimensionsChange?.({
-            ...dimensions,
-            height: currentHeightRef.current,
-          });
-        },
-        onPanResponderTerminate: () => {
-          setIsResizing(false);
-        },
+    // Memoized animated styles
+    const animatedBorderStyle = useMemo(
+      () => ({
+        borderColor: isResizing
+          ? "rgba(34, 197, 94, 1)"
+          : "rgba(255, 255, 255, 0.1)",
+        borderWidth: isResizing ? 2 : 1,
+        shadowColor: isResizing ? "rgba(34, 197, 94, 0.6)" : "#000",
+        shadowOpacity: isResizing ? 0.8 : 0.3,
+        shadowRadius: isResizing ? 12 : 8,
+        elevation: isResizing ? 20 : 16,
       }),
-    [mode, minHeight, effectiveMaxHeight, throttledUpdateHeight, dimensions, onDimensionsChange, animatedHeight]
-  );
+      [isResizing]
+    );
 
-  // Memoized animated styles
-  const animatedBorderStyle = useMemo(() => ({
-    borderColor: isResizing ? "rgba(34, 197, 94, 1)" : "rgba(255, 255, 255, 0.1)",
-    borderWidth: isResizing ? 2 : 1,
-    shadowColor: isResizing ? "rgba(34, 197, 94, 0.6)" : "#000",
-    shadowOpacity: isResizing ? 0.8 : 0.3,
-    shadowRadius: isResizing ? 12 : 8,
-    elevation: isResizing ? 20 : 16,
-  }), [isResizing]);
+    // Don't render if not visible or state not loaded
+    if (!visible || !isStateLoaded) return null;
 
-  // Don't render if not visible or state not loaded
-  if (!visible || !isStateLoaded) return null;
-
-  // Render bottom sheet mode (simplified for performance testing)
-  return (
-    <View
-      style={[
-        defaultStyles.overlay,
-        { paddingTop: insets.top },
-        customStyles.container,
-      ]}
-      pointerEvents="box-none"
-    >
-      <Animated.View
+    // Render bottom sheet mode (simplified for performance testing)
+    return (
+      <View
         style={[
-          defaultStyles.bottomSheetModal,
-          customStyles.modal,
-          { height: animatedHeight },
-          animatedBorderStyle,
+          defaultStyles.overlay,
+          { paddingTop: insets.top },
+          customStyles.container,
         ]}
+        pointerEvents="box-none"
       >
-        <ModalHeader
-          mode={mode}
-          isResizing={isResizing}
-          config={header}
-          panHandlers={resizePanResponder.panHandlers}
-          onToggleMode={toggleMode}
-          onClose={handleClose}
-          styles={customStyles}
-        />
-        <View style={[defaultStyles.content, customStyles.content]}>
-          {children}
-        </View>
-      </Animated.View>
-    </View>
-  );
-});
+        <Animated.View
+          style={[
+            defaultStyles.bottomSheetModal,
+            customStyles.modal,
+            { height: animatedHeight },
+            animatedBorderStyle,
+          ]}
+        >
+          <ModalHeader
+            mode={mode}
+            isResizing={isResizing}
+            config={header}
+            panHandlers={resizePanResponder.panHandlers}
+            onToggleMode={toggleMode}
+            onClose={handleClose}
+            styles={customStyles}
+          />
+          <View style={[defaultStyles.content, customStyles.content]}>
+            {children}
+          </View>
+        </Animated.View>
+      </View>
+    );
+  }
+);
 
 // ============================================================================
 // Styles

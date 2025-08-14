@@ -1,5 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, StyleSheet, View, Dimensions, Text } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  withSpring,
+  withSequence,
+  withDelay,
+  interpolate,
+  Easing,
+  runOnJS,
+} from "react-native-reanimated";
 import {
   DatabaseIcon,
   BugIcon,
@@ -33,6 +44,8 @@ interface DialDevToolsProps {
   buttonPosition?: { x: number; y: number };
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 const DialDevTools: React.FC<DialDevToolsProps> = ({
   onQueryPress,
   onEnvPress,
@@ -44,6 +57,14 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   buttonPosition = { x: 30, y: 30 },
 }) => {
   const [selectedIcon, setSelectedIcon] = React.useState(-1);
+  
+  // Reanimated shared values
+  const backdropOpacity = useSharedValue(0);
+  const dialScale = useSharedValue(0);
+  const dialRotation = useSharedValue(0);
+  const centerButtonScale = useSharedValue(0);
+  const iconsProgress = useSharedValue(0);
+  const glitchOffset = useSharedValue(0);
 
   const icons: IconType[] = [
     {
@@ -94,42 +115,130 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
   ];
 
+  // Initialize animations on mount
+  useEffect(() => {
+    // Entrance animation sequence
+    backdropOpacity.value = withTiming(1, { duration: 400 });
+    dialScale.value = withSpring(1, {
+      damping: 15,
+      stiffness: 150,
+      mass: 1,
+    });
+    dialRotation.value = withSequence(
+      withTiming(360, { duration: 800, easing: Easing.out(Easing.cubic) }),
+      withTiming(0, { duration: 0 })
+    );
+    centerButtonScale.value = withDelay(
+      300,
+      withSpring(1, {
+        damping: 10,
+        stiffness: 200,
+      })
+    );
+    iconsProgress.value = withDelay(
+      500,
+      withTiming(1, { duration: 600, easing: Easing.out(Easing.cubic) })
+    );
+    
+    // Subtle glitch effect
+    const glitchAnimation = () => {
+      glitchOffset.value = withSequence(
+        withTiming(2, { duration: 50 }),
+        withTiming(-2, { duration: 50 }),
+        withTiming(0, { duration: 50 })
+      );
+    };
+    const interval = setInterval(glitchAnimation, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleClose = () => {
-    // Close without animation to avoid scheduling issues
-    if (onClose) {
-      onClose();
-    }
+    // Exit animation
+    iconsProgress.value = withTiming(0, { duration: 200 });
+    centerButtonScale.value = withTiming(0, { duration: 200 });
+    dialScale.value = withTiming(0, { duration: 300 });
+    backdropOpacity.value = withTiming(0, { duration: 300 }, () => {
+      if (onClose) {
+        runOnJS(onClose)();
+      }
+    });
   };
 
   const handleIconPress = (index: number) => {
-    setSelectedIcon(index);
-    // Trigger the action immediately
-    icons[index].onPress();
-    handleClose();
+    'worklet';
+    runOnJS(setSelectedIcon)(index);
+    
+    // Pulse animation on selection
+    centerButtonScale.value = withSequence(
+      withSpring(0.9, { damping: 15, stiffness: 500 }),
+      withSpring(1, { damping: 10, stiffness: 200 })
+    );
+    
+    // Trigger action and close
+    runOnJS(() => {
+      icons[index].onPress();
+      handleClose();
+    })();
   };
+
+  // Animated styles
+  const backdropAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: backdropOpacity.value,
+  }));
+
+  const dialAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: dialScale.value },
+      { rotate: `${interpolate(dialRotation.value, [0, 360], [0, 360])}deg` },
+    ],
+  }));
+
+  const glitchAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: glitchOffset.value },
+    ],
+  }));
+
+  const centerButtonAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: centerButtonScale.value },
+    ],
+  }));
+
+  const pulseAnimatedStyle = useAnimatedStyle(() => {
+    const pulseScale = interpolate(
+      Math.sin(Date.now() * 0.001) * 0.5 + 0.5,
+      [0, 1],
+      [0.98, 1.02]
+    );
+    return {
+      transform: [{ scale: selectedIcon >= 0 ? 1 : pulseScale }],
+    };
+  });
 
   return (
     <View style={styles.container}>
       {/* Dark overlay backdrop */}
-      <View style={styles.backdrop}>
+      <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
         <Pressable
           style={StyleSheet.absoluteFillObject}
           onPress={handleClose}
         />
-      </View>
+      </Animated.View>
 
-      <View
+      <Animated.View
         style={[
           styles.parent,
           {
             position: "absolute",
-            left: (SCREEN_WIDTH - CIRCLE_SIZE) / 2, // Center horizontally
-            bottom: 80, // Fixed distance from bottom
+            left: (SCREEN_WIDTH - CIRCLE_SIZE) / 2,
+            bottom: 80,
           },
+          dialAnimatedStyle,
         ]}
       >
-        {/* Cyberpunk dial background */}
-        <View style={styles.circle}>
+        {/* Cyberpunk dial background with glitch */}
+        <Animated.View style={[styles.circle, glitchAnimatedStyle]}>
           {/* Gradient background using layered Views */}
           <View style={styles.gradientBackground}>
             <View style={styles.gradientLayer1} />
@@ -157,33 +266,34 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             <DialIcon
               selectedIcon={selectedIcon}
               onPress={handleIconPress}
-              open={1}
+              iconsProgress={iconsProgress}
               icon={icon}
               key={i}
               index={i}
               totalIcons={icons.length}
             />
           ))}
-        </View>
+        </Animated.View>
 
-        {/* Center label */}
-        <View style={styles.buttonContainer}>
-          {/* Button gradient using layered Views */}
+        {/* Center button */}
+        <Animated.View style={[styles.buttonContainer, centerButtonAnimatedStyle]}>
           <View style={styles.buttonGradient}>
             <View style={styles.buttonGradientLayer1} />
             <View style={styles.buttonGradientLayer2} />
             <View style={styles.buttonGradientLayer3} />
 
             <View style={styles.buttonBorder}>
-              <View style={styles.button}>
-                {/* Main text with glow */}
+              <AnimatedPressable 
+                style={[styles.button, pulseAnimatedStyle]}
+                onPress={() => handleClose()}
+              >
                 <Text style={styles.centerText}>RN BETTER</Text>
                 <Text style={styles.centerText}>DEV TOOLS</Text>
-              </View>
+              </AnimatedPressable>
             </View>
           </View>
-        </View>
-      </View>
+        </Animated.View>
+      </Animated.View>
     </View>
   );
 };

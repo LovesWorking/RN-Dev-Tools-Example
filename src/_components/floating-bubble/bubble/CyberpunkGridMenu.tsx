@@ -12,7 +12,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { CyberpunkGlitchBackground } from "./CyberpunkGlitchBackground";
-import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
+import { TanstackLogo, ReactQueryButtonNative } from "@/src/_sections/react-query/components/query-browser/svgs";
 import {
   DatabaseIcon,
   BugIcon,
@@ -405,6 +405,29 @@ export function CyberpunkGridMenu({
           },
         ]}
       >
+        {/* Test ReactQueryButton in center */}
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              width: 105,
+              height: 65,
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          ]}
+        >
+          <Pressable
+            onPress={() => {
+              console.log("ReactQueryButton pressed!");
+              onQueryPress();
+            }}
+            style={{ width: 105, height: 65 }}
+          >
+            <ReactQueryButtonNative />
+          </Pressable>
+        </Animated.View>
+
         {menuItems.map((item, index) => {
           const { animatedStyle, shadowStyle, glitchStyle } =
             itemAnimatedStyles[index];
@@ -823,7 +846,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontFamily: "monospace",
     opacity: 0.7,
-    marginTop: -2,
+    marginTop: 2, // Increased spacing between label and sublabel
   },
   dataStream: {
     position: "absolute",

@@ -1,10 +1,12 @@
-import { ClaudeModal, ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
+import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
 import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { View, Text } from "react-native";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
 import { useState, useCallback } from "react";
+import { useTheme } from "../../../_themes/DevToolsThemeContext";
 
 interface EnvVarsModalProps {
   visible: boolean;
@@ -28,6 +30,7 @@ export function EnvVarsModal({
   enableSharedModalDimensions = false,
 }: EnvVarsModalProps) {
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -46,13 +49,50 @@ export function EnvVarsModal({
         paddingLeft: 4,
       }}
     >
-      {onBack && <BackButton onPress={onBack} color="#FFFFFF" size={16} />}
+      {onBack && <BackButton onPress={onBack} color={theme.colors.text} size={16} />}
       <Text
-        style={{ color: "#E5E7EB", fontSize: 14, fontWeight: "500", flex: 1 }}
+        style={{
+          color: theme.colors.text,
+          fontSize: theme.name === "cyberpunk" ? 14 : 14,
+          fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+          letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+          flex: 1,
+          textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
+        }}
         numberOfLines={1}
       >
-        Environment Variables
+        {theme.name === "cyberpunk" ? "// ENV_VARIABLES" : "Environment Variables"}
       </Text>
+      {theme.name === "cyberpunk" && (
+        <View style={{
+          flexDirection: "row",
+          gap: 3,
+          marginRight: 8,
+        }}>
+          <View style={{
+            width: 3,
+            height: 3,
+            borderRadius: 1.5,
+            backgroundColor: theme.colors.envColor,
+            opacity: 0.8,
+          }} />
+          <View style={{
+            width: 3,
+            height: 3,
+            borderRadius: 1.5,
+            backgroundColor: theme.colors.envColor,
+            opacity: 0.5,
+          }} />
+          <View style={{
+            width: 3,
+            height: 3,
+            borderRadius: 1.5,
+            backgroundColor: theme.colors.envColor,
+            opacity: 0.3,
+          }} />
+        </View>
+      )}
     </View>
   );
 
@@ -61,7 +101,7 @@ export function EnvVarsModal({
     : devToolsStorageKeys.env.modal();
 
   return (
-    <ClaudeModal
+    <ThemedClaudeModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -72,8 +112,9 @@ export function EnvVarsModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
     >
       <EnvVarsDetailContent requiredEnvVars={requiredEnvVars} />
-    </ClaudeModal>
+    </ThemedClaudeModal>
   );
 }
