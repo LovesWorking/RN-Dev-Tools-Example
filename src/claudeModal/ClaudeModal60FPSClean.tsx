@@ -547,41 +547,48 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           setIsResizing(false);
           
           const finalHeight = currentHeightRef.current;
+          const velocity = gestureState.vy;
           
-          // Optional: Small spring to smooth the release
-          Animated.spring(animatedBottomPosition, {
-            toValue: finalHeight,
-            tension: 180,
-            friction: 22,
-            useNativeDriver: false, // Must be false for height
-          }).start();
+          // Close with swipe down: either fast swipe or drag past threshold
+          // Fast swipe: velocity > 0.8 and moving down (dy > 50)
+          // Or drag past threshold: dragged down more than 150px
+          const shouldClose = (velocity > 0.8 && gestureState.dy > 50) || 
+                            (gestureState.dy > 150 && finalHeight <= minHeight);
           
-          if (externalAnimatedHeight) {
-            Animated.spring(externalAnimatedHeight, {
-              toValue: finalHeight,
-              tension: 180,
-              friction: 22,
-              useNativeDriver: false,
-            }).start();
-          }
-          
-          // Close if dragged down too much
-          if (gestureState.dy > 150 && finalHeight <= minHeight) {
-            // Close with animation
+          if (shouldClose) {
+            // Close with smooth animation
             Animated.parallel([
               Animated.timing(visibilityProgress, {
                 toValue: 0,
-                duration: 150,
+                duration: 200,
                 useNativeDriver: true,
               }),
-              Animated.timing(bottomSheetTranslateY, {
+              Animated.spring(bottomSheetTranslateY, {
                 toValue: SCREEN.height,
-                duration: 150,
+                tension: 180,
+                friction: 22,
                 useNativeDriver: true,
               }),
             ]).start(() => {
               setTimeout(() => onClose(), 0);
             });
+          } else {
+            // Spring to final position
+            Animated.spring(animatedBottomPosition, {
+              toValue: finalHeight,
+              tension: 180,
+              friction: 22,
+              useNativeDriver: false, // Must be false for height
+            }).start();
+            
+            if (externalAnimatedHeight) {
+              Animated.spring(externalAnimatedHeight, {
+                toValue: finalHeight,
+                tension: 180,
+                friction: 22,
+                useNativeDriver: false,
+              }).start();
+            }
           }
         },
 
