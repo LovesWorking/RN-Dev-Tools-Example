@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Query } from "@tanstack/react-query";
+import { Query, Mutation } from "@tanstack/react-query";
 import { BackButton } from "../../../../_shared/ui/components/BackButton";
-import { Mutation } from "@tanstack/react-query";
 
 interface ReactQueryModalHeaderProps {
   selectedQuery?: Query;
@@ -120,28 +119,23 @@ export function ReactQueryModalHeader({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    minHeight: 32, // Match FloatingModalHeader minHeight exactly
     justifyContent: "center",
-    // Remove horizontal padding - let content handle its own spacing
+    paddingHorizontal: 12,
+    minHeight: 32, // Ensure minimum height for content
   },
 
   detailsView: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
-    gap: 12,
-    minHeight: 32, // Match FloatingModalHeader minHeight
-    paddingLeft: 4, // Only left padding for consistent spacing
-    paddingRight: 0, // No right padding - buttons handle their own spacing
+    justifyContent: "center",
+    width: "100%",
+    gap: 8,
   },
 
   browserView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "stretch", // Let navigation use full width
-    minHeight: 32, // Match FloatingModalHeader minHeight
-    paddingLeft: 4, // Consistent left spacing
-    paddingRight: 4, // Minimal right padding to match left
   },
 
   tabNavigationContainer: {

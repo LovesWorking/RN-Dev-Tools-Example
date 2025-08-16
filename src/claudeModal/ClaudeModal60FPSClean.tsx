@@ -189,12 +189,17 @@ const MinimizeIcon = memo(function MinimizeIcon() {
 const DragIndicator = memo(function DragIndicator({
   isResizing,
   mode,
+  hasCustomContent = false,
 }: {
   isResizing: boolean;
   mode: ModalMode;
+  hasCustomContent?: boolean;
 }) {
   return (
-    <View style={styles.dragIndicatorContainer}>
+    <View style={[
+      styles.dragIndicatorContainer,
+      hasCustomContent && styles.dragIndicatorContainerCustom
+    ]}>
       {/* Show drag indicator in both modes */}
       <View
         style={[
@@ -322,11 +327,12 @@ const ModalHeader = memo(function ModalHeader({
     }
 
     // Otherwise, render custom content within the standard header structure
+    // Apply pan handlers to the outer View for dragging in floating mode
     return (
       <View style={styles.header} {...headerProps}>
         <TouchableWithoutFeedback onPress={handleHeaderTap}>
           <View style={styles.headerInner}>
-            <DragIndicator isResizing={isResizing} mode={mode} />
+            <DragIndicator isResizing={isResizing} mode={mode} hasCustomContent={true} />
             {header.customContent}
           </View>
         </TouchableWithoutFeedback>
@@ -1211,13 +1217,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     backgroundColor: "#171717",
-    paddingBottom: 8,
-    minHeight: 60,
+    minHeight: 56, // Increased for better content visibility
   },
   floatingHeader: {
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
-    overflow: "hidden",
   },
   floatingModeHeader: {
     borderTopLeftRadius: 14,
@@ -1225,11 +1229,16 @@ const styles = StyleSheet.create({
   },
   headerInner: {
     flex: 1,
-    minHeight: 60,
+    justifyContent: "center",
   },
   dragIndicatorContainer: {
     alignItems: "center",
     paddingVertical: 8,
+  },
+  dragIndicatorContainerCustom: {
+    paddingVertical: 4, // Reduced padding when custom content is present
+    paddingTop: 6,
+    paddingBottom: 2,
   },
   dragIndicator: {
     width: 36,
