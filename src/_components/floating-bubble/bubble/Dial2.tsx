@@ -19,7 +19,10 @@ import {
   LayersIcon,
 } from "@/src/_shared/icons/lucide-icons";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
-import { getSafeAreaInsets, hasNotch as getHasNotch } from "@/src/hooks/useSafeAreaInsets";
+import {
+  getSafeAreaInsets,
+  hasNotch as getHasNotch,
+} from "@/src/hooks/useSafeAreaInsets";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const insets = getSafeAreaInsets();
