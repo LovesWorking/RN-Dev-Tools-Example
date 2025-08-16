@@ -1,10 +1,12 @@
 import { Mutation } from "@tanstack/react-query";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
-import ClaudeModal60FPSClean, { type ModalMode } from "../../../../claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "../../../../claudeModal/ClaudeModal60FPSClean";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View } from "react-native";
 import { useSharedValue, withSpring } from "react-native-reanimated";
@@ -42,6 +44,7 @@ export function MutationBrowserModal({
   const setActiveFilter = externalOnFilterChange ?? setInternalActiveFilter;
 
   // Track modal mode for conditional styling
+  // Initialize with bottomSheet but it will be updated from persisted state if available
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const storagePrefix = enableSharedModalDimensions
     ? devToolsStorageKeys.reactQuery.modal()
@@ -113,7 +116,8 @@ export function MutationBrowserModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       <View style={{ flex: 1 }}>
         <GestureDetector gesture={panGesture}>
           <View style={{ flex: 1 }}>
@@ -132,7 +136,7 @@ export function MutationBrowserModal({
         <MutationBrowserFooter
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-          isFloatingMode={modalMode === "floating"}
+          modalMode={modalMode}
         />
       </View>
     </ClaudeModal60FPSClean>

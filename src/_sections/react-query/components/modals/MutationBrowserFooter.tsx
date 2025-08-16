@@ -1,11 +1,13 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 import MutationStatusCount from "../query-browser/MutationStatusCount";
+import { useMemo } from "react";
+import { ModalMode } from "../../../../claudeModal/ClaudeModal60FPSClean";
 
 interface MutationBrowserFooterProps {
   activeFilter?: string | null;
   onFilterChange?: (filter: string | null) => void;
-  isFloatingMode?: boolean; // To determine if modal is floating or docked
+  modalMode: ModalMode;
 }
 
 /**
@@ -19,15 +21,22 @@ interface MutationBrowserFooterProps {
 export function MutationBrowserFooter({
   activeFilter,
   onFilterChange,
-  isFloatingMode = true, // Default to floating mode if not specified
+  modalMode,
 }: MutationBrowserFooterProps) {
+  const isFloatingMode = modalMode === "floating";
   const insets = useSafeAreaInsets();
+
+  // Use useMemo to ensure paddingBottom is recalculated when isFloatingMode changes
+  const paddingBottom = useMemo(() => {
+    return !isFloatingMode ? insets.bottom + 8 : 0;
+  }, [isFloatingMode, insets.bottom]);
 
   return (
     <View
+      key={`footer-${isFloatingMode ? "floating" : "docked"}`} // Force re-render with key change
       style={[
         styles.filterFooter,
-        { paddingBottom: !isFloatingMode ? insets.bottom + 8 : 0 },
+        { paddingBottom },
         // Remove border radius when docked to bottom
         !isFloatingMode && styles.dockedFooter,
       ]}

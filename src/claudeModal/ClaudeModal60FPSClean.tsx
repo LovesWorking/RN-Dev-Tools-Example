@@ -428,6 +428,8 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         // Restore mode
         if (savedState.mode) {
           setMode(savedState.mode);
+          // Notify parent of loaded mode
+          onModeChange?.(savedState.mode);
         }
 
         // Restore bottom sheet height
@@ -1061,9 +1063,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           />
         </View>
 
-        <ScrollView style={[styles.content, customStyles.content]}>
-          {children}
-        </ScrollView>
+        <View style={[styles.content, customStyles.content]}>
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={true}
+          >
+            {children}
+          </ScrollView>
+        </View>
 
         {/* Corner resize handles - positioned absolutely on the outer container */}
         <View
@@ -1137,12 +1145,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             />
           </View>
 
-          <ScrollView
-            style={[styles.content, customStyles.content]}
-            contentContainerStyle={{ paddingBottom: insets.bottom }}
-          >
-            {children}
-          </ScrollView>
+          <View style={[styles.content, customStyles.content]}>
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+              showsVerticalScrollIndicator={true}
+            >
+              {children}
+            </ScrollView>
+          </View>
         </Animated.View>
       </Animated.View>
     </View>
