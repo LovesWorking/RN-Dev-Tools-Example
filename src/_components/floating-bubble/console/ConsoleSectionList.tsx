@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 import { CyberpunkGlitchBackground } from "../bubble/CyberpunkGlitchBackground";
 
 interface ConsoleSectionListProps {

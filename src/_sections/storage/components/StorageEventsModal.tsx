@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -151,11 +150,9 @@ export function StorageEventsModal({
 
   const handleToggleListening = useCallback(async () => {
     if (isListening) {
-      console.log("[StorageEventsModal] Stopping listener");
       stopListening();
       setIsListening(false);
     } else {
-      console.log("[StorageEventsModal] Starting listener");
       await startListening();
       setIsListening(true);
     }
@@ -454,7 +451,7 @@ export function StorageEventsModal({
   // Show filter view if filters are active
   if (showFilters) {
     return (
-      <ThemedClaudeModal
+      <ClaudeModal60FPSClean
         visible={visible}
         onClose={onClose}
         persistenceKey={storagePrefix}
@@ -479,12 +476,12 @@ export function StorageEventsModal({
           onAddPattern={handleAddPattern}
           onBack={() => setShowFilters(false)}
         />
-      </ThemedClaudeModal>
+      </ClaudeModal60FPSClean>
     );
   }
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -496,7 +493,7 @@ export function StorageEventsModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <View style={styles.container}>
         {conversations.length === 0 ? (
           <View style={styles.emptyState}>
@@ -524,7 +521,7 @@ export function StorageEventsModal({
           />
         )}
       </View>
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }
 

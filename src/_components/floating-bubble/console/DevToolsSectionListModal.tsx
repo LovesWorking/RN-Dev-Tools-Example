@@ -1,4 +1,4 @@
-import { ThemedClaudeModal60FPS } from "../../../claudeModal/ThemedClaudeModal60FPS";
+import ClaudeModal60FPSClean from "../../../claudeModal/ClaudeModal60FPSClean";
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { ConsoleSectionList } from "./ConsoleSectionList";
 import { ReactQuerySection } from "./sections";
@@ -11,8 +11,6 @@ import { SectionType } from "./DevToolsModalRouter";
 import { Text, View } from "react-native";
 import { useState, useCallback } from "react";
 import { useTheme } from "../../../_themes/DevToolsThemeContext";
-import { CyberpunkConsoleTitle } from "./CyberpunkConsoleTitle";
-import { CyberpunkModalHeader } from "../../../claudeModal/CyberpunkModalHeader";
 
 interface DevToolsSectionListModalProps {
   visible: boolean;
@@ -52,52 +50,17 @@ export function DevToolsSectionListModal({
     ? "@dev_tools_console_modal"
     : "@devtools_section_list";
 
-  const renderHeaderContent = () => {
-    if (theme.name === "cyberpunk") {
-      // Return the full CyberpunkModalHeader for complete header replacement
-      return (
-        <CyberpunkModalHeader
-          customContent={<CyberpunkConsoleTitle />}
-          showToggleButton={true}
-        />
-      );
-    }
-
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          flex: 1,
-          gap: 12,
-          minHeight: 32,
-          paddingLeft: 4,
-        }}
-      >
-        <Text
-          style={{
-            color: theme.colors.text,
-            fontSize: 14,
-            fontWeight: "500",
-            flex: 1,
-          }}
-          numberOfLines={1}
-        >
-          Developer Tools Console
-        </Text>
-      </View>
-    );
-  };
 
   return (
-    <ThemedClaudeModal60FPS
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
-      persistenceKey={storagePrefix}
       header={{
-        customContent: renderHeaderContent(),
+        title: "Developer Tools Console",
+        subtitle: "Select a tool",
         showToggleButton: true,
       }}
+      styles={{}}
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
@@ -126,6 +89,6 @@ export function DevToolsSectionListModal({
           onPress={() => onSectionSelect("bubble-settings")}
         />
       </ConsoleSectionList>
-    </ThemedClaudeModal60FPS>
+    </ClaudeModal60FPSClean>
   );
 }

@@ -45,7 +45,7 @@ export class NativeFrameMetricsTracker {
   
   private setupPerformanceObserver() {
     // Check if performance observer is available
-    if (typeof performance !== 'undefined' && performance.now) {
+    if (typeof performance !== 'undefined' && performance.now()) {
       try {
         // Try to use the performance timeline API if available
         if ('PerformanceObserver' in global) {

@@ -10,7 +10,7 @@ import { renderTracker } from './ComponentRenderTracker';
 
 export interface ProfilerMetrics {
   id: string;
-  phase: 'mount' | 'update';
+  phase: 'mount' | 'update' | 'nested-update';
   actualDuration: number;
   baseDuration: number;
   startTime: number;
@@ -155,7 +155,7 @@ export const profilerStore = new ReactProfilerStore();
 // Hook to use React Profiler
 export function useReactProfiler(componentId: string) {
   const onRenderCallback = useCallback<ProfilerOnRenderCallback>(
-    (id, phase, actualDuration, baseDuration, startTime, commitTime, interactions) => {
+    (id: string, phase: "mount" | "update" | "nested-update", actualDuration: number, baseDuration: number, startTime: number, commitTime: number) => {
       const metrics: ProfilerMetrics = {
         id,
         phase,
@@ -163,7 +163,7 @@ export function useReactProfiler(componentId: string) {
         baseDuration,
         startTime,
         commitTime,
-        interactions: interactions || new Set(), // Handle undefined interactions
+        interactions: new Set(), // No longer provided in newer React versions
       };
       
       // Store in our profiler store
@@ -203,7 +203,7 @@ export function withProfiler<P extends object>(
   return React.forwardRef<any, P>((props, ref) => {
     return (
       <ProfiledComponent id={componentId}>
-        <Component {...props} ref={ref} />
+        <Component {...(props as P)} ref={ref} />
       </ProfiledComponent>
     );
   });

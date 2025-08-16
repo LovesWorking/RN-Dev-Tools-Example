@@ -46,7 +46,7 @@ interface MemoryLeak {
 export class MemoryProfiler {
   private profiles: Map<string, ComponentMemoryProfile> = new Map();
   private globalSnapshots: MemorySnapshot[] = [];
-  private monitoringInterval: NodeJS.Timeout | null = null;
+  private monitoringInterval: ReturnType<typeof setInterval> | null = null;
   private snapshotInterval = 1000; // 1 second
   private leakThreshold = 5; // MB growth over 5 seconds indicates potential leak
   private isMonitoring = false;

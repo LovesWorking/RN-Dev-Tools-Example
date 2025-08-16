@@ -1,6 +1,5 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import { ModalMode } from "../../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../../claudeModal/ClaudeModal60FPSClean";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { QueryBrowserMode } from "../QueryBrowserMode";
@@ -67,7 +66,7 @@ export function QueryBrowserModal({
   );
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -79,7 +78,7 @@ export function QueryBrowserModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <View style={{ flex: 1 }}>
         <QueryBrowserMode
           selectedQuery={selectedQuery}
@@ -92,6 +91,6 @@ export function QueryBrowserModal({
           isFloatingMode={modalMode === "floating"}
         />
       </View>
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }

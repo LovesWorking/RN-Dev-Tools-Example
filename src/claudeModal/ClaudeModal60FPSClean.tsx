@@ -30,7 +30,7 @@ import {
   Text,
   Easing,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 
 // ============================================================================
 // CONSTANTS - Modal dimensions and configuration
@@ -46,7 +46,7 @@ const FLOATING_MIN_HEIGHT = 200;
 // ============================================================================
 // TYPE DEFINITIONS - Interface contracts for the modal
 // ============================================================================
-type ModalMode = "bottomSheet" | "floating";
+export type ModalMode = "bottomSheet" | "floating";
 
 interface HeaderConfig {
   title?: string;
@@ -73,6 +73,9 @@ interface ClaudeModalProps {
   animatedHeight?: Animated.Value; // External animated height for performance testing
   initialMode?: ModalMode;
   onModeChange?: (mode: ModalMode) => void;
+  persistenceKey?: string;
+  enablePersistence?: boolean;
+  enableGlitchEffects?: boolean;
 }
 
 // ============================================================================
@@ -216,7 +219,7 @@ const ModalHeader = memo(
       // Check if the custom content is a complete header replacement (like CyberpunkModalHeader)
       // by checking if it's a React element with specific props
       const isCompleteReplacement = React.isValidElement(header.customContent) && 
-        header.customContent.type?.name === 'CyberpunkModalHeader';
+        (typeof header.customContent.type === 'function' && header.customContent.type.name === 'CyberpunkModalHeader');
       
       if (isCompleteReplacement) {
         // Clone the element and pass the necessary props
@@ -334,10 +337,36 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   
   // Sync with external height if provided
   useEffect(() => {
+    // Height sync effect
     if (externalAnimatedHeight && !isResizing) {
       currentHeightRef.current = initialHeight;
       externalAnimatedHeight.setValue(initialHeight);
+      // Set external height
     }
+  }, []);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    // Mount/Unmount effect
+    return () => {
+      // Stop all animations and reset when component unmounts
+      visibilityProgress.stopAnimation();
+      bottomSheetTranslateY.stopAnimation();
+      floatingScale.stopAnimation();
+      dragOffset.stopAnimation();
+      animatedBottomPosition.stopAnimation();
+      floatingPosition.stopAnimation();
+      animatedWidth.stopAnimation();
+      animatedFloatingHeight.stopAnimation();
+      
+      // Reset to initial values
+      visibilityProgress.setValue(0);
+      bottomSheetTranslateY.setValue(SCREEN.height);
+      floatingScale.setValue(0);
+      dragOffset.setValue(0);
+      animatedBottomPosition.setValue(initialHeight);
+      currentHeightRef.current = initialHeight;
+    };
   }, []);
   
   // Update refs when dimensions change
@@ -403,11 +432,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   // EFFECT: Visibility Animations - All using native driver!
   // ============================================================================
   useEffect(() => {
+    // Visibility effect
+    let openAnimation: Animated.CompositeAnimation | null = null;
+    let closeAnimation: Animated.CompositeAnimation | null = null;
+    
     if (visible) {
       // Open animations
       if (mode === "bottomSheet") {
         // Parallel animations for smooth opening
-        Animated.parallel([
+        openAnimation = Animated.parallel([
           // Fade in
           Animated.timing(visibilityProgress, {
             toValue: 1,
@@ -422,10 +455,11 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             stiffness: 300,
             useNativeDriver: true,
           }),
-        ]).start();
+        ]);
+        openAnimation.start();
       } else {
         // Floating mode entrance
-        Animated.parallel([
+        openAnimation = Animated.parallel([
           // Fade in
           Animated.timing(visibilityProgress, {
             toValue: 1,
@@ -439,12 +473,13 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             stiffness: 200,
             useNativeDriver: true,
           }),
-        ]).start();
+        ]);
+        openAnimation.start();
       }
     } else {
       // Close animations
       if (mode === "bottomSheet") {
-        Animated.parallel([
+        closeAnimation = Animated.parallel([
           // Fade out
           Animated.timing(visibilityProgress, {
             toValue: 0,
@@ -458,10 +493,11 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             easing: Easing.in(Easing.cubic),
             useNativeDriver: true,
           }),
-        ]).start();
+        ]);
+        closeAnimation.start();
       } else {
         // Floating mode exit
-        Animated.parallel([
+        closeAnimation = Animated.parallel([
           Animated.timing(visibilityProgress, {
             toValue: 0,
             duration: 200,
@@ -472,10 +508,24 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             duration: 200,
             useNativeDriver: true,
           }),
-        ]).start();
+        ]);
+        closeAnimation.start();
       }
     }
-  }, [visible, mode, visibilityProgress, bottomSheetTranslateY, floatingScale]);
+    
+    // Cleanup function - only stop animations, don't reset values
+    return () => {
+      // Cleanup animations
+      if (openAnimation) {
+        openAnimation.stop();
+        // Stopped open animation
+      }
+      if (closeAnimation) {
+        closeAnimation.stop();
+        // Stopped close animation
+      }
+    };
+  }, [visible, mode, visibilityProgress, bottomSheetTranslateY, floatingScale, externalAnimatedHeight]); // Removed initialHeight to prevent animation restarts on height changes
 
   // ============================================================================
   // OPTIMIZED PAN RESPONDER: Bottom Sheet Resize
@@ -792,7 +842,11 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   // ============================================================================
   // RENDER: Modal UI with transform-based animations
   // ============================================================================
-  if (!visible) return null;
+  if (!visible) {
+    // Not visible
+    return null;
+  }
+  // Rendering modal
 
   // Render floating mode
   if (mode === "floating") {

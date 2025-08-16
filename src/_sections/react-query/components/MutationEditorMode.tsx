@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Mutation } from "@tanstack/react-query";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 import Explorer from "./query-browser/Explorer";
 import MutationDetails from "./query-browser/MutationDetails";
 import ActionButton from "./query-browser/ActionButton";

@@ -226,7 +226,7 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
                       style={[
                         styles.progressFill, 
                         { 
-                          width: `${percentage}%`,
+                          width: `${percentage}%` as any,
                           backgroundColor: item.color,
                         }
                       ]} 

@@ -1,6 +1,6 @@
 /**
  * Modal Performance Debugger
- * Advanced performance tracking for ClaudeModalUltraOptimized
+ * Advanced performance tracking for ClaudeModal60FPSClean
  * Tracks renders, gesture performance, animation frames, and bottlenecks
  */
 

@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 import MutationStatusCount from "../query-browser/MutationStatusCount";
 
 interface MutationBrowserFooterProps {

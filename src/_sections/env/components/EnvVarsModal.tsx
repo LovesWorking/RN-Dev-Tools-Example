@@ -1,5 +1,4 @@
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { View, Text } from "react-native";
@@ -101,7 +100,7 @@ export function EnvVarsModal({
     : devToolsStorageKeys.env.modal();
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -113,8 +112,8 @@ export function EnvVarsModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <EnvVarsDetailContent requiredEnvVars={requiredEnvVars} />
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }

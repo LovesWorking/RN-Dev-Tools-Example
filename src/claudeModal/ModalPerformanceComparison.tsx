@@ -23,12 +23,12 @@ import {
   Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ClaudeModal from "./ClaudeModal";
-import ClaudeModalOriginal from "./ClaudeModalOriginal";
-import ClaudeModalPure from "./ClaudeModalPure";
+// import ClaudeModal from "./ClaudeModal";
+// import ClaudeModalOriginal from "./ClaudeModalOriginal";
+// import ClaudeModalPure from "./ClaudeModalPure";
 import ClaudeModal60FPSClean from "./ClaudeModal60FPSClean";
 import Modal60fpsTest from "./Modal60fpsTest";
-import { ThemedClaudeModal } from "./ThemedClaudeModal";
+// import { ThemedClaudeModal } from "./ThemedClaudeModal";
 import { JSFPSMonitor, JSFPSResult } from "./utils/JSFPSMonitor";
 import { mobileFPSMonitor, FPSMetrics, JankEvent } from "./utils/MobileFPSMonitor";
 import { nativeFrameTracker, FrameMetrics as NativeFrameMetrics } from "./utils/NativeFrameMetrics";
@@ -44,7 +44,7 @@ import automatedTester, { ModalType as AutoTestModalType } from "./utils/Automat
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-type ModalType = "claude" | "original" | "pure" | "60fps" | "60fpsTest" | "themed";
+type ModalType = "60fps" | "60fpsTest" | "claude" | "original" | "pure" | "optimized" | "themed" | "ultraOptimized";
 
 interface BenchmarkResult {
   id: string; // Unique ID for each test run
@@ -101,18 +101,10 @@ interface TimingRefs {
 // Get modal display name
 const getModalName = (type: ModalType) => {
   switch (type) {
-    case "claude":
-      return "ClaudeModal";
-    case "original":
-      return "ClaudeModalOriginal";
-    case "pure":
-      return "ClaudeModalPure";
     case "60fps":
       return "ClaudeModal60FPSClean";
     case "60fpsTest":
       return "Modal60fpsTest";
-    case "themed":
-      return "ThemedClaudeModal";
     default:
       return type;
   }
@@ -230,51 +222,9 @@ const calculatePerformanceGrade = (result: BenchmarkResult): { grade: string, co
 };
 
 // Create tracked versions of modals with render performance monitoring
-const TrackedClaudeModal = React.forwardRef((props: any, ref: any) => {
-  useRenderTracking('ClaudeModal');
-  const [isInteractive, setIsInteractive] = useState(false);
-  
-  // Mark as interactive after mount
-  useEffect(() => {
-    const timer = setTimeout(() => setIsInteractive(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return (
-    <PerformanceMeasureView
-      screenName="ClaudeModal"
-      interactive={isInteractive}
-      componentInstanceId="claude-modal-perf"
-    >
-      <ProfiledComponent id="ClaudeModal">
-        <ClaudeModal {...props} ref={ref} />
-      </ProfiledComponent>
-    </PerformanceMeasureView>
-  );
-});
 
-const TrackedClaudeModalOriginal = React.forwardRef((props: any, ref: any) => {
-  useRenderTracking('ClaudeModalOriginal');
-  const [isInteractive, setIsInteractive] = useState(false);
-  
-  // Mark as interactive after mount
-  useEffect(() => {
-    const timer = setTimeout(() => setIsInteractive(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return (
-    <PerformanceMeasureView
-      screenName="ClaudeModalOriginal"
-      interactive={isInteractive}
-      componentInstanceId="claude-modal-original-perf"
-    >
-      <ProfiledComponent id="ClaudeModalOriginal">
-        <ClaudeModalOriginal {...props} ref={ref} />
-      </ProfiledComponent>
-    </PerformanceMeasureView>
-  );
-});
+
+
 
 const TrackedClaudeModal60FPSClean = React.forwardRef((props: any, ref: any) => {
   useRenderTracking('ClaudeModal60FPSClean');
@@ -322,52 +272,9 @@ const TrackedModal60fpsTest = React.forwardRef((props: any, ref: any) => {
   );
 });
 
-const TrackedClaudeModalPure = React.forwardRef((props: any, ref: any) => {
-  useRenderTracking('ClaudeModalPure');
-  const [isInteractive, setIsInteractive] = useState(false);
-  const uniqueId = useRef(`ClaudeModalPure-${Date.now()}-${Math.random()}`).current;
-  
-  // Mark as interactive after mount
-  useEffect(() => {
-    const timer = setTimeout(() => setIsInteractive(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return (
-    <PerformanceMeasureView
-      screenName="ClaudeModalPure"
-      interactive={isInteractive}
-      componentInstanceId="claude-modal-pure-perf"
-    >
-      <ProfiledComponent id={uniqueId}>
-        <ClaudeModalPure {...props} ref={ref} />
-      </ProfiledComponent>
-    </PerformanceMeasureView>
-  );
-});
 
-const TrackedThemedClaudeModal = React.forwardRef((props: any, ref: any) => {
-  useRenderTracking('ThemedClaudeModal');
-  const [isInteractive, setIsInteractive] = useState(false);
-  
-  // Mark as interactive after mount
-  useEffect(() => {
-    const timer = setTimeout(() => setIsInteractive(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return (
-    <PerformanceMeasureView
-      screenName="ThemedClaudeModal"
-      interactive={isInteractive}
-      componentInstanceId="themed-claude-modal-perf"
-    >
-      <ProfiledComponent id="ThemedClaudeModal">
-        <ThemedClaudeModal {...props} ref={ref} />
-      </ProfiledComponent>
-    </PerformanceMeasureView>
-  );
-});
+
+
 
 // Configuration flags for testing
 const AUTO_RUN_COMPARISON = false; // Set to true to auto-start tests on mount
@@ -428,6 +335,7 @@ export const ModalPerformanceComparison: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [testMode, setTestMode] = useState<"floating" | "bottomSheet">("bottomSheet");
+  
   const [regressionAnalysis, setRegressionAnalysis] = useState<Map<ModalType, RegressionAnalysis>>(new Map());
   const [showRegressionDetails, setShowRegressionDetails] = useState(false);
   const [productionMode, setProductionMode] = useState(false);
@@ -467,8 +375,24 @@ export const ModalPerformanceComparison: React.FC = () => {
   // Refs for resize simulation to stress test performance
   const resizeHeightRef = useRef(400);
   const resizeDirectionRef = useRef(1); // 1 for up, -1 for down
-  const resizeIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const modalHeightRef = useRef<Animated.Value>(new Animated.Value(400));
+  const resizeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Create separate Animated.Values for each modal to prevent interference
+  const modal60fpsHeightRef = useRef<Animated.Value | null>(null);
+  const modal60fpsTestHeightRef = useRef<Animated.Value | null>(null);
+  
+  if (!modal60fpsHeightRef.current) {
+    modal60fpsHeightRef.current = new Animated.Value(400);
+  }
+  if (!modal60fpsTestHeightRef.current) {
+    modal60fpsTestHeightRef.current = new Animated.Value(400);
+  }
+  
+  // Get the appropriate height ref for the active modal
+  const getModalHeightRef = (modalType: string) => {
+    if (modalType === "60fps") return modal60fpsHeightRef.current;
+    if (modalType === "60fpsTest") return modal60fpsTestHeightRef.current;
+    return null;
+  };
 
   // Create resize simulation for stress testing
   const runResizeSimulation = useCallback(() => {
@@ -496,10 +420,13 @@ export const ModalPerformanceComparison: React.FC = () => {
         resizeDirectionRef.current = 1;
       }
       
-      // Update the animated value directly for all modals
-      modalHeightRef.current.setValue(resizeHeightRef.current);
+      // Update the animated value for the currently active modal
+      const heightRef = getModalHeightRef(activeModal);
+      if (heightRef) {
+        heightRef.setValue(resizeHeightRef.current);
+      }
     }, 16); // ~60fps for smooth resize simulation
-  }, []);
+  }, [activeModal, getModalHeightRef]);
   
   const stopResizeSimulation = useCallback(() => {
     console.log('Stopping resize simulation...');
@@ -509,7 +436,13 @@ export const ModalPerformanceComparison: React.FC = () => {
     }
     // Reset to default height
     resizeHeightRef.current = 400;
-    modalHeightRef.current.setValue(400);
+    // Reset both modal heights
+    if (modal60fpsHeightRef.current) {
+      modal60fpsHeightRef.current.setValue(400);
+    }
+    if (modal60fpsTestHeightRef.current) {
+      modal60fpsTestHeightRef.current.setValue(400);
+    }
   }, []);
 
   // Initialize FPS monitor on mount
@@ -558,7 +491,6 @@ export const ModalPerformanceComparison: React.FC = () => {
   // Start benchmark
   const startBenchmark = useCallback(
     async (modalType: ModalType) => {
-      console.log(`🚀 Starting benchmark for: ${getModalName(modalType)}`);
       
       // Increment run ID for unique modal keys
       modalRunIdRef.current += 1;
@@ -596,7 +528,6 @@ export const ModalPerformanceComparison: React.FC = () => {
       try {
         await AsyncStorage.setItem(persistenceKey, JSON.stringify(standardConfig));
       } catch (error) {
-        console.error('Failed to set modal config:', error);
       }
       
       // Initialize FPS monitor if needed
@@ -618,33 +549,19 @@ export const ModalPerformanceComparison: React.FC = () => {
       if (startProfiler && typeof startProfiler === 'function') {
         try {
           switch (modalType) {
-            case "claude":
-              destinationScreen = "ClaudeModal";
-              componentInstanceId = "claude-modal-perf";
-              break;
-            case "original":
-              destinationScreen = "ClaudeModalOriginal";
-              componentInstanceId = "claude-modal-original-perf";
-              break;
             case "60fps":
               destinationScreen = "ClaudeModal60FPSClean";
               componentInstanceId = "claude-modal-60fps-perf";
               break;
-            case "pure":
-              destinationScreen = "ClaudeModalPure";
-              componentInstanceId = "claude-modal-pure-perf";
-              break;
-            case "themed":
-              destinationScreen = "ThemedClaudeModal";
-              componentInstanceId = "themed-claude-modal-perf";
+            case "60fpsTest":
+              destinationScreen = "Modal60fpsTest";
+              componentInstanceId = "modal-60fps-test-perf";
               break;
           }
           
           startProfiler({
             source: sourceScreen,
-            destination: destinationScreen,
-            componentInstanceId,
-          });
+          } as any);
           console.log(`✅ Shopify profiler started for ${destinationScreen}`);
         } catch (error) {
           console.error(`❌ Error starting Shopify profiler:`, error);
@@ -750,7 +667,6 @@ export const ModalPerformanceComparison: React.FC = () => {
         const nativeFrameMetrics = nativeFrameTracker.stop();
         
         if (nativeFrameMetrics) {
-          console.log(`📊 Native Frame Metrics for ${getModalName(modalType)}:`);
           console.log(`  - Average FPS: ${nativeFrameMetrics.averageFPS}`);
           console.log(`  - Min/Max FPS: ${nativeFrameMetrics.minFPS}/${nativeFrameMetrics.maxFPS}`);
           console.log(`  - Dropped Frames: ${nativeFrameMetrics.droppedFrames}`);
@@ -779,9 +695,9 @@ export const ModalPerformanceComparison: React.FC = () => {
         
         // Get Shopify Performance metrics from global storage
         let shopifyMetrics = undefined;
-        if (global.__performanceReports) {
+        if ((global as any).__performanceReports) {
           // Filter reports for this modal
-          const modalReports = global.__performanceReports.filter(
+          const modalReports = (global as any).__performanceReports.filter(
             (report: any) => report.destinationScreen === componentName
           );
           
@@ -923,7 +839,6 @@ export const ModalPerformanceComparison: React.FC = () => {
               });
               
               // Log regression summary
-              console.log(`\n📊 === REGRESSION ANALYSIS: ${getModalName(modalType)} ===`);
               console.log(RegressionAnalyzer.generateSummary(analysis));
               console.log('=====================================\n');
             }
@@ -952,7 +867,7 @@ export const ModalPerformanceComparison: React.FC = () => {
     setResults([]);
     setCurrentTestIndex(0);
 
-    const modalTypes: ModalType[] = ["claude", "original", "optimized", "pure", "themed"];
+    const modalTypes: ModalType[] = ["60fps", "60fpsTest"];
     
     // First, update AsyncStorage for all modals to ensure consistent testing
     const standardConfig = {
@@ -968,7 +883,6 @@ export const ModalPerformanceComparison: React.FC = () => {
         )
       );
     } catch (error) {
-      console.error('Failed to set modal configs:', error);
     }
 
     for (let i = 0; i < modalTypes.length; i++) {
@@ -1205,7 +1119,6 @@ export const ModalPerformanceComparison: React.FC = () => {
     }
     
     setAutomatedTestRunning(true);
-    console.log('🤖 Starting automated test for 60FPS variants comparison...');
     
     // Clear previous results for clean comparison
     setResults([]);
@@ -1215,7 +1128,6 @@ export const ModalPerformanceComparison: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Test 60fpsTest modal (old version with height animation)
-    console.log('Testing Modal60fpsTest (height animation)...');
     for (let i = 0; i < 2; i++) {
       console.log(`  Test ${i + 1}/2`);
       await new Promise<void>((resolve) => {
@@ -1229,7 +1141,6 @@ export const ModalPerformanceComparison: React.FC = () => {
     }
     
     // Test 60FPS modal (new optimized with transforms)
-    console.log('Testing ClaudeModal60FPSClean...');
     for (let i = 0; i < 2; i++) {
       console.log(`  Test ${i + 1}/2`);
       await new Promise<void>((resolve) => {
@@ -1275,7 +1186,7 @@ export const ModalPerformanceComparison: React.FC = () => {
       jank: pureResults.reduce((sum, r) => sum + (r.nativeFrameMetrics?.jankScore || 0), 0) / pureResults.length,
       mountTime: pureResults.reduce((sum, r) => sum + (r.renderMetrics?.mountTime || 0), 0) / pureResults.length,
       memory: pureResults.reduce((sum, r) => sum + (r.memoryMetrics?.memoryGrowthMB || 0), 0) / pureResults.length,
-      renders: pureResults.reduce((sum, r) => sum + (r.renderMetrics?.totalRenders || 0), 0) / pureResults.length,
+      renders: pureResults.reduce((sum, r) => sum + (r.renderMetrics?.updateCount || 0), 0) / pureResults.length,
     };
     
     const sixtyFpsAvg = {
@@ -1283,7 +1194,7 @@ export const ModalPerformanceComparison: React.FC = () => {
       jank: sixtyFpsResults.reduce((sum, r) => sum + (r.nativeFrameMetrics?.jankScore || 0), 0) / sixtyFpsResults.length,
       mountTime: sixtyFpsResults.reduce((sum, r) => sum + (r.renderMetrics?.mountTime || 0), 0) / sixtyFpsResults.length,
       memory: sixtyFpsResults.reduce((sum, r) => sum + (r.memoryMetrics?.memoryGrowthMB || 0), 0) / sixtyFpsResults.length,
-      renders: sixtyFpsResults.reduce((sum, r) => sum + (r.renderMetrics?.totalRenders || 0), 0) / sixtyFpsResults.length,
+      renders: sixtyFpsResults.reduce((sum, r) => sum + (r.renderMetrics?.updateCount || 0), 0) / sixtyFpsResults.length,
     };
     
     // Calculate improvements
@@ -1296,14 +1207,12 @@ export const ModalPerformanceComparison: React.FC = () => {
     };
     
     // Log results
-    console.log('📊 Pure Modal Average:');
     console.log(`  FPS: ${pureAvg.fps.toFixed(1)}`);
     console.log(`  Jank: ${pureAvg.jank.toFixed(1)}`);
     console.log(`  Mount: ${pureAvg.mountTime.toFixed(0)}ms`);
     console.log(`  Memory: ${pureAvg.memory.toFixed(2)}MB`);
     console.log(`  Renders: ${pureAvg.renders.toFixed(0)}`);
     
-    console.log('\n🚀 60FPS Modal Average:');
     console.log(`  FPS: ${sixtyFpsAvg.fps.toFixed(1)}`);
     console.log(`  Jank: ${sixtyFpsAvg.jank.toFixed(1)}`);
     console.log(`  Mount: ${sixtyFpsAvg.mountTime.toFixed(0)}ms`);
@@ -1329,7 +1238,6 @@ export const ModalPerformanceComparison: React.FC = () => {
     }
     
     setAutomatedTestRunning(false);
-    console.log('\n✅ Automated test complete!');
     
     // Store results globally for analysis
     (global as any).lastOptimizationTestResults = {
@@ -1346,7 +1254,6 @@ export const ModalPerformanceComparison: React.FC = () => {
   // Expose global function for Claude to run tests
   useEffect(() => {
     (global as any).runModalOptimizationTest = runAutomatedTest;
-    console.log('🤖 Automated test ready! Run: global.runModalOptimizationTest()');
     
     // Auto-run optimization test if configured (only once)
     if (AUTO_RUN_OPTIMIZATION_TEST && !automatedTestRunning && !autoTestStartedRef.current) {
@@ -1382,7 +1289,6 @@ export const ModalPerformanceComparison: React.FC = () => {
   useEffect(() => {
     if (AUTO_TEST_60FPS && !isRunning && !activeModal) {
       const timer = setTimeout(() => {
-        console.log('🚀 Auto-testing 60FPS modal with height animations...');
         startBenchmark('60fps');
       }, AUTO_TEST_60FPS_DELAY);
       
@@ -1462,7 +1368,7 @@ export const ModalPerformanceComparison: React.FC = () => {
             style={[
               styles.resizeIndicatorBar,
               {
-                height: modalHeightRef.current.interpolate({
+                height: (getModalHeightRef(activeModal) || new Animated.Value(400)).interpolate({
                   inputRange: [200, 600],
                   outputRange: [20, 100],
                 }),
@@ -1524,104 +1430,15 @@ export const ModalPerformanceComparison: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.buttonRow}>
-            <Pressable
-              style={[
-                styles.button,
-                styles.buttonPrimary,
-                isRunning && styles.buttonDisabled,
-              ]}
-              onPress={runComparison}
-              disabled={isRunning}
-            >
-              <Text style={styles.buttonText}>
-                Run {testMode === "floating" ? "Floating" : "Bottom Sheet"} Test {currentTestIndex > 0 && `(${currentTestIndex}/5)`}
-              </Text>
-            </Pressable>
-          </View>
-          
-          {/* Production Monitoring Toggle */}
-          <View style={styles.productionModeContainer}>
-            <Pressable
-              style={[
-                styles.productionToggle,
-                productionMode && styles.productionToggleActive
-              ]}
-              onPress={() => {
-                const newMode = !productionMode;
-                setProductionMode(newMode);
-                productionMonitor.initialize({
-                  enabled: newMode,
-                  samplingRate: 1.0, // 100% in dev
-                  reportCallback: (report) => {
-                    setProductionReport(report);
-                    console.log('📊 Production Report:', report.metrics);
-                  },
-                });
-                console.log(`🏭 Production monitoring ${newMode ? 'enabled' : 'disabled'}`);
-              }}
-            >
-              <Text style={styles.productionToggleText}>
-                {productionMode ? '🏭 Production Mode ON' : '🏢 Production Mode OFF'}
-              </Text>
-              <Text style={styles.productionToggleSubtext}>
-                {productionMode ? 'Collecting real metrics' : 'Click to enable lightweight monitoring'}
-              </Text>
-            </Pressable>
-            
-            {productionMode && productionReport && (
-              <Pressable
-                style={styles.productionReportButton}
-                onPress={() => setShowProductionReport(!showProductionReport)}
-              >
-                <Text style={styles.productionReportButtonText}>
-                  📊 View Report ({productionReport.metrics.totalEvents} events)
-                </Text>
-              </Pressable>
-            )}
-          </View>
-
+          {/* Test Buttons */}
           <View style={styles.buttonGrid}>
-            <Pressable
-              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
-              onPress={() => startBenchmark("claude")}
-              disabled={isRunning}
-            >
-              <Text style={styles.buttonTextSmall}>📦 ClaudeModal</Text>
-            </Pressable>
-
-            <Pressable
-              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
-              onPress={() => startBenchmark("original")}
-              disabled={isRunning}
-            >
-              <Text style={styles.buttonTextSmall}>🔧 Original</Text>
-            </Pressable>
-
-            <Pressable
-              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
-              onPress={() => startBenchmark("pure")}
-              disabled={isRunning}
-            >
-              <Text style={styles.buttonTextSmall}>💎 Pure</Text>
-            </Pressable>
-
             <Pressable
               style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
               onPress={() => startBenchmark("60fps")}
               disabled={isRunning}
             >
-              <Text style={styles.buttonTextSmall}>🚀 60FPS</Text>
+              <Text style={styles.buttonTextSmall}>🚀 60FPS Clean</Text>
             </Pressable>
-
-            <Pressable
-              style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
-              onPress={() => startBenchmark("themed")}
-              disabled={isRunning}
-            >
-              <Text style={styles.buttonTextSmall}>🎨 Themed</Text>
-            </Pressable>
-
             <Pressable
               style={[styles.button, styles.buttonSmall, isRunning && styles.buttonDisabled]}
               onPress={() => startBenchmark("60fpsTest")}
@@ -1677,9 +1494,9 @@ export const ModalPerformanceComparison: React.FC = () => {
           
           {/* Export Report Button */}
           {results.length > 0 && !isRunning && (
-            <View style={styles.exportContainer}>
+            <View style={styles.section}>
               <Pressable
-                style={[styles.button, styles.buttonExport]}
+                style={[styles.button, styles.button]}
                 onPress={() => {
                   // Generate detailed report
                   const report = PerformanceReportExporter.generateDetailedReport(results, regressionAnalysis);
@@ -1724,7 +1541,7 @@ export const ModalPerformanceComparison: React.FC = () => {
                   {/* Header Row */}
                   <View style={styles.tableHeader}>
                     <Text style={[styles.tableCell, styles.tableCellHeader, styles.firstColumn]}>
-                      Modal
+                      
                     </Text>
                     <Text style={[styles.tableCell, styles.tableCellHeader]}>FPS</Text>
                     <Text style={[styles.tableCell, styles.tableCellHeader]}>Drops</Text>
@@ -1798,18 +1615,15 @@ export const ModalPerformanceComparison: React.FC = () => {
                     const finalScore = factors > 0 ? Math.round(score) : 0;
                     
                     // Shorten modal names for display
-                    const shortName = result.modalType === 'claude' ? '' :
-                                     result.modalType === 'original' ? 'Orig' :
-                                     result.modalType === 'optimized' ? 'Opt' :
-                                     result.modalType === 'pure' ? 'Pure' :
-                                     result.modalType === 'themed' ? 'Theme' : '';
+                    const shortName = result.modalType === '60fps' ? '🚀' :
+                                     result.modalType === '60fpsTest' ? '🧪' : '';
                     
                     return (
                       <View key={index} style={styles.tableRow}>
                         <Text style={[styles.tableCell, styles.firstColumn, styles.modalNameCell]}>
-                          {getModalName(result.modalType)}
+                          {shortName}
                           {result.shopifyMetrics?.isColdStart !== undefined ? 
-                            (result.shopifyMetrics.isColdStart ? ' ❄️' : ' 🔥') : ''
+                            (result.shopifyMetrics.isColdStart ? '❄️' : '🔥') : ''
                           }
                         </Text>
                         <View style={styles.tableCell}>
@@ -2396,12 +2210,12 @@ export const ModalPerformanceComparison: React.FC = () => {
                           
                           {result.issues.length > 0 && (
                             <View style={styles.reportDetailIssues}>
-                              <Text style={styles.reportDetailIssuesTitle}>Issues:</Text>
+                              <Text style={styles.title}>Issues:</Text>
                               {result.issues.map((issue, issueIdx) => (
                                 <Text key={issueIdx} style={[
                                   styles.reportDetailIssue,
-                                  issue.severity === 'critical' && styles.issuesCritical,
-                                  issue.severity === 'warning' && styles.issuesWarning,
+                                  issue.severity === 'critical' && { borderLeftColor: '#EF4444' },
+                                  issue.severity === 'warning' && { borderLeftColor: '#F59E0B' },
                                 ]}>
                                   • {issue.description} ({issue.occurrences}x)
                                 </Text>
@@ -2410,10 +2224,10 @@ export const ModalPerformanceComparison: React.FC = () => {
                           )}
                           
                           {result.recommendations.length > 0 && (
-                            <View style={styles.reportDetailRecommendations}>
-                              <Text style={styles.reportDetailRecommendationsTitle}>Recommendations:</Text>
+                            <View style={styles.reportRecommendations}>
+                              <Text style={styles.title}>Recommendations:</Text>
                               {result.recommendations.map((rec, recIdx) => (
-                                <Text key={recIdx} style={styles.reportDetailRecommendation}>
+                                <Text key={recIdx} style={styles.reportRecommendation}>
                                   • {rec}
                                 </Text>
                               ))}
@@ -2428,28 +2242,28 @@ export const ModalPerformanceComparison: React.FC = () => {
                       <Text style={styles.reportSectionTitle}>💡 Recommendations</Text>
                       
                       {detailedReport.recommendations.critical.length > 0 && (
-                        <View style={styles.reportRecommendationGroup}>
-                          <Text style={styles.reportRecommendationGroupTitle}>🔴 Critical</Text>
+                        <View style={styles.reportSection}>
+                          <Text style={styles.reportSectionTitle}>🔴 Critical</Text>
                           {detailedReport.recommendations.critical.map((rec, idx) => (
-                            <Text key={idx} style={styles.reportRecommendationCritical}>• {rec}</Text>
+                            <Text key={idx} style={[styles.reportRecommendation, { color: '#EF4444' }]}>• {rec}</Text>
                           ))}
                         </View>
                       )}
                       
                       {detailedReport.recommendations.improvements.length > 0 && (
-                        <View style={styles.reportRecommendationGroup}>
-                          <Text style={styles.reportRecommendationGroupTitle}>🟡 Improvements</Text>
+                        <View style={styles.reportSection}>
+                          <Text style={styles.reportSectionTitle}>🟡 Improvements</Text>
                           {detailedReport.recommendations.improvements.map((rec, idx) => (
-                            <Text key={idx} style={styles.reportRecommendationImprovement}>• {rec}</Text>
+                            <Text key={idx} style={[styles.reportRecommendation, { color: '#F59E0B' }]}>• {rec}</Text>
                           ))}
                         </View>
                       )}
                       
                       {detailedReport.recommendations.bestPractices.length > 0 && (
-                        <View style={styles.reportRecommendationGroup}>
-                          <Text style={styles.reportRecommendationGroupTitle}>✅ Best Practices</Text>
+                        <View style={styles.reportSection}>
+                          <Text style={styles.reportSectionTitle}>✅ Best Practices</Text>
                           {detailedReport.recommendations.bestPractices.map((rec, idx) => (
-                            <Text key={idx} style={styles.reportRecommendationBest}>• {rec}</Text>
+                            <Text key={idx} style={[styles.reportRecommendation, { color: '#10B981' }]}>• {rec}</Text>
                           ))}
                         </View>
                       )}
@@ -2601,81 +2415,18 @@ export const ModalPerformanceComparison: React.FC = () => {
       </ScrollView>
 
       {/* Test Modals */}
-      {activeModal === "claude" && (
-        <TrackedClaudeModal
-          key={`claude-${testMode}-${modalRunIdRef.current}`}
-          visible={true}
-          onClose={() => stopBenchmark("claude")}
-          header={{
-            title: "ClaudeModal",
-            subtitle: `FPS: ${currentFps}`,
-          }}
-          persistenceKey="benchmark-claude-modal"
-          initialMode={testMode}
-          initialHeight={resizeHeightRef.current}
-          animatedHeight={modalHeightRef.current}
-        >
-          <TestContent />
-        </TrackedClaudeModal>
-      )}
+      
 
-      {activeModal === "original" && (
-        <TrackedClaudeModalOriginal
-          key={`original-${testMode}-${modalRunIdRef.current}`}
-          visible={true}
-          onClose={() => stopBenchmark("original")}
-          header={{
-            title: "ClaudeModalOriginal",
-            subtitle: `FPS: ${currentFps}`,
-          }}
-          persistenceKey="benchmark-original-modal"
-          initialMode={testMode}
-          initialHeight={resizeHeightRef.current}
-          animatedHeight={modalHeightRef.current}
-        >
-          <TestContent />
-        </TrackedClaudeModalOriginal>
-      )}
+      
 
-      {activeModal === "pure" && (
-        <TrackedClaudeModalPure
-          key={`pure-${testMode}-${modalRunIdRef.current}`}
-          visible={true}
-          onClose={() => stopBenchmark("pure")}
-          header={{
-            title: "ClaudeModalPure",
-            subtitle: `FPS: ${currentFps}`,
-          }}
-          persistenceKey="benchmark-pure-modal"
-          initialMode={testMode}
-          initialHeight={resizeHeightRef.current}
-          animatedHeight={modalHeightRef.current}
-        >
-          <TestContent />
-        </TrackedClaudeModalPure>
-      )}
+      
 
-      {activeModal === "themed" && (
-        <TrackedThemedClaudeModal
-          key={`themed-${testMode}-${modalRunIdRef.current}`}
-          visible={true}
-          onClose={() => stopBenchmark("themed")}
-          header={{
-            title: "ThemedClaudeModal",
-            subtitle: `FPS: ${currentFps}`,
-          }}
-          persistenceKey="benchmark-themed-modal"
-          initialMode={testMode}
-          initialHeight={resizeHeightRef.current}
-          animatedHeight={modalHeightRef.current}
-        >
-          <TestContent />
-        </TrackedThemedClaudeModal>
-      )}
       {activeModal === "60fps" && (
-        <TrackedClaudeModal60FPSClean
-          key={`60fps-${testMode}-${modalRunIdRef.current}`}
-          visible={true}
+        <>
+          {/* Rendering ClaudeModal60FPSClean */}
+          <ClaudeModal60FPSClean
+            key={`60fps-${testMode}-${modalRunIdRef.current}`}
+            visible={true}
           onClose={() => stopBenchmark("60fps")}
           header={{
             title: "ClaudeModal60FPSClean",
@@ -2684,24 +2435,29 @@ export const ModalPerformanceComparison: React.FC = () => {
           persistenceKey="benchmark-60fps-modal"
           initialMode={testMode}
           initialHeight={resizeHeightRef.current}
-          animatedHeight={modalHeightRef.current}
+          animatedHeight={modal60fpsHeightRef.current}
         >
           <TestContent />
-        </TrackedClaudeModal60FPSClean>
+          </ClaudeModal60FPSClean>
+        </>
       )}
       {activeModal === "60fpsTest" && (
-        <TrackedModal60fpsTest
-          key={`60fpsTest-${modalRunIdRef.current}`}
-          visible={true}
+        <>
+          {/* Rendering Modal60fpsTest */}
+          <Modal60fpsTest
+            key={`60fpsTest-${modalRunIdRef.current}`}
+            visible={true}
           onClose={() => stopBenchmark("60fpsTest")}
           header={{
             title: "Modal60fpsTest (Height)",
             subtitle: `FPS: ${currentFps}`,
           }}
           initialHeight={resizeHeightRef.current}
+          animatedHeight={modal60fpsTestHeightRef.current}
         >
           <TestContent />
-        </TrackedModal60fpsTest>
+          </Modal60fpsTest>
+        </>
       )}
     </View>
   );

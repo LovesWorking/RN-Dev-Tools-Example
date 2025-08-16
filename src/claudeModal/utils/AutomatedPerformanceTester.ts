@@ -130,12 +130,6 @@ class AutomatedPerformanceTesterClass {
   configure(config: TestConfiguration): void {
     this.currentConfig = config;
     if (!config.silentMode) {
-      console.log('🤖 Automated tester configured:', {
-        modals: config.modalTypes,
-        tests: config.testsPerModal,
-        duration: config.testDurationMs,
-        stress: config.stressLevel,
-      });
     }
   }
   
@@ -167,7 +161,6 @@ class AutomatedPerformanceTesterClass {
         if (!this.isRunning) break;
         
         if (!silentMode) {
-          console.log(`📊 Testing ${modalType} - Test ${testNum}/${testsPerModal}`);
         }
         
         const result = await this.runSingleTest(modalType, testNum);
@@ -296,7 +289,6 @@ class AutomatedPerformanceTesterClass {
     const optimizedResults = this.testResults.filter(r => r.modalType === 'ultraOptimized');
     
     if (pureResults.length === 0 || optimizedResults.length === 0) {
-      console.warn('Need results from both modal types to compare');
       return null;
     }
     

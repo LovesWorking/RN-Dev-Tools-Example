@@ -647,7 +647,7 @@ export function ClaudeGridMenuSVGGlitch({
 
   // Single controller for all effects - only 1-2 buttons animate at once
   // Use useRef to avoid re-renders affecting the background
-  const effectLoopRef = useRef<ReturnType<typeof setTimeout>>();
+  const effectLoopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   useEffect(() => {
     const effectLoop = () => {

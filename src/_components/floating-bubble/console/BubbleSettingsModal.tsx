@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { Text, View } from "react-native";
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { BubbleSettingsDetail, type BubbleVisibilitySettings } from "../../../_sections/settings";
 import { ChevronLeft, Settings } from "lucide-react-native";
 import { TouchableOpacity } from "react-native";
@@ -117,7 +116,7 @@ export function BubbleSettingsModal({
   );
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -130,8 +129,8 @@ export function BubbleSettingsModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <BubbleSettingsDetail onSettingsChange={onSettingsChange} />
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }

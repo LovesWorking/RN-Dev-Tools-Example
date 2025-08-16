@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { SentryLogsContent } from "./SentryLogsSection";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
@@ -187,7 +186,7 @@ export function SentryLogsModal({
     : devToolsStorageKeys.sentry.modal();
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -199,7 +198,7 @@ export function SentryLogsModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <SentryLogsContent
         selectedEntry={selectedEntry}
         onSelectEntry={setSelectedEntry}
@@ -231,7 +230,7 @@ export function SentryLogsModal({
         }}
         isLoggingEnabled={isLoggingEnabled}
       />
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }
 

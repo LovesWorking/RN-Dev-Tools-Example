@@ -1,6 +1,5 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import { ModalMode } from "../../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../../claudeModal/ClaudeModal60FPSClean";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { DataEditorMode } from "../DataEditorMode";
@@ -54,7 +53,7 @@ export function DataEditorModal({
   if (!visible || !selectedQuery) return null;
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -66,11 +65,11 @@ export function DataEditorModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <DataEditorMode
         selectedQuery={selectedQuery}
         isFloatingMode={modalMode === "floating"}
       />
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }

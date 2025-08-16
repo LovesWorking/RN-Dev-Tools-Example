@@ -149,13 +149,6 @@ export function RnBetterDevToolsBubble({
   // Debug which modal is stuck open
   useEffect(() => {
     if (isAnyModalOpen) {
-      console.log("[DEBUG] Modal states:", {
-        isModalOpen,
-        isDebugModalOpen,
-        isEnvModalOpen,
-        isSentryModalOpen,
-        isStorageModalOpen,
-      });
     }
   }, [
     isModalOpen,
@@ -240,7 +233,6 @@ export function RnBetterDevToolsBubble({
               },
               onSentryPress: () => {
                 // Disabled - Sentry modal has import issues
-                console.warn("Sentry modal is temporarily disabled");
                 setShowFloatingMenu(false);
                 // handleSentryPress(); // Don't open the modal
               },
@@ -289,7 +281,6 @@ export function RnBetterDevToolsBubble({
         {/* Dial2 Menu - Opens when user button is clicked */}
         {isDebugModalOpen && (
           <DialDevTools
-            buttonPosition={buttonPosition}
             onQueryPress={() => {
               handleDebugModalDismiss();
               handleQueryPress();
@@ -314,7 +305,6 @@ export function RnBetterDevToolsBubble({
               handleDebugModalDismiss();
             }}
             isWifiEnabled={isWifiEnabled}
-            environment={environment}
           />
         )}
 

@@ -23,7 +23,7 @@ import {
   ScrollView,
   Text,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 
 const SCREEN = Dimensions.get("window");
 const MIN_HEIGHT = 100;
@@ -41,6 +41,7 @@ interface Modal60fpsTestProps {
   minHeight?: number;
   maxHeight?: number;
   initialHeight?: number;
+  animatedHeight?: Animated.Value; // External animated height for performance testing
 }
 
 // Icons
@@ -81,13 +82,15 @@ export const Modal60fpsTest: React.FC<Modal60fpsTestProps> = ({
   minHeight = MIN_HEIGHT,
   maxHeight,
   initialHeight = DEFAULT_HEIGHT,
+  animatedHeight: externalAnimatedHeight,
 }) => {
   const insets = useSafeAreaInsets();
   const [isResizing, setIsResizing] = useState(false);
   
   // SEPARATE animated values - NEVER mix them!
-  // For height (non-native)
-  const animatedHeight = useRef(new Animated.Value(initialHeight)).current;
+  // For height (non-native) - use external if provided
+  const internalAnimatedHeight = useRef(new Animated.Value(initialHeight)).current;
+  const animatedHeight = externalAnimatedHeight || internalAnimatedHeight;
   
   // For position (native)
   const animatedY = useRef(new Animated.Value(SCREEN.height)).current;
@@ -100,12 +103,45 @@ export const Modal60fpsTest: React.FC<Modal60fpsTestProps> = ({
   const startHeightRef = useRef(initialHeight);
   
   const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top - 50;
+  const isExternallyControlled = !!externalAnimatedHeight;
+  
+  // Sync with external height if provided
+  useEffect(() => {
+    // Height sync effect
+    if (externalAnimatedHeight && !isResizing) {
+      currentHeightRef.current = initialHeight;
+      externalAnimatedHeight.setValue(initialHeight);
+      // Set external height
+    }
+  }, [externalAnimatedHeight, initialHeight, isResizing]);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    // Mount/Unmount effect
+    return () => {
+      // Stop all animations and reset when component unmounts
+      animatedY.stopAnimation();
+      animatedOpacity.stopAnimation();
+      animatedHeight.stopAnimation();
+      animatedY.setValue(SCREEN.height);
+      animatedOpacity.setValue(0);
+      animatedHeight.setValue(initialHeight);
+    };
+  }, []);
   
   // Open/close - ONLY animates Y position and opacity (both native)
   useEffect(() => {
+    // Visibility effect
+    let openAnimation: Animated.CompositeAnimation | null = null;
+    let closeAnimation: Animated.CompositeAnimation | null = null;
+    
     if (visible) {
+      // Reset position if needed and then open
+      animatedY.setValue(SCREEN.height);
+      animatedOpacity.setValue(0);
+      
       // Open
-      Animated.parallel([
+      openAnimation = Animated.parallel([
         Animated.spring(animatedY, {
           toValue: 0,
           tension: 180,
@@ -117,10 +153,11 @@ export const Modal60fpsTest: React.FC<Modal60fpsTestProps> = ({
           duration: 200,
           useNativeDriver: true, // ✅ Native for opacity
         }),
-      ]).start();
+      ]);
+      openAnimation.start();
     } else {
       // Close
-      Animated.parallel([
+      closeAnimation = Animated.parallel([
         Animated.spring(animatedY, {
           toValue: SCREEN.height,
           tension: 180,
@@ -132,17 +169,31 @@ export const Modal60fpsTest: React.FC<Modal60fpsTestProps> = ({
           duration: 200,
           useNativeDriver: true, // ✅ Native for opacity
         }),
-      ]).start();
+      ]);
+      closeAnimation.start();
     }
-  }, [visible]);
+    
+    // Cleanup function - only stop animations, don't reset values
+    return () => {
+      // Cleanup animations
+      if (openAnimation) {
+        openAnimation.stop();
+        // Stopped open animation
+      }
+      if (closeAnimation) {
+        closeAnimation.stop();
+        // Stopped close animation
+      }
+    };
+  }, [visible]); // Only re-run when visible changes, not on height changes
   
   // Resize handler - ONLY touches height (non-native)
   const resizePanResponder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
+        onStartShouldSetPanResponder: () => !isExternallyControlled,
         onMoveShouldSetPanResponder: (evt, gestureState) => 
-          Math.abs(gestureState.dy) > 5,
+          !isExternallyControlled && Math.abs(gestureState.dy) > 5,
           
         onPanResponderGrant: () => {
           setIsResizing(true);
@@ -185,10 +236,14 @@ export const Modal60fpsTest: React.FC<Modal60fpsTestProps> = ({
           setIsResizing(false);
         },
       }),
-    [minHeight, effectiveMaxHeight, onClose]
+    [minHeight, effectiveMaxHeight, onClose, isExternallyControlled]
   );
   
-  if (!visible) return null;
+  if (!visible) {
+    // Not visible
+    return null;
+  }
+  // Rendering modal
   
   return (
     <>

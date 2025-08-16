@@ -90,7 +90,7 @@ class ProductionPerformanceMonitorClass {
   private isEnabled = false;
   private sessionId: string;
   private events: ProductionMetrics[] = [];
-  private reportTimer: NodeJS.Timeout | null = null;
+  private reportTimer: ReturnType<typeof setInterval> | null = null;
   private samplingRate: number;
   private reportCallback?: (report: PerformanceReport) => void;
   

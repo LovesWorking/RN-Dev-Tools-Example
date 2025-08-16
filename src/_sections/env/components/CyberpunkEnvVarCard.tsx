@@ -156,8 +156,8 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
       return () => clearTimeout(timeoutId);
     };
 
-    const timeoutId = startRandomGlitch();
-    return () => clearTimeout(timeoutId);
+    const cleanup = startRandomGlitch();
+    return cleanup;
   }, [index]);
 
   const handlePressIn = () => {

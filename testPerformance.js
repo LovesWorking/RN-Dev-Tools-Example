@@ -22,9 +22,7 @@ if (appIndexContent.includes('const EMPTY_STYLES = {}')) {
 }
 
 if (appIndexContent.includes('styles={EMPTY_STYLES}')) {
-  console.log('✅ EMPTY_STYLES is passed to ClaudeModalUltraOptimized');
 } else {
-  console.log('❌ EMPTY_STYLES is not passed to ClaudeModalUltraOptimized');
 }
 
 // Check 2: Verify custom memo comparison in ClaudeModalUltraOptimized
@@ -71,8 +69,6 @@ console.log('  • Dropped frames reduced from 28-57 to <5');
 console.log('  • No more "Changed props: [\'styles\']" re-renders');
 
 console.log('\n🧪 To test performance:');
-console.log('  1. Open the Ultra Optimized modal');
-console.log('  2. Resize the modal up and down twice');
 console.log('  3. Toggle to floating mode and drag around');
 console.log('  4. Check console for performance report');
 console.log('  5. Look for "PERFORMANCE REPORT" in logs');

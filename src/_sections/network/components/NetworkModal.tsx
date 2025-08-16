@@ -19,8 +19,7 @@ import {
   XCircle,
   Clock
 } from 'lucide-react-native';
-import { ModalMode } from '../../../claudeModal/ClaudeModalPure';
-import { ThemedClaudeModal } from '../../../claudeModal/ThemedClaudeModal';
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from '../../../_shared/ui/components/BackButton';
 import { devToolsStorageKeys } from '../../../_shared/storage/devToolsStorageKeys';
 import { useTheme } from '../../../_themes/DevToolsThemeContext';
@@ -219,7 +218,7 @@ function NetworkModalInner({
   // Show detail view if an event is selected
   if (selectedEvent) {
     return (
-      <ThemedClaudeModal
+      <ClaudeModal60FPSClean
         visible={visible}
         onClose={onClose}
         persistenceKey={persistenceKey}
@@ -231,19 +230,19 @@ function NetworkModalInner({
         enablePersistence={true}
         initialMode="bottomSheet"
         enableGlitchEffects={theme.name === "cyberpunk"}
-      >
+       styles={{}}>
         <View style={styles.container}>
           <NetworkEventDetailView
             event={selectedEvent}
             onBack={handleBack}
           />
         </View>
-      </ThemedClaudeModal>
+      </ClaudeModal60FPSClean>
     );
   }
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -255,7 +254,7 @@ function NetworkModalInner({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <View style={styles.container}>
         {/* Show filter view if active */}
         {showFilterView ? (
@@ -320,7 +319,7 @@ function NetworkModalInner({
           </>
         )}
       </View>
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }
 

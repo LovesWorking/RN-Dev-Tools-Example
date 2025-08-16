@@ -20,116 +20,21 @@ import {
   type ViewStyle,
   type TextStyle,
 } from "react-native";
+import { useSafeAreaInsets as usePureJSSafeAreaInsets, getSafeAreaInsets as getPureJSSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 // Using Views to render grip dots; no react-native-svg dependency
 
 // =============================
-// Safe Area Helper with optional react-native-safe-area-context
+// Safe Area Helper using our pure JS implementation
 // =============================
-let SafeAreaModule: any = null;
-let hasCheckedSafeArea = false;
 
-function initializeSafeAreaContext(): void {
-  if (hasCheckedSafeArea) return;
-  hasCheckedSafeArea = true;
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    SafeAreaModule = require("react-native-safe-area-context");
-  } catch {
-    // Silent fallback - react-native-safe-area-context not installed
-  }
-}
-
-// Fallback safe area detection when react-native-safe-area-context is not available
-function getFallbackSafeAreaInsets(): {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-} {
-  // Default safe area insets
-  let insets = { top: 0, bottom: 0, left: 0, right: 0 };
-
-  if (Platform.OS === "ios") {
-    // Check for iPhone with notch/dynamic island
-    const { height, width } = Dimensions.get("window");
-    const aspectRatio = height / width;
-
-    // iPhone X and later with notch/dynamic island have specific aspect ratios
-    // iPhone X/XS/11 Pro: 2436x1125 (2.165)
-    // iPhone XR/11: 1792x828 (2.164)
-    // iPhone 12/13/14/15: 2532x1170 (2.164) or 2778x1284 (2.163)
-    // iPhone 14 Pro/15 Pro with Dynamic Island: 2556x1179 (2.168) or 2796x1290 (2.167)
-    const hasNotch = aspectRatio > 2.15;
-
-    if (hasNotch) {
-      // Typical safe area values for iPhones with notch/dynamic island
-      insets = {
-        top: 59, // Status bar + notch/dynamic island area
-        bottom: 34, // Home indicator area
-        left: 0,
-        right: 0,
-      };
-    } else {
-      // Older iPhones without notch
-      insets = {
-        top: 20, // Just status bar
-        bottom: 0,
-        left: 0,
-        right: 0,
-      };
-    }
-  } else if (Platform.OS === "android") {
-    // Android - use StatusBar height for top inset
-    insets = {
-      top: StatusBar.currentHeight || 24,
-      bottom: 0, // Most Android devices don't need bottom safe area
-      left: 0,
-      right: 0,
-    };
-  }
-
-  return insets;
-}
-
-// Hook to get safe area insets (tries react-native-safe-area-context first, falls back to custom)
+// Hook to get safe area insets
 function useFloatingToolsSafeArea(): {
   top: number;
   bottom: number;
   left: number;
   right: number;
 } {
-  // Initialize on first use
-  useEffect(() => {
-    initializeSafeAreaContext();
-  }, []);
-
-  // Default fallback insets
-  const [fallbackInsets, setFallbackInsets] = useState(
-    getFallbackSafeAreaInsets
-  );
-
-  // Update fallback insets on dimension changes
-  useEffect(() => {
-    const updateInsets = () => {
-      setFallbackInsets(getFallbackSafeAreaInsets());
-    };
-
-    const subscription = Dimensions.addEventListener("change", updateInsets);
-    return () => subscription?.remove();
-  }, []);
-
-  // If safe area context is available, use it directly (not as a hook since we can't call hooks conditionally)
-  // We'll access the current frame insets instead
-  if (SafeAreaModule && SafeAreaModule.initialWindowMetrics) {
-    // Use the initial window metrics which are static
-    const metrics = SafeAreaModule.initialWindowMetrics;
-    if (metrics && metrics.insets) {
-      return metrics.insets;
-    }
-  }
-
-  return fallbackInsets;
+  return usePureJSSafeAreaInsets();
 }
 
 // Non-hook version for use outside of components
@@ -139,13 +44,7 @@ function getSafeAreaInsets(): {
   left: number;
   right: number;
 } {
-  // Initialize if needed
-  if (!hasCheckedSafeArea) {
-    initializeSafeAreaContext();
-  }
-
-  // For non-hook contexts, we can't use useSafeAreaInsets, so use fallback
-  return getFallbackSafeAreaInsets();
+  return getPureJSSafeAreaInsets();
 }
 
 // =============================

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { useTheme } from "../../../_themes/DevToolsThemeContext";
 import {
@@ -348,7 +347,7 @@ export function StorageEventDetailModal({
   const latestEvent = keyStats?.latestEvent || event;
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -360,7 +359,7 @@ export function StorageEventDetailModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
@@ -748,7 +747,7 @@ export function StorageEventDetailModal({
           </View>
         )}
       </ScrollView>
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }
 

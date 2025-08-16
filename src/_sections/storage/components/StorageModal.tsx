@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
@@ -112,7 +111,7 @@ export function StorageModal({
   );
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -124,12 +123,12 @@ export function StorageModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <StorageBrowserMode 
         selectedQuery={undefined}
         onQuerySelect={() => {}}
         requiredStorageKeys={requiredStorageKeys} 
       />
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }

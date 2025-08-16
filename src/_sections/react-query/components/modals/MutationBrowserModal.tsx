@@ -4,8 +4,7 @@ import { useCallback, useState } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
-import { ModalMode } from "../../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../../claudeModal/ThemedClaudeModal";
+import ClaudeModal60FPSClean, { type ModalMode } from "../../../../claudeModal/ClaudeModal60FPSClean";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View } from "react-native";
 import { useSharedValue, withSpring } from "react-native-reanimated";
@@ -102,7 +101,7 @@ export function MutationBrowserModal({
   );
 
   return (
-    <ThemedClaudeModal
+    <ClaudeModal60FPSClean
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -114,7 +113,7 @@ export function MutationBrowserModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-    >
+     styles={{}}>
       <View style={{ flex: 1 }}>
         <GestureDetector gesture={panGesture}>
           <View style={{ flex: 1 }}>
@@ -136,6 +135,6 @@ export function MutationBrowserModal({
           isFloatingMode={modalMode === "floating"}
         />
       </View>
-    </ThemedClaudeModal>
+    </ClaudeModal60FPSClean>
   );
 }
