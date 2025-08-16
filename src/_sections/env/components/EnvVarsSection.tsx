@@ -3,6 +3,7 @@ import { Settings } from "lucide-react-native";
 import { CyberpunkSectionButton } from "../../../_components/floating-bubble/console/CyberpunkSectionButton";
 import { EnvVarsContent } from "./EnvVarsContent";
 import { RequiredEnvVar } from "../types";
+import { GameUIEnvContent } from "./GameUIEnvContent";
 
 interface EnvVarsSectionProps {
   onPress: () => void;
@@ -45,9 +46,8 @@ export function EnvVarsDetailContent({
     <ScrollView
       sentry-label="ignore devtools env vars section scroll"
       style={{ flex: 1, backgroundColor: "#2A2A2A" }}
-      contentContainerStyle={{ padding: 24 }}
     >
-      <EnvVarsContent requiredEnvVars={requiredEnvVars} />
+      <GameUIEnvContent requiredEnvVars={requiredEnvVars} />
     </ScrollView>
   );
 }

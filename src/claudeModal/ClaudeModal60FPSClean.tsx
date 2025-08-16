@@ -1181,26 +1181,28 @@ const styles = StyleSheet.create({
     right: 0,
   },
   bottomSheet: {
-    backgroundColor: "#1F1F1F",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: "#000",
+    backgroundColor: "rgba(10, 10, 20, 0.98)", // Game UI panel
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(0, 212, 255, 0.3)",
+    shadowColor: "#00D4FF",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 16,
+    shadowRadius: 12,
+    elevation: 20,
   },
   floatingModal: {
     position: "absolute",
-    backgroundColor: "#1F1F1F",
-    borderRadius: 14,
+    backgroundColor: "rgba(10, 10, 20, 0.98)",
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 16,
+    borderColor: "rgba(0, 212, 255, 0.3)",
+    shadowColor: "#00D4FF",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 24,
     zIndex: 1000,
     // Default dimensions, will be overridden by animated values
     width: FLOATING_WIDTH,
@@ -1214,10 +1216,14 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
   },
   header: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    backgroundColor: "#171717",
-    minHeight: 56, // Increased for better content visibility
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    backgroundColor: "rgba(10, 10, 20, 0.98)", // Game UI panel color
+    minHeight: 56,
+    borderWidth: 1,
+    borderColor: "rgba(0, 212, 255, 0.3)", // Cyan border
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
   floatingHeader: {
     borderTopLeftRadius: 14,
@@ -1234,17 +1240,22 @@ const styles = StyleSheet.create({
   dragIndicatorContainer: {
     alignItems: "center",
     paddingVertical: 8,
+    backgroundColor: "transparent",
   },
   dragIndicatorContainerCustom: {
-    paddingVertical: 4, // Reduced padding when custom content is present
     paddingTop: 6,
     paddingBottom: 2,
+    backgroundColor: "transparent",
   },
   dragIndicator: {
-    width: 36,
-    height: 4,
-    backgroundColor: "#4B5563",
+    width: 40,
+    height: 3,
+    backgroundColor: "rgba(0, 212, 255, 0.6)", // Cyan indicator
     borderRadius: 2,
+    shadowColor: "#00D4FF",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
   },
   floatingDragIndicator: {
     width: 50,
@@ -1336,7 +1347,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: "#1F1F1F",
+    backgroundColor: "rgba(5, 5, 10, 0.98)", // Darker game UI background
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
   cornerHandle: {
     position: "absolute",

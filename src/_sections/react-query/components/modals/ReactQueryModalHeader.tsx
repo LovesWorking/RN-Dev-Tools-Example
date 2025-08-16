@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 12,
-    minHeight: 32, // Ensure minimum height for content
   },
 
   detailsView: {

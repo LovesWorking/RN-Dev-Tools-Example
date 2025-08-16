@@ -19,3 +19,4 @@ export { useDynamicEnv } from "./hooks/useDynamicEnv";
 
 // Re-export components for backward compatibility
 export { EnvVarsModalContent } from "./components/EnvVarsModalContent";
+export { GameUIEnvContent } from "./components/GameUIEnvContent";
