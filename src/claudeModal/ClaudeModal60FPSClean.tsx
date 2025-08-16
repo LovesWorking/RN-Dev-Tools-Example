@@ -31,6 +31,7 @@ import {
   Text,
   Easing,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 
 // ============================================================================
@@ -43,6 +44,54 @@ const FLOATING_WIDTH = 380;
 const FLOATING_HEIGHT = 500;
 const FLOATING_MIN_WIDTH = SCREEN.width * 0.25; // 1/4 of screen width
 const FLOATING_MIN_HEIGHT = 80; // Just a bit more than header height (60px header + 20px content)
+
+// ============================================================================
+// STORAGE - Modal state persistence with AsyncStorage
+// ============================================================================
+interface PersistedModalState {
+  mode?: ModalMode;
+  panelHeight?: number;
+  dimensions?: {
+    width: number;
+    height: number;
+    top: number;
+    left: number;
+  };
+  isVisible?: boolean;
+}
+
+class ModalStorage {
+  private static memoryCache: Record<string, PersistedModalState> = {};
+
+  static async save(key: string, value: PersistedModalState): Promise<void> {
+    try {
+      this.memoryCache[key] = value;
+      await AsyncStorage.setItem(`@modal_state_${key}`, JSON.stringify(value));
+    } catch (error) {
+      console.warn('Failed to save modal state:', error);
+    }
+  }
+
+  static async load(key: string): Promise<PersistedModalState | null> {
+    try {
+      // Try memory cache first
+      if (this.memoryCache[key]) {
+        return this.memoryCache[key];
+      }
+      
+      // Load from AsyncStorage
+      const stored = await AsyncStorage.getItem(`@modal_state_${key}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        this.memoryCache[key] = parsed;
+        return parsed;
+      }
+    } catch (error) {
+      console.warn('Failed to load modal state:', error);
+    }
+    return null;
+  }
+}
 
 // ============================================================================
 // TYPE DEFINITIONS - Interface contracts for the modal
@@ -330,11 +379,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   animatedHeight: externalAnimatedHeight,
   initialMode = "bottomSheet",
   onModeChange,
+  persistenceKey,
+  enablePersistence = true,
 }) => {
   const insets = useSafeAreaInsets();
+  const [isStateLoaded, setIsStateLoaded] = useState(!enablePersistence);
   const [mode, setMode] = useState<ModalMode>(initialMode);
   const [isResizing, setIsResizing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [panelHeight, setPanelHeight] = useState(initialHeight);
   const [dimensions, setDimensions] = useState({
     width: FLOATING_WIDTH,
     height: FLOATING_HEIGHT,
@@ -363,6 +416,73 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   const animatedBottomPosition = useRef(
     new Animated.Value(initialHeight)
   ).current;
+
+  // Load persisted state on mount
+  useEffect(() => {
+    if (!enablePersistence || !persistenceKey) {
+      setIsStateLoaded(true);
+      return;
+    }
+
+    let mounted = true;
+    const loadState = async () => {
+      const savedState = await ModalStorage.load(persistenceKey);
+      if (mounted && savedState) {
+        // Restore mode
+        if (savedState.mode) {
+          setMode(savedState.mode);
+        }
+        
+        // Restore bottom sheet height
+        if (savedState.panelHeight) {
+          setPanelHeight(savedState.panelHeight);
+          currentHeightRef.current = savedState.panelHeight;
+          animatedBottomPosition.setValue(savedState.panelHeight);
+        }
+        
+        // Restore floating dimensions and position
+        if (savedState.dimensions) {
+          setDimensions(savedState.dimensions);
+          floatingPosition.setValue({
+            x: savedState.dimensions.left,
+            y: savedState.dimensions.top,
+          });
+          animatedWidth.setValue(savedState.dimensions.width);
+          animatedFloatingHeight.setValue(savedState.dimensions.height);
+        }
+      }
+      if (mounted) setIsStateLoaded(true);
+    };
+
+    loadState();
+    return () => {
+      mounted = false;
+    };
+  }, [persistenceKey, enablePersistence]);
+
+  // Save state with debounce
+  useEffect(() => {
+    if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
+
+    const timeoutId = setTimeout(() => {
+      ModalStorage.save(persistenceKey, {
+        mode,
+        panelHeight: currentHeightRef.current,
+        dimensions,
+        isVisible: visible,
+      });
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    mode,
+    panelHeight,
+    dimensions,
+    visible,
+    persistenceKey,
+    enablePersistence,
+    isStateLoaded,
+  ]);
 
   // Sync with external height if provided
   useEffect(() => {
@@ -579,6 +699,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           // Update the animated value for height
           animatedBottomPosition.setValue(clampedPosition);
           currentHeightRef.current = clampedPosition;
+          setPanelHeight(clampedPosition);
 
           // If external height is provided, update it too
           if (externalAnimatedHeight) {
@@ -623,7 +744,9 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
               tension: 180,
               friction: 22,
               useNativeDriver: false, // Must be false for height
-            }).start();
+            }).start(() => {
+              setPanelHeight(finalHeight);
+            });
 
             if (externalAnimatedHeight) {
               Animated.spring(externalAnimatedHeight, {
