@@ -133,17 +133,14 @@ export const getSubtitle = (stats: EnvVarStats) => {
 
   if (requiredCount > 0) {
     if (issueCount > 0) {
-      // Break down the issues for clarity
-      const issues: string[] = [];
-      if (missingCount > 0) issues.push(`${missingCount} missing`);
-      if (wrongTypeCount > 0) issues.push(`${wrongTypeCount} wrong type`);
-      if (wrongValueCount > 0) issues.push(`${wrongValueCount} wrong value`);
-      
-      return `⚠️ ${issueCount} issue${issueCount > 1 ? 's' : ''}: ${issues.join(', ')}`;
+      // Shorter format: "7✗ issues" or specific count
+      return `${issueCount}✗`;
     } else {
-      return `✅ All ${requiredCount} required vars valid${optionalCount > 0 ? ` • ${optionalCount} optional` : ''}`;
+      // Shorter format: "✓ No issues"
+      return `✓ Valid`;
     }
   } else {
-    return `${optionalCount} variable${optionalCount !== 1 ? 's' : ''} found`;
+    // Shorter format: "5 found"
+    return `${optionalCount} found`;
   }
 };

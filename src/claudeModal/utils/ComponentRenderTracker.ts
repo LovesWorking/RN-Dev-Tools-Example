@@ -29,7 +29,6 @@ export class ComponentRenderTracker {
   
   // Start tracking a component mount
   startMount(componentName: string): void {
-    console.log(`[RenderTracker] Starting mount tracking for ${componentName}`);
     this.mountStartTimes.set(componentName, performance.now());
     
     // Initialize metrics if not exists
@@ -60,7 +59,6 @@ export class ComponentRenderTracker {
       metrics.mountTime = mountTime;
       metrics.totalRenderTime += mountTime;
       metrics.lastRenderTime = mountTime;
-      console.log(`[RenderTracker] ${componentName} mounted in ${mountTime.toFixed(2)}ms`);
     }
     
     this.mountStartTimes.delete(componentName);
@@ -104,7 +102,6 @@ export class ComponentRenderTracker {
       metrics.averageUpdateTime = 
         metrics.updates.reduce((sum, u) => sum + u.duration, 0) / metrics.updates.length;
       
-      console.log(`[RenderTracker] ${componentName} rendered in ${duration.toFixed(2)}ms (${triggerType})`);
     }
     
     this.renderStartTimes.delete(componentName);

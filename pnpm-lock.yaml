@@ -23,6 +23,9 @@ importers:
       '@shopify/flash-list':
         specifier: ^1.8.3
         version: 1.8.3(@babel/runtime@7.28.2)(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@shopify/react-native-performance':
+        specifier: ^4.1.2
+        version: 4.1.2(@babel/runtime@7.28.2)(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@tanstack/query-async-storage-persister':
         specifier: ^5.83.1
         version: 5.83.1
@@ -1105,6 +1108,13 @@ packages:
 
   '@shopify/flash-list@1.8.3':
     resolution: {integrity: sha512-vXuj6JyuMjONVOXjEhWFeaONPuWN/53Cl2LeyeM8TZ0JzUcNU+BE6iyga1/yyJeDf0K7YPgAE/PcUX2+DM1LiA==}
+    peerDependencies:
+      '@babel/runtime': '*'
+      react: '*'
+      react-native: '*'
+
+  '@shopify/react-native-performance@4.1.2':
+    resolution: {integrity: sha512-1Xu2xo+hAxg75iuX5akVqAgc3h/J1ohfi7JKXlGsprP4ylpW7kHMfq/7AstL7FoUC8xcHsTUvUFhoZ94ot8g6Q==}
     peerDependencies:
       '@babel/runtime': '*'
       react: '*'
@@ -6439,6 +6449,12 @@ snapshots:
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
       recyclerlistview: 4.2.3(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       tslib: 2.8.1
+
+  '@shopify/react-native-performance@4.1.2(@babel/runtime@7.28.2)(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      react: 19.0.0
+      react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
 
   '@sinclair/typebox@0.27.8': {}
 

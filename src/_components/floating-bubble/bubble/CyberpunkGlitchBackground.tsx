@@ -373,7 +373,7 @@ const GridLine: React.FC<GridLineProps> = ({ horizontal, position }) => {
   );
 };
 
-export const CyberpunkGlitchBackground: React.FC = () => {
+export const CyberpunkGlitchBackground: React.FC = React.memo(() => {
   return (
     <View style={styles.container} pointerEvents="none">
       {/* Grid lines */}
@@ -408,7 +408,7 @@ export const CyberpunkGlitchBackground: React.FC = () => {
       <View style={styles.noiseOverlay} />
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

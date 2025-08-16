@@ -1,15 +1,5 @@
-import React, { useEffect } from "react";
-import { StyleSheet, Pressable, View, Text, Dimensions } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-  withSpring,
-  withDelay,
-  interpolate,
-  Easing,
-  runOnJS,
-} from "react-native-reanimated";
+import React, { useEffect, useRef } from "react";
+import { StyleSheet, Pressable, View, Text, Dimensions, Animated } from "react-native";
 import { IconType } from "./DialDevTools";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -18,12 +8,10 @@ const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320);
 const CIRCLE_RADIUS = CIRCLE_SIZE / 2;
 const START_ANGLE = (-1 * Math.PI) / 2;
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 type Props = {
   index: number;
   icon: IconType;
-  iconsProgress: Animated.SharedValue<number>;
+  iconsProgress: Animated.Value;
   onPress: (index: number) => void;
   selectedIcon: number;
   totalIcons: number;
@@ -40,93 +28,167 @@ const DialIcon: React.FC<Props> = ({
   const ANGLE_PER_VIEW = (2 * Math.PI) / totalIcons;
   const angle = START_ANGLE + ANGLE_PER_VIEW * index;
   
-  // Animation values
-  const scale = useSharedValue(1);
-  const glowOpacity = useSharedValue(0);
-  const rotation = useSharedValue(0);
+  // Animation values - using interpolation for better performance
+  const scale = useRef(new Animated.Value(1)).current;
+  const glowOpacity = useRef(new Animated.Value(0)).current;
+  const rotation = useRef(new Animated.Value(0)).current;
   
   const isSelected = selectedIcon === index;
+  
+  // Calculate final position for this icon
+  const radius = CIRCLE_RADIUS - VIEW_SIZE / 2 - 20;
+  const finalX = radius * Math.cos(angle);
+  const finalY = radius * Math.sin(angle);
   
   // Handle selection animation
   useEffect(() => {
     if (isSelected) {
-      scale.value = withSpring(1.15, {
-        damping: 12,
-        stiffness: 180,
-      });
-      glowOpacity.value = withTiming(1, { duration: 300 });
-      rotation.value = withSpring(10, {
-        damping: 15,
-        stiffness: 150,
-      });
+      Animated.parallel([
+        Animated.spring(scale, {
+          toValue: 1.15,
+          damping: 12,
+          stiffness: 180,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(rotation, {
+          toValue: 10,
+          damping: 15,
+          stiffness: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
     } else {
-      scale.value = withSpring(1, {
-        damping: 15,
-        stiffness: 200,
-      });
-      glowOpacity.value = withTiming(0, { duration: 300 });
-      rotation.value = withSpring(0, {
-        damping: 15,
-        stiffness: 150,
-      });
+      Animated.parallel([
+        Animated.spring(scale, {
+          toValue: 1,
+          damping: 15,
+          stiffness: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(rotation, {
+          toValue: 0,
+          damping: 15,
+          stiffness: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
-  }, [isSelected]);
+  }, [isSelected, scale, glowOpacity, rotation]);
   
-  // Calculate final position
-  const finalX = CIRCLE_RADIUS + (CIRCLE_RADIUS - VIEW_SIZE / 2 - 20) * Math.cos(angle) - VIEW_SIZE / 2;
-  const finalY = CIRCLE_RADIUS + (CIRCLE_RADIUS - VIEW_SIZE / 2 - 20) * Math.sin(angle) - VIEW_SIZE / 2;
-  
-  // Main animated style for position and appearance
-  const animatedStyle = useAnimatedStyle(() => {
-    const progress = iconsProgress.value;
-    
-    // Staggered entrance with spiral effect
-    const staggerDelay = index * 0.1;
-    const staggeredProgress = Math.max(0, Math.min(1, (progress - staggerDelay) / (1 - staggerDelay)));
-    
-    // Interpolate from center with rotation
-    const spiralAngle = angle + (1 - staggeredProgress) * Math.PI * 2;
-    const distance = interpolate(staggeredProgress, [0, 1], [0, CIRCLE_RADIUS - VIEW_SIZE / 2 - 20]);
-    
-    const x = CIRCLE_RADIUS + distance * Math.cos(spiralAngle) - VIEW_SIZE / 2;
-    const y = CIRCLE_RADIUS + distance * Math.sin(spiralAngle) - VIEW_SIZE / 2;
-    
-    return {
-      position: 'absolute' as const,
-      left: x,
-      top: y,
-      opacity: interpolate(staggeredProgress, [0, 0.5, 1], [0, 0.3, 1]),
-      transform: [
-        { scale: scale.value * staggeredProgress },
-        { rotate: `${rotation.value}deg` },
-      ],
-    };
-  });
-  
-  // Glow effect style
-  const glowStyle = useAnimatedStyle(() => ({
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: icon.color,
-    opacity: glowOpacity.value * 0.2,
-    borderRadius: VIEW_SIZE / 2,
-    transform: [{ scale: 1.5 }],
-  }));
-  
-  // Hover animation on press in
+  // Hover animation on press in/out
   const handlePressIn = () => {
-    'worklet';
-    scale.value = withSpring(0.95, {
+    Animated.spring(scale, {
+      toValue: 0.95,
       damping: 15,
       stiffness: 400,
-    });
+      useNativeDriver: true,
+    }).start();
   };
   
   const handlePressOut = () => {
-    'worklet';
-    scale.value = withSpring(isSelected ? 1.15 : 1, {
+    Animated.spring(scale, {
+      toValue: isSelected ? 1.15 : 1,
       damping: 15,
       stiffness: 400,
-    });
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  // Create staggered progress for each icon
+  const staggerDelay = index * 0.1;
+  const maxStagger = (totalIcons - 1) * 0.1;
+  
+  // Use interpolation for smooth animation that works both directions
+  const staggeredProgress = iconsProgress.interpolate({
+    inputRange: [0, staggerDelay, staggerDelay + (1 - maxStagger), 1],
+    outputRange: [0, 0, 1, 1],
+    extrapolate: 'clamp',
+  });
+  
+  // Spiral animation with interpolation
+  const spiralRotation = staggeredProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [Math.PI * 2, 0], // Spiral from 2π to 0
+  });
+  
+  // Distance from center
+  const distance = staggeredProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, radius],
+  });
+  
+  // Calculate X and Y positions using Animated operations
+  const translateX = Animated.add(
+    Animated.multiply(
+      distance,
+      spiralRotation.interpolate({
+        inputRange: [0, Math.PI * 2],
+        outputRange: [Math.cos(angle), Math.cos(angle + Math.PI * 2)],
+      })
+    ),
+    staggeredProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, finalX - radius * Math.cos(angle + Math.PI * 2)],
+    })
+  );
+  
+  const translateY = Animated.add(
+    Animated.multiply(
+      distance,
+      spiralRotation.interpolate({
+        inputRange: [0, Math.PI * 2],
+        outputRange: [Math.sin(angle), Math.sin(angle + Math.PI * 2)],
+      })
+    ),
+    staggeredProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, finalY - radius * Math.sin(angle + Math.PI * 2)],
+    })
+  );
+  
+  // Opacity animation
+  const itemOpacity = staggeredProgress.interpolate({
+    inputRange: [0, 0.3, 1],
+    outputRange: [0, 0.3, 1],
+  });
+  
+  // Scale based on progress
+  const progressScale = staggeredProgress;
+  
+  // Main animated style for position and appearance
+  const animatedStyle = {
+    position: 'absolute' as const,
+    left: CIRCLE_RADIUS - VIEW_SIZE / 2, // Center position
+    top: CIRCLE_RADIUS - VIEW_SIZE / 2,  // Center position
+    opacity: itemOpacity,
+    transform: [
+      { translateX }, // Apply translation from center
+      { translateY }, // Apply translation from center
+      { scale: Animated.multiply(scale, progressScale) },
+      { rotate: rotation.interpolate({
+        inputRange: [0, 10],
+        outputRange: ['0deg', '10deg'],
+      }) },
+    ],
+  };
+  
+  // Glow effect style
+  const glowStyle = {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: icon.color,
+    opacity: Animated.multiply(glowOpacity, 0.2),
+    borderRadius: VIEW_SIZE / 2,
+    transform: [{ scale: 1.5 }],
   };
 
   return (
@@ -134,7 +196,7 @@ const DialIcon: React.FC<Props> = ({
       {/* Glow effect behind icon */}
       <Animated.View style={glowStyle} pointerEvents="none" />
       
-      <AnimatedPressable
+      <Pressable
         onPress={() => onPress(index)}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -164,7 +226,7 @@ const DialIcon: React.FC<Props> = ({
         ]}>
           {icon.name.toUpperCase()}
         </Text>
-      </AnimatedPressable>
+      </Pressable>
     </Animated.View>
   );
 };

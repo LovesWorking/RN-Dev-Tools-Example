@@ -10,7 +10,6 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { QueryClientWrapper } from "@/app/_components/QueryClientWrapper";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -18,6 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { View } from "react-native";
 import { DevToolsThemeProvider } from "@/src/_themes/DevToolsThemeContext";
+import { useEffect } from "react";
 
 // import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble/RnBetterDevToolsBubble";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -53,6 +53,32 @@ if (!global.__queryClient) {
 
 const queryClient = global.__queryClient;
 
+// App content component
+function AppContent() {
+  return (
+    <QueryClientWrapper queryClient={queryClient}>
+      <DevToolsThemeProvider defaultTheme="cyberpunk">
+        <View style={{ flex: 1 }}>
+          <LinearGradient
+            colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
+            style={{ flex: 1 }}
+          >
+            <ThemeProvider
+              value={useColorScheme() === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="light" />
+            </ThemeProvider>
+          </LinearGradient>
+        </View>
+      </DevToolsThemeProvider>
+    </QueryClientWrapper>
+  );
+}
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -71,26 +97,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientWrapper queryClient={queryClient}>
-        <DevToolsThemeProvider defaultTheme="cyberpunk">
-          <View style={{ flex: 1 }}>
-            <LinearGradient
-              colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
-              style={{ flex: 1 }}
-            >
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="index" />
-                  <Stack.Screen name="+not-found" />
-                </Stack>
-                <StatusBar style="light" />
-              </ThemeProvider>
-            </LinearGradient>
-          </View>
-        </DevToolsThemeProvider>
-      </QueryClientWrapper>
+      <AppContent />
     </GestureHandlerRootView>
   );
 }

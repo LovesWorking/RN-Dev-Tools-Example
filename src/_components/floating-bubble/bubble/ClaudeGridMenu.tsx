@@ -40,10 +40,7 @@ export function ClaudeGridMenu({
   isWifiEnabled = true,
   buttonPosition = { x: 30, y: 30 },
 }: MagneticGridMenuProps) {
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
-  const centerX = screenWidth - buttonPosition.x;
-  const centerY = screenHeight - buttonPosition.y;
+  const { height: screenHeight } = Dimensions.get("window");
 
   // Create animated values for each item using pure React Native
   const items = useRef(

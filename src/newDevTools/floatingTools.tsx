@@ -748,6 +748,7 @@ export function FloatingTools({
   return (
     <Animated.View style={bubbleStyle}>
       <View
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         style={containerStyle}
         {...panResponder.panHandlers}
         onLayout={(event) => {

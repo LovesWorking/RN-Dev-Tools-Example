@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from "react-native";
 import { Settings, EyeOff, Database, Palette } from "lucide-react-native";
 import { useState, useEffect } from "react";
-import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
+import { CyberpunkSectionButton } from "../../../_components/floating-bubble/console/CyberpunkSectionButton";
 import { useDevToolsTheme } from "../../../_themes/DevToolsThemeContext";
 
 // AsyncStorage will be loaded lazily
@@ -88,10 +88,10 @@ export function BubbleSettingsSection({ onPress }: BubbleSettingsSectionProps) {
   };
 
   return (
-    <CyberpunkConsoleSection
+    <CyberpunkSectionButton
       id="bubble-settings"
-      title="Bubble Visibility Settings"
-      subtitle={`${getVisibleCount()} of 6 buttons visible`}
+      title="SETTINGS"
+      subtitle={`${getVisibleCount()}/6 visible`}
       icon={Settings}
       iconColor="#10B981"
       iconBackgroundColor="rgba(16, 185, 129, 0.1)"

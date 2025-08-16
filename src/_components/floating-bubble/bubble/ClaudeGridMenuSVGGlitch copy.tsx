@@ -11,6 +11,7 @@ import {
 import { CyberpunkGlitchBackground } from "./CyberpunkGlitchBackground";
 import {
   TanstackLogo,
+  ReactQueryButtonNative,
   CyberpunkBorderBox,
   AnimatedCyberpunkBorderBox,
 } from "@/src/_sections/react-query/components/query-browser/svgs";
@@ -59,8 +60,8 @@ export function ClaudeGridMenuSVGGlitch({
   isWifiEnabled = true,
   buttonPosition = { x: 30, y: 30 },
 }: MagneticGridMenuProps) {
-  // Core animations - create outside of useRef to avoid freezing
-  const [items] = useState(() =>
+  // Core animations
+  const items = useRef(
     Array.from({ length: 6 }, () => ({
       scale: new Animated.Value(0),
       translateX: new Animated.Value(0),
@@ -80,10 +81,10 @@ export function ClaudeGridMenuSVGGlitch({
       scanlineOpacity: new Animated.Value(0),
       shakeY: new Animated.Value(0), // For vertical split effect
     }))
-  );
+  ).current;
 
-  const [backdropOpacity] = useState(() => new Animated.Value(0));
-  const [scanlineY] = useState(() => new Animated.Value(-100));
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
+  const scanlineY = useRef(new Animated.Value(-100)).current;
 
   const menuItems = useMemo(
     () => [
@@ -177,12 +178,6 @@ export function ClaudeGridMenuSVGGlitch({
   const triggerGlitch = useCallback(
     (index: number) => {
       const item = items[index];
-
-      // Stop any existing animations on this item to prevent conflicts
-      item.splitOpacity.stopAnimation();
-      item.leftX.stopAnimation();
-      item.shakeY.stopAnimation();
-      item.doubleOpacity1.stopAnimation();
 
       // Randomly choose between effect 11 and 17
       const useEffect11 = Math.random() > 0.5;
@@ -320,7 +315,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-
+          
           // 2. ROTATION: Spin 720 degrees (2 full rotations) while falling
           Animated.sequence([
             Animated.timing(item.rotation, {
@@ -336,7 +331,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-
+          
           // 3. SCALE: Grow big → shrink small → settle to normal
           Animated.sequence([
             Animated.timing(item.scale, {
@@ -356,7 +351,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-
+          
           // 4. OPACITY: Digital glitch flicker effect
           Animated.sequence([
             Animated.timing(item.opacity, {
@@ -419,29 +414,28 @@ export function ClaudeGridMenuSVGGlitch({
     handleOpen();
 
     return () => {
-      // Safe cleanup - check if animations exist before stopping
       items.forEach((item) => {
-        if (item.scale) item.scale.stopAnimation();
-        if (item.translateX) item.translateX.stopAnimation();
-        if (item.translateY) item.translateY.stopAnimation();
-        if (item.rotation) item.rotation.stopAnimation();
-        if (item.opacity) item.opacity.stopAnimation();
-        if (item.pressScale) item.pressScale.stopAnimation();
-        if (item.pulse) item.pulse.stopAnimation();
-        if (item.splitOpacity) item.splitOpacity.stopAnimation();
-        if (item.leftX) item.leftX.stopAnimation();
-        if (item.rightX) item.rightX.stopAnimation();
-        if (item.doubleOpacity1) item.doubleOpacity1.stopAnimation();
-        if (item.doubleOpacity2) item.doubleOpacity2.stopAnimation();
-        if (item.distortScale) item.distortScale.stopAnimation();
-        if (item.scanlineY) item.scanlineY.stopAnimation();
-        if (item.scanlineOpacity) item.scanlineOpacity.stopAnimation();
-        if (item.shakeY) item.shakeY.stopAnimation();
+        item.scale.stopAnimation();
+        item.translateX.stopAnimation();
+        item.translateY.stopAnimation();
+        item.rotation.stopAnimation();
+        item.opacity.stopAnimation();
+        item.pressScale.stopAnimation();
+        item.pulse.stopAnimation();
+        item.splitOpacity.stopAnimation();
+        item.leftX.stopAnimation();
+        item.rightX.stopAnimation();
+        item.doubleOpacity1.stopAnimation();
+        item.doubleOpacity2.stopAnimation();
+        item.distortScale.stopAnimation();
+        item.scanlineY.stopAnimation();
+        item.scanlineOpacity.stopAnimation();
+        item.shakeY.stopAnimation();
       });
-      if (backdropOpacity) backdropOpacity.stopAnimation();
-      if (scanlineY) scanlineY.stopAnimation();
+      backdropOpacity.stopAnimation();
+      scanlineY.stopAnimation();
     };
-  }, [handleOpen, items, backdropOpacity, scanlineY]);
+  }, [handleOpen]);
 
   const handlePressIn = useCallback(
     (index: number) => {
@@ -466,55 +460,48 @@ export function ClaudeGridMenuSVGGlitch({
   );
 
   const handleClose = useCallback(() => {
-    // Fast close animation - all buttons at once with slight stagger
-    const animations: Animated.CompositeAnimation[] = [];
-    
+    // Reverse falling animation - buttons fly back up
     items.forEach((item, index) => {
-      const delay = index * 30; // Much smaller stagger (30ms vs 50ms)
-      const pos = HEX_POSITIONS[index];
-
-      animations.push(
-        Animated.sequence([
-          Animated.delay(delay),
-          Animated.parallel([
-            // Quick scale and fade
-            Animated.timing(item.scale, {
-              toValue: 0,
-              duration: 200, // Faster than 300ms
-              easing: Easing.in(Easing.quad),
-              useNativeDriver: true,
-            }),
-            Animated.timing(item.opacity, {
-              toValue: 0,
-              duration: 150, // Faster than 250ms
-              useNativeDriver: true,
-            }),
-            // Optional: slight upward movement from current position
-            Animated.timing(item.translateY, {
-              toValue: pos.y - 50, // Move up 50px from final position
-              duration: 200,
-              easing: Easing.in(Easing.quad),
-              useNativeDriver: true,
-            }),
-          ]),
-        ])
-      );
+      const delay = (5 - index) * 50; // Reverse stagger
+      
+      Animated.sequence([
+        Animated.delay(delay),
+        Animated.parallel([
+          // Fly up animation
+          Animated.timing(item.translateY, {
+            toValue: -screenHeight,
+            duration: 400,
+            easing: Easing.in(Easing.cubic),
+            useNativeDriver: true,
+          }),
+          // Scale down
+          Animated.timing(item.scale, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          // Fade out
+          Animated.timing(item.opacity, {
+            toValue: 0,
+            duration: 250,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start();
     });
-
-    // Run all animations in parallel
-    Animated.parallel([
-      ...animations,
-      // Fade out backdrop quickly
-      Animated.timing(backdropOpacity, {
-        toValue: 0,
-        duration: 200, // Faster than 300ms
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      // Close immediately after animations
-      if (onClose) {
-        onClose();
-      }
+    
+    // Fade out backdrop
+    Animated.timing(backdropOpacity, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // Defer the actual close to avoid React warnings
+      setTimeout(() => {
+        if (onClose) {
+          onClose();
+        }
+      }, 0);
     });
   }, [items, backdropOpacity, onClose]);
 
@@ -522,23 +509,29 @@ export function ClaudeGridMenuSVGGlitch({
     (index: number, onPress: () => void) => {
       const item = items[index];
 
-      // Quick press feedback animation (don't wait for it)
-      Animated.timing(item.pressScale, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-
-      // Execute action immediately for better responsiveness
-      if (onPress === onClose) {
-        handleClose();
-      } else {
-        onPress();
-        // Small delay before closing to let the user see the action happened
-        setTimeout(() => {
+      // Spring back animation
+      Animated.parallel([
+        Animated.spring(item.pressScale, {
+          toValue: 1,
+          damping: 15,
+          stiffness: 400,
+          useNativeDriver: true,
+        }),
+        Animated.spring(item.scale, {
+          toValue: 1,
+          damping: 10,
+          stiffness: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Execute action after animation
+        if (onPress === onClose) {
           handleClose();
-        }, 50);
-      }
+        } else {
+          onPress();
+          handleClose();
+        }
+      });
     },
     [items, handleClose, onClose]
   );
@@ -646,16 +639,16 @@ export function ClaudeGridMenuSVGGlitch({
   );
 
   // Single controller for all effects - only 1-2 buttons animate at once
-  // Use useRef to avoid re-renders affecting the background
-  const effectLoopRef = useRef<ReturnType<typeof setTimeout>>();
-  
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
     const effectLoop = () => {
-      effectLoopRef.current = setTimeout(() => {
-        // Only animate occasionally to reduce performance impact
-        if (Math.random() > 0.3) { // 70% chance to show effect
-          // Animate 1-2 buttons instead of 2-3
-          const numButtons = Math.random() > 0.7 ? 2 : 1;
+      // Wait 0.5-1 seconds between effects for testing
+      timer = setTimeout(() => {
+        // Always show an effect for testing
+        if (true) {
+          // Always animate 2-3 buttons for testing
+          const numButtons = Math.random() > 0.5 ? 3 : 2;
 
           // Pick random buttons
           const availableIndices = [0, 1, 2, 3, 4, 5];
@@ -675,38 +668,34 @@ export function ClaudeGridMenuSVGGlitch({
             }
           }
 
-          // Apply effects with requestAnimationFrame to avoid blocking
-          requestAnimationFrame(() => {
-            setAnimatingButtons(selectedButtons);
+          // Apply effects
+          setAnimatingButtons(selectedButtons);
 
-            // Trigger scramble animations for buttons with scramble effect
-            Object.entries(selectedButtons).forEach(([index, effect]) => {
-              if (effect === "scramble") {
-                const buttonIdx = parseInt(index);
-                const menuItem = menuItems[buttonIdx];
-                scrambleText(buttonIdx, menuItem.label, menuItem.sublabel);
-              }
-            });
-
-            // Clear effects after brief duration (except scramble which handles itself)
-            setTimeout(() => {
-              setAnimatingButtons({});
-            }, 200);
+          // Trigger scramble animations for buttons with scramble effect
+          Object.entries(selectedButtons).forEach(([index, effect]) => {
+            if (effect === "scramble") {
+              const buttonIdx = parseInt(index);
+              const menuItem = menuItems[buttonIdx];
+              scrambleText(buttonIdx, menuItem.label, menuItem.sublabel);
+            }
           });
+
+          // Clear effects after brief duration (except scramble which handles itself)
+          setTimeout(() => {
+            setAnimatingButtons({});
+          }, 200);
         }
 
-        // Schedule next check with longer delay
+        // Schedule next check
         effectLoop();
-      }, 5000 + Math.random() * 7000); // 5-12 seconds between effects
+      }, 3000 + Math.random() * 5000); // 0.5-1 seconds for testing
     };
 
-    // Start the loop with initial delay
-    effectLoopRef.current = setTimeout(effectLoop, 2000);
+    // Start the loop
+    effectLoop();
 
     return () => {
-      if (effectLoopRef.current) {
-        clearTimeout(effectLoopRef.current);
-      }
+      clearTimeout(timer);
     };
   }, [menuItems, scrambleText]);
 
@@ -780,16 +769,13 @@ export function ClaudeGridMenuSVGGlitch({
       outputRange: [1, 1.05],
     });
 
-  // Memoize the background component to prevent re-renders
-  const MemoizedBackground = useMemo(() => <CyberpunkGlitchBackground />, []);
-
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
         <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} />
       </Animated.View>
 
-      {MemoizedBackground}
+      <CyberpunkGlitchBackground />
 
       <Animated.View
         style={[
@@ -821,16 +807,14 @@ export function ClaudeGridMenuSVGGlitch({
               {
                 rotate: item.rotation.interpolate({
                   inputRange: [0, 720],
-                  outputRange: ["0deg", "720deg"],
+                  outputRange: ['0deg', '720deg'],
                 }),
               },
               {
-                scale: hasPulse 
-                  ? Animated.multiply(
-                      Animated.multiply(item.scale, item.pressScale),
-                      pulseInterpolation(item.pulse)
-                    )
-                  : Animated.multiply(item.scale, item.pressScale),
+                scale: Animated.multiply(
+                  Animated.multiply(item.scale, item.pressScale),
+                  hasPulse ? pulseInterpolation(item.pulse) : 1
+                ),
               },
             ],
             opacity: item.opacity,

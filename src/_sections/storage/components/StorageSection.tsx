@@ -1,5 +1,5 @@
 import { HardDrive } from "lucide-react-native";
-import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
+import { CyberpunkSectionButton } from "../../../_components/floating-bubble/console/CyberpunkSectionButton";
 import { useStorageQueryCounts } from "../../react-query/hooks/useStorageQueryCounts";
 
 interface StorageSectionProps {
@@ -15,21 +15,21 @@ export function StorageSection({ onPress }: StorageSectionProps) {
 
   const getStorageSubtitle = () => {
     if (total === 0) {
-      return "No storage entries";
+      return "Empty";
     }
     
-    const parts = [];
-    if (mmkv > 0) parts.push(`${mmkv} MMKV`);
-    if (async > 0) parts.push(`${async} Async`);
-    if (secure > 0) parts.push(`${secure} Secure`);
+    // Shorter format: just show the most used type
+    if (async > 0) return `${async} Async`;
+    if (mmkv > 0) return `${mmkv} MMKV`;
+    if (secure > 0) return `${secure} Secure`;
     
-    return parts.join(", ");
+    return `${total} items`;
   };
 
   return (
-    <CyberpunkConsoleSection
+    <CyberpunkSectionButton
       id="storage"
-      title="Storage"
+      title="STORAGE"
       subtitle={getStorageSubtitle()}
       icon={HardDrive}
       iconColor="#00FF88"

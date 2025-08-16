@@ -20,6 +20,8 @@ import Svg, {
   FeComposite,
   FeMerge,
   FeMergeNode,
+  Polygon,
+  Pattern,
 } from "react-native-svg";
 
 export function Trash() {
@@ -1182,20 +1184,20 @@ export function CyberpunkBorderBox({
           <Stop offset="70%" stopColor={color} stopOpacity="0.08" />
           <Stop offset="100%" stopColor={color} stopOpacity="0.02" />
         </RadialGradient>
-        
+
         {/* Drop shadow filter */}
         <Filter id={`shadow-${color}`}>
-          <FeGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-          <FeOffset dx="0" dy="0" result="offsetblur"/>
-          <FeFlood floodColor={color} floodOpacity="0.5"/>
-          <FeComposite in2="offsetblur" operator="in"/>
+          <FeGaussianBlur in="SourceAlpha" stdDeviation="3" />
+          <FeOffset dx="0" dy="0" result="offsetblur" />
+          <FeFlood floodColor={color} floodOpacity="0.5" />
+          <FeComposite in2="offsetblur" operator="in" />
           <FeMerge>
-            <FeMergeNode/>
-            <FeMergeNode in="SourceGraphic"/>
+            <FeMergeNode />
+            <FeMergeNode in="SourceGraphic" />
           </FeMerge>
         </Filter>
       </Defs>
-      
+
       <G>
         {/* Background exactly like cyberBorder in CyberpunkGridMenu */}
         <Rect
@@ -1253,7 +1255,7 @@ export function CyberpunkBorderBox({
           strokeOpacity={0.8}
           strokeWidth="1"
         />
-        
+
         {/* Main cyberBorder - with more gap from outer border */}
         <Rect
           x="3.5"
@@ -1295,7 +1297,7 @@ export function AnimatedCyberpunkBorderBox({
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    switch(animationType) {
+    switch (animationType) {
       case "pulse":
         // Pulsing glow effect
         Animated.loop(
@@ -1313,7 +1315,7 @@ export function AnimatedCyberpunkBorderBox({
           ])
         ).start();
         break;
-      
+
       case "scan":
         // Scanning line effect
         Animated.loop(
@@ -1324,7 +1326,7 @@ export function AnimatedCyberpunkBorderBox({
           })
         ).start();
         break;
-      
+
       case "glitch":
         // Random glitch effect with more intensity
         const glitchLoop = () => {
@@ -1369,7 +1371,7 @@ export function AnimatedCyberpunkBorderBox({
         };
         glitchLoop();
         break;
-      
+
       case "rotate":
         // Rotating corner accents
         Animated.loop(
@@ -1396,17 +1398,38 @@ export function AnimatedCyberpunkBorderBox({
         style={{ position: "absolute" }}
       >
         <Defs>
-          <LinearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <LinearGradient
+            id="pulseGradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <Stop offset="0%" stopColor={color} stopOpacity="0" />
             <Stop offset="50%" stopColor={accentColor} stopOpacity="0.5" />
             <Stop offset="100%" stopColor={secondaryColor} stopOpacity="0" />
           </LinearGradient>
         </Defs>
-        
+
         <G>
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="rgba(0,0,0,0.98)" />
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill={color} fillOpacity={0.08} />
-          
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="rgba(0,0,0,0.98)"
+          />
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill={color}
+            fillOpacity={0.08}
+          />
+
           {/* Animated pulsing border */}
           <AnimatedRect
             x="0"
@@ -1419,26 +1442,64 @@ export function AnimatedCyberpunkBorderBox({
             strokeWidth="2"
             strokeOpacity={pulseAnim}
           />
-          
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="none" stroke={color} strokeOpacity={0.8} strokeWidth="1.5" />
-          
+
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="none"
+            stroke={color}
+            strokeOpacity={0.8}
+            strokeWidth="1.5"
+          />
+
           {/* Animated corner accents */}
-          <AnimatedRect x="4.5" y="4.5" width="2" height="12" fill={color} opacity={pulseAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.5, 1],
-          })} />
-          <AnimatedRect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} opacity={pulseAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.5, 1],
-          })} />
-          <AnimatedRect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} opacity={pulseAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.5, 1],
-          })} />
-          <AnimatedRect x="98.5" y="48.5" width="2" height="12" fill={color} opacity={pulseAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.5, 1],
-          })} />
+          <AnimatedRect
+            x="4.5"
+            y="4.5"
+            width="2"
+            height="12"
+            fill={color}
+            opacity={pulseAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.5, 1],
+            })}
+          />
+          <AnimatedRect
+            x="88.5"
+            y="4.5"
+            width="12"
+            height="2"
+            fill={secondaryColor}
+            opacity={pulseAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.5, 1],
+            })}
+          />
+          <AnimatedRect
+            x="4.5"
+            y="58.5"
+            width="12"
+            height="2"
+            fill={secondaryColor}
+            opacity={pulseAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.5, 1],
+            })}
+          />
+          <AnimatedRect
+            x="98.5"
+            y="48.5"
+            width="2"
+            height="12"
+            fill={color}
+            opacity={pulseAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.5, 1],
+            })}
+          />
         </G>
       </Svg>
     );
@@ -1460,16 +1521,51 @@ export function AnimatedCyberpunkBorderBox({
             <Stop offset="100%" stopColor={accentColor} stopOpacity="0" />
           </LinearGradient>
         </Defs>
-        
+
         <G>
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="rgba(0,0,0,0.98)" />
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill={color} fillOpacity={0.08} />
-          
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="rgba(0,0,0,0.98)"
+          />
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill={color}
+            fillOpacity={0.08}
+          />
+
           {/* Scanning overlay - removed to avoid gradient issues */}
-          
-          <Rect x="0" y="0" width="105" height="65" rx="8" fill="none" stroke={color} strokeOpacity={0.5} strokeWidth="1" />
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="none" stroke={color} strokeOpacity={0.8} strokeWidth="1.5" />
-          
+
+          <Rect
+            x="0"
+            y="0"
+            width="105"
+            height="65"
+            rx="8"
+            fill="none"
+            stroke={color}
+            strokeOpacity={0.5}
+            strokeWidth="1"
+          />
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="none"
+            stroke={color}
+            strokeOpacity={0.8}
+            strokeWidth="1.5"
+          />
+
           {/* Scanning line */}
           <AnimatedLine
             x1="3.5"
@@ -1486,7 +1582,7 @@ export function AnimatedCyberpunkBorderBox({
             strokeWidth="2"
             opacity="0.8"
           />
-          
+
           <Rect x="4.5" y="4.5" width="2" height="12" fill={color} />
           <Rect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} />
           <Rect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} />
@@ -1506,9 +1602,24 @@ export function AnimatedCyberpunkBorderBox({
         style={{ position: "absolute" }}
       >
         <G>
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="rgba(0,0,0,0.98)" />
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill={color} fillOpacity={0.08} />
-          
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="rgba(0,0,0,0.98)"
+          />
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill={color}
+            fillOpacity={0.08}
+          />
+
           {/* Multiple glitched borders for more dramatic effect */}
           <AnimatedRect
             x={glitchAnim.interpolate({
@@ -1527,7 +1638,7 @@ export function AnimatedCyberpunkBorderBox({
             strokeOpacity={glitchAnim}
             strokeWidth="1"
           />
-          
+
           <AnimatedRect
             x={glitchAnim.interpolate({
               inputRange: [0, 0.3, 0.5, 0.8, 1],
@@ -1548,7 +1659,7 @@ export function AnimatedCyberpunkBorderBox({
             })}
             strokeWidth="1.5"
           />
-          
+
           {/* Additional glitch layer */}
           <AnimatedRect
             x={glitchAnim.interpolate({
@@ -1567,23 +1678,43 @@ export function AnimatedCyberpunkBorderBox({
             })}
             strokeWidth="1"
           />
-          
-          <Rect x="0" y="0" width="105" height="65" rx="8" fill="none" stroke={color} strokeOpacity={0.5} strokeWidth="1" />
-          <Rect x="3.5" y="3.5" width="98" height="58" rx="6" fill="none" stroke={color} strokeOpacity={0.8} strokeWidth="1.5" />
-          
+
+          <Rect
+            x="0"
+            y="0"
+            width="105"
+            height="65"
+            rx="8"
+            fill="none"
+            stroke={color}
+            strokeOpacity={0.5}
+            strokeWidth="1"
+          />
+          <Rect
+            x="3.5"
+            y="3.5"
+            width="98"
+            height="58"
+            rx="6"
+            fill="none"
+            stroke={color}
+            strokeOpacity={0.8}
+            strokeWidth="1.5"
+          />
+
           {/* Glitched corner accents */}
-          <AnimatedRect 
-            x="4.5" 
+          <AnimatedRect
+            x="4.5"
             y={glitchAnim.interpolate({
               inputRange: [0, 0.5, 1],
               outputRange: [4.5, 3.5, 5.5],
             })}
-            width="2" 
-            height="12" 
+            width="2"
+            height="12"
             fill={glitchAnim.interpolate({
               inputRange: [0, 0.5, 1],
               outputRange: [color, "#00FFFF", "#FF00FF"],
-            })} 
+            })}
           />
           <Rect x="88.5" y="4.5" width="12" height="2" fill={secondaryColor} />
           <Rect x="4.5" y="58.5" width="12" height="2" fill={secondaryColor} />
@@ -1594,7 +1725,13 @@ export function AnimatedCyberpunkBorderBox({
   }
 
   // Default static version
-  return <CyberpunkBorderBox color={color} secondaryColor={secondaryColor} accentColor={accentColor} />;
+  return (
+    <CyberpunkBorderBox
+      color={color}
+      secondaryColor={secondaryColor}
+      accentColor={accentColor}
+    />
+  );
 }
 
 // React Native compatible version of ReactQueryButton - now uses the border box
@@ -1663,5 +1800,201 @@ export function ReactQueryButtonNative() {
         010101
       </RNText>
     </View>
+  );
+}
+// Cyber punk button outline
+export function CyberpunkButtonOutline() {
+  return (
+    <Svg viewBox="0 0 280 80">
+      <Defs></Defs>
+      <Path
+        d="M 15 5 L 250 5 L 270 25 L 270 55 L 255 70 L 25 70 L 10 55 L 10 25 Z"
+        fill="none"
+        stroke="#00ff88"
+        strokeWidth={2}
+        filter="url(#neonGlow)"
+      />
+      <Path
+        d="M 18 8 L 247 8 L 267 28 L 267 52 L 252 67 L 28 67 L 13 52 L 13 28 Z"
+        fill="none"
+        stroke="#00ff88"
+        strokeWidth={1}
+        opacity={0.6}
+      />
+      <G stroke="#00ffff" strokeWidth={1} fill="none" filter="url(#outerGlow)">
+        <Line x1={250} y1={5} x2={245} y2={10} />
+        <Line x1={250} y1={5} x2={255} y2={10} />
+        <Line x1={270} y1={25} x2={265} y2={20} />
+        <Line x1={270} y1={25} x2={265} y2={30} />
+      </G>
+      <G stroke="#00ffff" strokeWidth={1} fill="none" filter="url(#outerGlow)">
+        <Line x1={270} y1={55} x2={265} y2={50} />
+        <Line x1={270} y1={55} x2={265} y2={60} />
+        <Line x1={255} y1={70} x2={260} y2={65} />
+        <Line x1={255} y1={70} x2={250} y2={65} />
+      </G>
+      <G stroke="#00ffff" strokeWidth={1} fill="none" filter="url(#outerGlow)">
+        <Line x1={25} y1={70} x2={30} y2={65} />
+        <Line x1={25} y1={70} x2={20} y2={65} />
+        <Line x1={10} y1={55} x2={15} y2={60} />
+        <Line x1={10} y1={55} x2={15} y2={50} />
+      </G>
+      <G stroke="#00ffff" strokeWidth={1} fill="none" filter="url(#outerGlow)">
+        <Line x1={10} y1={25} x2={15} y2={30} />
+        <Line x1={10} y1={25} x2={15} y2={20} />
+        <Line x1={15} y1={5} x2={20} y2={10} />
+        <Line x1={15} y1={5} x2={25} y2={10} />
+      </G>
+      <Rect x={80} y={2} width={20} height={1} fill="#00ffff" opacity={0.8} />
+      <Rect x={105} y={2} width={8} height={1} fill="#00ffff" opacity={0.6} />
+      <Rect x={118} y={2} width={15} height={1} fill="#00ffff" opacity={0.8} />
+      <Rect x={180} y={77} width={25} height={1} fill="#00ffff" opacity={0.8} />
+      <Rect x={210} y={77} width={12} height={1} fill="#00ffff" opacity={0.6} />
+      <Rect x={227} y={77} width={18} height={1} fill="#00ffff" opacity={0.8} />
+      <Circle cx={6} cy={25} r={1.5} fill="#ff0080" opacity={0.9} />
+      <Circle cx={6} cy={40} r={1} fill="#00ffff" opacity={0.7} />
+      <Circle cx={6} cy={55} r={1.5} fill="#ff0080" opacity={0.9} />
+      <Rect x={273} y={30} width={2} height={4} fill="#ff0080" opacity={0.9} />
+      <Rect x={273} y={38} width={2} height={2} fill="#00ffff" opacity={0.7} />
+      <Rect x={273} y={44} width={2} height={6} fill="#ff0080" opacity={0.9} />
+      <Polygon
+        points="140,1 145,6 140,11 135,6"
+        fill="none"
+        stroke="#ff0080"
+        strokeWidth={1}
+        opacity={0.8}
+        filter="url(#outerGlow)"
+      />
+    </Svg>
+  );
+}
+// Modal header cyber punk
+export function ModalHeaderCyberpunk() {
+  return (
+    <Svg viewBox="0 0 375 60">
+      <Defs>
+        <Pattern
+          id="gridPattern"
+          x={0}
+          y={0}
+          width={8}
+          height={8}
+          patternUnits="userSpaceOnUse"
+        >
+          <Path
+            d="M 8 0 L 0 0 0 8"
+            fill="none"
+            stroke="#333333"
+            strokeWidth={0.5}
+            opacity={0.3}
+          />
+        </Pattern>
+      </Defs>
+      <Path
+        d="M 15 0 L 360 0 L 375 15 L 375 60 L 0 60 L 0 15 Z"
+        fill="#1A1A1A"
+        fillOpacity={0.9}
+      />
+      <Path
+        d="M 15 0 L 360 0 L 375 15 L 375 60 L 0 60 L 0 15 Z"
+        fill="url(#gridPattern)"
+      />
+      <Path
+        d="M 15 0 L 360 0 L 375 15"
+        fill="none"
+        stroke="#00BFFF"
+        strokeWidth={1}
+        filter="url(#electricGlow)"
+      />
+      <Rect
+        x={167.5}
+        y={8}
+        width={40}
+        height={6}
+        rx={3}
+        ry={3}
+        fill="#000000"
+        opacity={0.8}
+      />
+      <Rect
+        x={167.5}
+        y={8}
+        width={40}
+        height={6}
+        rx={3}
+        ry={3}
+        fill="none"
+        stroke="#00BFFF"
+        strokeWidth={0.5}
+        opacity={0.6}
+      />
+      <Text
+        x={125}
+        y={16}
+        fontFamily="'Courier New', monospace"
+        fontSize={8}
+        fill="#00BFFF"
+        opacity={0.8}
+      >
+        {"ID: //"}
+      </Text>
+      <Text
+        x={230}
+        y={16}
+        fontFamily="'Courier New', monospace"
+        fontSize={8}
+        fill="#00BFFF"
+        opacity={0.8}
+      >
+        {"STAT: OK"}
+      </Text>
+      <Text
+        x={25}
+        y={20}
+        fontFamily="'Arial', sans-serif"
+        fontSize={10}
+        fontWeight="bold"
+        letterSpacing="1px"
+        fill="#FFFFFF"
+        opacity={0.9}
+      >
+        {"// SECURE_ACCESS"}
+      </Text>
+      <Rect x={5} y={20} width={2} height={8} fill="#00BFFF" opacity={0.6} />
+      <Rect x={8} y={22} width={4} height={2} fill="#00BFFF" opacity={0.4} />
+      <Rect x={368} y={20} width={2} height={8} fill="#00BFFF" opacity={0.6} />
+      <Rect x={363} y={22} width={4} height={2} fill="#00BFFF" opacity={0.4} />
+      <Circle cx={20} cy={35} r={1.5} fill="#00FF88" opacity={0.8} />
+      <Circle cx={25} cy={35} r={1} fill="#00BFFF" opacity={0.6} />
+      <Circle cx={30} cy={35} r={1} fill="#FF4444" opacity={0.5} />
+      <Line
+        x1={50}
+        y1={50}
+        x2={90}
+        y2={50}
+        stroke="#00BFFF"
+        strokeWidth={0.5}
+        opacity={0.4}
+      />
+      <Line
+        x1={285}
+        y1={50}
+        x2={325}
+        y2={50}
+        stroke="#00BFFF"
+        strokeWidth={0.5}
+        opacity={0.4}
+      />
+      <Text
+        x={340}
+        y={45}
+        fontFamily="'Courier New', monospace"
+        fontSize={6}
+        fill="#00BFFF"
+        opacity={0.5}
+      >
+        {"v2.7.1"}
+      </Text>
+    </Svg>
   );
 }

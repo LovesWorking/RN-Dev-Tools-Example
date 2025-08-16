@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
+import { CyberpunkSectionButton } from "../../../_components/floating-bubble/console/CyberpunkSectionButton";
 import { TanstackLogo } from "./query-browser/svgs";
 
 interface ReactQuerySectionProps {
@@ -22,11 +22,21 @@ export function ReactQuerySection({
   onPress,
   getRnBetterDevToolsSubtitle,
 }: ReactQuerySectionProps) {
+  // Format subtitle to be shorter: "45 queries • 10 mutations" → "45Q • 10M"
+  const formatSubtitle = () => {
+    const full = getRnBetterDevToolsSubtitle();
+    const match = full.match(/(\d+) queries • (\d+) mutations/);
+    if (match) {
+      return `${match[1]}Q • ${match[2]}M`;
+    }
+    return "No data";
+  };
+  
   return (
-    <CyberpunkConsoleSection
+    <CyberpunkSectionButton
       id="rn-better-dev-tools"
-      title="React Query"
-      subtitle={getRnBetterDevToolsSubtitle()}
+      title="QUERY"
+      subtitle={formatSubtitle()}
       icon={TanstackIcon as any}
       iconColor="#FF006E"
       iconBackgroundColor="rgba(255, 0, 110, 0.1)"

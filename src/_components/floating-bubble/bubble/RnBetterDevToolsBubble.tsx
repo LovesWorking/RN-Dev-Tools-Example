@@ -19,16 +19,13 @@ import type { Environment } from "../../../_sections/env";
 import { ErrorBoundary } from "../../../_shared/ui/components/ErrorBoundary";
 import {
   ReactQueryModal,
-  useReactQueryState,
   useModalManager,
 } from "../../../_sections/react-query";
-import { DevToolsConsole } from "../console/DevToolsConsole";
-import { LayersIcon } from "@/src/_shared/icons/lucide-icons";
-import { CyberCascadeMenu } from "./CyberCascadeMenu";
-import { CyberpunkGridMenu } from "./CyberpunkGridMenu";
+// DevToolsSectionListModal removed - using Dial2 directly
 import { ClaudeGridMenu } from "./ClaudeGridMenu";
 import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./DialDevTools";
+import Dial2 from "./Dial2";
 
 // Re-export types that developers will need
 export type { UserRole } from "../../../newDevTools/floatingTools";
@@ -69,8 +66,8 @@ export function RnBetterDevToolsBubble({
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
 
   // Menu type selection
-  type MenuType = "cybercascade" | "cyberpunk" | "claude" | "dial";
-  const [menuType, setMenuType] = useState<MenuType>("cyberpunk");
+  type MenuType = "claude" | "dial" | "dial2";
+  const [menuType, setMenuType] = useState<MenuType>("dial2");
 
   // Get screen dimensions
   const { height: screenHeight } = Dimensions.get("window");
@@ -110,7 +107,6 @@ export function RnBetterDevToolsBubble({
   ]);
 
   // const { getSentrySubtitle } = useSentrySubtitle();
-  const { getRnBetterDevToolsSubtitle } = useReactQueryState(queryClient);
   const envVarsSubtitle = useEnvVarsSubtitle(requiredEnvVars);
 
   // Modal management hook with persistence - extracted from main component logic
@@ -125,7 +121,6 @@ export function RnBetterDevToolsBubble({
     activeFilter,
     activeTab,
     selectedMutationId,
-    setSelectedSection,
     setActiveFilter,
     handleModalDismiss,
     handleDebugModalDismiss,
@@ -135,11 +130,13 @@ export function RnBetterDevToolsBubble({
     handleQueryPress,
     handleStatusPress,
     handleEnvPress,
-    handleSentryPress,
     handleStoragePress,
     handleTabChange,
     handleMutationSelect,
+    setSelectedSection,
   } = useModalManager();
+
+  // Removed auto-open - Dial2 is now the primary selector
 
   // Hide bubble when any modal is open to prevent visual overlap
   const isAnyModalOpen =
@@ -160,45 +157,23 @@ export function RnBetterDevToolsBubble({
         isStorageModalOpen,
       });
     }
-  }, [isModalOpen, isDebugModalOpen, isEnvModalOpen, isSentryModalOpen, isStorageModalOpen, isAnyModalOpen]);
+  }, [
+    isModalOpen,
+    isDebugModalOpen,
+    isEnvModalOpen,
+    isSentryModalOpen,
+    isStorageModalOpen,
+    isAnyModalOpen,
+  ]);
+
+  // Removed auto-open for dev tools console
 
   // Note: We no longer wait for state restoration to show the bubble
   // The bubble should be visible immediately on app launch
 
-  // Emergency reset function if modals get stuck
-  const handleEmergencyReset = () => {
-    console.log("[DEBUG] Emergency reset triggered");
-    handleModalDismiss();
-    handleDebugModalDismiss();
-    handleEnvModalDismiss();
-    handleSentryModalDismiss();
-    handleStorageModalDismiss();
-    setShowFloatingMenu(false);
-  };
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        {/* Emergency reset button - always visible in top left when modals are stuck */}
-        {isAnyModalOpen && (
-          <Pressable
-            onPress={handleEmergencyReset}
-            style={{
-              position: "absolute",
-              top: 60,
-              left: 20,
-              zIndex: 10000,
-              backgroundColor: "rgba(255, 0, 0, 0.8)",
-              padding: 10,
-              borderRadius: 5,
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 12, fontWeight: "bold" }}>
-              Reset Modals
-            </Text>
-          </Pressable>
-        )}
-
         {/* Floating Tools - Always mounted for stable tree; hidden via opacity/pointerEvents when modals open */}
         <View
           pointerEvents={isAnyModalOpen ? "none" : "auto"}
@@ -208,54 +183,43 @@ export function RnBetterDevToolsBubble({
             <EnvironmentIndicator environment={environment!} />
             <UserStatus userRole={userRole} onPress={handleStatusPress} />
 
-            {/* Test buttons for different menu types */}
-            <View style={{ flexDirection: "row", gap: 4 }}>
-              {/* Cyber Cascade Menu */}
+            {/* Menu selection buttons */}
+            <View style={{ flexDirection: "row", gap: 4, marginTop: 8 }}>
+              {/* Dial2 - Game UI */}
               <Pressable
                 onPress={() => {
-                  setMenuType("cybercascade");
+                  setMenuType("dial2");
                   setShowFloatingMenu(true);
                 }}
-                style={[styles.menuButton, { backgroundColor: "#00FF88" }]}
+                style={[styles.menuButton, { backgroundColor: "#00D4FF" }]}
                 hitSlop={8}
               >
-                <LayersIcon size={14} color="white" />
+                <Text style={styles.menuButtonText}>G</Text>
               </Pressable>
 
-              {/* Cyberpunk Grid (Reanimated) */}
-              <Pressable
-                onPress={() => {
-                  setMenuType("cyberpunk");
-                  setShowFloatingMenu(true);
-                }}
-                style={[styles.menuButton, { backgroundColor: "#00FFFF" }]}
-                hitSlop={8}
-              >
-                <LayersIcon size={14} color="white" />
-              </Pressable>
+              {/* claude - claude  */}
 
-              {/* Claude Grid (Pure React Native) */}
               <Pressable
                 onPress={() => {
                   setMenuType("claude");
                   setShowFloatingMenu(true);
                 }}
-                style={[styles.menuButton, { backgroundColor: "#FF00FF" }]}
+                style={[styles.menuButton, { backgroundColor: "#FF10F0" }]}
                 hitSlop={8}
               >
-                <LayersIcon size={14} color="white" />
+                <Text style={styles.menuButtonText}>C</Text>
               </Pressable>
 
-              {/* Dial Menu */}
+              {/* dial */}
               <Pressable
                 onPress={() => {
                   setMenuType("dial");
                   setShowFloatingMenu(true);
                 }}
-                style={[styles.menuButton, { backgroundColor: "#8B00FF" }]}
+                style={[styles.menuButton, { backgroundColor: "#FF10F0" }]}
                 hitSlop={8}
               >
-                <LayersIcon size={14} color="white" />
+                <Text style={styles.menuButtonText}>D</Text>
               </Pressable>
             </View>
           </FloatingTools>
@@ -291,17 +255,16 @@ export function RnBetterDevToolsBubble({
                 setShowFloatingMenu(false);
               },
               isWifiEnabled,
+              environment,
             };
 
             switch (menuType) {
-              case "cybercascade":
-                return <CyberCascadeMenu {...menuProps} />;
-              case "cyberpunk":
-                return <CyberpunkGridMenu {...menuProps} />;
               case "claude":
                 return <ClaudeGridMenuSVGGlitch {...menuProps} />;
               case "dial":
                 return <DialDevTools {...menuProps} />;
+              case "dial2":
+                return <Dial2 {...menuProps} />;
               default:
                 return <ClaudeGridMenu {...menuProps} />;
             }
@@ -323,21 +286,37 @@ export function RnBetterDevToolsBubble({
           onMutationSelect={handleMutationSelect}
         />
 
-        {/* DevTools Console - Auto-opens if restored state indicates it was open */}
-        <DevToolsConsole
-          key="devtools-console-modal"
-          visible={isDebugModalOpen}
-          onClose={handleDebugModalDismiss}
-          requiredEnvVars={requiredEnvVars}
-          requiredStorageKeys={requiredStorageKeys}
-          getSentrySubtitle={() => "Sentry subtitle disabled for now"}
-          getRnBetterDevToolsSubtitle={getRnBetterDevToolsSubtitle}
-          envVarsSubtitle={envVarsSubtitle}
-          selectedSection={selectedSection}
-          setSelectedSection={setSelectedSection}
-          enableSharedModalDimensions={enableSharedModalDimensions}
-          onReactQueryPress={handleQueryPress}
-        />
+        {/* Dial2 Menu - Opens when user button is clicked */}
+        {isDebugModalOpen && (
+          <DialDevTools
+            buttonPosition={buttonPosition}
+            onQueryPress={() => {
+              handleDebugModalDismiss();
+              handleQueryPress();
+            }}
+            onEnvPress={() => {
+              handleDebugModalDismiss();
+              handleEnvPress();
+            }}
+            onSentryPress={() => {
+              // Disabled - Sentry modal has import issues
+              console.warn("Sentry modal is temporarily disabled");
+              handleDebugModalDismiss();
+            }}
+            onStoragePress={() => {
+              handleDebugModalDismiss();
+              handleStoragePress();
+            }}
+            onWifiToggle={() => {
+              setIsWifiEnabled(!isWifiEnabled);
+            }}
+            onClose={() => {
+              handleDebugModalDismiss();
+            }}
+            isWifiEnabled={isWifiEnabled}
+            environment={environment}
+          />
+        )}
 
         {/* Environment Variables Modal - Auto-opens if restored state indicates it was open */}
         <EnvVarsModal
@@ -400,5 +379,11 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.15)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  menuButtonText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+    fontFamily: "monospace",
   },
 });

@@ -1,5 +1,5 @@
 import { Globe } from 'lucide-react-native';
-import { CyberpunkConsoleSection } from '../../../_components/floating-bubble/console/CyberpunkConsoleSection';
+import { CyberpunkSectionButton } from '../../../_components/floating-bubble/console/CyberpunkSectionButton';
 import { useNetworkEvents } from '../hooks/useNetworkEvents';
 
 interface NetworkSectionProps {
@@ -11,32 +11,22 @@ export function NetworkSection({ onPress }: NetworkSectionProps) {
 
   const getNetworkSubtitle = () => {
     if (stats.totalRequests === 0) {
-      return isEnabled ? "Recording • No requests yet" : "Not recording";
+      return isEnabled ? "Recording" : "Paused";
     }
     
+    // Shorter format: "Rec • 3 req" or "3R • 1F" for requests and failed
     const parts = [];
-    
-    if (isEnabled) {
-      parts.push("Recording");
-    }
-    
-    parts.push(`${stats.totalRequests} requests`);
-    
-    if (stats.failedRequests > 0) {
-      parts.push(`${stats.failedRequests} failed`);
-    }
-    
-    if (stats.pendingRequests > 0) {
-      parts.push(`${stats.pendingRequests} pending`);
-    }
+    if (isEnabled) parts.push("Rec");
+    parts.push(`${stats.totalRequests}R`);
+    if (stats.failedRequests > 0) parts.push(`${stats.failedRequests}F`);
     
     return parts.join(" • ");
   };
 
   return (
-    <CyberpunkConsoleSection
+    <CyberpunkSectionButton
       id="network"
-      title="Network Monitor"
+      title="NETWORK"
       subtitle={getNetworkSubtitle()}
       icon={Globe}
       iconColor="#E040FB"

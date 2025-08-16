@@ -1,5 +1,4 @@
-import { ModalMode } from "../../../claudeModal/ClaudeModalPure";
-import { ThemedClaudeModal } from "../../../claudeModal/ThemedClaudeModal";
+import { ThemedClaudeModal60FPS } from "../../../claudeModal/ThemedClaudeModal60FPS";
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { ConsoleSectionList } from "./ConsoleSectionList";
 import { ReactQuerySection } from "./sections";
@@ -12,6 +11,8 @@ import { SectionType } from "./DevToolsModalRouter";
 import { Text, View } from "react-native";
 import { useState, useCallback } from "react";
 import { useTheme } from "../../../_themes/DevToolsThemeContext";
+import { CyberpunkConsoleTitle } from "./CyberpunkConsoleTitle";
+import { CyberpunkModalHeader } from "../../../claudeModal/CyberpunkModalHeader";
 
 interface DevToolsSectionListModalProps {
   visible: boolean;
@@ -38,10 +39,10 @@ export function DevToolsSectionListModal({
   envVarsSubtitle,
   enableSharedModalDimensions = false,
 }: DevToolsSectionListModalProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
+  const [modalMode, setModalMode] = useState<"bottomSheet" | "floating">("bottomSheet");
   const theme = useTheme();
 
-  const handleModeChange = useCallback((mode: ModalMode) => {
+  const handleModeChange = useCallback((mode: "bottomSheet" | "floating") => {
     setModalMode(mode);
   }, []);
 
@@ -51,65 +52,45 @@ export function DevToolsSectionListModal({
     ? "@dev_tools_console_modal"
     : "@devtools_section_list";
 
-  const renderHeaderContent = () => (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        flex: 1,
-        gap: 12,
-        minHeight: 32,
-        paddingLeft: 4,
-      }}
-    >
-      <Text
-        style={{ 
-          color: theme.colors.text, 
-          fontSize: theme.name === "cyberpunk" ? 14 : 14, 
-          fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
-          letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-          textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
-          flex: 1 
-        }}
-        numberOfLines={1}
-      >
-        {theme.name === "cyberpunk" ? "// DEV_TOOLS_CONSOLE" : "Developer Tools Console"}
-      </Text>
-      {theme.name === "cyberpunk" && (
-        <View style={{
+  const renderHeaderContent = () => {
+    if (theme.name === "cyberpunk") {
+      // Return the full CyberpunkModalHeader for complete header replacement
+      return (
+        <CyberpunkModalHeader
+          customContent={<CyberpunkConsoleTitle />}
+          showToggleButton={true}
+        />
+      );
+    }
+
+    return (
+      <View
+        style={{
           flexDirection: "row",
-          gap: 3,
-          marginRight: 8,
-        }}>
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.primary,
-            opacity: 0.8,
-          }} />
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.primary,
-            opacity: 0.5,
-          }} />
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.primary,
-            opacity: 0.3,
-          }} />
-        </View>
-      )}
-    </View>
-  );
+          alignItems: "center",
+          flex: 1,
+          gap: 12,
+          minHeight: 32,
+          paddingLeft: 4,
+        }}
+      >
+        <Text
+          style={{
+            color: theme.colors.text,
+            fontSize: 14,
+            fontWeight: "500",
+            flex: 1,
+          }}
+          numberOfLines={1}
+        >
+          Developer Tools Console
+        </Text>
+      </View>
+    );
+  };
 
   return (
-    <ThemedClaudeModal
+    <ThemedClaudeModal60FPS
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -145,6 +126,6 @@ export function DevToolsSectionListModal({
           onPress={() => onSectionSelect("bubble-settings")}
         />
       </ConsoleSectionList>
-    </ThemedClaudeModal>
+    </ThemedClaudeModal60FPS>
   );
 }

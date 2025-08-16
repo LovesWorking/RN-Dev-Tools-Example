@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { RequiredStorageKey } from "../../../_sections/storage/types";
 import { DevToolsModalRouter, SectionType } from "./DevToolsModalRouter";
-import { DevToolsSectionListModal } from "./DevToolsSectionListModal";
 
 interface DevToolsConsoleProps {
   visible: boolean;
@@ -20,13 +19,13 @@ interface DevToolsConsoleProps {
 }
 
 /**
- * Refactored DevToolsConsole following composition principles
- *
+ * Simplified DevToolsConsole that works with Dial2 as the primary menu selector.
+ * No longer includes a section list modal - Dial2 handles the menu selection.
+ * 
  * Applied principles:
- * - Decompose by Responsibility: Separated section list and detail modals
- * - Prefer Composition over Configuration: Uses specialized modal components
- * - Extract Reusable Logic: Modal routing logic extracted to DevToolsModalRouter
- * - Utilize Render Props: Each modal handles its own rendering responsibility
+ * - Single Responsibility: Only handles routing to the selected modal
+ * - Composition: Delegates all UI to specialized components
+ * - Simplified State: Removed redundant section list logic
  */
 export function DevToolsConsole({
   visible,
@@ -45,27 +44,24 @@ export function DevToolsConsole({
   // Use external state if provided (for persistence), otherwise use internal state
   const [internalSelectedSection, setInternalSelectedSection] =
     useState<SectionType | null>(null);
+  
   const selectedSection =
     (externalSelectedSection as SectionType | null) || internalSelectedSection;
   const setSelectedSection =
     externalSetSelectedSection || setInternalSelectedSection;
 
-  const handleSectionSelect = (sectionType: SectionType) => {
-    if (sectionType === "rn-better-dev-tools" && onReactQueryPress) {
+  // Handle React Query special case
+  useEffect(() => {
+    if (selectedSection === "rn-better-dev-tools" && onReactQueryPress) {
       // Close the DevTools console and open the React Query modal
       onClose();
       onReactQueryPress();
-    } else {
-      setSelectedSection(sectionType);
+      setSelectedSection(null);
     }
-  };
+  }, [selectedSection, onReactQueryPress, onClose, setSelectedSection]);
 
   const handleModalClose = () => {
     setSelectedSection(null);
-    onClose();
-  };
-
-  const handleSectionListClose = () => {
     onClose();
   };
 
@@ -73,39 +69,22 @@ export function DevToolsConsole({
     setSelectedSection(null);
   };
 
-  // Show section list when main modal is visible but no section selected
-  const showSectionList = visible && selectedSection === null;
-
-  // Show section detail when a section is selected
+  // Only show the modal router when visible and a section is selected
+  if (!visible || !selectedSection) {
+    return null;
+  }
 
   return (
-    <>
-      {/* Section List Modal - shown when no section is selected */}
-      <DevToolsSectionListModal
-        visible={showSectionList}
-        onClose={handleSectionListClose}
-        onSectionSelect={handleSectionSelect}
-        requiredEnvVars={requiredEnvVars}
-        _getSentrySubtitle={getSentrySubtitle}
-        getRnBetterDevToolsSubtitle={getRnBetterDevToolsSubtitle}
-        envVarsSubtitle={envVarsSubtitle}
-        enableSharedModalDimensions={enableSharedModalDimensions}
-      />
-
-      {/* Specialized Section Detail Modals - each handles its own visibility */}
-      <DevToolsModalRouter
-        selectedSection={selectedSection}
-        onClose={handleModalClose}
-        requiredEnvVars={requiredEnvVars}
-        requiredStorageKeys={requiredStorageKeys}
-        _getSentrySubtitle={getSentrySubtitle}
-        envVarsSubtitle={envVarsSubtitle}
-        onBack={handleBack}
-        enableSharedModalDimensions={enableSharedModalDimensions}
-        onSettingsChange={onSettingsChange}
-      />
-    </>
+    <DevToolsModalRouter
+      selectedSection={selectedSection}
+      onClose={handleModalClose}
+      requiredEnvVars={requiredEnvVars}
+      requiredStorageKeys={requiredStorageKeys}
+      _getSentrySubtitle={getSentrySubtitle}
+      envVarsSubtitle={envVarsSubtitle}
+      onBack={handleBack}
+      enableSharedModalDimensions={enableSharedModalDimensions}
+      onSettingsChange={onSettingsChange}
+    />
   );
 }
-
-// No styles needed - each specialized modal handles its own styling

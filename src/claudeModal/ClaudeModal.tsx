@@ -122,6 +122,8 @@ export interface ClaudeModalProps {
   onModeChange?: (mode: ModalMode) => void;
   /** Callback when dimensions change */
   onDimensionsChange?: (dimensions: ModalDimensions) => void;
+  /** External animated height for performance testing */
+  animatedHeight?: Animated.Value;
 }
 
 // ============================================================================
@@ -389,6 +391,7 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
   enablePersistence = true,
   onModeChange,
   onDimensionsChange,
+  animatedHeight: externalAnimatedHeight,
 }) => {
   const insets = useSafeAreaInsets();
   const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
@@ -410,8 +413,9 @@ export const ClaudeModal: React.FC<ClaudeModalProps> = ({
     height: SCREEN.height,
   });
 
-  // Refs
-  const animatedHeight = useRef(new Animated.Value(panelHeight)).current;
+  // Use external animated height if provided (for performance testing), otherwise create internal one
+  const internalAnimatedHeight = useRef(new Animated.Value(panelHeight)).current;
+  const animatedHeight = externalAnimatedHeight || internalAnimatedHeight;
   const startHeightRef = useRef(panelHeight);
   const currentHeightRef = useRef(panelHeight);
   const lastUpdateTimeRef = useRef(0);

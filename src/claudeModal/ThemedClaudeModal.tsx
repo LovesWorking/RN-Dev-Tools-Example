@@ -13,12 +13,14 @@ import React, { useMemo, useEffect, useRef } from "react";
 import { View, Text, Animated, Easing, StyleSheet } from "react-native";
 import { ClaudeModal, ClaudeModalProps } from "./ClaudeModalPure";
 import { useTheme, useThemeAnimations } from "../_themes/DevToolsThemeContext";
+import { CyberpunkModalHeader } from "./CyberpunkModalHeader";
 
 interface ThemedClaudeModalProps extends Omit<ClaudeModalProps, "styles"> {
   // Allow style overrides if needed
   styleOverrides?: ClaudeModalProps["styles"];
   // Enable glitch effects for cyberpunk theme
   enableGlitchEffects?: boolean;
+  // Note: animatedHeight is already included via ClaudeModalProps
 }
 
 export function ThemedClaudeModal({
@@ -131,11 +133,14 @@ export function ThemedClaudeModal({
         overflow: "hidden",
       },
       header: {
-        backgroundColor: theme.colors.modalHeader,
-        borderBottomColor: theme.colors.modalHeaderBorder,
-        borderBottomWidth: 1,
-        borderTopLeftRadius: theme.name === "cyberpunk" ? 16 : 14,
-        borderTopRightRadius: theme.name === "cyberpunk" ? 16 : 14,
+        backgroundColor: theme.name === "cyberpunk" ? "transparent" : theme.colors.modalHeader,
+        borderBottomColor: theme.name === "cyberpunk" ? "transparent" : theme.colors.modalHeaderBorder,
+        borderBottomWidth: theme.name === "cyberpunk" ? 0 : 1,
+        borderTopLeftRadius: theme.name === "cyberpunk" ? 0 : 14,
+        borderTopRightRadius: theme.name === "cyberpunk" ? 0 : 14,
+        height: theme.name === "cyberpunk" ? 0 : undefined,
+        padding: theme.name === "cyberpunk" ? 0 : undefined,
+        margin: theme.name === "cyberpunk" ? 0 : undefined,
       },
       headerTitle: {
         color: theme.colors.text,
@@ -157,10 +162,11 @@ export function ThemedClaudeModal({
         flex: 1,
       },
       dragIndicator: {
-        backgroundColor: theme.colors.modalDragIndicator,
-        width: theme.name === "cyberpunk" ? 40 : 32,
-        height: theme.name === "cyberpunk" ? 4 : 3,
-        borderRadius: theme.name === "cyberpunk" ? 2 : 1.5,
+        backgroundColor: theme.name === "cyberpunk" ? "transparent" : theme.colors.modalDragIndicator,
+        width: theme.name === "cyberpunk" ? 0 : 32,
+        height: theme.name === "cyberpunk" ? 0 : 3,
+        borderRadius: theme.name === "cyberpunk" ? 0 : 1.5,
+        display: theme.name === "cyberpunk" ? "none" : "flex",
       },
     };
 
@@ -175,45 +181,66 @@ export function ThemedClaudeModal({
     return baseStyles;
   }, [theme, styleOverrides]);
 
+  // Track current mode for toggle
+  const [currentMode, setCurrentMode] = React.useState(props.initialMode || "bottomSheet");
+
+  // For cyberpunk theme, we need to completely replace the header
+  const shouldUseCustomHeader = theme.name === "cyberpunk";
+
+  const handleToggleMode = () => {
+    const newMode = currentMode === "floating" ? "bottomSheet" : "floating";
+    setCurrentMode(newMode);
+    props.onModeChange?.(newMode);
+  };
+
   // Enhanced header with cyberpunk styling
   const themedHeader = useMemo(() => {
-    if (!header) return undefined;
-
-    // Add cyberpunk text effects to header
-    if (theme.name === "cyberpunk" && header.customContent) {
+    // If cyberpunk theme, we don't want ANY header from ClaudeModal
+    // We'll render our own inside the children
+    if (shouldUseCustomHeader && header) {
+      // Return a header config that effectively hides the default header
       return {
         ...header,
-        customContent: (
-          <View style={{ flex: 1, position: "relative" }}>
-            {header.customContent}
-            {/* Glitch overlay for header text */}
-            {animations.glitchEnabled && (
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFillObject,
-                  {
-                    opacity: glitchOpacity,
-                    backgroundColor: theme.colors.glitchPrimary,
-                    mixBlendMode: "screen",
-                  },
-                ]}
-                pointerEvents="none"
-              />
-            )}
-          </View>
-        ),
+        customContent: <View />, // Empty view
+        hideCloseButton: true,
+        showToggleButton: false,
+        title: undefined,
+        subtitle: undefined,
       };
     }
 
     return header;
-  }, [header, theme, animations.glitchEnabled, glitchOpacity]);
+  }, [header, shouldUseCustomHeader]);
 
-  // Wrap children with theme-specific effects
+  // Wrap children with theme-specific effects AND add custom header if needed
   const themedChildren = useMemo(() => {
+    let content = children;
+    
+    // For cyberpunk theme, add the custom header at the top
+    if (shouldUseCustomHeader) {
+      content = (
+        <View style={{ flex: 1 }}>
+          <CyberpunkModalHeader
+            title={header?.title}
+            customContent={header?.customContent}
+            showToggleButton={header?.showToggleButton}
+            hideCloseButton={header?.hideCloseButton}
+            onToggleMode={handleToggleMode}
+            onClose={props.onClose}
+            mode={currentMode}
+          />
+          <View style={{ flex: 1 }}>
+            {children}
+          </View>
+        </View>
+      );
+    }
+    
+    // Add scanline effect for cyberpunk theme
     if (theme.name === "cyberpunk" && animations.scanlineEnabled) {
       return (
         <View style={{ flex: 1, position: "relative" }}>
-          {children}
+          {content}
           {/* Scanline effect */}
           <Animated.View
             style={[
@@ -256,8 +283,8 @@ export function ThemedClaudeModal({
       );
     }
 
-    return children;
-  }, [children, theme, animations.scanlineEnabled, scanlineY]);
+    return content;
+  }, [children, theme, animations.scanlineEnabled, scanlineY, shouldUseCustomHeader, header, handleToggleMode, props.onClose, currentMode]);
 
   // Apply animated border glow for cyberpunk theme
   const animatedModalStyle = useMemo(() => {

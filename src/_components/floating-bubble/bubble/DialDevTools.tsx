@@ -1,16 +1,5 @@
-import React, { useEffect } from "react";
-import { Pressable, StyleSheet, View, Dimensions, Text } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-  withSpring,
-  withSequence,
-  withDelay,
-  interpolate,
-  Easing,
-  runOnJS,
-} from "react-native-reanimated";
+import React, { useEffect, useRef } from "react";
+import { Pressable, StyleSheet, View, Dimensions, Text, Animated, Easing } from "react-native";
 import {
   DatabaseIcon,
   BugIcon,
@@ -41,10 +30,7 @@ interface DialDevToolsProps {
   onWifiToggle: () => void;
   onClose?: () => void;
   isWifiEnabled?: boolean;
-  buttonPosition?: { x: number; y: number };
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const DialDevTools: React.FC<DialDevToolsProps> = ({
   onQueryPress,
@@ -54,17 +40,21 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   onWifiToggle,
   onClose,
   isWifiEnabled = true,
-  buttonPosition = { x: 30, y: 30 },
 }) => {
   const [selectedIcon, setSelectedIcon] = React.useState(-1);
   
-  // Reanimated shared values
-  const backdropOpacity = useSharedValue(0);
-  const dialScale = useSharedValue(0);
-  const dialRotation = useSharedValue(0);
-  const centerButtonScale = useSharedValue(0);
-  const iconsProgress = useSharedValue(0);
-  const glitchOffset = useSharedValue(0);
+  // React Native Animated values
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
+  const dialScale = useRef(new Animated.Value(0)).current;
+  const dialRotation = useRef(new Animated.Value(0)).current;
+  const centerButtonScale = useRef(new Animated.Value(0)).current;
+  const iconsProgress = useRef(new Animated.Value(0)).current;
+  const glitchOffset = useRef(new Animated.Value(0)).current;
+  const pulseScale = useRef(new Animated.Value(1)).current;
+  
+  // Animation tracking refs
+  const glitchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pulseAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
 
   const icons: IconType[] = [
     {
@@ -110,7 +100,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       icon: <XIcon size={24} color="#9E9E9E" />,
       color: "#424242",
       onPress: () => {
-        handleClose();
+        // Empty function - handleIconPress will handle the close animation
       },
     },
   ];
@@ -118,103 +108,227 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   // Initialize animations on mount
   useEffect(() => {
     // Entrance animation sequence
-    backdropOpacity.value = withTiming(1, { duration: 400 });
-    dialScale.value = withSpring(1, {
+    Animated.timing(backdropOpacity, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+    
+    Animated.spring(dialScale, {
+      toValue: 1,
       damping: 15,
       stiffness: 150,
       mass: 1,
-    });
-    dialRotation.value = withSequence(
-      withTiming(360, { duration: 800, easing: Easing.out(Easing.cubic) }),
-      withTiming(0, { duration: 0 })
-    );
-    centerButtonScale.value = withDelay(
-      300,
-      withSpring(1, {
+      useNativeDriver: true,
+    }).start();
+    
+    Animated.sequence([
+      Animated.timing(dialRotation, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(dialRotation, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
+    Animated.sequence([
+      Animated.delay(300),
+      Animated.spring(centerButtonScale, {
+        toValue: 1,
         damping: 10,
         stiffness: 200,
-      })
-    );
-    iconsProgress.value = withDelay(
-      500,
-      withTiming(1, { duration: 600, easing: Easing.out(Easing.cubic) })
-    );
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
+    Animated.sequence([
+      Animated.delay(500),
+      Animated.timing(iconsProgress, {
+        toValue: 1,
+        duration: 600,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
     
     // Subtle glitch effect
     const glitchAnimation = () => {
-      glitchOffset.value = withSequence(
-        withTiming(2, { duration: 50 }),
-        withTiming(-2, { duration: 50 }),
-        withTiming(0, { duration: 50 })
-      );
+      Animated.sequence([
+        Animated.timing(glitchOffset, {
+          toValue: 2,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glitchOffset, {
+          toValue: -2,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glitchOffset, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start();
     };
-    const interval = setInterval(glitchAnimation, 3000);
-    return () => clearInterval(interval);
+    
+    glitchIntervalRef.current = setInterval(glitchAnimation, 3000);
+    
+    // Pulse animation
+    const startPulse = () => {
+      pulseAnimationRef.current = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseScale, {
+            toValue: 1.02,
+            duration: 1000,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseScale, {
+            toValue: 0.98,
+            duration: 1000,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      pulseAnimationRef.current.start();
+    };
+    
+    startPulse();
+    
+    return () => {
+      if (glitchIntervalRef.current) {
+        clearInterval(glitchIntervalRef.current);
+      }
+      if (pulseAnimationRef.current) {
+        pulseAnimationRef.current.stop();
+      }
+    };
   }, []);
 
   const handleClose = () => {
-    // Exit animation
-    iconsProgress.value = withTiming(0, { duration: 200 });
-    centerButtonScale.value = withTiming(0, { duration: 200 });
-    dialScale.value = withTiming(0, { duration: 300 });
-    backdropOpacity.value = withTiming(0, { duration: 300 }, () => {
+    // Stop any ongoing animations first
+    if (pulseAnimationRef.current) {
+      pulseAnimationRef.current.stop();
+    }
+    
+    // Exit animation sequence - reverse order of entrance
+    Animated.sequence([
+      // First animate icons back to center
+      Animated.timing(iconsProgress, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      // Then scale down center button and dial
+      Animated.parallel([
+        Animated.timing(centerButtonScale, {
+          toValue: 0,
+          duration: 200,
+          easing: Easing.in(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(dialScale, {
+          toValue: 0,
+          duration: 250,
+          easing: Easing.in(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]),
+      // Finally fade out backdrop
+      Animated.timing(backdropOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // Use setTimeout to defer the state update to the next tick
+      // This avoids the useInsertionEffect warning
       if (onClose) {
-        runOnJS(onClose)();
+        setTimeout(() => {
+          onClose();
+        }, 0);
       }
     });
   };
 
   const handleIconPress = (index: number) => {
-    'worklet';
-    runOnJS(setSelectedIcon)(index);
+    setSelectedIcon(index);
     
     // Pulse animation on selection
-    centerButtonScale.value = withSequence(
-      withSpring(0.9, { damping: 15, stiffness: 500 }),
-      withSpring(1, { damping: 10, stiffness: 200 })
-    );
+    Animated.sequence([
+      Animated.spring(centerButtonScale, {
+        toValue: 0.9,
+        damping: 15,
+        stiffness: 500,
+        useNativeDriver: true,
+      }),
+      Animated.spring(centerButtonScale, {
+        toValue: 1,
+        damping: 10,
+        stiffness: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
     
-    // Trigger action and close
-    runOnJS(() => {
-      icons[index].onPress();
-      handleClose();
-    })();
+    // Check if it's the close button (last item)
+    const isCloseButton = icons[index].name === "Close";
+    
+    if (isCloseButton) {
+      // For close button, just trigger the close animation
+      setTimeout(() => {
+        handleClose();
+      }, 50);
+    } else {
+      // For other buttons, trigger action then close
+      setTimeout(() => {
+        icons[index].onPress();
+        handleClose();
+      }, 50);
+    }
   };
 
   // Animated styles
-  const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: backdropOpacity.value,
-  }));
+  const backdropAnimatedStyle = {
+    opacity: backdropOpacity,
+  };
 
-  const dialAnimatedStyle = useAnimatedStyle(() => ({
+  const dialAnimatedStyle = {
     transform: [
-      { scale: dialScale.value },
-      { rotate: `${interpolate(dialRotation.value, [0, 360], [0, 360])}deg` },
+      { scale: dialScale },
+      { 
+        rotate: dialRotation.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '360deg'],
+        })
+      },
     ],
-  }));
+  };
 
-  const glitchAnimatedStyle = useAnimatedStyle(() => ({
+  const glitchAnimatedStyle = {
     transform: [
-      { translateX: glitchOffset.value },
+      { translateX: glitchOffset },
     ],
-  }));
+  };
 
-  const centerButtonAnimatedStyle = useAnimatedStyle(() => ({
+  const centerButtonAnimatedStyle = {
     transform: [
-      { scale: centerButtonScale.value },
+      { scale: centerButtonScale },
     ],
-  }));
+  };
 
-  const pulseAnimatedStyle = useAnimatedStyle(() => {
-    const pulseScale = interpolate(
-      Math.sin(Date.now() * 0.001) * 0.5 + 0.5,
-      [0, 1],
-      [0.98, 1.02]
-    );
-    return {
-      transform: [{ scale: selectedIcon >= 0 ? 1 : pulseScale }],
-    };
-  });
+  const pulseAnimatedStyle = {
+    transform: [
+      { scale: selectedIcon >= 0 ? 1 : pulseScale },
+    ],
+  };
 
   return (
     <View style={styles.container}>
@@ -283,13 +397,12 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             <View style={styles.buttonGradientLayer3} />
 
             <View style={styles.buttonBorder}>
-              <AnimatedPressable 
-                style={[styles.button, pulseAnimatedStyle]}
-                onPress={() => handleClose()}
-              >
-                <Text style={styles.centerText}>RN BETTER</Text>
-                <Text style={styles.centerText}>DEV TOOLS</Text>
-              </AnimatedPressable>
+              <Animated.View style={[styles.button, pulseAnimatedStyle]}>
+                <Pressable onPress={() => handleClose()} style={styles.buttonPressable}>
+                  <Text style={styles.centerText}>RN BETTER</Text>
+                  <Text style={styles.centerText}>DEV TOOLS</Text>
+                </Pressable>
+              </Animated.View>
             </View>
           </View>
         </Animated.View>
@@ -429,6 +542,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     overflow: "hidden",
+  },
+  buttonPressable: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   tanstackContainer: {
     width: 24,

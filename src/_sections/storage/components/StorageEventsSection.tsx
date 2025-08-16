@@ -1,5 +1,5 @@
 import { Database } from "lucide-react-native";
-import { CyberpunkConsoleSection } from "../../../_components/floating-bubble/console/CyberpunkConsoleSection";
+import { CyberpunkSectionButton } from "../../../_components/floating-bubble/console/CyberpunkSectionButton";
 
 interface StorageEventsSectionProps {
   onPress: () => void;
@@ -8,13 +8,13 @@ interface StorageEventsSectionProps {
 
 export function StorageEventsSection({ onPress, eventCount = 0 }: StorageEventsSectionProps) {
   const subtitle = eventCount > 0 
-    ? `${eventCount} events captured` 
-    : 'Monitor AsyncStorage operations';
+    ? `${eventCount} events` 
+    : 'Monitoring';
 
   return (
-    <CyberpunkConsoleSection
+    <CyberpunkSectionButton
       id="storage-events"
-      title="Storage Events"
+      title="EVENTS"
       subtitle={subtitle}
       icon={Database}
       iconColor="#00E5FF"

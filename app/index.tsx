@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StyleSheet,
@@ -35,9 +41,10 @@ import {
 } from "@/src/_components/floating-bubble/bubble";
 import ClaudeModal from "@/src/claudeModal/ClaudeModal";
 import ClaudeModalOriginal from "@/src/claudeModal/ClaudeModalOriginal";
-import ClaudeModalOptimized from "@/src/claudeModal/ClaudeModalOptimized";
 import ClaudeModalPure from "@/src/claudeModal/ClaudeModalPure";
+import ClaudeModal60FPSClean from "@/src/claudeModal/ClaudeModal60FPSClean";
 import { ThemedClaudeModal } from "@/src/claudeModal/ThemedClaudeModal";
+import { Modal60fpsTest } from "@/src/claudeModal/Modal60fpsTest";
 import ModalPerformanceComparison from "@/src/claudeModal/ModalPerformanceComparison";
 import { Environment } from "@/src/newDevTools/floatingTools";
 import { createEnvVarConfig, envVar } from "@/src/_sections/env";
@@ -488,15 +495,26 @@ function getRandomPokemonNames(count: number): string[] {
   return shuffled.slice(0, count);
 }
 
+// Stable empty styles object to prevent re-renders
+const EMPTY_STYLES = {};
+
 export default function PokemonScreen() {
   const queryClient = useQueryClient();
   // Modal states for our modal versions
   const [claudeModalVisible, setClaudeModalVisible] = useState(false);
-  const [claudeModalOriginalVisible, setClaudeModalOriginalVisible] = useState(false);
-  const [claudeModalOptimizedVisible, setClaudeModalOptimizedVisible] = useState(false);
+  const [claudeModalOriginalVisible, setClaudeModalOriginalVisible] =
+    useState(false);
   const [claudeModalPureVisible, setClaudeModalPureVisible] = useState(false);
-  const [themedClaudeModalVisible, setThemedClaudeModalVisible] = useState(false);
-  const [performanceTestVisible, setPerformanceTestVisible] = useState(false);
+  const [claudeModalUltra60FPSVisible, setClaudeModalUltra60FPSVisible] =
+    useState(false); // Auto-open for testing
+  const [themedClaudeModalVisible, setThemedClaudeModalVisible] =
+    useState(false);
+  const [modal60fpsTestVisible, setModal60fpsTestVisible] = useState(false);
+  // Auto-open performance test modal for testing (set to false to disable)
+  const AUTO_OPEN_PERFORMANCE_TEST = false;
+  const [performanceTestVisible, setPerformanceTestVisible] = useState(
+    AUTO_OPEN_PERFORMANCE_TEST
+  );
   const [pokemonStack, setPokemonStack] = useState(() => [
     "pikachu",
     "charizard",
@@ -1237,11 +1255,7 @@ export default function PokemonScreen() {
             colors={["rgba(100,200,100,0.25)", "rgba(100,200,100,0.1)"]}
             style={styles.debugGradient}
           >
-            <Ionicons
-              name="cube"
-              size={16}
-              color="rgba(255,255,255,0.8)"
-            />
+            <Ionicons name="cube" size={16} color="rgba(255,255,255,0.8)" />
             <Text style={styles.debugText}>ClaudeModal</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -1262,25 +1276,6 @@ export default function PokemonScreen() {
               color="rgba(255,255,255,0.8)"
             />
             <Text style={styles.debugText}>ClaudeModalOriginal</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* ClaudeModalOptimized Button */}
-        <TouchableOpacity
-          onPress={() => setClaudeModalOptimizedVisible(true)}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(200,100,0,0.25)", "rgba(200,100,0,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons
-              name="flash"
-              size={16}
-              color="rgba(255,255,255,0.8)"
-            />
-            <Text style={styles.debugText}>ClaudeModalOptimized</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -1315,6 +1310,40 @@ export default function PokemonScreen() {
               color="rgba(255,255,255,0.8)"
             />
             <Text style={styles.debugText}>ThemedClaudeModal</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* ClaudeModal60FPS Button */}
+        <TouchableOpacity
+          onPress={() => setClaudeModalUltra60FPSVisible(true)}
+          style={styles.debugButton}
+          activeOpacity={0.7}
+        >
+          <LinearGradient
+            colors={["rgba(0,255,255,0.25)", "rgba(0,200,255,0.1)"]}
+            style={styles.debugGradient}
+          >
+            <Ionicons
+              name="speedometer"
+              size={16}
+              color="rgba(255,255,255,0.8)"
+            />
+            <Text style={styles.debugText}>60FPS Native testing</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Modal60fpsTest Button */}
+        <TouchableOpacity
+          onPress={() => setModal60fpsTestVisible(true)}
+          style={styles.debugButton}
+          activeOpacity={0.7}
+        >
+          <LinearGradient
+            colors={["rgba(255,100,0,0.25)", "rgba(255,50,0,0.1)"]}
+            style={styles.debugGradient}
+          >
+            <Ionicons name="flask" size={16} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.debugText}>60FPS Test</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -1488,44 +1517,6 @@ export default function PokemonScreen() {
         </ScrollView>
       </ClaudeModalOriginal>
 
-      {/* ClaudeModalOptimized */}
-      <ClaudeModalOptimized
-        visible={claudeModalOptimizedVisible}
-        onClose={() => setClaudeModalOptimizedVisible(false)}
-        persistenceKey="@claude_modal_optimized_demo"
-        header={{
-          title: "ClaudeModalOptimized",
-          subtitle: "Performance optimized version",
-          showToggleButton: true,
-        }}
-        enablePersistence={true}
-        initialMode="bottomSheet"
-      >
-        <ScrollView style={{ flex: 1, padding: 20 }}>
-          <Text style={{ color: "white", fontSize: 16, marginBottom: 10 }}>
-            ClaudeModalOptimized Component
-          </Text>
-          <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
-            This is the performance optimized version with memoization.
-          </Text>
-          <View style={{ height: 20 }} />
-          {/* Test content */}
-          {Array.from({ length: 20 }).map((_, i) => (
-            <View
-              key={i}
-              style={{
-                padding: 15,
-                backgroundColor: "rgba(255,255,255,0.05)",
-                borderRadius: 8,
-                marginBottom: 10,
-              }}
-            >
-              <Text style={{ color: "white" }}>Item {i + 1}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </ClaudeModalOptimized>
-
       {/* ClaudeModalPure */}
       <ClaudeModalPure
         visible={claudeModalPureVisible}
@@ -1599,8 +1590,9 @@ export default function PokemonScreen() {
             ThemedClaudeModal Component
           </Text>
           <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
-            This modal supports theme switching between cyberpunk and dark modes.
-            It includes glitch effects, animated borders, and theme-aware styling.
+            This modal supports theme switching between cyberpunk and dark
+            modes. It includes glitch effects, animated borders, and theme-aware
+            styling.
           </Text>
           <View style={{ height: 20 }} />
           {/* Test content */}
@@ -1613,7 +1605,10 @@ export default function PokemonScreen() {
                 borderRadius: 8,
                 marginBottom: 10,
                 borderWidth: 1,
-                borderColor: i % 2 === 0 ? "rgba(0,255,255,0.3)" : "rgba(255,0,255,255,0.3)",
+                borderColor:
+                  i % 2 === 0
+                    ? "rgba(0,255,255,0.3)"
+                    : "rgba(255,0,255,255,0.3)",
               }}
             >
               <Text style={{ color: "white" }}>Themed Item {i + 1}</Text>
@@ -1621,6 +1616,131 @@ export default function PokemonScreen() {
           ))}
         </ScrollView>
       </ThemedClaudeModal>
+
+      {/* ClaudeModal60FPSClean - Clean Separated Version */}
+      <ClaudeModal60FPSClean
+        visible={claudeModalUltra60FPSVisible}
+        onClose={useCallback(() => setClaudeModalUltra60FPSVisible(false), [])}
+        header={useMemo(
+          () => ({
+            title: "60FPS Clean Modal 🚀",
+            subtitle: "Completely separated native/non-native animations",
+            showToggleButton: true,
+          }),
+          []
+        )}
+        styles={EMPTY_STYLES}
+      >
+        <ScrollView style={{ flex: 1, padding: 20 }}>
+          <Text style={{ color: "white", fontSize: 16, marginBottom: 10 }}>
+            60FPS Simple Modal
+          </Text>
+          <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
+            SIMPLE approach like the original but with optimizations:
+          </Text>
+          <View style={{ marginTop: 15 }}>
+            <Text
+              style={{ color: "#00FFFF", fontSize: 14, fontWeight: "bold" }}
+            >
+              🎯 Key Features:
+            </Text>
+            {[
+              "✅ Animated.Value for height (no setState during drag)",
+              "✅ RAF throttling for smooth 60FPS updates",
+              "✅ Native driver for open/close animations",
+              "✅ Velocity-based snap on release",
+              "✅ Platform-specific optimizations",
+              "✅ Works exactly like original but faster",
+            ].map((item, i) => (
+              <Text
+                key={i}
+                style={{
+                  color: "rgba(255,255,255,0.8)",
+                  fontSize: 13,
+                  marginTop: 6,
+                  marginLeft: 10,
+                }}
+              >
+                {item}
+              </Text>
+            ))}
+          </View>
+          <View style={{ marginTop: 20 }}>
+            <Text
+              style={{ color: "#FFD700", fontSize: 14, fontWeight: "bold" }}
+            >
+              🚀 Expected Performance:
+            </Text>
+            {[
+              "• 60 FPS during all gestures",
+              "• 0 dropped frames",
+              "• Minimal re-renders (<5)",
+              "• No JS thread involvement during animations",
+              "• Smooth as native iOS/Android modals",
+            ].map((item, i) => (
+              <Text
+                key={i}
+                style={{
+                  color: "rgba(255,255,255,0.8)",
+                  fontSize: 13,
+                  marginTop: 6,
+                  marginLeft: 10,
+                }}
+              >
+                {item}
+              </Text>
+            ))}
+          </View>
+        </ScrollView>
+      </ClaudeModal60FPSClean>
+
+      {/* Modal60fpsTest - Height Animation Version */}
+      <Modal60fpsTest
+        visible={modal60fpsTestVisible}
+        onClose={() => setModal60fpsTestVisible(false)}
+        header={{
+          title: "60FPS Test Modal",
+          subtitle: "Height animation (non-native) for comparison",
+        }}
+        minHeight={100}
+        maxHeight={600}
+        initialHeight={400}
+      >
+        <ScrollView style={{ flex: 1, padding: 20 }}>
+          <Text style={{ color: "white", fontSize: 16, marginBottom: 10 }}>
+            60FPS Test Modal (Height Animation)
+          </Text>
+          <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
+            This modal uses height animation instead of transforms to compare
+            performance.
+          </Text>
+
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ color: "white", fontSize: 14, fontWeight: "600" }}>
+              Key Differences:
+            </Text>
+            {[
+              "• Uses Animated.Value for height (non-native)",
+              "• Position and opacity use native driver",
+              "• Height changes cannot use native driver",
+              "• May show lower FPS during resize",
+              "• Useful for comparing animation approaches",
+            ].map((item, i) => (
+              <Text
+                key={i}
+                style={{
+                  color: "rgba(255,255,255,0.8)",
+                  fontSize: 13,
+                  marginTop: 6,
+                  marginLeft: 10,
+                }}
+              >
+                {item}
+              </Text>
+            ))}
+          </View>
+        </ScrollView>
+      </Modal60fpsTest>
 
       {/* Performance Test Modal */}
       <ClaudeModalPure

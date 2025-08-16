@@ -23,9 +23,8 @@ import {
   ViewStyle,
   TextStyle,
   LayoutChangeEvent,
-  Platform,
-  StatusBar,
 } from "react-native";
+import { getSafeAreaInsets } from "@/src/_shared/utils/getSafeAreaInsets";
 
 // ============================================================================
 // Types and Interfaces
@@ -112,34 +111,9 @@ export interface ClaudeModalProps {
   onModeChange?: (mode: ModalMode) => void;
   /** Callback when dimensions change */
   onDimensionsChange?: (dimensions: ModalDimensions) => void;
+  /** External animated height for performance testing */
+  animatedHeight?: Animated.Value;
 }
-
-// ============================================================================
-// Safe Area Insets (Pure JS implementation)
-// ============================================================================
-
-const getSafeAreaInsets = () => {
-  // Default safe area insets for different platforms
-  const isIOS = Platform.OS === "ios";
-  const isAndroid = Platform.OS === "android";
-
-  let top = 0;
-  let bottom = 0;
-
-  if (isIOS) {
-    // iPhone X and later models have notch/dynamic island
-    const { height } = Dimensions.get("window");
-    const hasNotch = height >= 812; // iPhone X and later
-    top = hasNotch ? 44 : 20;
-    bottom = hasNotch ? 34 : 0;
-  } else if (isAndroid) {
-    // Android status bar height
-    top = StatusBar.currentHeight || 24;
-    bottom = 0;
-  }
-
-  return { top, bottom, left: 0, right: 0 };
-};
 
 // ============================================================================
 // Storage Operations
@@ -419,6 +393,7 @@ const ClaudeModalOriginal: React.FC<ClaudeModalProps> = ({
   enablePersistence = true,
   onModeChange,
   onDimensionsChange,
+  animatedHeight: externalAnimatedHeight,
 }) => {
   const insets = getSafeAreaInsets();
   const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
@@ -440,8 +415,9 @@ const ClaudeModalOriginal: React.FC<ClaudeModalProps> = ({
     height: SCREEN.height,
   });
 
-  // Refs
-  const animatedHeight = useRef(new Animated.Value(panelHeight)).current;
+  // Use external animated height if provided (for performance testing), otherwise create internal one
+  const internalAnimatedHeight = useRef(new Animated.Value(panelHeight)).current;
+  const animatedHeight = externalAnimatedHeight || internalAnimatedHeight;
   const animatedPosition = useRef(
     new Animated.ValueXY({ x: dimensions.left, y: dimensions.top })
   ).current;
