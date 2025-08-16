@@ -404,12 +404,6 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     extrapolate: 'clamp',
   });
   
-  // Scale animation for floating mode entrance
-  const floatingEntranceScale = floatingScale.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.8, 1],
-    extrapolate: 'clamp',
-  });
   
   // ============================================================================
   // REFS for values we need to track
@@ -418,8 +412,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   const initialPositionRef = useRef(initialHeight);
   const startPositionRef = useRef(initialHeight);
   const isExternallyControlled = !!externalAnimatedHeight;
-  const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top - 50;
-  const snapPoints = useMemo(() => [minHeight, initialHeight, effectiveMaxHeight], [minHeight, initialHeight, effectiveMaxHeight]);
+  const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
   
   // Mode toggle handler
   const toggleMode = useCallback(() => {
@@ -437,78 +430,65 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     let closeAnimation: Animated.CompositeAnimation | null = null;
     
     if (visible) {
+      // Reset position if needed and then open
+      bottomSheetTranslateY.setValue(SCREEN.height);
+      visibilityProgress.setValue(0);
+      
       // Open animations
       if (mode === "bottomSheet") {
         // Parallel animations for smooth opening
         openAnimation = Animated.parallel([
-          // Fade in
-          Animated.timing(visibilityProgress, {
-            toValue: 1,
-            duration: 250,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-          }),
           // Slide up from bottom
           Animated.spring(bottomSheetTranslateY, {
             toValue: 0,
-            damping: 20,
-            stiffness: 300,
+            tension: 180,
+            friction: 22,
             useNativeDriver: true,
           }),
-        ]);
-        openAnimation.start();
-      } else {
-        // Floating mode entrance
-        openAnimation = Animated.parallel([
-          // Fade in
+          // Fade in backdrop
           Animated.timing(visibilityProgress, {
             toValue: 1,
             duration: 200,
             useNativeDriver: true,
           }),
-          // Scale entrance
-          Animated.spring(floatingScale, {
-            toValue: 1,
-            damping: 15,
-            stiffness: 200,
-            useNativeDriver: true,
-          }),
         ]);
+        openAnimation.start();
+      } else {
+        // Floating mode entrance - simple fade without scale pop
+        floatingScale.setValue(1); // Set scale to 1 directly, no animation
+        openAnimation = Animated.timing(visibilityProgress, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        });
         openAnimation.start();
       }
     } else {
       // Close animations
       if (mode === "bottomSheet") {
         closeAnimation = Animated.parallel([
-          // Fade out
+          // Slide down
+          Animated.spring(bottomSheetTranslateY, {
+            toValue: SCREEN.height,
+            tension: 180,
+            friction: 22,
+            useNativeDriver: true,
+          }),
+          // Fade out backdrop
           Animated.timing(visibilityProgress, {
             toValue: 0,
             duration: 200,
-            useNativeDriver: true,
-          }),
-          // Slide down
-          Animated.timing(bottomSheetTranslateY, {
-            toValue: SCREEN.height,
-            duration: 250,
-            easing: Easing.in(Easing.cubic),
             useNativeDriver: true,
           }),
         ]);
         closeAnimation.start();
       } else {
-        // Floating mode exit
-        closeAnimation = Animated.parallel([
-          Animated.timing(visibilityProgress, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.timing(floatingScale, {
-            toValue: 0.8,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-        ]);
+        // Floating mode exit - simple fade without scale
+        closeAnimation = Animated.timing(visibilityProgress, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        });
         closeAnimation.start();
       }
     }
@@ -566,27 +546,27 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         onPanResponderRelease: (evt, gestureState) => {
           setIsResizing(false);
           
-          // Calculate destination with velocity consideration
-          const velocity = gestureState.vy;
-          const currentPosition = currentHeightRef.current;
+          const finalHeight = currentHeightRef.current;
           
-          // Add velocity factor for momentum
-          const projectedPosition = currentPosition - velocity * 200;
+          // Optional: Small spring to smooth the release
+          Animated.spring(animatedBottomPosition, {
+            toValue: finalHeight,
+            tension: 180,
+            friction: 22,
+            useNativeDriver: false, // Must be false for height
+          }).start();
           
-          // Find nearest snap point
-          let closestSnapPoint = snapPoints[0];
-          let minDistance = Math.abs(projectedPosition - snapPoints[0]);
-          
-          for (const snapPoint of snapPoints) {
-            const distance = Math.abs(projectedPosition - snapPoint);
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestSnapPoint = snapPoint;
-            }
+          if (externalAnimatedHeight) {
+            Animated.spring(externalAnimatedHeight, {
+              toValue: finalHeight,
+              tension: 180,
+              friction: 22,
+              useNativeDriver: false,
+            }).start();
           }
           
-          // Check if should close (dragging down past threshold)
-          if (gestureState.dy > 150 && velocity > 0.5) {
+          // Close if dragged down too much
+          if (gestureState.dy > 150 && finalHeight <= minHeight) {
             // Close with animation
             Animated.parallel([
               Animated.timing(visibilityProgress, {
@@ -602,27 +582,6 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             ]).start(() => {
               setTimeout(() => onClose(), 0);
             });
-          } else {
-            // Animate to nearest snap point
-            Animated.spring(animatedBottomPosition, {
-              toValue: closestSnapPoint,
-              velocity: velocity / 2,
-              damping: 20,
-              stiffness: 300,
-              useNativeDriver: false,
-            }).start();
-            
-            currentHeightRef.current = closestSnapPoint;
-            
-            if (externalAnimatedHeight) {
-              Animated.spring(externalAnimatedHeight, {
-                toValue: closestSnapPoint,
-                velocity: velocity / 2,
-                damping: 20,
-                stiffness: 300,
-                useNativeDriver: false,
-              }).start();
-            }
           }
         },
 
@@ -645,7 +604,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           }
         },
       }),
-    [mode, isExternallyControlled, minHeight, effectiveMaxHeight, snapPoints, animatedBottomPosition, externalAnimatedHeight, bottomSheetTranslateY, visibilityProgress, onClose]
+    [mode, isExternallyControlled, minHeight, effectiveMaxHeight, animatedBottomPosition, externalAnimatedHeight, bottomSheetTranslateY, visibilityProgress, onClose]
   );
 
   // ============================================================================
@@ -842,11 +801,11 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   // ============================================================================
   // RENDER: Modal UI with transform-based animations
   // ============================================================================
+  
+  // Render nothing if not visible (but hooks have already been called)
   if (!visible) {
-    // Not visible
     return null;
   }
-  // Rendering modal
 
   // Render floating mode
   if (mode === "floating") {
@@ -861,7 +820,6 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             transform: [
               { translateX: floatingPosition.x },
               { translateY: floatingPosition.y },
-              { scale: floatingEntranceScale },
             ],
           },
           (isDragging || isResizing) && styles.floatingModalDragging,
@@ -955,7 +913,10 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             />
           </View>
 
-          <ScrollView style={[styles.content, customStyles.content]}>
+          <ScrollView 
+            style={[styles.content, customStyles.content]}
+            contentContainerStyle={{ paddingBottom: insets.bottom }}
+          >
             {children}
           </ScrollView>
         </Animated.View>
@@ -987,7 +948,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 16,
-    maxHeight: SCREEN.height * 0.9,
   },
   floatingModal: {
     position: "absolute",
@@ -1099,7 +1059,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: "#2A2A2A",
+    backgroundColor: "#1F1F1F",
   },
   cornerHandle: {
     position: "absolute",

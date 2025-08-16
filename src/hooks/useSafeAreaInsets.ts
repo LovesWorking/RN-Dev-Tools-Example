@@ -69,24 +69,50 @@ const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
   };
 };
 
-// Main hook - simplified to always use pure JS implementation
+// Check if npm package is available at module level (not inside component)
+let hasNativePackage = false;
+let SafeAreaContextModule: any = null;
+
+try {
+  SafeAreaContextModule = require('react-native-safe-area-context');
+  if (SafeAreaContextModule?.useSafeAreaInsets) {
+    hasNativePackage = true;
+    console.log('✅ react-native-safe-area-context package found - using native implementation');
+  }
+} catch {
+  console.warn('⚠️ react-native-safe-area-context not found - using pure JS fallback implementation');
+}
+
+// Create a wrapper hook that always exists
+const useNativeSafeAreaInsets = hasNativePackage 
+  ? SafeAreaContextModule.useSafeAreaInsets
+  : () => null;
+
+// Main hook with automatic fallback
 export const useSafeAreaInsets = (): SafeAreaInsets => {
-  const [insets, setInsets] = useState<SafeAreaInsets>(() => getPureJSSafeAreaInsets());
+  // Always call the native hook unconditionally (returns null if not available)
+  const nativeInsets = useNativeSafeAreaInsets();
+  
+  // Fallback state for pure JS implementation
+  const [fallbackInsets, setFallbackInsets] = useState<SafeAreaInsets>(() => getPureJSSafeAreaInsets());
   
   useEffect(() => {
-    // Handle orientation changes
-    const updateInsets = () => {
-      setInsets(getPureJSSafeAreaInsets());
-    };
-    
-    const subscription = Dimensions.addEventListener('change', updateInsets);
-    
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
+    // Only set up orientation listener if using fallback
+    if (!nativeInsets) {
+      const updateInsets = () => {
+        setFallbackInsets(getPureJSSafeAreaInsets());
+      };
+      
+      const subscription = Dimensions.addEventListener('change', updateInsets);
+      
+      return () => {
+        subscription?.remove();
+      };
+    }
+  }, [!nativeInsets]); // Use boolean for stable dependency
   
-  return insets;
+  // Return native insets if available, otherwise use fallback
+  return nativeInsets || fallbackInsets;
 };
 
 

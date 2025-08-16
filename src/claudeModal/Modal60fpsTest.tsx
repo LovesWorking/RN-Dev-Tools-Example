@@ -239,11 +239,10 @@ export const Modal60fpsTest: React.FC<Modal60fpsTestProps> = ({
     [minHeight, effectiveMaxHeight, onClose, isExternallyControlled]
   );
   
+  // Render nothing if not visible (but hooks have already been called)
   if (!visible) {
-    // Not visible
     return null;
   }
-  // Rendering modal
   
   return (
     <>
