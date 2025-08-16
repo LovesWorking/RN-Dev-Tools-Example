@@ -22,6 +22,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Pressable,
   Dimensions,
   PanResponder,
@@ -40,8 +41,8 @@ const MIN_HEIGHT = 100;
 const DEFAULT_HEIGHT = 400;
 const FLOATING_WIDTH = 380;
 const FLOATING_HEIGHT = 500;
-const FLOATING_MIN_WIDTH = 300;
-const FLOATING_MIN_HEIGHT = 200;
+const FLOATING_MIN_WIDTH = SCREEN.width * 0.25; // 1/4 of screen width
+const FLOATING_MIN_HEIGHT = 80; // Just a bit more than header height (60px header + 20px content)
 
 // ============================================================================
 // TYPE DEFINITIONS - Interface contracts for the modal
@@ -139,57 +140,51 @@ const MinimizeIcon = memo(function MinimizeIcon() {
 /**
  * DragIndicator - Visual feedback for draggable areas
  */
-const DragIndicator = memo(
-  function DragIndicator({
-    isResizing,
-    mode,
-  }: {
-    isResizing: boolean;
-    mode: ModalMode;
-  }) {
-    return (
-      <View style={styles.dragIndicatorContainer}>
-        {mode === "bottomSheet" && (
-          <>
-            <View
-              style={[
-                styles.dragIndicator,
-                isResizing && styles.dragIndicatorActive,
-              ]}
-            />
-            {/* Add resize grip lines for better visual feedback */}
-            {isResizing && (
-              <View style={styles.resizeGripContainer}>
-                <View style={styles.resizeGripLine} />
-                <View style={styles.resizeGripLine} />
-                <View style={styles.resizeGripLine} />
-              </View>
-            )}
-          </>
-        )}
-      </View>
-    );
-  }
-);
+const DragIndicator = memo(function DragIndicator({
+  isResizing,
+  mode,
+}: {
+  isResizing: boolean;
+  mode: ModalMode;
+}) {
+  return (
+    <View style={styles.dragIndicatorContainer}>
+      {/* Show drag indicator in both modes */}
+      <View
+        style={[
+          styles.dragIndicator,
+          mode === "floating" && styles.floatingDragIndicator,
+          isResizing && styles.dragIndicatorActive,
+        ]}
+      />
+      {/* Add resize grip lines for better visual feedback in bottom sheet */}
+      {isResizing && mode === "bottomSheet" && (
+        <View style={styles.resizeGripContainer}>
+          <View style={styles.resizeGripLine} />
+          <View style={styles.resizeGripLine} />
+          <View style={styles.resizeGripLine} />
+        </View>
+      )}
+    </View>
+  );
+});
 
 /**
  * CornerHandle - Resize handle for floating mode corners
  */
-const CornerHandle = memo(
-  function CornerHandle({
-    position,
-    isActive,
-  }: {
-    position: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
-    isActive: boolean;
-  }) {
-    return (
-      <View style={[styles.cornerHandle]}>
-        <View style={[styles.handler, isActive && styles.handlerActive]} />
-      </View>
-    );
-  }
-);
+const CornerHandle = memo(function CornerHandle({
+  position,
+  isActive,
+}: {
+  position: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
+  isActive: boolean;
+}) {
+  return (
+    <View style={[styles.cornerHandle]}>
+      <View style={[styles.handler, isActive && styles.handlerActive]} />
+    </View>
+  );
+});
 
 /**
  * ModalHeader - Header bar with title, controls, and drag area
@@ -203,92 +198,122 @@ interface ModalHeaderProps {
   panHandlers?: any;
 }
 
-const ModalHeader = memo(
-  function ModalHeader({
-    header,
-    onClose,
-    onToggleMode,
-    isResizing,
-    mode,
-    panHandlers,
-  }: ModalHeaderProps) {
-    const headerProps = panHandlers ? panHandlers : {};
+const ModalHeader = memo(function ModalHeader({
+  header,
+  onClose,
+  onToggleMode,
+  isResizing,
+  mode,
+  panHandlers,
+}: ModalHeaderProps) {
+  const lastTapRef = useRef<number>(0);
+  const tapCountRef = useRef<number>(0);
+  const tapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // If custom content is provided, check if it's a complete replacement
-    if (header?.customContent) {
-      // Check if the custom content is a complete header replacement (like CyberpunkModalHeader)
-      // by checking if it's a React element with specific props
-      const isCompleteReplacement = React.isValidElement(header.customContent) && 
-        (typeof header.customContent.type === 'function' && header.customContent.type.name === 'CyberpunkModalHeader');
-      
-      if (isCompleteReplacement) {
-        // Clone the element and pass the necessary props
-        return React.cloneElement(header.customContent as React.ReactElement<any>, {
+  const handleHeaderTap = useCallback(() => {
+    const now = Date.now();
+    const timeSinceLastTap = now - lastTapRef.current;
+
+    // Reset tap count if more than 500ms since last tap
+    if (timeSinceLastTap > 500) {
+      tapCountRef.current = 0;
+    }
+
+    tapCountRef.current++;
+    lastTapRef.current = now;
+
+    // Clear existing timeout
+    if (tapTimeoutRef.current) {
+      clearTimeout(tapTimeoutRef.current);
+    }
+
+    // Set timeout to process the tap gesture
+    tapTimeoutRef.current = setTimeout(() => {
+      if (tapCountRef.current === 2) {
+        // Double tap - toggle mode
+        onToggleMode();
+      } else if (tapCountRef.current >= 3) {
+        // Triple tap - close modal
+        onClose();
+      }
+      tapCountRef.current = 0;
+    }, 300);
+  }, [onToggleMode, onClose]);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (tapTimeoutRef.current) {
+        clearTimeout(tapTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const headerProps = panHandlers ? panHandlers : {};
+
+  // If custom content is provided, check if it's a complete replacement
+  if (header?.customContent) {
+    // Check if the custom content is a complete header replacement (like CyberpunkModalHeader)
+    // by checking if it's a React element with specific props
+    const isCompleteReplacement =
+      React.isValidElement(header.customContent) &&
+      typeof header.customContent.type === "function" &&
+      header.customContent.type.name === "CyberpunkModalHeader";
+
+    if (isCompleteReplacement) {
+      // Clone the element and pass the necessary props
+      return React.cloneElement(
+        header.customContent as React.ReactElement<any>,
+        {
           onToggleMode,
           onClose,
           mode,
           panHandlers: headerProps,
           showToggleButton: header?.showToggleButton !== false,
           hideCloseButton: header?.hideCloseButton,
-        });
-      }
-      
-      // Otherwise, render custom content within the standard header structure
-      return (
-        <View style={styles.header} {...headerProps}>
-          <DragIndicator isResizing={isResizing} mode={mode} />
-          {header.customContent}
-          <View style={styles.headerControls}>
-            {header?.showToggleButton !== false && (
-              <Pressable
-                onPress={onToggleMode}
-                style={[styles.controlButton, styles.toggleButton]}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                {mode === "floating" ? <MinimizeIcon /> : <MaximizeIcon />}
-              </Pressable>
-            )}
-            {!header?.hideCloseButton && (
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                <CloseIcon />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+        }
       );
     }
 
+    // Otherwise, render custom content within the standard header structure
     return (
       <View style={styles.header} {...headerProps}>
-        <DragIndicator isResizing={isResizing} mode={mode} />
-        <View style={styles.headerContent}>
-          {header?.title && (
-            <Text style={styles.headerTitle}>{header.title}</Text>
-          )}
-          {header?.subtitle && (
-            <Text style={styles.headerSubtitle}>{header.subtitle}</Text>
-          )}
-        </View>
-        <View style={styles.headerControls}>
-          {header?.showToggleButton !== false && (
-            <Pressable
-              onPress={onToggleMode}
-              style={[styles.controlButton, styles.toggleButton]}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              {mode === "floating" ? <MinimizeIcon /> : <MaximizeIcon />}
-            </Pressable>
-          )}
-          {!header?.hideCloseButton && (
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <CloseIcon />
-            </TouchableOpacity>
-          )}
-        </View>
+        <TouchableWithoutFeedback onPress={handleHeaderTap}>
+          <View style={styles.headerInner}>
+            <DragIndicator isResizing={isResizing} mode={mode} />
+            {header.customContent}
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     );
   }
-);
+
+  return (
+    <View
+      style={[styles.header, mode === "floating" && styles.floatingModeHeader]}
+      {...headerProps}
+    >
+      <TouchableWithoutFeedback onPress={handleHeaderTap}>
+        <View style={styles.headerInner}>
+          <DragIndicator isResizing={isResizing} mode={mode} />
+          <View style={styles.headerContent}>
+            {header?.title && (
+              <Text style={styles.headerTitle}>{header.title}</Text>
+            )}
+            {header?.subtitle && (
+              <Text style={styles.headerSubtitle}>{header.subtitle}</Text>
+            )}
+          </View>
+          <View style={styles.headerHintText}>
+            <Text style={styles.hintText}>
+              Double tap: Toggle • Triple tap: Close
+            </Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </View>
+  );
+});
 
 // ============================================================================
 // MAIN COMPONENT - Optimized for 60FPS with transforms and interpolation
@@ -320,21 +345,25 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     width: SCREEN.width,
     height: SCREEN.height,
   });
-  
+
   // ============================================================================
   // ANIMATED VALUES - All using native driver
   // ============================================================================
-  
+
   // Main visibility progress (0 = hidden, 1 = visible)
   const visibilityProgress = useRef(new Animated.Value(0)).current;
-  
+
   // Bottom sheet specific - using translateY for performance!
-  const bottomSheetTranslateY = useRef(new Animated.Value(SCREEN.height)).current;
+  const bottomSheetTranslateY = useRef(
+    new Animated.Value(SCREEN.height)
+  ).current;
   const dragOffset = useRef(new Animated.Value(0)).current;
-  
+
   // Height tracking for resize - actual position from bottom
-  const animatedBottomPosition = useRef(new Animated.Value(initialHeight)).current;
-  
+  const animatedBottomPosition = useRef(
+    new Animated.Value(initialHeight)
+  ).current;
+
   // Sync with external height if provided
   useEffect(() => {
     // Height sync effect
@@ -344,7 +373,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
       // Set external height
     }
   }, []);
-  
+
   // Cleanup on unmount
   useEffect(() => {
     // Mount/Unmount effect
@@ -358,7 +387,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
       floatingPosition.stopAnimation();
       animatedWidth.stopAnimation();
       animatedFloatingHeight.stopAnimation();
-      
+
       // Reset to initial values
       visibilityProgress.setValue(0);
       bottomSheetTranslateY.setValue(SCREEN.height);
@@ -368,12 +397,12 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
       currentHeightRef.current = initialHeight;
     };
   }, []);
-  
+
   // Update refs when dimensions change
   useEffect(() => {
     currentDimensionsRef.current = dimensions;
   }, [dimensions]);
-  
+
   // Floating mode animations
   const floatingPosition = useRef(
     new Animated.ValueXY({
@@ -383,8 +412,10 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   ).current;
   const floatingScale = useRef(new Animated.Value(0)).current;
   const animatedWidth = useRef(new Animated.Value(FLOATING_WIDTH)).current;
-  const animatedFloatingHeight = useRef(new Animated.Value(FLOATING_HEIGHT)).current;
-  
+  const animatedFloatingHeight = useRef(
+    new Animated.Value(FLOATING_HEIGHT)
+  ).current;
+
   // Refs for resize handles
   const currentDimensionsRef = useRef(dimensions);
   const startDimensionsRef = useRef(dimensions);
@@ -392,19 +423,18 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   const offsetY = useRef(0);
   const sHeight = useRef(0);
   const sWidth = useRef(0);
-  
+
   // ============================================================================
   // INTERPOLATIONS - All math done natively!
   // ============================================================================
-  
+
   // Opacity interpolation for smooth fade
   const modalOpacity = visibilityProgress.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
-  
-  
+
   // ============================================================================
   // REFS for values we need to track
   // ============================================================================
@@ -413,7 +443,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   const startPositionRef = useRef(initialHeight);
   const isExternallyControlled = !!externalAnimatedHeight;
   const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
-  
+
   // Mode toggle handler
   const toggleMode = useCallback(() => {
     const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
@@ -428,12 +458,12 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     // Visibility effect
     let openAnimation: Animated.CompositeAnimation | null = null;
     let closeAnimation: Animated.CompositeAnimation | null = null;
-    
+
     if (visible) {
       // Reset position if needed and then open
       bottomSheetTranslateY.setValue(SCREEN.height);
       visibilityProgress.setValue(0);
-      
+
       // Open animations
       if (mode === "bottomSheet") {
         // Parallel animations for smooth opening
@@ -492,7 +522,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         closeAnimation.start();
       }
     }
-    
+
     // Cleanup function - only stop animations, don't reset values
     return () => {
       // Cleanup animations
@@ -505,7 +535,14 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         // Stopped close animation
       }
     };
-  }, [visible, mode, visibilityProgress, bottomSheetTranslateY, floatingScale, externalAnimatedHeight]); // Removed initialHeight to prevent animation restarts on height changes
+  }, [
+    visible,
+    mode,
+    visibilityProgress,
+    bottomSheetTranslateY,
+    floatingScale,
+    externalAnimatedHeight,
+  ]); // Removed initialHeight to prevent animation restarts on height changes
 
   // ============================================================================
   // OPTIMIZED PAN RESPONDER: Bottom Sheet Resize
@@ -514,9 +551,12 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   const bottomSheetPanResponder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => !isExternallyControlled && mode === "bottomSheet",
+        onStartShouldSetPanResponder: () =>
+          !isExternallyControlled && mode === "bottomSheet",
         onMoveShouldSetPanResponder: (evt, gestureState) =>
-          !isExternallyControlled && mode === "bottomSheet" && Math.abs(gestureState.dy) > 5,
+          !isExternallyControlled &&
+          mode === "bottomSheet" &&
+          Math.abs(gestureState.dy) > 5,
 
         onPanResponderGrant: () => {
           setIsResizing(true);
@@ -529,14 +569,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           // Calculate new position: draggedPosition = initialPosition + translationY
           // Note: dy is negative when dragging up (to increase height)
           const draggedPosition = initialPositionRef.current - gestureState.dy;
-          
+
           // Clamp between min and max
-          const clampedPosition = Math.max(minHeight, Math.min(draggedPosition, effectiveMaxHeight));
-          
+          const clampedPosition = Math.max(
+            minHeight,
+            Math.min(draggedPosition, effectiveMaxHeight)
+          );
+
           // Update the animated value for height
           animatedBottomPosition.setValue(clampedPosition);
           currentHeightRef.current = clampedPosition;
-          
+
           // If external height is provided, update it too
           if (externalAnimatedHeight) {
             externalAnimatedHeight.setValue(clampedPosition);
@@ -545,16 +588,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
 
         onPanResponderRelease: (evt, gestureState) => {
           setIsResizing(false);
-          
+
           const finalHeight = currentHeightRef.current;
           const velocity = gestureState.vy;
-          
+
           // Close with swipe down: either fast swipe or drag past threshold
           // Fast swipe: velocity > 0.8 and moving down (dy > 50)
           // Or drag past threshold: dragged down more than 150px
-          const shouldClose = (velocity > 0.8 && gestureState.dy > 50) || 
-                            (gestureState.dy > 150 && finalHeight <= minHeight);
-          
+          const shouldClose =
+            (velocity > 0.8 && gestureState.dy > 50) ||
+            (gestureState.dy > 150 && finalHeight <= minHeight);
+
           if (shouldClose) {
             // Close with smooth animation
             Animated.parallel([
@@ -580,7 +624,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
               friction: 22,
               useNativeDriver: false, // Must be false for height
             }).start();
-            
+
             if (externalAnimatedHeight) {
               Animated.spring(externalAnimatedHeight, {
                 toValue: finalHeight,
@@ -600,9 +644,9 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             toValue: targetHeight,
             useNativeDriver: false,
           }).start();
-          
+
           currentHeightRef.current = targetHeight;
-          
+
           if (externalAnimatedHeight) {
             Animated.spring(externalAnimatedHeight, {
               toValue: targetHeight,
@@ -611,7 +655,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           }
         },
       }),
-    [mode, isExternallyControlled, minHeight, effectiveMaxHeight, animatedBottomPosition, externalAnimatedHeight, bottomSheetTranslateY, visibilityProgress, onClose]
+    [
+      mode,
+      isExternallyControlled,
+      minHeight,
+      effectiveMaxHeight,
+      animatedBottomPosition,
+      externalAnimatedHeight,
+      bottomSheetTranslateY,
+      visibilityProgress,
+      onClose,
+    ]
   );
 
   // ============================================================================
@@ -647,11 +701,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             case "topLeft": {
               updatedWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                Math.min(sWidth.current - dx, containerBounds.width - offsetX.current)
+                Math.min(
+                  sWidth.current - dx,
+                  containerBounds.width - offsetX.current
+                )
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                Math.min(sHeight.current - dy, containerBounds.height - updatedY)
+                Math.min(
+                  sHeight.current - dy,
+                  containerBounds.height - updatedY
+                )
               );
               if (updatedWidth !== sWidth.current) {
                 updatedX = offsetX.current + (sWidth.current - updatedWidth);
@@ -659,7 +719,10 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
               if (updatedHeight !== sHeight.current) {
                 updatedY = Math.max(
                   insets.top,
-                  Math.min(offsetY.current + dy, containerBounds.height - updatedHeight)
+                  Math.min(
+                    offsetY.current + dy,
+                    containerBounds.height - updatedHeight
+                  )
                 );
               }
               break;
@@ -667,16 +730,25 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             case "topRight": {
               updatedWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                Math.min(sWidth.current + dx, containerBounds.width - offsetX.current)
+                Math.min(
+                  sWidth.current + dx,
+                  containerBounds.width - offsetX.current
+                )
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                Math.min(sHeight.current - dy, containerBounds.height - updatedY)
+                Math.min(
+                  sHeight.current - dy,
+                  containerBounds.height - updatedY
+                )
               );
               if (updatedHeight !== sHeight.current) {
                 updatedY = Math.max(
                   insets.top,
-                  Math.min(offsetY.current + dy, containerBounds.height - updatedHeight)
+                  Math.min(
+                    offsetY.current + dy,
+                    containerBounds.height - updatedHeight
+                  )
                 );
               }
               break;
@@ -684,11 +756,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             case "bottomLeft": {
               updatedWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                Math.min(sWidth.current - dx, containerBounds.width - offsetX.current)
+                Math.min(
+                  sWidth.current - dx,
+                  containerBounds.width - offsetX.current
+                )
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                Math.min(sHeight.current + dy, containerBounds.height - offsetY.current)
+                Math.min(
+                  sHeight.current + dy,
+                  containerBounds.height - offsetY.current
+                )
               );
               if (updatedWidth !== sWidth.current) {
                 updatedX = offsetX.current + (sWidth.current - updatedWidth);
@@ -698,11 +776,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             case "bottomRight": {
               updatedWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                Math.min(sWidth.current + dx, containerBounds.width - offsetX.current)
+                Math.min(
+                  sWidth.current + dx,
+                  containerBounds.width - offsetX.current
+                )
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                Math.min(sHeight.current + dy, containerBounds.height - offsetY.current)
+                Math.min(
+                  sHeight.current + dy,
+                  containerBounds.height - offsetY.current
+                )
               );
               break;
             }
@@ -715,7 +799,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             left: updatedX,
             top: updatedY,
           });
-          
+
           // Also update animated values for smooth transitions
           animatedWidth.setValue(updatedWidth);
           animatedFloatingHeight.setValue(updatedHeight);
@@ -739,7 +823,14 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         },
       });
     },
-    [mode, containerBounds, insets.top, animatedWidth, animatedFloatingHeight, floatingPosition]
+    [
+      mode,
+      containerBounds,
+      insets.top,
+      animatedWidth,
+      animatedFloatingHeight,
+      floatingPosition,
+    ]
   );
 
   const resizeHandlers = useMemo(() => {
@@ -769,26 +860,32 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
 
         onPanResponderMove: (_evt, gestureState) => {
           // Update animated values
-          floatingPosition.setValue({ 
-            x: gestureState.dx, 
-            y: gestureState.dy 
+          floatingPosition.setValue({
+            x: gestureState.dx,
+            y: gestureState.dy,
           });
         },
 
         onPanResponderRelease: () => {
           setIsDragging(false);
           floatingPosition.flattenOffset();
-          
+
           // Get current position and update dimensions
           const currentX = (floatingPosition.x as any).__getValue();
           const currentY = (floatingPosition.y as any).__getValue();
           const currentDims = currentDimensionsRef.current;
-          
-          const clampedX = Math.max(0, Math.min(currentX, containerBounds.width - currentDims.width));
-          const clampedY = Math.max(insets.top, Math.min(currentY, containerBounds.height - currentDims.height));
-          
+
+          const clampedX = Math.max(
+            0,
+            Math.min(currentX, containerBounds.width - currentDims.width)
+          );
+          const clampedY = Math.max(
+            insets.top,
+            Math.min(currentY, containerBounds.height - currentDims.height)
+          );
+
           floatingPosition.setValue({ x: clampedX, y: clampedY });
-          
+
           const newDimensions = {
             ...currentDims,
             left: clampedX,
@@ -808,7 +905,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   // ============================================================================
   // RENDER: Modal UI with transform-based animations
   // ============================================================================
-  
+
   // Render nothing if not visible (but hooks have already been called)
   if (!visible) {
     return null;
@@ -821,7 +918,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         style={[
           styles.floatingModal,
           {
-            width: dimensions.width,  // Use state dimensions for real-time updates
+            width: dimensions.width, // Use state dimensions for real-time updates
             height: dimensions.height,
             opacity: modalOpacity,
             transform: [
@@ -833,19 +930,21 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           customStyles.container,
         ]}
       >
-        <ModalHeader
-          header={header}
-          onClose={onClose}
-          onToggleMode={toggleMode}
-          isResizing={isDragging || isResizing}
-          mode={mode}
-          panHandlers={floatingDragPanResponder.panHandlers}
-        />
+        <View style={styles.floatingHeader}>
+          <ModalHeader
+            header={header}
+            onClose={onClose}
+            onToggleMode={toggleMode}
+            isResizing={isDragging || isResizing}
+            mode={mode}
+            panHandlers={floatingDragPanResponder.panHandlers}
+          />
+        </View>
 
         <ScrollView style={[styles.content, customStyles.content]}>
           {children}
         </ScrollView>
-        
+
         {/* Corner resize handles - positioned absolutely on the outer container */}
         <View
           {...resizeHandlers.topLeft.panHandlers}
@@ -895,19 +994,17 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           styles.bottomSheetWrapper,
           {
             opacity: modalOpacity,
-            transform: [
-              { translateY: bottomSheetTranslateY },
-            ],
+            transform: [{ translateY: bottomSheetTranslateY }],
           },
         ]}
       >
-        <Animated.View 
+        <Animated.View
           style={[
-            styles.bottomSheet, 
+            styles.bottomSheet,
             customStyles.container,
             {
               height: externalAnimatedHeight || animatedBottomPosition,
-            }
+            },
           ]}
         >
           <View {...bottomSheetPanResponder.panHandlers}>
@@ -920,7 +1017,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             />
           </View>
 
-          <ScrollView 
+          <ScrollView
             style={[styles.content, customStyles.content]}
             contentContainerStyle={{ paddingBottom: insets.bottom }}
           >
@@ -984,6 +1081,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     backgroundColor: "#171717",
     paddingBottom: 8,
+    minHeight: 60,
+  },
+  floatingHeader: {
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    overflow: "hidden",
+  },
+  floatingModeHeader: {
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+  },
+  headerInner: {
+    flex: 1,
+    minHeight: 60,
   },
   dragIndicatorContainer: {
     alignItems: "center",
@@ -994,6 +1105,11 @@ const styles = StyleSheet.create({
     height: 4,
     backgroundColor: "#4B5563",
     borderRadius: 2,
+  },
+  floatingDragIndicator: {
+    width: 50,
+    height: 5,
+    backgroundColor: "#6B7280",
   },
   dragIndicatorActive: {
     backgroundColor: "#10B981",
@@ -1031,6 +1147,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#9CA3AF",
     paddingTop: 4,
+  },
+  headerHintText: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  hintText: {
+    fontSize: 10,
+    color: "#6B7280",
+    fontStyle: "italic",
   },
   controlButton: {
     width: 28,
