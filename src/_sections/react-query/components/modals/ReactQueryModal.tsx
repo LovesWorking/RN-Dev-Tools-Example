@@ -5,7 +5,6 @@ import { QueryBrowserModal } from "./QueryBrowserModal";
 import { DataEditorModal } from "./DataEditorModal";
 import { MutationBrowserModal } from "./MutationBrowserModal";
 import { MutationEditorModal } from "./MutationEditorModal";
-import { useEffect } from "react";
 
 interface ReactQueryModalProps {
   visible: boolean;

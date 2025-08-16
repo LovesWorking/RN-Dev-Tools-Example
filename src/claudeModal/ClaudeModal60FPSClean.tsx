@@ -21,15 +21,12 @@ import React, {
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   TouchableWithoutFeedback,
-  Pressable,
   Dimensions,
   PanResponder,
   Animated,
   ScrollView,
   Text,
-  Easing,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
@@ -68,7 +65,7 @@ class ModalStorage {
       this.memoryCache[key] = value;
       await AsyncStorage.setItem(`@modal_state_${key}`, JSON.stringify(value));
     } catch (error) {
-      console.warn('Failed to save modal state:', error);
+      console.warn("Failed to save modal state:", error);
     }
   }
 
@@ -78,7 +75,7 @@ class ModalStorage {
       if (this.memoryCache[key]) {
         return this.memoryCache[key];
       }
-      
+
       // Load from AsyncStorage
       const stored = await AsyncStorage.getItem(`@modal_state_${key}`);
       if (stored) {
@@ -87,7 +84,7 @@ class ModalStorage {
         return parsed;
       }
     } catch (error) {
-      console.warn('Failed to load modal state:', error);
+      console.warn("Failed to load modal state:", error);
     }
     return null;
   }
@@ -394,7 +391,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     top: (SCREEN.height - FLOATING_HEIGHT) / 2,
     left: (SCREEN.width - FLOATING_WIDTH) / 2,
   });
-  const [containerBounds, setContainerBounds] = useState({
+  const [containerBounds] = useState({
     width: SCREEN.width,
     height: SCREEN.height,
   });
@@ -432,14 +429,14 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         if (savedState.mode) {
           setMode(savedState.mode);
         }
-        
+
         // Restore bottom sheet height
         if (savedState.panelHeight) {
           setPanelHeight(savedState.panelHeight);
           currentHeightRef.current = savedState.panelHeight;
           animatedBottomPosition.setValue(savedState.panelHeight);
         }
-        
+
         // Restore floating dimensions and position
         if (savedState.dimensions) {
           setDimensions(savedState.dimensions);

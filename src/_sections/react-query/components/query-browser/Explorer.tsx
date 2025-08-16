@@ -28,115 +28,125 @@ const chunkArray = <T extends { label: string; value: JsonValue }>(
   return result;
 };
 // Memoized Expander component for performance [[memory:4875251]]
-const Expander = React.memo(({ expanded, isFocused = false }: { expanded: boolean; isFocused?: boolean }) => {
-  return (
-    <View
-      style={[
-        styles.expanderIcon,
-        expanded ? styles.expanded : styles.collapsed,
-      ]}
-    >
-      <Svg
-        width={EXPANDER_SIZE}
-        height={EXPANDER_SIZE}
-        viewBox="0 0 24 24"
-        fill="none"
+const Expander = React.memo(
+  ({
+    expanded,
+    isFocused = false,
+  }: {
+    expanded: boolean;
+    isFocused?: boolean;
+  }) => {
+    return (
+      <View
+        style={[
+          styles.expanderIcon,
+          expanded ? styles.expanded : styles.collapsed,
+        ]}
       >
-        <Path 
-          d={expanded ? "M6 9l6 6 6-6" : "M9 6l6 6-6 6"}
-          stroke={isFocused ? "#00FFFF" : "#9CA3AF"} 
-          strokeWidth={2} 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-        />
-      </Svg>
-    </View>
-  );
-});
+        <Svg
+          width={EXPANDER_SIZE}
+          height={EXPANDER_SIZE}
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <Path
+            d={expanded ? "M6 9l6 6 6-6" : "M9 6l6 6-6 6"}
+            stroke={isFocused ? "#00FFFF" : "#9CA3AF"}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </Svg>
+      </View>
+    );
+  }
+);
 type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
 
 // Memoized CopyButton component optimized with ref pattern [[memory:4875251]]
-const CopyButton = React.memo(({ value, isFocused = false }: { value: JsonValue; isFocused?: boolean }) => {
-  const [copyState, setCopyState] = useState<CopyState>("NoCopy");
-  const valueRef = useRef(value);
-  valueRef.current = value;
+const CopyButton = React.memo(
+  ({ value, isFocused = false }: { value: JsonValue; isFocused?: boolean }) => {
+    const [copyState, setCopyState] = useState<CopyState>("NoCopy");
+    const valueRef = useRef(value);
+    valueRef.current = value;
 
-  const handleCopy = useCallback(async () => {
-    try {
-      // Use ref to avoid stale closures [[memory:4875251]]
-      const copied = await copyToClipboard(valueRef.current);
-      if (copied) {
-        setCopyState("SuccessCopy");
-        setTimeout(() => setCopyState("NoCopy"), 1500);
-      } else {
+    const handleCopy = useCallback(async () => {
+      try {
+        // Use ref to avoid stale closures [[memory:4875251]]
+        const copied = await copyToClipboard(valueRef.current);
+        if (copied) {
+          setCopyState("SuccessCopy");
+          setTimeout(() => setCopyState("NoCopy"), 1500);
+        } else {
+          setCopyState("ErrorCopy");
+          setTimeout(() => setCopyState("NoCopy"), 1500);
+        }
+      } catch (error) {
+        console.error("Copy failed:", error);
         setCopyState("ErrorCopy");
         setTimeout(() => setCopyState("NoCopy"), 1500);
       }
-    } catch (error) {
-      console.error("Copy failed:", error);
-      setCopyState("ErrorCopy");
-      setTimeout(() => setCopyState("NoCopy"), 1500);
-    }
-  }, []); // No dependencies needed anymore
+    }, []); // No dependencies needed anymore
 
-  return (
-    <TouchableOpacity
-      sentry-label="ignore devtools copy button"
-      style={[styles.buttonStyle, isFocused && styles.buttonStyleFocused]}
-      aria-label={
-        copyState === "NoCopy"
-          ? "Copy object to clipboard"
-          : copyState === "SuccessCopy"
-          ? "Object copied to clipboard"
-          : "Error copying object to clipboard"
-      }
-      onPress={copyState === "NoCopy" ? handleCopy : undefined}
-      hitSlop={HIT_SLOP_OPTIMIZED}
-      activeOpacity={0.7}
-    >
-      {copyState === "NoCopy" && (
-        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-          <Path
-            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-            stroke={isFocused ? "#06B6D4" : "#64748B"}
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </Svg>
-      )}
-      {copyState === "SuccessCopy" && (
-        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-          <Path
-            d="M9 11l3 3 8-8"
-            stroke="#10B981"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <Path
-            d="M20 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h9"
-            stroke="#10B981"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </Svg>
-      )}
-      {copyState === "ErrorCopy" && (
-        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-          <Path
-            d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"
-            stroke="#EF4444"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </Svg>
-      )}
-    </TouchableOpacity>
-  );
-});
+    return (
+      <TouchableOpacity
+        sentry-label="ignore devtools copy button"
+        style={[styles.buttonStyle, isFocused && styles.buttonStyleFocused]}
+        aria-label={
+          copyState === "NoCopy"
+            ? "Copy object to clipboard"
+            : copyState === "SuccessCopy"
+            ? "Object copied to clipboard"
+            : "Error copying object to clipboard"
+        }
+        onPress={copyState === "NoCopy" ? handleCopy : undefined}
+        hitSlop={HIT_SLOP_OPTIMIZED}
+        activeOpacity={0.7}
+      >
+        {copyState === "NoCopy" && (
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+            <Path
+              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              stroke={isFocused ? "#06B6D4" : "#64748B"}
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        )}
+        {copyState === "SuccessCopy" && (
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+            <Path
+              d="M9 11l3 3 8-8"
+              stroke="#10B981"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <Path
+              d="M20 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h9"
+              stroke="#10B981"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        )}
+        {copyState === "ErrorCopy" && (
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+            <Path
+              d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"
+              stroke="#EF4444"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        )}
+      </TouchableOpacity>
+    );
+  }
+);
 
 // Memoized DeleteItemButton component [[memory:4875251]]
 const DeleteItemButton = React.memo(
@@ -319,11 +329,19 @@ export default function Explorer({
 }: Props) {
   const queryClient = useQueryClient();
   const [isRowFocused, setIsRowFocused] = useState(false);
-  
+
   // Determine if this is a main section
   const isMainSection = useMemo(() => {
     const upperLabel = label.toUpperCase();
-    return ['DATA', 'QUERY', 'QUERYKEY', 'TYPES', 'STATS', 'OPTIONS', 'OBSERVERS'].includes(upperLabel);
+    return [
+      "DATA",
+      "QUERY",
+      "QUERYKEY",
+      "TYPES",
+      "STATS",
+      "OPTIONS",
+      "OBSERVERS",
+    ].includes(upperLabel);
   }, [label]);
 
   // Explorer's section is expanded or collapsed
@@ -428,10 +446,12 @@ export default function Explorer({
       <View style={styles.fullWidthMarginRight}>
         {subEntryPages.length > 0 && (
           <>
-            <View style={[
-              styles.flexRowItemsCenterGap,
-              isMainSection && styles.flexRowItemsCenterGapMain,
-            ]}>
+            <View
+              style={[
+                styles.flexRowItemsCenterGap,
+                isMainSection && styles.flexRowItemsCenterGapMain,
+              ]}
+            >
               <TouchableOpacity
                 sentry-label="ignore devtools explorer expander button"
                 style={styles.expanderButton}
@@ -440,11 +460,13 @@ export default function Explorer({
                 activeOpacity={0.6}
               >
                 <Expander expanded={isExpanded} isFocused={isRowFocused} />
-                <Text style={[
-                  styles.labelText,
-                  isRowFocused && styles.labelTextFocused,
-                  isMainSection && styles.labelTextMain,
-                ]}>
+                <Text
+                  style={[
+                    styles.labelText,
+                    isRowFocused && styles.labelTextFocused,
+                    isMainSection && styles.labelTextMain,
+                  ]}
+                >
                   {label.toUpperCase()}
                 </Text>
                 <Text style={styles.textGray500}>{`${
@@ -478,10 +500,12 @@ export default function Explorer({
             {isExpanded && (
               <>
                 {subEntryPages.length === 1 && (
-                  <View style={[
-                    styles.singleEntryContainer,
-                    isMainSection && styles.singleEntryContainerMain,
-                  ]}>
+                  <View
+                    style={[
+                      styles.singleEntryContainer,
+                      isMainSection && styles.singleEntryContainerMain,
+                    ]}
+                  >
                     {subEntries.map((entry, index) => (
                       <Explorer
                         key={entry.label + index}
@@ -622,14 +646,17 @@ export default function Explorer({
                 </Text>
               </>
             )}
-            {editable && itemsDeletable && activeQuery !== undefined && 
-              valueType !== "string" && valueType !== "number" && (
-              <DeleteItemButton
-                activeQuery={activeQuery}
-                dataPath={currentDataPath}
-                isFocused={isRowFocused}
-              />
-            )}
+            {editable &&
+              itemsDeletable &&
+              activeQuery !== undefined &&
+              valueType !== "string" &&
+              valueType !== "number" && (
+                <DeleteItemButton
+                  activeQuery={activeQuery}
+                  dataPath={currentDataPath}
+                  isFocused={isRowFocused}
+                />
+              )}
           </View>
         )}
       </View>

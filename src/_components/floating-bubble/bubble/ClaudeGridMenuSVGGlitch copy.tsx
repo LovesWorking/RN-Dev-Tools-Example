@@ -315,7 +315,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-          
+
           // 2. ROTATION: Spin 720 degrees (2 full rotations) while falling
           Animated.sequence([
             Animated.timing(item.rotation, {
@@ -331,7 +331,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-          
+
           // 3. SCALE: Grow big → shrink small → settle to normal
           Animated.sequence([
             Animated.timing(item.scale, {
@@ -351,7 +351,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-          
+
           // 4. OPACITY: Digital glitch flicker effect
           Animated.sequence([
             Animated.timing(item.opacity, {
@@ -463,7 +463,7 @@ export function ClaudeGridMenuSVGGlitch({
     // Reverse falling animation - buttons fly back up
     items.forEach((item, index) => {
       const delay = (5 - index) * 50; // Reverse stagger
-      
+
       Animated.sequence([
         Animated.delay(delay),
         Animated.parallel([
@@ -489,7 +489,7 @@ export function ClaudeGridMenuSVGGlitch({
         ]),
       ]).start();
     });
-    
+
     // Fade out backdrop
     Animated.timing(backdropOpacity, {
       toValue: 0,
@@ -807,7 +807,7 @@ export function ClaudeGridMenuSVGGlitch({
               {
                 rotate: item.rotation.interpolate({
                   inputRange: [0, 720],
-                  outputRange: ['0deg', '720deg'],
+                  outputRange: ["0deg", "720deg"],
                 }),
               },
               {

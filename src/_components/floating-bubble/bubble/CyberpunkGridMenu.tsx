@@ -12,7 +12,10 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { CyberpunkGlitchBackground } from "./CyberpunkGlitchBackground";
-import { TanstackLogo, ReactQueryButtonNative } from "@/src/_sections/react-query/components/query-browser/svgs";
+import {
+  TanstackLogo,
+  ReactQueryButtonNative,
+} from "@/src/_sections/react-query/components/query-browser/svgs";
 import {
   DatabaseIcon,
   BugIcon,

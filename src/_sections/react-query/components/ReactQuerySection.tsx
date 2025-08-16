@@ -31,7 +31,7 @@ export function ReactQuerySection({
     }
     return "No data";
   };
-  
+
   return (
     <CyberpunkSectionButton
       id="rn-better-dev-tools"
