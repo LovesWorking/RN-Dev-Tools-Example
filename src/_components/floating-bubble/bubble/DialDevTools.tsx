@@ -1,5 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import { Pressable, StyleSheet, View, Dimensions, Text, Animated, Easing } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Dimensions,
+  Text,
+  Animated,
+  Easing,
+} from "react-native";
 import {
   DatabaseIcon,
   BugIcon,
@@ -42,7 +50,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   isWifiEnabled = true,
 }) => {
   const [selectedIcon, setSelectedIcon] = React.useState(-1);
-  
+
   // React Native Animated values
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const dialScale = useRef(new Animated.Value(0)).current;
@@ -51,7 +59,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const iconsProgress = useRef(new Animated.Value(0)).current;
   const glitchOffset = useRef(new Animated.Value(0)).current;
   const pulseScale = useRef(new Animated.Value(1)).current;
-  
+
   // Animation tracking refs
   const glitchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulseAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -113,7 +121,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       duration: 400,
       useNativeDriver: true,
     }).start();
-    
+
     Animated.spring(dialScale, {
       toValue: 1,
       damping: 15,
@@ -121,7 +129,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       mass: 1,
       useNativeDriver: true,
     }).start();
-    
+
     Animated.sequence([
       Animated.timing(dialRotation, {
         toValue: 1,
@@ -135,7 +143,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     Animated.sequence([
       Animated.delay(300),
       Animated.spring(centerButtonScale, {
@@ -145,7 +153,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     Animated.sequence([
       Animated.delay(500),
       Animated.timing(iconsProgress, {
@@ -155,7 +163,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     // Subtle glitch effect
     const glitchAnimation = () => {
       Animated.sequence([
@@ -176,9 +184,9 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         }),
       ]).start();
     };
-    
+
     glitchIntervalRef.current = setInterval(glitchAnimation, 3000);
-    
+
     // Pulse animation
     const startPulse = () => {
       pulseAnimationRef.current = Animated.loop(
@@ -199,9 +207,9 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       );
       pulseAnimationRef.current.start();
     };
-    
+
     startPulse();
-    
+
     return () => {
       if (glitchIntervalRef.current) {
         clearInterval(glitchIntervalRef.current);
@@ -217,7 +225,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     if (pulseAnimationRef.current) {
       pulseAnimationRef.current.stop();
     }
-    
+
     // Exit animation sequence - reverse order of entrance
     Animated.sequence([
       // First animate icons back to center
@@ -261,7 +269,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
   const handleIconPress = (index: number) => {
     setSelectedIcon(index);
-    
+
     // Pulse animation on selection
     Animated.sequence([
       Animated.spring(centerButtonScale, {
@@ -277,10 +285,10 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     // Check if it's the close button (last item)
     const isCloseButton = icons[index].name === "Close";
-    
+
     if (isCloseButton) {
       // For close button, just trigger the close animation
       setTimeout(() => {
@@ -303,31 +311,25 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const dialAnimatedStyle = {
     transform: [
       { scale: dialScale },
-      { 
+      {
         rotate: dialRotation.interpolate({
           inputRange: [0, 1],
-          outputRange: ['0deg', '360deg'],
-        })
+          outputRange: ["0deg", "360deg"],
+        }),
       },
     ],
   };
 
   const glitchAnimatedStyle = {
-    transform: [
-      { translateX: glitchOffset },
-    ],
+    transform: [{ translateX: glitchOffset }],
   };
 
   const centerButtonAnimatedStyle = {
-    transform: [
-      { scale: centerButtonScale },
-    ],
+    transform: [{ scale: centerButtonScale }],
   };
 
   const pulseAnimatedStyle = {
-    transform: [
-      { scale: selectedIcon >= 0 ? 1 : pulseScale },
-    ],
+    transform: [{ scale: selectedIcon >= 0 ? 1 : pulseScale }],
   };
 
   return (
@@ -390,7 +392,9 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         </Animated.View>
 
         {/* Center button */}
-        <Animated.View style={[styles.buttonContainer, centerButtonAnimatedStyle]}>
+        <Animated.View
+          style={[styles.buttonContainer, centerButtonAnimatedStyle]}
+        >
           <View style={styles.buttonGradient}>
             <View style={styles.buttonGradientLayer1} />
             <View style={styles.buttonGradientLayer2} />
@@ -398,7 +402,10 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
             <View style={styles.buttonBorder}>
               <Animated.View style={[styles.button, pulseAnimatedStyle]}>
-                <Pressable onPress={() => handleClose()} style={styles.buttonPressable}>
+                <Pressable
+                  onPress={() => handleClose()}
+                  style={styles.buttonPressable}
+                >
                   <Text style={styles.centerText}>RN BETTER</Text>
                   <Text style={styles.centerText}>DEV TOOLS</Text>
                 </Pressable>

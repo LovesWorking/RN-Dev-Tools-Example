@@ -130,7 +130,7 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
   if (totalCount === 0) {
     return (
       <View style={styles.mainPanel}>
-        <View style={styles.headerBar}>
+        <View style={styles.compactHeader}>
           <View style={styles.headerLeft}>
             <Text style={styles.headerTitle}>ENV CONFIG</Text>
             <Text style={styles.headerSubtitle}>Loaded at startup</Text>
