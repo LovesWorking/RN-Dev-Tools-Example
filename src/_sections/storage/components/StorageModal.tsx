@@ -44,7 +44,7 @@ export function StorageModal({
         flex: 1,
         gap: 12,
         minHeight: 32,
-        paddingLeft: 4,
+        paddingLeft: 12,
       }}
     >
       {onBack && <BackButton onPress={onBack} color={theme.colors.text} />}
@@ -64,20 +64,33 @@ export function StorageModal({
       >
         <HardDrive size={18} color={theme.colors.storageColor} />
       </View>
-      <Text
-        style={{
-          color: theme.colors.text,
-          fontSize: theme.name === "cyberpunk" ? 14 : 14,
-          fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
-          letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-          flex: 1,
-          textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
-        }}
-        numberOfLines={1}
-      >
-        {theme.name === "cyberpunk" ? "// STORAGE_BROWSER" : "Storage Browser"}
-      </Text>
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            color: theme.colors.text,
+            fontSize: theme.name === "cyberpunk" ? 14 : 14,
+            fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+            letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+            textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
+          }}
+          numberOfLines={1}
+        >
+          {theme.name === "cyberpunk" ? "PERSISTENT STORAGE" : "Storage Browser"}
+        </Text>
+        <Text
+          style={{
+            color: theme.name === "cyberpunk" ? theme.colors.textSecondary : "#9CA3AF",
+            fontSize: 10,
+            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+            marginTop: 2,
+            opacity: 0.8,
+          }}
+          numberOfLines={1}
+        >
+          {theme.name === "cyberpunk" ? "APP DATA • ASYNCSTORAGE • MMKV" : "View and manage stored data"}
+        </Text>
+      </View>
       {theme.name === "cyberpunk" && (
         <View style={{
           flexDirection: "row",

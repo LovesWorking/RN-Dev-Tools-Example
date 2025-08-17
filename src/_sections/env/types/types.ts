@@ -1,7 +1,7 @@
 /**
  * Supported environment variable types that can be automatically detected
  */
-export type EnvVarType = "string" | "number" | "boolean" | "array" | "object";
+export type EnvVarType = "string" | "number" | "boolean" | "array" | "object" | "url";
 
 /**
  * Configuration for a required environment variable

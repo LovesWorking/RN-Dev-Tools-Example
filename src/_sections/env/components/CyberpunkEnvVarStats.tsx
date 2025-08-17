@@ -40,8 +40,8 @@ const gameColors = {
 const variableTypeData = [
   {
     key: "valid",
-    label: "SYSTEMS ONLINE",
-    subtitle: "Ready to ship",
+    label: "VALID VARIABLES",
+    subtitle: "Correctly configured",
     icon: CheckCircle2,
     color: gameColors.online,
     pulseDelay: 0,
@@ -72,8 +72,8 @@ const variableTypeData = [
   },
   {
     key: "optional",
-    label: "OPTIONAL MODS",
-    subtitle: "Extra features",
+    label: "OPTIONAL VARS",
+    subtitle: "Available extras",
     icon: Server,
     color: gameColors.optional,
     pulseDelay: 800,
@@ -90,59 +90,24 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
     optionalCount,
   } = stats;
 
-  // Animation values for game effects
-  const scanLineY = useSharedValue(-100);
-  const glitchOpacity = useSharedValue(0);
-  const pulseValue = useSharedValue(1);
-  
-  // Status pulse animations
-  const statusPulse = useSharedValue(0);
+  // Minimal animation values - only for status indicator
+  const statusPulse = useSharedValue(1);
 
   useEffect(() => {
-    // Continuous scan line
-    scanLineY.value = withRepeat(
-      withTiming(400, { duration: 4000, easing: Easing.linear }),
-      -1,
-      false
-    );
-
-    // Status indicator pulse
-    statusPulse.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0.3, { duration: 1000 })
-      ),
-      -1,
-      true
-    );
-
-    // Occasional glitch effect
-    const startGlitch = () => {
-      const nextDelay = 3000 + Math.random() * 5000;
-      setTimeout(() => {
-        glitchOpacity.value = withSequence(
-          withTiming(0.5, { duration: 50 }),
-          withTiming(0, { duration: 30 }),
-          withTiming(0.3, { duration: 40 }),
-          withTiming(0, { duration: 100 })
-        );
-        startGlitch();
-      }, nextDelay);
-    };
-    
-    // Only start glitch if there are errors
+    // Simple status pulse for critical states only
     if (missingCount > 0 || wrongValueCount > 0 || wrongTypeCount > 0) {
-      startGlitch();
+      statusPulse.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 1500 }),
+          withTiming(0.6, { duration: 1500 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      statusPulse.value = withTiming(1, { duration: 300 });
     }
   }, [missingCount, wrongValueCount, wrongTypeCount]);
-
-  const scanLineStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: scanLineY.value }],
-  }));
-
-  const glitchStyle = useAnimatedStyle(() => ({
-    opacity: glitchOpacity.value,
-  }));
 
   const statusPulseStyle = useAnimatedStyle(() => ({
     opacity: statusPulse.value,
@@ -167,8 +132,8 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
       <View style={styles.mainPanel}>
         <View style={styles.headerBar}>
           <View style={styles.headerLeft}>
-            <Text style={styles.headerTitle}>ENV SCANNER</Text>
-            <Text style={styles.headerSubtitle}>v2.0.1</Text>
+            <Text style={styles.headerTitle}>ENV CONFIG</Text>
+            <Text style={styles.headerSubtitle}>Loaded at startup</Text>
           </View>
           <View style={styles.statusIndicator}>
             <View style={[styles.statusDot, { backgroundColor: gameColors.muted }]} />
@@ -187,35 +152,24 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
 
   return (
     <View style={styles.mainPanel}>
-      {/* Scan line effect */}
-      <Animated.View style={[styles.scanLine, scanLineStyle]} />
-      
-      {/* Glitch overlay for errors */}
-      {(missingCount > 0 || wrongValueCount > 0) && (
-        <Animated.View style={[styles.glitchOverlay, glitchStyle]} />
-      )}
-
-      {/* Header with status */}
-      <View style={styles.headerBar}>
+      {/* Compact Header with inline health */}
+      <View style={styles.compactHeader}>
         <View style={styles.headerLeft}>
-          <Text style={styles.headerTitle}>ENV SCANNER</Text>
-          <Text style={styles.headerSubtitle}>LIVE MONITORING</Text>
+          <Text style={styles.headerTitle}>ENV CONFIG</Text>
+          <Text style={styles.headerSubtitle}>Snapshot from startup</Text>
         </View>
-        <Animated.View style={[styles.statusIndicator, statusPulseStyle]}>
-          <View style={[styles.statusDot, { backgroundColor: healthColor }]} />
-          <Text style={[styles.statusText, { color: healthColor }]}>{healthStatus}</Text>
-        </Animated.View>
+        <View style={styles.headerRight}>
+          <Animated.View style={[styles.statusIndicator, statusPulseStyle]}>
+            <View style={[styles.statusDot, { backgroundColor: healthColor }]} />
+            <Text style={[styles.statusText, { color: healthColor }]}>{healthStatus}</Text>
+          </Animated.View>
+        </View>
       </View>
 
-      {/* System Health Bar */}
-      <View style={styles.healthSection}>
-        <View style={styles.healthHeader}>
-          <Text style={styles.healthLabel}>SYSTEM HEALTH</Text>
-          <Text style={[styles.healthPercentage, { color: healthColor }]}>
-            {healthPercentage}%
-          </Text>
-        </View>
-        <View style={styles.healthBarContainer}>
+      {/* Compact Health Bar */}
+      <View style={styles.compactHealthSection}>
+        <Text style={styles.healthLabel}>SYSTEM HEALTH</Text>
+        <View style={styles.healthBarWrapper}>
           <View style={styles.healthBarBg}>
             <Animated.View 
               entering={FadeIn.duration(500)}
@@ -224,17 +178,18 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
                 { 
                   width: `${healthPercentage}%`,
                   backgroundColor: healthColor,
-                  shadowColor: healthColor,
                 }
               ]} 
             />
           </View>
-          <View style={styles.healthGridOverlay} />
         </View>
+        <Text style={[styles.healthPercentage, { color: healthColor }]}>
+          {healthPercentage}%
+        </Text>
       </View>
 
-      {/* Variable Stats Grid */}
-      <View style={styles.statsGrid}>
+      {/* Compact Stats Grid */}
+      <View style={styles.compactStatsGrid}>
         {variableTypeData.map((item, index) => {
           let count = 0;
           let isActive = false;
@@ -272,48 +227,33 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
               key={item.key}
               entering={FadeIn.duration(300).delay(item.pulseDelay)}
               style={[
-                styles.statCard,
-                { borderColor: item.color + "40" },
-                isError && styles.statCardError
+                styles.compactStatCard,
+                { borderColor: item.color + "30" },
               ]}
             >
-              {/* Glow effect for active cards */}
-              <View style={[styles.cardGlow, { backgroundColor: item.color + "10" }]} />
-              
-              {/* Card content */}
-              <View style={styles.cardHeader}>
-                <View style={[styles.iconWrapper, { backgroundColor: item.color + "15" }]}>
-                  <IconComponent size={14} color={item.color} />
-                </View>
-                <View style={styles.cardInfo}>
-                  <Text style={[styles.cardLabel, { color: item.color }]}>
+              <View style={styles.compactCardContent}>
+                <IconComponent size={12} color={item.color} />
+                <View style={styles.compactCardInfo}>
+                  <Text style={[styles.compactCardLabel, { color: item.color }]}>
                     {item.label}
                   </Text>
-                  <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+                  <Text style={styles.compactCardSubtitle}>{item.subtitle}</Text>
                 </View>
-              </View>
-              
-              {/* Count display */}
-              <View style={styles.cardStats}>
-                <Text style={[styles.statNumber, { color: item.color }]}>
+                <Text style={[styles.compactStatNumber, { color: item.color }]}>
                   {count.toString().padStart(2, '0')}
                 </Text>
-                <View style={[styles.statBar, { backgroundColor: item.color + "20" }]}>
-                  <View 
-                    style={[
-                      styles.statBarFill,
-                      { 
-                        width: `${(count / totalCount) * 100}%`,
-                        backgroundColor: item.color 
-                      }
-                    ]}
-                  />
-                </View>
               </View>
-
-              {/* Corner indicators */}
-              <View style={[styles.cornerIndicator, styles.cornerTL, { backgroundColor: item.color }]} />
-              <View style={[styles.cornerIndicator, styles.cornerBR, { backgroundColor: item.color }]} />
+              <View style={[styles.compactStatBar, { backgroundColor: item.color + "10" }]}>
+                <View 
+                  style={[
+                    styles.compactStatBarFill,
+                    { 
+                      width: `${(count / totalCount) * 100}%`,
+                      backgroundColor: item.color 
+                    }
+                  ]}
+                />
+              </View>
             </Animated.View>
           );
         })}
@@ -352,245 +292,170 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
 const styles = StyleSheet.create({
   mainPanel: {
     backgroundColor: gameColors.panel,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: gameColors.border,
     overflow: "hidden",
     position: "relative",
   },
 
-  // Scan line effect
-  scanLine: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    height: 2,
-    backgroundColor: "rgba(0, 212, 255, 0.1)",
-    zIndex: 10,
-  },
-
-  // Glitch overlay
-  glitchOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 0, 0, 0.05)",
-    zIndex: 9,
-  },
-
-  // Header
-  headerBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.1)",
-  },
-  headerLeft: {
-    gap: 2,
-  },
-  headerTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: gameColors.primary,
-    fontFamily: "monospace",
-    letterSpacing: 2,
-  },
-  headerSubtitle: {
-    fontSize: 9,
-    color: gameColors.secondary,
-    fontFamily: "monospace",
-    letterSpacing: 1,
-  },
-  statusIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-  },
-  statusText: {
-    fontSize: 10,
-    fontWeight: "600",
-    fontFamily: "monospace",
-    letterSpacing: 1,
-  },
-
-  // Health section
-  healthSection: {
-    marginBottom: 20,
-  },
-  healthHeader: {
+  // Compact Header
+  compactHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 8,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
-  healthLabel: {
-    fontSize: 10,
+  headerLeft: {
+    gap: 1,
+  },
+  headerRight: {
+    alignItems: "flex-end",
+  },
+  headerTitle: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: gameColors.primary,
+    fontFamily: "monospace",
+    letterSpacing: 1.5,
+  },
+  headerSubtitle: {
+    fontSize: 8,
     color: gameColors.secondary,
     fontFamily: "monospace",
-    letterSpacing: 1,
+    opacity: 0.7,
   },
-  healthPercentage: {
-    fontSize: 16,
-    fontWeight: "700",
+  statusIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  statusDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+  },
+  statusText: {
+    fontSize: 9,
+    fontWeight: "600",
     fontFamily: "monospace",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 8,
+    letterSpacing: 0.5,
   },
-  healthBarContainer: {
-    position: "relative",
+
+  // Compact Health section
+  compactHealthSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    gap: 8,
+  },
+  healthLabel: {
+    fontSize: 8,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+  },
+  healthBarWrapper: {
+    flex: 1,
   },
   healthBarBg: {
-    height: 6,
+    height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 3,
+    borderRadius: 2,
     overflow: "hidden",
   },
   healthBarFill: {
     height: "100%",
-    borderRadius: 3,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
+    borderRadius: 2,
   },
-  healthGridOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.1,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 3,
-  },
-
-  // Stats grid
-  statsGrid: {
-    gap: 12,
-    marginBottom: 16,
-  },
-  statCard: {
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 12,
-    position: "relative",
-    overflow: "hidden",
-  },
-  statCardError: {
-    backgroundColor: "rgba(255, 0, 0, 0.02)",
-  },
-  cardGlow: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.3,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 10,
-  },
-  iconWrapper: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cardInfo: {
-    flex: 1,
-  },
-  cardLabel: {
+  healthPercentage: {
     fontSize: 11,
     fontWeight: "700",
     fontFamily: "monospace",
-    letterSpacing: 1,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
   },
-  cardSubtitle: {
-    fontSize: 9,
-    color: gameColors.secondary,
-    fontFamily: "monospace",
-    marginTop: 1,
+
+  // Compact Stats grid
+  compactStatsGrid: {
+    gap: 6,
+    marginBottom: 8,
   },
-  cardStats: {
+  compactStatCard: {
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    borderRadius: 8,
+    borderWidth: 1,
+    padding: 8,
+    marginBottom: 4,
+  },
+  compactCardContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
+    marginBottom: 4,
   },
-  statNumber: {
-    fontSize: 24,
+  compactCardInfo: {
+    flex: 1,
+  },
+  compactCardLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+  },
+  compactCardSubtitle: {
+    fontSize: 8,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    opacity: 0.7,
+  },
+  compactStatNumber: {
+    fontSize: 16,
     fontWeight: "700",
     fontFamily: "monospace",
-    minWidth: 40,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
+    minWidth: 28,
   },
-  statBar: {
-    flex: 1,
-    height: 4,
-    borderRadius: 2,
+  compactStatBar: {
+    height: 3,
+    borderRadius: 1.5,
     overflow: "hidden",
   },
-  statBarFill: {
+  compactStatBarFill: {
     height: "100%",
-    borderRadius: 2,
-  },
-  cornerIndicator: {
-    position: "absolute",
-    width: 8,
-    height: 1,
-    opacity: 0.6,
-  },
-  cornerTL: {
-    top: 0,
-    left: 0,
-    width: 1,
-    height: 8,
-  },
-  cornerBR: {
-    bottom: 0,
-    right: 0,
-    width: 1,
-    height: 8,
+    borderRadius: 1.5,
   },
 
   // Bottom bar
   bottomBar: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 12,
+    paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.1)",
+    borderTopColor: "rgba(255, 255, 255, 0.05)",
   },
   bottomStats: {
     flex: 1,
     alignItems: "center",
   },
   bottomStatLabel: {
-    fontSize: 8,
+    fontSize: 7,
     color: gameColors.muted,
     fontFamily: "monospace",
-    letterSpacing: 1,
-    marginBottom: 2,
+    letterSpacing: 0.5,
+    marginBottom: 1,
   },
   bottomStatValue: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: "700",
     color: gameColors.primary,
     fontFamily: "monospace",
   },
   bottomDivider: {
     width: 1,
-    height: 20,
+    height: 16,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 

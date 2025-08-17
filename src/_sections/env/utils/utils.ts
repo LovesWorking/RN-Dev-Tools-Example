@@ -32,8 +32,17 @@ export const processEnvVars = (
     let status: EnvVarInfo["status"];
     if (!isPresent) {
       status = "required_missing";
-    } else if (expectedValue && actualValue !== expectedValue) {
-      status = "required_wrong_value";
+    } else if (expectedValue) {
+      // Handle different expectedValue patterns
+      let valueMatches = false;
+      if (expectedValue === 'sk_*') {
+        valueMatches = actualValue.startsWith('sk_');
+      } else if (expectedValue === 'production or development') {
+        valueMatches = actualValue === 'production' || actualValue === 'development';
+      } else {
+        valueMatches = actualValue === expectedValue;
+      }
+      status = valueMatches ? "required_present" : "required_wrong_value";
     } else if (
       expectedType &&
       getEnvVarType(actualValue).toLowerCase() !== expectedType.toLowerCase()

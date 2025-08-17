@@ -44,7 +44,11 @@ import ClaudeModal60FPSClean from "@/src/claudeModal/ClaudeModal60FPSClean";
 import { Modal60fpsTest } from "@/src/claudeModal/Modal60fpsTest";
 import ModalPerformanceComparison from "@/src/claudeModal/ModalPerformanceComparison";
 import { Environment } from "@/src/newDevTools/floatingTools";
-import { createEnvVarConfig, envVar } from "@/src/_sections/env";
+import {
+  createEnvVarConfig,
+  envVar,
+  GameUIEnvContent,
+} from "@/src/_sections/env";
 import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 
 const { width, height } = Dimensions.get("window");
@@ -496,14 +500,13 @@ function getRandomPokemonNames(count: number): string[] {
 // Stable empty styles object to prevent re-renders
 const EMPTY_STYLES = {};
 
-
 export default function PokemonScreen() {
   const queryClient = useQueryClient();
 
   const insets = useSafeAreaInsets();
   // Modal states for our modal versions
   const [claudeModalUltra60FPSVisible, setClaudeModalUltra60FPSVisible] =
-    useState(false); // Auto-open for testing
+    useState(false); // Auto-open for testing ENV UI
   const [modal60fpsTestVisible, setModal60fpsTestVisible] = useState(false);
   // Auto-open performance test modal for testing (set to false to disable)
   const AUTO_OPEN_PERFORMANCE_TEST = false;
@@ -528,7 +531,6 @@ export default function PokemonScreen() {
     useState<string>("electric");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
 
   // Debug function to log cache keys
   const logCacheKeys = useCallback(() => {
@@ -1366,75 +1368,15 @@ export default function PokemonScreen() {
         onClose={useCallback(() => setClaudeModalUltra60FPSVisible(false), [])}
         header={useMemo(
           () => ({
-            title: "60FPS Clean Modal 🚀",
-            subtitle: "Completely separated native/non-native animations",
+            title: "ENV Configuration",
+            subtitle: "Environment Variables Status",
             showToggleButton: true,
           }),
           []
         )}
         styles={EMPTY_STYLES}
       >
-        <ScrollView style={{ flex: 1, padding: 20 }}>
-          <Text style={{ color: "white", fontSize: 16, marginBottom: 10 }}>
-            60FPS Simple Modal
-          </Text>
-          <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
-            SIMPLE approach like the original but with optimizations:
-          </Text>
-          <View style={{ marginTop: 15 }}>
-            <Text
-              style={{ color: "#00FFFF", fontSize: 14, fontWeight: "bold" }}
-            >
-              🎯 Key Features:
-            </Text>
-            {[
-              "✅ Animated.Value for height (no setState during drag)",
-              "✅ RAF throttling for smooth 60FPS updates",
-              "✅ Native driver for open/close animations",
-              "✅ Velocity-based snap on release",
-              "✅ Platform-specific optimizations",
-              "✅ Works exactly like original but faster",
-            ].map((item, i) => (
-              <Text
-                key={i}
-                style={{
-                  color: "rgba(255,255,255,0.8)",
-                  fontSize: 13,
-                  marginTop: 6,
-                  marginLeft: 10,
-                }}
-              >
-                {item}
-              </Text>
-            ))}
-          </View>
-          <View style={{ marginTop: 20 }}>
-            <Text
-              style={{ color: "#FFD700", fontSize: 14, fontWeight: "bold" }}
-            >
-              🚀 Expected Performance:
-            </Text>
-            {[
-              "• 60 FPS during all gestures",
-              "• 0 dropped frames",
-              "• Minimal re-renders (<5)",
-              "• No JS thread involvement during animations",
-              "• Smooth as native iOS/Android modals",
-            ].map((item, i) => (
-              <Text
-                key={i}
-                style={{
-                  color: "rgba(255,255,255,0.8)",
-                  fontSize: 13,
-                  marginTop: 6,
-                  marginLeft: 10,
-                }}
-              >
-                {item}
-              </Text>
-            ))}
-          </View>
-        </ScrollView>
+        <GameUIEnvContent requiredEnvVars={requiredEnvVars} />
       </ClaudeModal60FPSClean>
 
       {/* Modal60fpsTest - Height Animation Version */}

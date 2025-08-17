@@ -1,4 +1,6 @@
-import ClaudeModal60FPSClean, { type ModalMode } from "../../../claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "../../../claudeModal/ClaudeModal60FPSClean";
 import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { View, Text } from "react-native";
@@ -6,6 +8,7 @@ import { BackButton } from "../../../_shared/ui/components/BackButton";
 import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKeys";
 import { useState, useCallback } from "react";
 import { useTheme } from "../../../_themes/DevToolsThemeContext";
+import { FileCode } from "lucide-react-native";
 
 interface EnvVarsModalProps {
   visible: boolean;
@@ -45,51 +48,99 @@ export function EnvVarsModal({
         flex: 1,
         gap: 12,
         minHeight: 32,
-        paddingLeft: 4,
+        paddingLeft: 12,
       }}
     >
-      {onBack && <BackButton onPress={onBack} color={theme.colors.text} size={16} />}
-      <Text
+      {onBack && <BackButton onPress={onBack} color={theme.colors.text} />}
+      <View
         style={{
-          color: theme.colors.text,
-          fontSize: theme.name === "cyberpunk" ? 14 : 14,
-          fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
-          letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-          flex: 1,
-          textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
+          width: 32,
+          height: 32,
+          backgroundColor:
+            theme.name === "cyberpunk"
+              ? `${theme.colors.envColor}15`
+              : "rgba(16, 185, 129, 0.1)",
+          borderRadius: theme.name === "cyberpunk" ? 8 : 16,
+          borderWidth: theme.name === "cyberpunk" ? 1 : 0,
+          borderColor:
+            theme.name === "cyberpunk"
+              ? `${theme.colors.envColor}40`
+              : undefined,
+          alignItems: "center",
+          justifyContent: "center",
         }}
-        numberOfLines={1}
       >
-        {theme.name === "cyberpunk" ? "// ENV_VARIABLES" : "Environment Variables"}
-      </Text>
-      {theme.name === "cyberpunk" && (
-        <View style={{
-          flexDirection: "row",
-          gap: 3,
-          marginRight: 8,
-        }}>
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.envColor,
+        <FileCode size={18} color={theme.colors.envColor} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            color: theme.colors.text,
+            fontSize: theme.name === "cyberpunk" ? 14 : 14,
+            fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+            letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+            textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
+          }}
+          numberOfLines={1}
+        >
+          {theme.name === "cyberpunk"
+            ? "ENV CONFIG INSPECTOR"
+            : "Environment Variables"}
+        </Text>
+        <Text
+          style={{
+            color:
+              theme.name === "cyberpunk"
+                ? theme.colors.textSecondary
+                : "#9CA3AF",
+            fontSize: 10,
+            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+            marginTop: 2,
             opacity: 0.8,
-          }} />
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.envColor,
-            opacity: 0.5,
-          }} />
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.envColor,
-            opacity: 0.3,
-          }} />
+          }}
+          numberOfLines={1}
+        >
+          {theme.name === "cyberpunk"
+            ? "VALIDATE & DEBUG ENV VARS"
+            : "View and validate env configuration"}
+        </Text>
+      </View>
+      {theme.name === "cyberpunk" && (
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 3,
+            marginRight: 8,
+          }}
+        >
+          <View
+            style={{
+              width: 3,
+              height: 3,
+              borderRadius: 1.5,
+              backgroundColor: theme.colors.envColor,
+              opacity: 0.8,
+            }}
+          />
+          <View
+            style={{
+              width: 3,
+              height: 3,
+              borderRadius: 1.5,
+              backgroundColor: theme.colors.envColor,
+              opacity: 0.5,
+            }}
+          />
+          <View
+            style={{
+              width: 3,
+              height: 3,
+              borderRadius: 1.5,
+              backgroundColor: theme.colors.envColor,
+              opacity: 0.3,
+            }}
+          />
         </View>
       )}
     </View>
@@ -112,7 +163,8 @@ export function EnvVarsModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       <EnvVarsDetailContent requiredEnvVars={requiredEnvVars} />
     </ClaudeModal60FPSClean>
   );

@@ -46,6 +46,11 @@ export function getEnvVarType(value: unknown): EnvVarType | "unknown" {
       return "number";
     }
 
+    // Check if it's a URL
+    if (strValue.startsWith("http://") || strValue.startsWith("https://")) {
+      return "url" as EnvVarType;
+    }
+    
     // Check if it's a comma-separated array
     if (strValue.includes(",")) {
       return "array";

@@ -48,10 +48,12 @@ export function EnvVarSection({
 
   return (
     <View style={styles.sectionContainer}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <Text style={styles.sectionCount}>{count}</Text>
-      </View>
+      {title !== "" && (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{title}</Text>
+          <Text style={styles.sectionCount}>{count}</Text>
+        </View>
+      )}
       <View style={styles.sectionContent}>
         {vars.map((envVar, index) => (
           <CyberpunkEnvVarCard

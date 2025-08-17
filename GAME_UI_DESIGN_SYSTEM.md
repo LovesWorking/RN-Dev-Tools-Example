@@ -63,10 +63,18 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
 3. HUD elements slide in (200ms delay)
 4. Menu items stagger in (80ms between)
 
-#### Continuous Effects
-- Scanning lines (4s loop)
-- Pulsing status indicators (2s loop)
-- Random glitch effects (3s intervals, 10% chance)
+#### Minimal Animation Philosophy
+- **Avoid excessive animations** - They impact performance
+- **Use animations only for state changes** - Not continuous loops
+- **Prefer React Native Reanimated** - Better performance than Animated API
+- **Simple fade-ins and scale effects** - More performant than complex animations
+- **Remove continuous effects** like scanning lines and glitches for production
+
+#### When to Animate
+- State transitions (expanded/collapsed)
+- Initial load (FadeIn with duration 200-300ms)
+- Error states (single pulse, not continuous)
+- Success confirmations (brief scale effect)
 
 ### 6. **Color Palette**
 
@@ -77,11 +85,13 @@ const gameColors = {
   panel: 'rgba(10, 10, 20, 0.98)',
   border: 'rgba(0, 212, 255, 0.3)',
   
-  // Status Colors
-  online: '#00FF88',
-  warning: '#FFD700',
-  error: '#FF4444',
-  info: '#00D4FF',
+  // Status Colors (Consistent Usage)
+  success: '#00FF88',   // Valid, working, good
+  warning: '#FFD700',   // Issues, attention needed
+  error: '#FF4444',     // Critical failures only
+  info: '#00D4FF',      // Informational, neutral
+  critical: '#FF00FF',  // System-critical states
+  optional: '#9D4EDD',  // Optional features
   
   // Tool-Specific
   query: '#00D4FF',    // Cyan
@@ -95,6 +105,12 @@ const gameColors = {
   secondary: '#AAA',
   muted: '#666',
 };
+
+// Color Usage Guidelines:
+// - Avoid using error color for non-critical issues
+// - Use warning color for issues that need attention
+// - Keep text primarily white for consistency
+// - Use color accents sparingly for emphasis
 ```
 
 ### 7. **Visual Effects**
@@ -122,7 +138,62 @@ Replace standard labels with dev culture references:
 - Network → SANITY (remaining patience)
 - Status → "SHIP IT", "PROD", "NO BUGS" (lies)
 
-### 9. **Component Structure**
+### 9. **Reusable Component Patterns**
+
+#### Collapsible Sections
+Create reusable components for consistent layouts:
+
+```tsx
+interface CollapsibleSectionProps {
+  icon: React.ComponentType<{ size: number; color: string }>;
+  iconColor: string;
+  title: string;
+  count: number;
+  subtitle: string;
+  expanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  icon: Icon,
+  iconColor,
+  title,
+  count,
+  subtitle,
+  expanded,
+  onToggle,
+  children,
+}) => (
+  <View style={styles.sectionContainer}>
+    <TouchableOpacity onPress={onToggle} activeOpacity={0.7}>
+      <View style={styles.sectionHeader}>
+        <View style={styles.sectionHeaderLeft}>
+          <Icon size={14} color={iconColor} />
+          <Text style={styles.sectionTitle}>{title}</Text>
+          <View style={[styles.sectionBadge, { backgroundColor: iconColor + "20" }]}>
+            <Text style={[styles.sectionCount, { color: iconColor }]}>{count}</Text>
+          </View>
+        </View>
+        {expanded ? (
+          <ChevronUp size={14} color={gameColors.muted} />
+        ) : (
+          <ChevronDown size={14} color={gameColors.muted} />
+        )}
+      </View>
+      <Text style={styles.sectionSubtitle}>{subtitle}</Text>
+    </TouchableOpacity>
+    
+    {expanded && (
+      <Animated.View entering={FadeIn.duration(200)}>
+        {children}
+      </Animated.View>
+    )}
+  </View>
+);
+```
+
+### 10. **Component Structure**
 
 ```tsx
 <GameUI>
@@ -181,13 +252,37 @@ Replace standard labels with dev culture references:
 </GameUI>
 ```
 
-### 10. **Implementation Tips**
+### 11. **Implementation Tips**
 
-1. **Performance**: Use `Animated.Value` for all animations
-2. **Responsiveness**: Calculate sizes based on screen dimensions
-3. **Safe Areas**: Always account for notches (60px top) and home indicators (60px bottom)
-4. **Accessibility**: Ensure text contrast meets WCAG standards
-5. **Easter Eggs**: Add random glitches, hidden messages in console
+1. **Performance First**:
+   - Use React Native Reanimated for animations
+   - Minimize re-renders with proper memoization
+   - Avoid continuous animations in production
+   - Keep animation durations under 300ms
+
+2. **Compact Design**:
+   - Make UI elements compact but readable
+   - Use smaller padding (8px instead of 16px)
+   - Reduce font sizes slightly (10-11px for labels)
+   - Stack information vertically to save horizontal space
+
+3. **Consistent Styling**:
+   - Create reusable components for common patterns
+   - Use consistent colors across similar elements
+   - Avoid mixing different visual metaphors
+   - Keep text colors primarily white/gray
+
+4. **Professional Headers**:
+   - Include icon in header with subtle background
+   - Add descriptive subtitle under main title
+   - Use uppercase for headers with letter-spacing
+   - Keep headers compact (32-40px height)
+
+5. **Responsive Design**:
+   - Calculate sizes based on screen dimensions
+   - Account for safe areas without hardcoding
+   - Test on different device sizes
+   - Ensure text remains readable on smaller screens
 
 ### Example Usage
 
@@ -235,40 +330,65 @@ const styles = StyleSheet.create({
 
 ## Key Implementation Learnings
 
-### Environment Badges
-- Use pulsing animations with different speeds per environment
-- Semi-transparent backgrounds with colored borders
-- Glowing dot indicators for live status
-- Text shadows for neon glow effects
+### Component Composition
+- **Extract reusable components** for consistent UI patterns
+- **Use composition over configuration** - Multiple specialized components instead of one complex component
+- **Pass stable props** to avoid unnecessary re-renders
+- **Create wrapper components** for common layouts (CollapsibleSection, etc.)
 
-### Responsive Design
-- Use pure JS safe area detection (no dependencies)
-- Dynamic sizing based on device characteristics
-- Maximize available screen space for content
-- Adjust text sizes and padding for smaller devices
+### Color Consistency
+- **Avoid red for non-critical issues** - Users find it alarming
+- **Use warning colors (yellow/orange)** for issues needing attention
+- **Keep primary text white** for better readability
+- **Use color accents sparingly** - Only for emphasis
+
+### Compact Stats Design
+- **Reduce card padding** from 12px to 8px
+- **Use horizontal layouts** for stat cards
+- **Smaller font sizes** (10px labels, 16px numbers)
+- **Inline progress bars** instead of separate sections
+- **Group related stats** in single cards
+
+### Modal Headers
+- **Professional format**: Icon + Title + Subtitle
+- **Consistent with other modals** (StorageModal pattern)
+- **Left padding** to avoid edge proximity
+- **Subtle icon backgrounds** for visual hierarchy
 
 ### Performance Optimizations
-- Use `setTimeout` for animation delays (not `delay` prop)
-- Animated.ScrollView for animated opacity on scroll containers
-- Proper cleanup in animation sequences
-- Defer state updates to avoid React warnings
+- **Use React Native Reanimated** instead of Animated API
+- **Avoid continuous animations** - Only animate state changes
+- **Keep animations under 300ms** for snappy feel
+- **Use FadeIn.duration(200)** for consistent timing
+- **Minimize useEffect dependencies** to reduce re-renders
 
 ## The "Wow Factor" Checklist
 
 ✅ Dark, atmospheric background  
-✅ Glowing neon accents  
-✅ Animated entrance sequence  
-✅ Live status indicators  
+✅ Glowing neon accents (used sparingly)  
+✅ Subtle entrance animations (200-300ms)  
+✅ Status indicators (static or single pulse)  
 ✅ Monospace typography  
-✅ Color-coded elements  
-✅ Progress bars and stats  
-✅ Level/XP system references  
-✅ Scanning line effects  
-✅ Random glitch effects  
-✅ Developer insider jokes  
-✅ Professional yet playful  
+✅ Color-coded elements (consistent usage)  
+✅ Inline progress bars and compact stats  
+✅ Professional headers with icons  
+✅ Collapsible sections for organization  
+✅ Reusable component patterns  
+✅ Developer-friendly terminology  
+✅ Professional yet engaging  
 ✅ Responsive to all screen sizes  
-✅ Pulsing environment indicators  
+✅ Compact, information-dense layouts  
 ✅ Maximum use of screen real estate  
 
-When someone opens a UI built with this system, they should immediately think: **"Did I just open a game or a dev tool?"**
+When someone opens a UI built with this system, they should immediately think: **"This dev tool feels as polished as a AAA game interface!"**
+
+## Best Practices Summary
+
+1. **Prioritize performance** over excessive animations
+2. **Create reusable components** for consistent patterns
+3. **Keep designs compact** but readable
+4. **Use consistent colors** - avoid alarming reds
+5. **Professional headers** with icons and subtitles
+6. **Collapsible sections** for better organization
+7. **Test on real devices** for performance
+8. **Minimal animation philosophy** - only what's necessary

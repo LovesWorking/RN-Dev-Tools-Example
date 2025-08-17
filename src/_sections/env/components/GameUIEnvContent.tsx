@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -24,6 +24,9 @@ import {
   Shield,
   Activity,
   AlertOctagon,
+  ChevronDown,
+  ChevronUp,
+  HelpCircle,
 } from "lucide-react-native";
 
 import { useDynamicEnv } from "../hooks";
@@ -58,38 +61,38 @@ const ALERT_STATES = {
   OPTIMAL: {
     icon: CheckCircle,
     color: gameColors.success,
-    label: "ALL SYSTEMS OPERATIONAL",
-    subtitle: "Environment configured correctly",
+    label: "CONFIG OK",
+    subtitle: "All required vars present",
     pulse: false,
   },
   WARNING: {
     icon: AlertTriangle,
     color: gameColors.warning,
-    label: "WARNING DETECTED",
-    subtitle: "Non-critical issues found",
-    pulse: true,
+    label: "CONFIG WARNING",
+    subtitle: "Check variable types/values",
+    pulse: false,
   },
   ERROR: {
     icon: AlertCircle,
     color: gameColors.error,
-    label: "ERROR STATE",
+    label: "CONFIG ERROR",
     subtitle: "Missing required variables",
-    pulse: true,
+    pulse: false,
   },
   CRITICAL: {
     icon: AlertOctagon,
     color: gameColors.critical,
-    label: "CRITICAL FAILURE",
-    subtitle: "Multiple system failures",
-    pulse: true,
-    glitch: true,
+    label: "CONFIG FAILURE",
+    subtitle: "Multiple required vars missing",
+    pulse: false,
+    glitch: false,
   },
   LOADING: {
     icon: Activity,
     color: gameColors.info,
-    label: "SCANNING ENVIRONMENT",
-    subtitle: "Analyzing configuration...",
-    pulse: true,
+    label: "LOADING CONFIG",
+    subtitle: "Reading environment variables...",
+    pulse: false,
   },
 };
 
@@ -97,22 +100,134 @@ interface GameUIEnvContentProps {
   requiredEnvVars?: RequiredEnvVar[];
 }
 
-export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
-  // Test state management
-  const [testAlertState, setTestAlertState] =
-    useState<keyof typeof ALERT_STATES>("OPTIMAL");
-  const [showTestControls, setShowTestControls] = useState(false);
+// Reusable collapsible section component
+interface CollapsibleSectionProps {
+  icon: React.ComponentType<{ size: number; color: string }>;
+  iconColor: string;
+  title: string;
+  count: number;
+  subtitle: string;
+  expanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
 
-  // Animation values
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  icon: Icon,
+  iconColor,
+  title,
+  count,
+  subtitle,
+  expanded,
+  onToggle,
+  children,
+}) => (
+  <View style={styles.sectionContainer}>
+    <TouchableOpacity
+      onPress={onToggle}
+      activeOpacity={0.7}
+      style={styles.sectionHeaderTouchable}
+    >
+      <View style={styles.sectionHeader}>
+        <View style={styles.sectionHeaderLeft}>
+          <Icon size={14} color={iconColor} />
+          <Text style={styles.sectionTitle}>{title}</Text>
+          <View style={[styles.sectionBadge, { backgroundColor: iconColor + "20" }]}>
+            <Text style={[styles.sectionCount, { color: iconColor }]}>{count}</Text>
+          </View>
+        </View>
+        {expanded ? (
+          <ChevronUp size={14} color={gameColors.muted} />
+        ) : (
+          <ChevronDown size={14} color={gameColors.muted} />
+        )}
+      </View>
+      <Text style={styles.sectionSubtitle}>{subtitle}</Text>
+    </TouchableOpacity>
+    
+    {expanded && (
+      <Animated.View entering={FadeIn.duration(200)}>
+        {children}
+      </Animated.View>
+    )}
+  </View>
+);
+
+export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
+  // State for expanded issues and sections
+  const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
+  const [issuesSectionExpanded, setIssuesSectionExpanded] = useState(true);
+  const [requiredSectionExpanded, setRequiredSectionExpanded] = useState(true);
+  const [optionalSectionExpanded, setOptionalSectionExpanded] = useState(false);
+  
+  // Dev test mode state
+  const [devTestMode, setDevTestMode] = useState<string | null>(null);
+  const [devMenuExpanded, setDevMenuExpanded] = useState(false);
+
+  // Animation values (minimal, only for state changes)
   const alertOpacity = useSharedValue(1);
   const alertScale = useSharedValue(1);
-  const glitchValue = useSharedValue(0);
-  const scanLineY = useSharedValue(-100);
 
   // Auto-collect environment variables
   const envResults = useDynamicEnv();
 
   const autoCollectedEnvVars = useMemo(() => {
+    // Dev test mode mock data
+    if (devTestMode) {
+      switch (devTestMode) {
+        case 'SUCCESS':
+          return {
+            EXPO_PUBLIC_API_URL: 'https://api.example.com',
+            EXPO_PUBLIC_API_KEY: 'sk_test_1234567890',
+            EXPO_PUBLIC_ENVIRONMENT: 'production',
+            EXPO_PUBLIC_DEBUG_MODE: 'false',
+            EXPO_PUBLIC_CACHE_TTL: '3600',
+            EXPO_PUBLIC_MAX_RETRIES: '3',
+            EXPO_PUBLIC_TIMEOUT: '30000',
+            EXPO_PUBLIC_FEATURE_FLAG_A: 'true',
+            EXPO_PUBLIC_FEATURE_FLAG_B: 'false',
+            EXPO_PUBLIC_LOG_LEVEL: 'info',
+          };
+        case 'PARTIAL_FAILURE':
+          return {
+            EXPO_PUBLIC_API_URL: 'https://api.example.com',
+            EXPO_PUBLIC_API_KEY: 'invalid_key_format',
+            EXPO_PUBLIC_ENVIRONMENT: 'dev',
+            EXPO_PUBLIC_DEBUG_MODE: 'yes', // Wrong type
+            EXPO_PUBLIC_TIMEOUT: 'thirty', // Wrong type
+          };
+        case 'CRITICAL_FAILURE':
+          return {
+            EXPO_PUBLIC_LOG_LEVEL: 'debug',
+            EXPO_PUBLIC_FEATURE_FLAG_A: 'true',
+          };
+        case 'EMPTY':
+          return {};
+        case 'TYPE_ERRORS':
+          return {
+            EXPO_PUBLIC_API_URL: '12345', // Should be URL
+            EXPO_PUBLIC_API_KEY: 'sk_test_1234567890',
+            EXPO_PUBLIC_ENVIRONMENT: 'production',
+            EXPO_PUBLIC_DEBUG_MODE: 'yes', // Should be boolean
+            EXPO_PUBLIC_CACHE_TTL: 'one hour', // Should be number
+            EXPO_PUBLIC_MAX_RETRIES: 'three', // Should be number
+            EXPO_PUBLIC_TIMEOUT: 'thirty seconds', // Should be number
+          };
+        case 'VALUE_ERRORS':
+          return {
+            EXPO_PUBLIC_API_URL: 'https://api.example.com',
+            EXPO_PUBLIC_API_KEY: 'wrong_prefix_1234567890', // Wrong prefix
+            EXPO_PUBLIC_ENVIRONMENT: 'staging', // Not allowed value
+            EXPO_PUBLIC_DEBUG_MODE: 'false',
+            EXPO_PUBLIC_LOG_LEVEL: 'verbose', // Invalid log level
+            EXPO_PUBLIC_MAX_RETRIES: '-1', // Invalid negative
+          };
+        default:
+          break;
+      }
+    }
+    
+    // Normal operation - use actual env vars
     const envVars: Record<string, string> = {};
     envResults.forEach(({ key, data }) => {
       if (data !== undefined && data !== null) {
@@ -120,17 +235,40 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       }
     });
     return envVars;
-  }, [envResults]);
+  }, [envResults, devTestMode]);
 
   // Process and categorize environment variables
   const { requiredVars, optionalVars } = useMemo(() => {
-    return processEnvVars(autoCollectedEnvVars, requiredEnvVars);
-  }, [autoCollectedEnvVars, requiredEnvVars]);
+    // Use mock required vars for dev test mode
+    const mockRequiredVars = devTestMode ? [
+      { key: 'EXPO_PUBLIC_API_URL', expectedType: 'url', description: 'Base API endpoint URL' },
+      { key: 'EXPO_PUBLIC_API_KEY', expectedType: 'string', expectedValue: 'sk_*', description: 'API authentication key' },
+      { key: 'EXPO_PUBLIC_ENVIRONMENT', expectedType: 'string', expectedValue: 'production or development', description: 'Current environment' },
+      { key: 'EXPO_PUBLIC_DEBUG_MODE', expectedType: 'boolean', description: 'Enable debug logging' },
+      { key: 'EXPO_PUBLIC_CACHE_TTL', expectedType: 'number', description: 'Cache time-to-live in seconds' },
+      { key: 'EXPO_PUBLIC_MAX_RETRIES', expectedType: 'number', description: 'Maximum retry attempts' },
+      { key: 'EXPO_PUBLIC_TIMEOUT', expectedType: 'number', description: 'Request timeout in milliseconds' },
+    ] as RequiredEnvVar[] : requiredEnvVars;
+    
+    return processEnvVars(autoCollectedEnvVars, mockRequiredVars);
+  }, [autoCollectedEnvVars, requiredEnvVars, devTestMode]);
 
   // Calculate statistics
   const stats = useMemo(() => {
+    // For dev test mode, ensure we're calculating stats based on mock data
+    if (devTestMode === 'EMPTY') {
+      return {
+        totalCount: 0,
+        requiredCount: 0,
+        optionalCount: 0,
+        presentRequiredCount: 0,
+        missingCount: 0,
+        wrongValueCount: 0,
+        wrongTypeCount: 0,
+      };
+    }
     return calculateStats(requiredVars, optionalVars, autoCollectedEnvVars);
-  }, [requiredVars, optionalVars, autoCollectedEnvVars]);
+  }, [requiredVars, optionalVars, autoCollectedEnvVars, devTestMode]);
 
   // Determine actual alert state based on stats
   const actualAlertState = useMemo(() => {
@@ -140,58 +278,47 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
     return "OPTIMAL";
   }, [stats]);
 
-  // Use test state if test controls are shown, otherwise use actual state
-  const currentAlertState = showTestControls
-    ? testAlertState
-    : actualAlertState;
+  // Use actual state based on env vars
+  const currentAlertState = actualAlertState;
   const alertConfig = ALERT_STATES[currentAlertState];
   const IconComponent = alertConfig.icon;
 
-  // Setup animations
+  // Toggle issue expansion
+  const toggleIssue = useCallback((key: string) => {
+    setExpandedIssues(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  }, []);
+
+  // Generate fix suggestions for issues
+  const generateFixSuggestion = useCallback((varItem: any) => {
+    if (varItem.status === 'required_missing') {
+      return `Add to .env: ${varItem.key}=your_value_here`;
+    } else if (varItem.status === 'required_wrong_type') {
+      const expectedType = varItem.expectedType || 'unknown';
+      return `Update type to ${expectedType} in .env file`;
+    } else if (varItem.status === 'required_wrong_value') {
+      const expectedVal = typeof varItem.expectedValue === 'string' 
+        ? varItem.expectedValue 
+        : 'valid value';
+      return `Update to match: ${expectedVal}`;
+    }
+    return '';
+  }, []);
+
+  // Simple fade-in animation for state changes only
   useEffect(() => {
-    // Scan line animation
-    scanLineY.value = withRepeat(
-      withTiming(400, { duration: 4000, easing: Easing.linear }),
-      -1,
-      false
-    );
-
-    // Alert pulse animation
-    if (alertConfig.pulse) {
-      alertScale.value = withRepeat(
-        withSequence(
-          withTiming(1.05, { duration: 500 }),
-          withTiming(1, { duration: 500 })
-        ),
-        -1,
-        true
-      );
-      alertOpacity.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 500 }),
-          withTiming(0.7, { duration: 500 })
-        ),
-        -1,
-        true
-      );
-    } else {
-      alertScale.value = withTiming(1, { duration: 300 });
-      alertOpacity.value = withTiming(1, { duration: 300 });
-    }
-
-    // Glitch effect for critical state
-    if (alertConfig.glitch) {
-      const startGlitch = () => {
-        glitchValue.value = withSequence(
-          withTiming(1, { duration: 50 }),
-          withTiming(0, { duration: 30 }),
-          withTiming(0.5, { duration: 40 }),
-          withTiming(0, { duration: 100 })
-        );
-        setTimeout(startGlitch, 2000 + Math.random() * 3000);
-      };
-      startGlitch();
-    }
+    // Just a simple fade when state changes
+    alertOpacity.value = 0;
+    alertOpacity.value = withTiming(1, { duration: 300 });
+    alertScale.value = 0.95;
+    alertScale.value = withTiming(1, { duration: 300, easing: Easing.out(Easing.ease) });
   }, [currentAlertState]);
 
   const alertAnimatedStyle = useAnimatedStyle(() => ({
@@ -199,22 +326,6 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
     opacity: alertOpacity.value,
   }));
 
-  const glitchAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateX: interpolate(
-          glitchValue.value,
-          [0, 1],
-          [0, Math.random() * 4 - 2]
-        ),
-      },
-    ],
-    opacity: interpolate(glitchValue.value, [0, 1], [1, 0.8]),
-  }));
-
-  const scanLineStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: scanLineY.value }],
-  }));
 
   return (
     <ScrollView
@@ -222,9 +333,8 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {/* Background effects */}
+      {/* Subtle background grid */}
       <View style={styles.backgroundGrid} />
-      <Animated.View style={[styles.scanLine, scanLineStyle]} />
 
       {/* Status Alert Header */}
       <Animated.View
@@ -234,13 +344,12 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
           alertAnimatedStyle,
         ]}
       >
-        <Animated.View style={glitchAnimatedStyle}>
-          <View
-            style={[
-              styles.alertGlow,
-              { backgroundColor: alertConfig.color + "10" },
-            ]}
-          />
+        <View
+          style={[
+            styles.alertGlow,
+            { backgroundColor: alertConfig.color + "10" },
+          ]}
+        />
 
           <View style={styles.alertContent}>
             <View
@@ -268,7 +377,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
               <Text
                 style={[styles.alertBadgeText, { color: alertConfig.color }]}
               >
-                LIVE
+                STATIC
               </Text>
             </View>
           </View>
@@ -292,115 +401,265 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
               />
             ))}
           </View>
-        </Animated.View>
       </Animated.View>
 
-      {/* Test Controls Toggle */}
-      <TouchableOpacity
-        onPress={() => setShowTestControls(!showTestControls)}
-        style={styles.testToggle}
-      >
-        <Zap size={14} color={gameColors.info} />
-        <Text style={styles.testToggleText}>
-          {showTestControls ? "HIDE" : "SHOW"} TEST CONTROLS
-        </Text>
-      </TouchableOpacity>
 
-      {/* Test Alert State Controls */}
-      {showTestControls && (
-        <Animated.View
-          entering={FadeIn.duration(300)}
-          style={styles.testControlsContainer}
-        >
-          <Text style={styles.testControlsTitle}>ALERT STATE SIMULATOR</Text>
-          <View style={styles.testButtons}>
-            {Object.keys(ALERT_STATES).map((state) => (
-              <TouchableOpacity
-                key={state}
-                onPress={() =>
-                  setTestAlertState(state as keyof typeof ALERT_STATES)
-                }
-                style={[
-                  styles.testButton,
-                  {
-                    borderColor:
-                      ALERT_STATES[state as keyof typeof ALERT_STATES].color +
-                      "60",
-                    backgroundColor:
-                      testAlertState === state
-                        ? ALERT_STATES[state as keyof typeof ALERT_STATES]
-                            .color + "20"
-                        : "transparent",
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.testButtonText,
-                    {
-                      color:
-                        ALERT_STATES[state as keyof typeof ALERT_STATES].color,
-                    },
-                  ]}
-                >
-                  {state}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </Animated.View>
-      )}
 
       {/* Stats Section with game UI styling */}
       <View style={styles.statsWrapper}>
         <CyberpunkEnvVarStats stats={stats} />
       </View>
 
-      {/* Required Variables Section with game UI label */}
-      <View style={styles.sectionContainer}>
-        <View style={styles.sectionHeader}>
-          <Shield size={14} color={gameColors.info} />
-          <Text style={styles.sectionTitle}>REQUIRED MODULES</Text>
-          <View style={styles.sectionBadge}>
-            <Text style={styles.sectionCount}>{stats.requiredCount}</Text>
-          </View>
-        </View>
-        <EnvVarSection
-          title=""
-          count={stats.requiredCount}
-          vars={requiredVars}
-          emptyMessage="No required modules configured"
-        />
-      </View>
-
-      {/* Optional Variables Section with game UI label */}
-      <View style={styles.sectionContainer}>
-        <View style={styles.sectionHeader}>
-          <Activity size={14} color={gameColors.optional} />
-          <Text style={styles.sectionTitle}>OPTIONAL MODULES</Text>
-          <View
-            style={[
-              styles.sectionBadge,
-              { backgroundColor: gameColors.optional + "20" },
-            ]}
-          >
-            <Text style={[styles.sectionCount, { color: gameColors.optional }]}>
-              {stats.optionalCount}
+      {/* Issues Section - Collapsible */}
+      {(stats.missingCount > 0 || stats.wrongValueCount > 0 || stats.wrongTypeCount > 0) && (
+        <CollapsibleSection
+          icon={AlertCircle}
+          iconColor={gameColors.warning}
+          title="ISSUES TO FIX"
+          count={stats.missingCount + stats.wrongValueCount + stats.wrongTypeCount}
+          subtitle="Environment variables that need attention before deployment"
+          expanded={issuesSectionExpanded}
+          onToggle={() => setIssuesSectionExpanded(!issuesSectionExpanded)}
+        >
+          <View style={styles.issuesCompactList}>
+            {requiredVars.filter(v => v.status !== 'required_present').map((varItem, index) => {
+              const fixSuggestion = generateFixSuggestion(varItem);
+              const isError = varItem.status === 'required_missing';
+              const statusColor = isError ? gameColors.warning : gameColors.info;
+              const StatusIcon = isError ? AlertOctagon : AlertTriangle;
+              const isExpanded = expandedIssues.has(varItem.key);
+              const ChevronIcon = isExpanded ? ChevronUp : ChevronDown;
+              
+              return (
+                <View key={`${varItem.key}-${index}`}>
+                  <TouchableOpacity
+                    onPress={() => toggleIssue(varItem.key)}
+                    style={styles.issueCompactRow}
+                    activeOpacity={0.7}
+                  >
+                    <StatusIcon size={14} color={statusColor} />
+                    <View style={styles.issueCompactContent}>
+                      <Text style={[styles.issueCompactKey, { color: gameColors.primary }]}>
+                        {varItem.key}
+                      </Text>
+                      <Text style={styles.issueCompactDesc}>
+                        {varItem.status === 'required_missing' && '• Not found'}
+                        {varItem.status === 'required_wrong_type' && `• Expected ${varItem.expectedType}`}
+                        {varItem.status === 'required_wrong_value' && `• Invalid: ${String(varItem.value).substring(0, 20)}`}
+                      </Text>
+                    </View>
+                    <ChevronIcon size={12} color={gameColors.muted} />
+                  </TouchableOpacity>
+                  
+                  {isExpanded && (
+                    <Animated.View 
+                      entering={FadeIn.duration(200)}
+                      style={styles.issueDetails}
+                    >
+                      <View style={styles.issueDetailRow}>
+                        <Text style={styles.issueDetailLabel}>Status:</Text>
+                        <Text style={[styles.issueDetailValue, { color: gameColors.primary, fontWeight: "600" }]}>
+                          {varItem.status === 'required_missing' && 'MISSING'}
+                          {varItem.status === 'required_wrong_type' && 'TYPE ERROR'}
+                          {varItem.status === 'required_wrong_value' && 'INVALID VALUE'}
+                        </Text>
+                      </View>
+                      
+                      {varItem.value !== undefined && varItem.status !== 'required_missing' && (
+                        <View style={styles.issueDetailRow}>
+                          <Text style={styles.issueDetailLabel}>Current:</Text>
+                          <Text style={[styles.issueDetailValue, { color: gameColors.warning }]}>
+                            "{String(varItem.value)}"
+                          </Text>
+                        </View>
+                      )}
+                      
+                      {varItem.expectedType && varItem.status === 'required_wrong_type' && (
+                        <View style={styles.issueDetailRow}>
+                          <Text style={styles.issueDetailLabel}>Expected:</Text>
+                          <Text style={[styles.issueDetailValue, { color: gameColors.success }]}>
+                            {varItem.expectedType}
+                          </Text>
+                        </View>
+                      )}
+                      
+                      {varItem.expectedValue && varItem.status === 'required_wrong_value' && (
+                        <View style={styles.issueDetailRow}>
+                          <Text style={styles.issueDetailLabel}>Expected:</Text>
+                          <Text style={[styles.issueDetailValue, { color: gameColors.success }]}>
+                            "{typeof varItem.expectedValue === 'string' ? varItem.expectedValue : 'valid value'}"
+                          </Text>
+                        </View>
+                      )}
+                      
+                      {varItem.description && (
+                        <View style={styles.issueDescSection}>
+                          <Text style={styles.issueDescText}>{varItem.description}</Text>
+                        </View>
+                      )}
+                      
+                      <View style={styles.issueFixSection}>
+                        <Text style={styles.issueFixLabel}>HOW TO FIX</Text>
+                        <Text style={styles.issueFixText}>{fixSuggestion}</Text>
+                      </View>
+                    </Animated.View>
+                  )}
+                </View>
+              );
+            })}
+            
+            <Text style={styles.issueHint}>
+              Tap any issue to view details
             </Text>
           </View>
-        </View>
+        </CollapsibleSection>
+      )}
+
+      {/* Required Variables Section - Collapsible */}
+      <CollapsibleSection
+        icon={Shield}
+        iconColor={gameColors.info}
+        title="REQUIRED VARIABLES"
+        count={stats.requiredCount}
+        subtitle="Variables that must be set for the app to function properly"
+        expanded={requiredSectionExpanded}
+        onToggle={() => setRequiredSectionExpanded(!requiredSectionExpanded)}
+      >
         <EnvVarSection
           title=""
-          count={stats.optionalCount}
-          vars={optionalVars}
-          emptyMessage="No optional modules detected"
+          count={0}
+          vars={requiredVars}
+          emptyMessage="No required variables configured"
         />
-      </View>
+      </CollapsibleSection>
+
+      {/* Optional Variables Section - Collapsible */}
+      <CollapsibleSection
+        icon={Activity}
+        iconColor={gameColors.optional}
+        title="OPTIONAL VARIABLES"
+        count={stats.optionalCount}
+        subtitle="Additional configuration for enhanced features and customization"
+        expanded={optionalSectionExpanded}
+        onToggle={() => setOptionalSectionExpanded(!optionalSectionExpanded)}
+      >
+        <EnvVarSection
+          title=""
+          count={0}
+          vars={optionalVars}
+          emptyMessage="No optional variables detected"
+        />
+      </CollapsibleSection>
 
       {/* Tech footer */}
       <Text style={styles.techFooter}>
         // EXPO_PUBLIC_* NAMESPACE REQUIRED FOR RN ACCESS
       </Text>
+      
+      {/* Dev Test Mode */}
+      <View style={styles.devTestContainer}>
+        <TouchableOpacity
+          onPress={() => setDevMenuExpanded(!devMenuExpanded)}
+          activeOpacity={0.7}
+          style={styles.devTestHeader}
+        >
+          <View style={styles.devTestHeaderContent}>
+            <Zap size={12} color={gameColors.critical} />
+            <Text style={styles.devTestTitle}>DEV TEST MODE</Text>
+            {devTestMode && (
+              <View style={styles.devTestBadge}>
+                <Text style={styles.devTestBadgeText}>{devTestMode}</Text>
+              </View>
+            )}
+          </View>
+          {devMenuExpanded ? (
+            <ChevronUp size={12} color={gameColors.muted} />
+          ) : (
+            <ChevronDown size={12} color={gameColors.muted} />
+          )}
+        </TouchableOpacity>
+        
+        {devMenuExpanded && (
+          <Animated.View entering={FadeIn.duration(200)} style={styles.devTestMenu}>
+            <TouchableOpacity
+              onPress={() => setDevTestMode(null)}
+              style={[styles.devTestOption, !devTestMode && styles.devTestOptionActive]}
+            >
+              <CheckCircle size={11} color={!devTestMode ? gameColors.success : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, !devTestMode && styles.devTestOptionTextActive]}>
+                LIVE DATA
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Use actual environment</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => setDevTestMode('SUCCESS')}
+              style={[styles.devTestOption, devTestMode === 'SUCCESS' && styles.devTestOptionActive]}
+            >
+              <CheckCircle size={11} color={devTestMode === 'SUCCESS' ? gameColors.success : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, devTestMode === 'SUCCESS' && styles.devTestOptionTextActive]}>
+                ALL VALID
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Everything configured correctly</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => setDevTestMode('PARTIAL_FAILURE')}
+              style={[styles.devTestOption, devTestMode === 'PARTIAL_FAILURE' && styles.devTestOptionActive]}
+            >
+              <AlertTriangle size={11} color={devTestMode === 'PARTIAL_FAILURE' ? gameColors.warning : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, devTestMode === 'PARTIAL_FAILURE' && styles.devTestOptionTextActive]}>
+                PARTIAL ISSUES
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Some missing, some wrong</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => setDevTestMode('CRITICAL_FAILURE')}
+              style={[styles.devTestOption, devTestMode === 'CRITICAL_FAILURE' && styles.devTestOptionActive]}
+            >
+              <AlertOctagon size={11} color={devTestMode === 'CRITICAL_FAILURE' ? gameColors.critical : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, devTestMode === 'CRITICAL_FAILURE' && styles.devTestOptionTextActive]}>
+                CRITICAL FAILURE
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Most vars missing</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => setDevTestMode('TYPE_ERRORS')}
+              style={[styles.devTestOption, devTestMode === 'TYPE_ERRORS' && styles.devTestOptionActive]}
+            >
+              <Zap size={11} color={devTestMode === 'TYPE_ERRORS' ? gameColors.info : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, devTestMode === 'TYPE_ERRORS' && styles.devTestOptionTextActive]}>
+                TYPE ERRORS
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Wrong data types</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => setDevTestMode('VALUE_ERRORS')}
+              style={[styles.devTestOption, devTestMode === 'VALUE_ERRORS' && styles.devTestOptionActive]}
+            >
+              <AlertCircle size={11} color={devTestMode === 'VALUE_ERRORS' ? gameColors.warning : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, devTestMode === 'VALUE_ERRORS' && styles.devTestOptionTextActive]}>
+                VALUE ERRORS
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Invalid values/formats</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => setDevTestMode('EMPTY')}
+              style={[styles.devTestOption, devTestMode === 'EMPTY' && styles.devTestOptionActive]}
+            >
+              <HelpCircle size={11} color={devTestMode === 'EMPTY' ? gameColors.muted : gameColors.muted} />
+              <Text style={[styles.devTestOptionText, devTestMode === 'EMPTY' && styles.devTestOptionTextActive]}>
+                NO VARIABLES
+              </Text>
+              <Text style={styles.devTestOptionDesc}>Empty environment</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -416,15 +675,8 @@ const styles = StyleSheet.create({
   },
   backgroundGrid: {
     ...StyleSheet.absoluteFillObject,
-    opacity: 0.02,
+    opacity: 0.01,
     backgroundColor: gameColors.info,
-  },
-  scanLine: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: "rgba(0, 212, 255, 0.05)",
   },
 
   // Alert Header
@@ -494,63 +746,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
 
-  // Test Controls
-  testToggle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    alignSelf: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: gameColors.panel,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: gameColors.border,
-    marginBottom: 12,
-  },
-  testToggleText: {
-    fontSize: 9,
-    color: gameColors.info,
-    fontFamily: "monospace",
-    letterSpacing: 1,
-    fontWeight: "600",
-  },
-  testControlsContainer: {
-    backgroundColor: gameColors.panel,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: gameColors.border,
-  },
-  testControlsTitle: {
-    fontSize: 10,
-    color: gameColors.secondary,
-    fontFamily: "monospace",
-    letterSpacing: 1,
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  testButtons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  testButton: {
-    flex: 1,
-    minWidth: "30%",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    alignItems: "center",
-  },
-  testButtonText: {
-    fontSize: 9,
-    fontFamily: "monospace",
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
 
   // Stats wrapper
   statsWrapper: {
@@ -561,21 +756,37 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginBottom: 20,
   },
+  sectionHeaderTouchable: {
+    marginBottom: 12,
+  },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
+    justifyContent: "space-between",
+    marginBottom: 4,
     paddingHorizontal: 4,
   },
-  sectionTitle: {
+  sectionHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     flex: 1,
+  },
+  sectionTitle: {
     fontSize: 11,
     color: gameColors.primary,
     fontFamily: "monospace",
     fontWeight: "700",
     letterSpacing: 2,
     opacity: 0.9,
+  },
+  sectionSubtitle: {
+    fontSize: 9,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    paddingHorizontal: 4,
+    marginTop: 2,
+    opacity: 0.7,
   },
   sectionBadge: {
     backgroundColor: gameColors.info + "20",
@@ -599,5 +810,198 @@ const styles = StyleSheet.create({
     marginTop: 20,
     letterSpacing: 1,
     opacity: 0.5,
+  },
+
+  // Compact issues section
+  issuesCompactList: {
+    backgroundColor: gameColors.panel,
+    borderRadius: 8,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255, 68, 68, 0.2)",
+  },
+  issueCompactRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    marginBottom: 4,
+  },
+  issueCompactContent: {
+    flex: 1,
+    marginLeft: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  issueCompactKey: {
+    fontSize: 11,
+    fontWeight: "600",
+    fontFamily: "monospace",
+  },
+  issueCompactDesc: {
+    fontSize: 10,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    flex: 1,
+  },
+  issueHint: {
+    fontSize: 9,
+    color: gameColors.muted,
+    fontFamily: "monospace",
+    textAlign: "center",
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.05)",
+  },
+  
+  // Issue details (expanded state)
+  issueDetails: {
+    marginTop: 8,
+    marginLeft: 22,
+    marginRight: 8,
+    paddingLeft: 12,
+    paddingRight: 8,
+    paddingTop: 8,
+    paddingBottom: 8,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    borderLeftWidth: 2,
+    borderLeftColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 4,
+  },
+  issueDetailRow: {
+    flexDirection: "row",
+    marginTop: 8,
+    alignItems: "flex-start",
+  },
+  issueDetailLabel: {
+    fontSize: 10,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    fontWeight: "600",
+    width: 70,
+  },
+  issueDetailValue: {
+    fontSize: 11,
+    color: gameColors.primary,
+    fontFamily: "monospace",
+    flex: 1,
+    lineHeight: 16,
+  },
+  issueFixSection: {
+    marginTop: 12,
+    padding: 10,
+    backgroundColor: "rgba(0, 212, 255, 0.08)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(0, 212, 255, 0.2)",
+  },
+  issueFixLabel: {
+    fontSize: 10,
+    color: gameColors.info,
+    fontFamily: "monospace",
+    fontWeight: "700",
+    marginBottom: 6,
+    letterSpacing: 0.5,
+  },
+  issueFixText: {
+    fontSize: 11,
+    color: "#FFFFFF",
+    fontFamily: "monospace",
+    lineHeight: 18,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    padding: 8,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  issueDescSection: {
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.05)",
+  },
+  issueDescText: {
+    fontSize: 10,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    marginTop: 4,
+    lineHeight: 14,
+  },
+  
+  // Dev Test Mode styles
+  devTestContainer: {
+    marginTop: 24,
+    marginBottom: 8,
+    backgroundColor: "rgba(255, 0, 255, 0.05)",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255, 0, 255, 0.2)",
+    borderStyle: "dashed" as const,
+  },
+  devTestHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+  },
+  devTestHeaderContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  devTestTitle: {
+    fontSize: 10,
+    color: gameColors.critical,
+    fontFamily: "monospace",
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  devTestBadge: {
+    backgroundColor: gameColors.critical + "20",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  devTestBadgeText: {
+    fontSize: 8,
+    color: gameColors.critical,
+    fontFamily: "monospace",
+    fontWeight: "600",
+  },
+  devTestMenu: {
+    padding: 8,
+    paddingTop: 0,
+  },
+  devTestOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 8,
+    borderRadius: 6,
+    marginBottom: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  devTestOptionActive: {
+    backgroundColor: "rgba(0, 212, 255, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(0, 212, 255, 0.3)",
+  },
+  devTestOptionText: {
+    fontSize: 10,
+    color: gameColors.secondary,
+    fontFamily: "monospace",
+    fontWeight: "600",
+    marginLeft: 8,
+    minWidth: 100,
+  },
+  devTestOptionTextActive: {
+    color: gameColors.primary,
+  },
+  devTestOptionDesc: {
+    fontSize: 9,
+    color: gameColors.muted,
+    fontFamily: "monospace",
+    marginLeft: 8,
   },
 });
