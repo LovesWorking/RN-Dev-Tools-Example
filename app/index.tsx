@@ -49,6 +49,8 @@ import {
   envVar,
   GameUIEnvContent,
 } from "@/src/_sections/env";
+import QueryStatusCount from "@/src/_sections/react-query/components/query-browser/QueryStatusCount";
+import MutationStatusCount from "@/src/_sections/react-query/components/query-browser/MutationStatusCount";
 import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 
 const { width, height } = Dimensions.get("window");
@@ -513,6 +515,8 @@ export default function PokemonScreen() {
   const [performanceTestVisible, setPerformanceTestVisible] = useState(
     AUTO_OPEN_PERFORMANCE_TEST
   );
+  
+  // Auto-open React Query modal for testing - removed due to Event not available in React Native
   const [pokemonStack, setPokemonStack] = useState(() => [
     "pikachu",
     "charizard",

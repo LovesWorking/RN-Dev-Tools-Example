@@ -1,7 +1,7 @@
 import { RequiredEnvVar } from "../../../_sections/env/types";
 import { RequiredStorageKey } from "../../../_sections/storage/types";
 import { EnvVarsModal } from "../../../_sections/env/components/EnvVarsModal";
-import { StorageModal, StorageEventsModal } from "../../../_sections/storage";
+import { StorageModalWithTabs, StorageEventsModal } from "../../../_sections/storage";
 import { NetworkModal } from "../../../_sections/network";
 import { BubbleSettingsModal } from "./BubbleSettingsModal";
 
@@ -62,7 +62,7 @@ export function DevToolsModalRouter({
         enableSharedModalDimensions={enableSharedModalDimensions}
       />
 
-      <StorageModal
+      <StorageModalWithTabs
         visible={selectedSection === "storage"}
         onClose={onClose}
         onBack={onBack}
@@ -70,12 +70,13 @@ export function DevToolsModalRouter({
         requiredStorageKeys={requiredStorageKeys}
       />
 
-      <StorageEventsModal
+      {/* Storage Events Modal is now integrated into StorageModalWithTabs as a tab */}
+      {/* <StorageEventsModal
         visible={selectedSection === "storage-events"}
         onClose={onClose}
         onBack={onBack}
         enableSharedModalDimensions={enableSharedModalDimensions}
-      />
+      /> */}
 
       <NetworkModal
         visible={selectedSection === "network"}

@@ -14,6 +14,7 @@ import MutationButton from "./MutationButton";
 import MutationInformation from "./MutationInformation";
 import useAllMutations from "../../hooks/useAllMutations";
 import { ContentStyle } from "@shopify/flash-list";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface Props {
   selectedMutation: Mutation | undefined;
@@ -166,53 +167,55 @@ export default function MutationsList({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
   },
   listWrapper: {
     flex: 1,
   },
   listContent: {
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
     paddingHorizontal: 8,
     paddingTop: 8,
   },
   mutationInfo: {
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
-    backgroundColor: "#171717",
+    borderTopColor: gameUIColors.border + "40",
+    backgroundColor: gameUIColors.background,
   },
   dragHandle: {
     height: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.panel,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    borderBottomColor: gameUIColors.border + "40",
   },
   dragIndicator: {
     width: 40,
     height: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: gameUIColors.border,
     borderRadius: 2,
   },
   mutationInfoContent: {
     flex: 1,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 32,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.panel,
     margin: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.border + "40",
   },
   emptyText: {
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
     fontSize: 14,
     textAlign: "center",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
   },
 });

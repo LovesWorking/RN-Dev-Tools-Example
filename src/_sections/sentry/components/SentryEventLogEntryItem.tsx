@@ -6,6 +6,7 @@ import { ConsoleTransportEntry } from "../../../_shared/logger/types";
 import { LogEntryHeader } from "../../log-dump/components/LogEntryHeader";
 import { LogEntrySentryBadge } from "./LogEntrySentryBadge";
 import { SentryEventMessage } from "./SentryEventMessage";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface SentryEventLogEntryItemProps {
   entry: ConsoleTransportEntry;
@@ -36,7 +37,7 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 8,
     overflow: "hidden",
     marginBottom: 8,

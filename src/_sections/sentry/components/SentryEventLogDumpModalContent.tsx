@@ -21,6 +21,7 @@ import {
 } from "lucide-react-native";
 
 import { ConsoleTransportEntry, LogLevel, LogType } from "../../../_shared/logger/types";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 import { EmptyFilterState, EmptyState } from "../../log-dump/EmptyStates";
 import { adaptSentryEventsToConsoleEntries } from "../utils/SentryEventAdapter";
@@ -250,7 +251,7 @@ function SentryEventLogDumpModalContentInner({
         <View style={styles.mainHeader} sentry-label="ignore devtools sentry dump main header">
           <View style={styles.headerLeft} sentry-label="ignore devtools sentry dump header left">
             <View style={styles.iconContainer} sentry-label="ignore devtools sentry dump icon container">
-              <FileText size={18} color="#8B5CF6" />
+              <FileText size={18} color={gameUIColors.optional} />
             </View>
             <View sentry-label="ignore devtools sentry dump header info">
               <Text style={styles.title} sentry-label="ignore devtools sentry dump title">Sentry Events</Text>
@@ -269,7 +270,7 @@ function SentryEventLogDumpModalContentInner({
               onPress={generateTestLogs}
               style={styles.testButton}
             >
-              <FlaskConical size={16} color="#818CF8" />
+              <FlaskConical size={16} color={gameUIColors.info} />
             </TouchableOpacity>
 
             {/* Clear Events Button */}
@@ -281,7 +282,7 @@ function SentryEventLogDumpModalContentInner({
               onPress={clearLogs}
               style={styles.clearButton}
             >
-              <Trash size={16} color="#F87171" />
+              <Trash size={16} color={gameUIColors.error} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -294,9 +295,9 @@ function SentryEventLogDumpModalContentInner({
               style={styles.refreshButton}
             >
               {isRefreshing ? (
-                <ActivityIndicator size="small" color="#8B5CF6" />
+                <ActivityIndicator size="small" color={gameUIColors.optional} />
               ) : (
-                <RefreshCw size={16} color="#8B5CF6" />
+                <RefreshCw size={16} color={gameUIColors.optional} />
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -307,7 +308,7 @@ function SentryEventLogDumpModalContentInner({
               onPress={onClose}
               style={styles.closeButton}
             >
-              <X size={16} color="#9CA3AF" />
+              <X size={16} color={gameUIColors.secondary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   subtitle: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 14,
   },
   headerRight: {

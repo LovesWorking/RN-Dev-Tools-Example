@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Query } from "@tanstack/react-query";
 import { QueryBrowser } from "./query-browser/index";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface QueryBrowserModeProps {
   selectedQuery: Query | undefined;
@@ -19,12 +20,11 @@ export function QueryBrowserMode({
         selectedQuery={selectedQuery}
         onQuerySelect={onQuerySelect}
         activeFilter={activeFilter}
-        emptyStateMessage="No React Query queries are currently active.
-
-To see queries here:
-• Make API calls using useQuery
-• Ensure queries are within QueryClientProvider
-• Check console for debugging info"
+        emptyStateMessage={
+          activeFilter
+            ? `No ${activeFilter} queries found`
+            : "No React Query queries are currently active.\n\nTo see queries here:\n• Make API calls using useQuery\n• Ensure queries are within QueryClientProvider\n• Check console for debugging info"
+        }
         contentContainerStyle={styles.queryListContent}
       />
     </View>
@@ -32,14 +32,13 @@ To see queries here:
 }
 
 const styles = StyleSheet.create({
-  // Query list matching main dev tools exactly
   queryListContainer: {
     flex: 1,
-    backgroundColor: "#171717", // Match container background to content background
+    backgroundColor: gameUIColors.background,
   },
   queryListContent: {
-    padding: 8, // Reduced to match main dev tools
-    backgroundColor: "#171717",
+    padding: 8,
+    backgroundColor: gameUIColors.background,
     flexGrow: 1,
   },
 });

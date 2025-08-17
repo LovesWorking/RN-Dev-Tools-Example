@@ -6,6 +6,8 @@ import QueryDetails from "./query-browser/QueryDetails";
 import ActionButton from "./query-browser/ActionButton";
 import { getQueryStatusLabel } from "../utils/getQueryStatusLabel";
 import { useActionButtons } from "../hooks/useActionButtons";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
+import { DataViewer } from "./shared/DataViewer";
 
 interface ActionButtonConfig {
   label: string;
@@ -54,14 +56,21 @@ export function DataEditorMode({
           <QueryDetails query={selectedQuery} />
         </View>
 
-        {/* Query Explorer Section */}
+        {/* Query Explorer Section - Non-editable viewer */}
         <View style={styles.section}>
-          <Explorer
-            label="Query"
-            value={selectedQuery}
-            defaultExpanded={["Query", "queryKey"]}
-            activeQuery={selectedQuery}
-          />
+          <View style={styles.queryExplorerContainer}>
+            <Text style={styles.queryExplorerHeader}>Query Explorer</Text>
+            <View style={styles.queryExplorerContent}>
+              <DataViewer
+                title=""
+                data={selectedQuery}
+                maxDepth={10}
+                rawMode={true}
+                showTypeFilter={true}
+                initialExpanded={false}
+              />
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -99,14 +108,19 @@ function DataExplorer({
 }) {
   if (!visible) return null;
   return (
-    <Explorer
-      key={selectedQuery.queryHash}
-      editable={true}
-      label="Data"
-      value={selectedQuery.state.data}
-      defaultExpanded={["Data"]}
-      activeQuery={selectedQuery}
-    />
+    <View style={styles.dataContainer}>
+      <Text style={styles.dataHeader}>Data Editor</Text>
+      <View style={styles.dataContent}>
+        <Explorer
+          key={selectedQuery.queryHash}
+          editable={true}
+          label="Data"
+          value={selectedQuery.state.data}
+          defaultExpanded={["Data"]}
+          activeQuery={selectedQuery}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -181,14 +195,14 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   emptyTitle: {
-    color: "#FFFFFF", // Match main dev tools primary text
+    color: gameUIColors.primary,
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center",
   },
   emptyDescription: {
-    color: "#9CA3AF", // Match main dev tools tertiary text
+    color: gameUIColors.secondary,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
@@ -201,7 +215,7 @@ const styles = StyleSheet.create({
     borderTopColor: "rgba(255, 255, 255, 0.06)", // Match DevToolsHeader border
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "#171717", // Match main dev tools primary background
+    backgroundColor: gameUIColors.background,
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
   },
@@ -210,5 +224,63 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 6, // Reduced from 8
     justifyContent: "space-between",
+  },
+  // Query Explorer styled container matching QueryDetails
+  queryExplorerContainer: {
+    minWidth: 200,
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(6, 182, 212, 0.3)",
+    overflow: "hidden",
+    shadowColor: "#06B6D4",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  queryExplorerHeader: {
+    backgroundColor: "rgba(6, 182, 212, 0.1)",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontWeight: "600",
+    fontSize: 12,
+    color: gameUIColors.info,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(6, 182, 212, 0.2)",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: "monospace",
+  },
+  queryExplorerContent: {
+    padding: 8,
+  },
+  // Data section with green accent - editable/success theme
+  dataContainer: {
+    minWidth: 200,
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(34, 197, 94, 0.3)", // Green for editable data
+    overflow: "hidden",
+    shadowColor: "#22C55E",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  dataHeader: {
+    backgroundColor: "rgba(34, 197, 94, 0.1)", // Green background
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontWeight: "600",
+    fontSize: 12,
+    color: gameUIColors.success, // Green text
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(34, 197, 94, 0.2)",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: "monospace",
+  },
+  dataContent: {
+    padding: 8,
   },
 });

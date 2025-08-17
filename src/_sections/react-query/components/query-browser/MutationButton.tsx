@@ -1,6 +1,7 @@
 import { Mutation } from "@tanstack/react-query";
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 const getMutationText = (mutation: Mutation) => {
   if (!mutation.options.mutationKey) return "Anonymous Mutation";
@@ -31,17 +32,17 @@ export default function MutationButton({
 
   const getStatusInfo = () => {
     if (mutation.state.isPaused) {
-      return { status: "Paused", color: "#8B5CF6", icon: <PauseCircle /> };
+      return { status: "Paused", color: gameUIColors.storage, icon: <PauseCircle /> };
     }
     switch (mutation.state.status) {
       case "success":
-        return { status: "Success", color: "#10B981", icon: <CheckCircle /> };
+        return { status: "Success", color: gameUIColors.success, icon: <CheckCircle /> };
       case "error":
-        return { status: "Error", color: "#EF4444", icon: <XCircle /> };
+        return { status: "Error", color: gameUIColors.error, icon: <XCircle /> };
       case "pending":
-        return { status: "Loading", color: "#3B82F6", icon: <LoadingCircle /> };
+        return { status: "Loading", color: gameUIColors.info, icon: <LoadingCircle /> };
       default:
-        return { status: "Idle", color: "#6B7280", icon: null };
+        return { status: "Idle", color: gameUIColors.muted, icon: null };
     }
   };
 
@@ -81,17 +82,17 @@ export default function MutationButton({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.border + "40",
     marginHorizontal: 8,
     marginVertical: 3,
     padding: 12,
   },
   selected: {
-    backgroundColor: "rgba(14, 165, 233, 0.05)",
-    borderColor: "rgba(14, 165, 233, 0.2)",
+    backgroundColor: gameUIColors.info + "15",
+    borderColor: gameUIColors.info + "50",
   },
   rowContent: {
     flexDirection: "row",
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   },
   submittedText: {
     fontSize: 10,
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
     marginTop: 1,
   },
   mutationSection: {
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   mutationKey: {
     fontFamily: "monospace",
     fontSize: 12,
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     lineHeight: 16,
   },
 });

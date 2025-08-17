@@ -3,6 +3,25 @@
 ## Overview
 This design system creates interfaces that look like AAA game menus, perfect for developer tools that want to feel powerful and engaging.
 
+## 🚀 Latest Updates
+
+### React Query Integration
+Successfully refactored React Query components to use the Game UI design system:
+- Created `GameUIQueryStats` component using `GameUICompactStats`
+- Updated `QueryBrowser` and `MutationsList` with Game UI colors
+- Styled `QueryRow` and `MutationButton` with consistent theming
+- Built `GameUIQueryDetails` for unified query/mutation details
+- Created `GameUIReactQueryBrowser` as comprehensive example
+
+### Shared Component Library
+Established reusable Game UI components:
+- `GameUICollapsibleSection` - Expandable sections with icons
+- `GameUIStatusHeader` - System status with alert states
+- `GameUICompactStats` - Flexible stats card displays
+- `GameUIIssuesList` - Issue display with expandable details
+- `GameUIDevTestMode` - Development testing utilities
+- `useGameUIAlertState` - Hook for alert animations
+
 ## Core Design Principles
 
 ### 1. **Dark Sci-Fi Aesthetic**
@@ -252,7 +271,53 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 </GameUI>
 ```
 
-### 11. **Implementation Tips**
+### 11. **React Query Patterns**
+
+#### Query Stats Display
+Use `GameUIQueryStats` to show query/mutation statistics:
+```tsx
+<GameUIQueryStats
+  type="queries" // or "mutations"
+  stats={{
+    fresh: 5,
+    stale: 2,
+    fetching: 1,
+    paused: 0,
+    inactive: 3
+  }}
+  activeFilter={filter}
+  onFilterChange={setFilter}
+/>
+```
+
+#### Query Browser Styling
+Apply Game UI colors to query browsers:
+```tsx
+const styles = StyleSheet.create({
+  queryRow: {
+    backgroundColor: gameUIColors.panel,
+    borderColor: gameUIColors.border + "40",
+  },
+  selectedRow: {
+    backgroundColor: gameUIColors.info + "15",
+    borderColor: gameUIColors.info + "50",
+  },
+  statusDot: {
+    backgroundColor: gameUIColors.success, // Based on status
+  }
+});
+```
+
+#### Query Details Component
+```tsx
+<GameUIQueryDetails
+  query={selectedQuery}
+  mutation={selectedMutation}
+  type="query" // or "mutation"
+/>
+```
+
+### 12. **Implementation Tips**
 
 1. **Performance First**:
    - Use React Native Reanimated for animations

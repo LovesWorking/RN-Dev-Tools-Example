@@ -5,6 +5,7 @@ import {
   LogType,
 } from "../../../_shared/logger/types";
 import { SentryFilterView } from "./SentryFilterView";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface SentryFilterModalProps {
   visible: boolean;
@@ -54,6 +55,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#1F1F1F",
+    backgroundColor: gameUIColors.background,
   },
 });

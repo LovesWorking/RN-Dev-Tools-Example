@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 import MutationStatusCount from "../query-browser/MutationStatusCount";
 import { useMemo } from "react";
 import { ModalMode } from "../../../../claudeModal/ClaudeModal60FPSClean";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface MutationBrowserFooterProps {
   activeFilter?: string | null;
@@ -52,22 +53,21 @@ export function MutationBrowserFooter({
 }
 
 const styles = StyleSheet.create({
-  // Footer matching DataEditorMode action footer exactly
   filterFooter: {
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)", // Match DevToolsHeader border
+    borderTopColor: gameUIColors.border + "40",
     paddingVertical: 8,
-    paddingHorizontal: 0, // Remove horizontal padding to maximize space
-    backgroundColor: "#171717", // Match main dev tools primary background
+    paddingHorizontal: 0,
+    backgroundColor: gameUIColors.background,
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
   },
   dockedFooter: {
-    borderBottomLeftRadius: 0, // Remove border radius when docked
+    borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
   filterContainer: {
-    minHeight: 32, // Consistent with MutationStatusCount
+    minHeight: 32,
     justifyContent: "center",
   },
 });

@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Mutation } from "@tanstack/react-query";
 import MutationsList from "./query-browser/MutationsList";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface MutationBrowserModeProps {
   selectedMutation: Mutation | undefined;
@@ -40,10 +41,10 @@ export function MutationBrowserMode({
 const styles = StyleSheet.create({
   mutationListContainer: {
     flex: 1,
-    backgroundColor: "#171717", // Match container background to content background
+    backgroundColor: gameUIColors.background,
   },
   mutationListContent: {
     padding: 8,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
   },
 });

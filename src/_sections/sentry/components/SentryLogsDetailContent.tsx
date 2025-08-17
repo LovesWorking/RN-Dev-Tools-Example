@@ -18,6 +18,7 @@ import { useSentryEvents } from "../hooks/useSentryEvents";
 import { TickProvider } from "../hooks/useTickEveryMinute";
 import { SentryDetailModal } from "./SentryDetailModal";
 import { SentryFilterModal } from "./SentryFilterModal";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 // Stable constants to prevent re-creation on every render [[memory:4875251]]
 const ESTIMATED_ITEM_SIZE = 44; // Reduced for compact cards
@@ -226,7 +227,7 @@ function SentryLogsDetailContentInner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1F1F1F",
+    backgroundColor: gameUIColors.background,
   },
   listWrapper: {
     flex: 1,

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   GestureResponderEvent,
 } from "react-native";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface QueryStatusProps {
   label: string;
@@ -28,49 +29,64 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
   onPress,
   onTouchStart,
 }) => {
-  // Modern color mapping for status indicators - hybrid approach
+  // Game UI color mapping for status indicators - matching ActionButton style
   const getStatusColors = (colorName: ColorName) => {
     const colorMap = {
-      green: { bg: "rgba(16, 185, 129, 0.1)", dot: "#10B981", text: "#10B981" },
+      green: { 
+        bg: gameUIColors.success + "26", 
+        border: gameUIColors.success + "59",
+        dot: gameUIColors.success, 
+        text: gameUIColors.success 
+      },
       yellow: {
-        bg: "rgba(245, 158, 11, 0.1)",
-        dot: "#F59E0B",
-        text: "#F59E0B",
+        bg: gameUIColors.warning + "26",
+        border: gameUIColors.warning + "59",
+        dot: gameUIColors.warning,
+        text: gameUIColors.warning,
       },
-      blue: { bg: "rgba(59, 130, 246, 0.1)", dot: "#3B82F6", text: "#3B82F6" },
+      blue: { 
+        bg: gameUIColors.info + "26", 
+        border: gameUIColors.info + "59",
+        dot: gameUIColors.info, 
+        text: gameUIColors.info 
+      },
       purple: {
-        bg: "rgba(139, 92, 246, 0.1)",
-        dot: "#8B5CF6",
-        text: "#8B5CF6",
+        bg: gameUIColors.storage + "26",
+        border: gameUIColors.storage + "59",
+        dot: gameUIColors.storage,
+        text: gameUIColors.storage,
       },
-      red: { bg: "rgba(239, 68, 68, 0.1)", dot: "#EF4444", text: "#EF4444" },
-      gray: { bg: "rgba(107, 114, 128, 0.1)", dot: "#6B7280", text: "#6B7280" },
+      red: { 
+        bg: gameUIColors.error + "26", 
+        border: gameUIColors.error + "59",
+        dot: gameUIColors.error, 
+        text: gameUIColors.error 
+      },
+      gray: { 
+        bg: gameUIColors.muted + "26", 
+        border: gameUIColors.muted + "59",
+        dot: gameUIColors.muted, 
+        text: gameUIColors.muted 
+      },
     };
     return colorMap[colorName] || colorMap.gray;
   };
 
   const statusColors = getStatusColors(color);
 
-  // Create active style based on the status color (from old version)
+  // Create active style based on the status color - React Query DevTools style
   const activeStyle = isActive
     ? {
-        backgroundColor: `${statusColors.dot}20`, // 20% opacity of the status color
-        borderColor: statusColors.dot,
+        backgroundColor: "rgba(255, 255, 255, 0.12)",
         transform: [{ scale: 1.05 }],
-        borderBottomWidth: 1.5,
-        borderBottomColor: statusColors.dot,
       }
-    : {
-        borderBottomWidth: 1.5,
-        borderBottomColor: statusColors.dot,
-      };
+    : {};
 
   return (
     <TouchableOpacity
       sentry-label="ignore devtools query status"
       style={[
         styles.queryStatusTag,
-        !showLabel && styles.clickable,
         activeStyle,
       ]}
       disabled={!onPress}
@@ -78,9 +94,15 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
       onPressIn={onTouchStart}
       activeOpacity={0.7}
     >
+      <View
+        style={[
+          styles.dot,
+          { backgroundColor: statusColors.dot },
+        ]}
+      />
       {showLabel && (
         <Text
-          style={[styles.label, { color: statusColors.text }]}
+          style={[styles.label]}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
@@ -88,27 +110,17 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
         </Text>
       )}
 
-      <View
-        style={[
-          styles.countContainer,
-          count > 0 && {
-            backgroundColor: statusColors.bg,
-          },
-        ]}
-      >
+      {count > 0 && (
         <Text
           style={[
             styles.count,
-            count > 0 && {
-              color: getStatusColors(color).text,
-            },
+            { color: statusColors.dot },
           ]}
           numberOfLines={1}
-          ellipsizeMode="middle"
         >
           {count}
         </Text>
-      </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -116,47 +128,34 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
 const styles = StyleSheet.create({
   queryStatusTag: {
     flexDirection: "row",
-    gap: 6, // Spacing between label and count
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 8, // Slightly more rounded than old version
-    paddingHorizontal: 8,
-    paddingVertical: 6,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    position: "relative",
-    flexShrink: 0, // Don't shrink below content size
-    flexGrow: 0, // Don't grow unless needed
-    minHeight: 28, // Ensure adequate height for text
-    maxHeight: 28, // Increased height limit for better text display
+    backgroundColor: "rgba(255, 255, 255, 0.06)", // Light background like React Query DevTools
+    borderRadius: 12, // Pill shape
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    height: 24,
+    gap: 6,
+    borderWidth: 0, // No border for clean look
   },
-  clickable: {
-    // Placeholder for clickable styles
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginLeft: 2,
   },
   label: {
-    fontSize: 12, // Slightly larger than old version
+    fontSize: 11,
     fontWeight: "500",
-    color: "#FFFFFF", // Will be overridden by dynamic color
-    flexShrink: 1, // Allow label to shrink if needed
-    minWidth: 0, // Allow text to shrink below intrinsic width
-  },
-  countContainer: {
-    height: 20,
-    paddingHorizontal: 8, // More padding for better balance
-    paddingVertical: 3,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 6, // More rounded
-    minWidth: 24, // Ensure space for 2+ digits
-    flexShrink: 0, // Don't shrink the count container
+    color: "rgba(255, 255, 255, 0.7)", // Neutral text color
+    textTransform: "capitalize", // Not all caps like RQ DevTools
+    fontFamily: "system",
   },
   count: {
-    fontSize: 11, // Slightly larger for better readability
-    color: "#9CA3AF", // Will be overridden by dynamic color
+    fontSize: 12,
     fontVariant: ["tabular-nums"],
     fontWeight: "600",
-    textAlign: "center",
+    marginRight: 4,
+    fontFamily: "system",
   },
 });
 

@@ -13,7 +13,7 @@ import { CyberpunkInput } from "../shared/CyberpunkInput";
 const CHUNK_SIZE = 100;
 const HIT_SLOP_OPTIMIZED = { top: 8, bottom: 8, left: 8, right: 8 };
 
-const EXPANDER_SIZE = 14;
+const EXPANDER_SIZE = 12;
 
 // Optimized chunking function moved to module scope [[memory:4875251]]
 const chunkArray = <T extends { label: string; value: JsonValue }>(
@@ -32,27 +32,30 @@ const Expander = React.memo(
   ({
     expanded,
     isFocused = false,
+    isMain = false,
   }: {
     expanded: boolean;
     isFocused?: boolean;
+    isMain?: boolean;
   }) => {
     return (
       <View
         style={[
           styles.expanderIcon,
+          isMain && styles.expanderIconMain,
           expanded ? styles.expanded : styles.collapsed,
         ]}
       >
         <Svg
-          width={EXPANDER_SIZE}
-          height={EXPANDER_SIZE}
+          width={isMain ? 14 : EXPANDER_SIZE}
+          height={isMain ? 14 : EXPANDER_SIZE}
           viewBox="0 0 24 24"
           fill="none"
         >
           <Path
             d={expanded ? "M6 9l6 6 6-6" : "M9 6l6 6-6 6"}
-            stroke={isFocused ? "#00FFFF" : "#9CA3AF"}
-            strokeWidth={2}
+            stroke={isFocused ? "#06B6D4" : (isMain ? "#CBD5E1" : "#94A3B8")}
+            strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -104,11 +107,11 @@ const CopyButton = React.memo(
         activeOpacity={0.7}
       >
         {copyState === "NoCopy" && (
-          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+          <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
             <Path
               d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              stroke={isFocused ? "#06B6D4" : "#64748B"}
-              strokeWidth={1.5}
+              stroke={isFocused ? "#06B6D4" : "#94A3B8"}
+              strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -185,11 +188,11 @@ const DeleteItemButton = React.memo(
         hitSlop={HIT_SLOP_OPTIMIZED}
         activeOpacity={0.7}
       >
-        <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
           <Path
             d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
-            stroke={isFocused ? "#06B6D4" : "#64748B"}
-            strokeWidth={1.5}
+            stroke={isFocused ? "#EF4444" : "#F87171"}
+            strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -233,11 +236,11 @@ const ClearArrayButton = React.memo(
         hitSlop={HIT_SLOP_OPTIMIZED}
         activeOpacity={0.7}
       >
-        <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
           <Path
             d="M21 10H7m14-6H7m14 12H7m14 6H7M3 10h.01M3 6h.01M3 14h.01M3 18h.01"
-            stroke={isFocused ? "#06B6D4" : "#64748B"}
-            strokeWidth={1.5}
+            stroke={isFocused ? "#FB923C" : "#FDBA74"}
+            strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -459,7 +462,7 @@ export default function Explorer({
                 hitSlop={HIT_SLOP_OPTIMIZED}
                 activeOpacity={0.6}
               >
-                <Expander expanded={isExpanded} isFocused={isRowFocused} />
+                <Expander expanded={isExpanded} isFocused={isRowFocused} isMain={isMainSection} />
                 <Text
                   style={[
                     styles.labelText,
@@ -665,61 +668,90 @@ export default function Explorer({
 }
 const styles = StyleSheet.create({
   buttonStyle: {
-    backgroundColor: "rgba(50, 50, 50, 0.6)",
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
     borderWidth: 1,
-    borderColor: "rgba(100, 100, 100, 0.6)",
-    borderRadius: 3,
+    borderColor: "rgba(148, 163, 184, 0.2)",
+    borderRadius: 6,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     position: "relative",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   buttonStyleFocused: {
-    borderColor: "rgba(0, 255, 255, 0.6)",
-    backgroundColor: "rgba(0, 255, 255, 0.05)",
+    borderColor: "rgba(6, 182, 212, 0.8)",
+    backgroundColor: "rgba(6, 182, 212, 0.15)",
+    shadowColor: "#06B6D4",
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   deleteButton: {
-    backgroundColor: "rgba(0, 255, 255, 0.05)",
-    borderColor: "rgba(0, 255, 255, 0.2)",
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderColor: "rgba(239, 68, 68, 0.3)",
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 6,
     padding: 0,
     alignItems: "center",
     justifyContent: "center",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     position: "relative",
+    shadowColor: "#EF4444",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
   },
   deleteButtonFocused: {
-    borderColor: "rgba(0, 255, 255, 0.6)",
-    backgroundColor: "rgba(0, 255, 255, 0.1)",
+    borderColor: "rgba(239, 68, 68, 0.8)",
+    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
   clearButton: {
-    backgroundColor: "rgba(50, 50, 50, 0.6)",
+    backgroundColor: "rgba(251, 146, 60, 0.1)",
     borderWidth: 1,
-    borderColor: "rgba(100, 100, 100, 0.6)",
-    borderRadius: 3,
+    borderColor: "rgba(251, 146, 60, 0.3)",
+    borderRadius: 6,
     flexDirection: "row",
     padding: 0,
     alignItems: "center",
     justifyContent: "center",
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     position: "relative",
     zIndex: 10,
+    shadowColor: "#FB923C",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
   },
   clearButtonFocused: {
-    borderColor: "rgba(0, 255, 255, 0.6)",
-    backgroundColor: "rgba(0, 255, 255, 0.05)",
+    borderColor: "rgba(251, 146, 60, 0.8)",
+    backgroundColor: "rgba(251, 146, 60, 0.2)",
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
   expanderIcon: {
-    width: 16,
-    height: 16,
+    width: 18,
+    height: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 2,
+    marginRight: 1,
+    backgroundColor: "rgba(148, 163, 184, 0.08)",
+    borderRadius: 3,
+  },
+  expanderIconMain: {
+    backgroundColor: "rgba(6, 182, 212, 0.12)",
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: "rgba(6, 182, 212, 0.3)",
   },
   expanded: {
     transform: [{ rotate: "0deg" }],
@@ -728,12 +760,12 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "0deg" }],
   },
   minWidthWrapper: {
-    minWidth: 200,
-    fontSize: 12,
+    minWidth: 180,
+    fontSize: 11,
     flexDirection: "row",
     flexWrap: "wrap",
     width: "100%",
-    marginVertical: 1,
+    marginVertical: 0.5,
   },
   fullWidthMarginRight: {
     position: "relative",
@@ -744,48 +776,63 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
     marginVertical: 1,
     borderRadius: 4,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: "rgba(15, 23, 42, 0.4)",
+    borderWidth: 0.5,
+    borderColor: "rgba(148, 163, 184, 0.1)",
   },
   flexRowItemsCenterGapMain: {
-    backgroundColor: "rgba(20, 20, 25, 0.4)",
-    borderLeftWidth: 2,
-    borderLeftColor: "rgba(148, 163, 184, 0.3)",
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
+    borderLeftWidth: 2.5,
+    borderLeftColor: "rgba(6, 182, 212, 0.6)",
+    borderColor: "rgba(6, 182, 212, 0.15)",
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    marginBottom: 3,
+    borderWidth: 1,
+    shadowColor: "#06B6D4",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
   },
   expanderButton: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "transparent",
-    paddingVertical: 2,
-    paddingHorizontal: 4,
+    paddingVertical: 1,
+    paddingHorizontal: 2,
     gap: 6,
     borderWidth: 0,
-    minHeight: 28,
+    minHeight: 24,
+    flex: 1,
   },
   labelText: {
-    color: "#9CA3AF",
+    color: "#94A3B8",
     fontSize: 10,
     fontWeight: "600",
-    marginRight: 6,
+    marginRight: 4,
     fontFamily: "monospace",
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
     textTransform: "uppercase",
   },
   labelTextFocused: {
-    color: "#00FFFF",
+    color: "#06B6D4",
   },
   labelTextMain: {
-    color: "#CBD5E1",
+    color: "#E2E8F0",
     fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.6,
   },
   textGray500: {
-    color: "#6B7280",
+    color: "#64748B",
     fontSize: 10,
     fontWeight: "400",
     fontFamily: "monospace",
+    opacity: 0.7,
   },
   pageRangeText: {
     color: "#9CA3AF",
@@ -797,27 +844,31 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    paddingLeft: 4,
+    paddingLeft: 2,
   },
   singleEntryContainer: {
-    marginLeft: 4,
+    marginLeft: 2,
     marginTop: 2,
-    paddingLeft: 4,
-    borderLeftWidth: 1,
-    borderLeftColor: "rgba(100, 100, 100, 0.3)",
+    paddingLeft: 8,
+    borderLeftWidth: 1.5,
+    borderLeftColor: "rgba(148, 163, 184, 0.25)",
   },
   singleEntryContainerMain: {
-    borderLeftColor: "rgba(148, 163, 184, 0.25)",
+    borderLeftColor: "rgba(6, 182, 212, 0.3)",
+    marginLeft: 4,
+    paddingLeft: 10,
   },
   multiEntryContainer: {
-    marginLeft: 4,
+    marginLeft: 2,
     marginTop: 2,
-    paddingLeft: 4,
-    borderLeftWidth: 1,
-    borderLeftColor: "rgba(100, 100, 100, 0.3)",
+    paddingLeft: 8,
+    borderLeftWidth: 1.5,
+    borderLeftColor: "rgba(148, 163, 184, 0.25)",
   },
   multiEntryContainerMain: {
-    borderLeftColor: "rgba(148, 163, 184, 0.25)",
+    borderLeftColor: "rgba(6, 182, 212, 0.3)",
+    marginLeft: 4,
+    paddingLeft: 10,
   },
   relativeOutlineNone: {
     position: "relative",
@@ -825,21 +876,22 @@ const styles = StyleSheet.create({
   pageExpanderButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    backgroundColor: "rgba(15, 23, 42, 0.4)",
+    paddingVertical: 3,
+    paddingHorizontal: 6,
     gap: 6,
     borderRadius: 4,
-    borderWidth: 0,
-    marginBottom: 4,
-    minHeight: 28,
+    borderWidth: 0.5,
+    borderColor: "rgba(148, 163, 184, 0.1)",
+    marginBottom: 2,
+    minHeight: 24,
   },
   entriesContainer: {
-    marginLeft: 4,
-    paddingLeft: 4,
+    marginLeft: 2,
+    paddingLeft: 8,
     marginTop: 2,
-    borderLeftWidth: 1,
-    borderLeftColor: "rgba(100, 100, 100, 0.3)",
+    borderLeftWidth: 1.5,
+    borderLeftColor: "rgba(148, 163, 184, 0.25)",
   },
   textNumber: {
     color: "#60A5FA",
@@ -854,19 +906,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
-    marginVertical: 2,
-    gap: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
+    marginVertical: 1,
+    gap: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    backgroundColor: "rgba(148, 163, 184, 0.03)",
   },
   text344054: {
-    color: "#9CA3AF",
+    color: "#94A3B8",
     fontWeight: "600",
-    fontSize: 10,
-    minWidth: 60,
+    fontSize: 9,
+    minWidth: 50,
     fontFamily: "monospace",
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
     textTransform: "uppercase",
+    opacity: 0.8,
   },
   numberInputButtons: {
     position: "absolute",
@@ -878,21 +933,26 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   touchableButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 4,
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
     borderWidth: 1,
-    borderColor: "rgba(107, 114, 128, 0.4)",
+    borderColor: "rgba(148, 163, 184, 0.2)",
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   touchableButtonFocused: {
-    borderColor: "#00FFFF",
-    shadowColor: "#00FFFF",
+    borderColor: "rgba(6, 182, 212, 0.8)",
+    backgroundColor: "rgba(6, 182, 212, 0.15)",
+    shadowColor: "#06B6D4",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
   },

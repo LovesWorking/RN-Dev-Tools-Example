@@ -26,6 +26,7 @@ import {
   ConsoleTransportEntry,
 } from "../../../_shared/logger/types";
 import { useSentryEventCounts } from "../hooks/useSentryEvents";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface SentryFilterViewProps {
   _entries: ConsoleTransportEntry[];
@@ -38,26 +39,26 @@ interface SentryFilterViewProps {
 
 // Define all possible log types with their icons and colors
 const ALL_LOG_TYPES = [
-  { type: LogType.Navigation, Icon: Route, color: "#34D399" },
-  { type: LogType.Touch, Icon: Hand, color: "#FBBF24" },
-  { type: LogType.System, Icon: Settings, color: "#A78BFA" },
-  { type: LogType.HTTPRequest, Icon: Globe, color: "#2DD4BF" },
-  { type: LogType.State, Icon: Database, color: "#8B5CF6" },
-  { type: LogType.UserAction, Icon: User, color: "#FB923C" },
-  { type: LogType.Auth, Icon: Key, color: "#F59E0B" },
-  { type: LogType.Error, Icon: AlertTriangle, color: "#F87171" },
-  { type: LogType.Debug, Icon: Bug, color: "#60A5FA" },
-  { type: LogType.Custom, Icon: Palette, color: "#06B6D4" },
-  { type: LogType.Generic, Icon: Box, color: "#94A3B8" },
-  { type: LogType.Replay, Icon: Play, color: "#EC4899" },
+  { type: LogType.Navigation, Icon: Route, color: gameUIColors.success },
+  { type: LogType.Touch, Icon: Hand, color: gameUIColors.warning },
+  { type: LogType.System, Icon: Settings, color: gameUIColors.storage },
+  { type: LogType.HTTPRequest, Icon: Globe, color: gameUIColors.info },
+  { type: LogType.State, Icon: Database, color: gameUIColors.storage },
+  { type: LogType.UserAction, Icon: User, color: gameUIColors.optional },
+  { type: LogType.Auth, Icon: Key, color: gameUIColors.warning },
+  { type: LogType.Error, Icon: AlertTriangle, color: gameUIColors.error },
+  { type: LogType.Debug, Icon: Bug, color: gameUIColors.info },
+  { type: LogType.Custom, Icon: Palette, color: gameUIColors.info },
+  { type: LogType.Generic, Icon: Box, color: gameUIColors.secondary },
+  { type: LogType.Replay, Icon: Play, color: gameUIColors.critical },
 ];
 
 // Define all log levels
 const ALL_LOG_LEVELS = [
-  { level: LogLevel.Info, color: "#22D3EE" },
-  { level: LogLevel.Debug, color: "#60A5FA" },
-  { level: LogLevel.Warn, color: "#FBBF24" },
-  { level: LogLevel.Error, color: "#F87171" },
+  { level: LogLevel.Info, color: gameUIColors.info },
+  { level: LogLevel.Debug, color: gameUIColors.info },
+  { level: LogLevel.Warn, color: gameUIColors.warning },
+  { level: LogLevel.Error, color: gameUIColors.error },
 ];
 
 export function SentryFilterView({
@@ -106,7 +107,7 @@ export function SentryFilterView({
       ]}
     >
       <View style={styles.filterItemLeft} sentry-label="ignore devtools sentry filter item left">
-        {Icon && <Icon size={16} color={isSelected ? color : "#9CA3AF"} />}
+        {Icon && <Icon size={16} color={isSelected ? color : gameUIColors.secondary} />}
         <Text style={[styles.filterItemText, isSelected && { color }]} sentry-label="ignore devtools sentry filter item text">
           {label}
         </Text>
@@ -189,7 +190,7 @@ export function SentryFilterView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1F1F1F",
+    backgroundColor: gameUIColors.background,
   },
   content: {
     flex: 1,
@@ -201,10 +202,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#9CA3AF",
+    fontSize: 12,
+    fontWeight: "700",
+    color: gameUIColors.secondary,
     marginBottom: 12,
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   filterGrid: {
     gap: 8,
@@ -215,10 +219,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderColor: gameUIColors.border + "40",
     marginBottom: 8,
   },
   filterItemLeft: {
@@ -228,8 +232,9 @@ const styles = StyleSheet.create({
   },
   filterItemText: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontWeight: "500",
+    fontFamily: "monospace",
   },
   filterItemRight: {
     flexDirection: "row",
@@ -237,12 +242,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   filterItemCount: {
-    fontSize: 12,
-    color: "#6B7280",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    fontSize: 11,
+    color: gameUIColors.muted,
+    backgroundColor: gameUIColors.border + "20",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
     overflow: "hidden",
+    fontFamily: "monospace",
   },
 });

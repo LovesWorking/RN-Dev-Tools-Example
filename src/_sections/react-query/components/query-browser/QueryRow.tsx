@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Query } from "@tanstack/react-query";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 const getQueryText = (query: Query) => {
   if (!query?.queryKey) return "Unknown Query";
@@ -22,20 +23,21 @@ interface QueryRowProps {
 }
 
 const QueryRow: React.FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
-  // Modern status color mapping
+  // Game UI status color mapping
   const getStatusHexColor = (status: string): string => {
     switch (status) {
       case "fresh":
-        return "#10B981"; // Green
+        return gameUIColors.success;
       case "stale":
+        return gameUIColors.warning;
       case "inactive":
-        return "#F59E0B"; // Orange
+        return gameUIColors.muted;
       case "fetching":
-        return "#3B82F6"; // Blue
+        return gameUIColors.info;
       case "paused":
-        return "#8B5CF6"; // Purple
+        return gameUIColors.storage;
       default:
-        return "#6B7280"; // Gray
+        return gameUIColors.secondary;
     }
   };
 
@@ -93,20 +95,20 @@ const QueryRow: React.FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
 
 const styles = StyleSheet.create({
   queryRow: {
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.border + "40",
     marginHorizontal: 8,
     marginVertical: 3,
     padding: 12,
     transform: [{ scale: 1 }],
   },
   selectedQueryRow: {
-    backgroundColor: "rgba(14, 165, 233, 0.1)",
-    borderColor: "rgba(14, 165, 233, 0.3)",
+    backgroundColor: gameUIColors.info + "15",
+    borderColor: gameUIColors.info + "50",
     transform: [{ scale: 1.01 }],
-    shadowColor: "#0EA5E9",
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
   },
   observerText: {
     fontSize: 10,
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
     marginTop: 1,
   },
   querySection: {
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
   queryHash: {
     fontFamily: "monospace",
     fontSize: 12,
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     lineHeight: 16,
   },
   badgeSection: {
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     fontSize: 10,
-    color: "#EF4444",
+    color: gameUIColors.error,
     fontWeight: "500",
     marginTop: 2,
   },

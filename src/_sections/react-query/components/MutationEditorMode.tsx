@@ -5,6 +5,8 @@ import Explorer from "./query-browser/Explorer";
 import MutationDetails from "./query-browser/MutationDetails";
 import ActionButton from "./query-browser/ActionButton";
 import { useMutationActionButtons } from "../hooks/useMutationActionButtons";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
+import { DataViewer } from "./shared/DataViewer";
 
 interface MutationEditorModeProps {
   selectedMutation: Mutation;
@@ -44,13 +46,21 @@ export function MutationEditorMode({
           <MutationDetails selectedMutation={selectedMutation} />
         </View>
 
-        {/* Mutation Explorer Section */}
+        {/* Mutation Explorer Section - Non-editable viewer */}
         <View style={styles.section}>
-          <Explorer
-            label="Mutation"
-            value={selectedMutation}
-            defaultExpanded={["Mutation"]}
-          />
+          <View style={styles.mutationExplorerContainer}>
+            <Text style={styles.mutationExplorerHeader}>Mutation Explorer</Text>
+            <View style={styles.mutationExplorerContent}>
+              <DataViewer
+                title=""
+                data={selectedMutation}
+                maxDepth={10}
+                rawMode={true}
+                showTypeFilter={true}
+                initialExpanded={false}
+              />
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -88,13 +98,18 @@ function DataExplorer({
 }) {
   if (!visible) return null;
   return (
-    <Explorer
-      key={selectedMutation.mutationId}
-      editable={true}
-      label="Data"
-      value={selectedMutation.state.data}
-      defaultExpanded={["Data"]}
-    />
+    <View style={styles.dataContainer}>
+      <Text style={styles.dataHeader}>Data Editor</Text>
+      <View style={styles.dataContent}>
+        <Explorer
+          key={selectedMutation.mutationId}
+          editable={true}
+          label="Data"
+          value={selectedMutation.state.data}
+          defaultExpanded={["Data"]}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -157,14 +172,14 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   emptyTitle: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center",
   },
   emptyDescription: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
@@ -175,7 +190,7 @@ const styles = StyleSheet.create({
     borderTopColor: "rgba(255, 255, 255, 0.06)",
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
   },
@@ -184,5 +199,63 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 6,
     justifyContent: "space-between",
+  },
+  // Mutation Explorer styled container matching QueryDetails
+  mutationExplorerContainer: {
+    minWidth: 200,
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(6, 182, 212, 0.3)",
+    overflow: "hidden",
+    shadowColor: "#06B6D4",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  mutationExplorerHeader: {
+    backgroundColor: "rgba(6, 182, 212, 0.1)",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontWeight: "600",
+    fontSize: 12,
+    color: gameUIColors.info,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(6, 182, 212, 0.2)",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: "monospace",
+  },
+  mutationExplorerContent: {
+    padding: 8,
+  },
+  // Data section with purple accent - mutation/action theme
+  dataContainer: {
+    minWidth: 200,
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(168, 85, 247, 0.3)", // Purple for mutation data
+    overflow: "hidden",
+    shadowColor: "#A855F7",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+  dataHeader: {
+    backgroundColor: "rgba(168, 85, 247, 0.1)", // Purple background
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontWeight: "600",
+    fontSize: 12,
+    color: gameUIColors.storage, // Purple text
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(168, 85, 247, 0.2)",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    fontFamily: "monospace",
+  },
+  dataContent: {
+    padding: 8,
   },
 });

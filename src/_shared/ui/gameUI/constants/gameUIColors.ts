@@ -26,6 +26,7 @@ export const gameUIColors = {
 
   // Text Hierarchy
   primary: "#FFFFFF",   // Main text
+  primaryLight: "#E2E8F0", // Slightly dimmed main text
   secondary: "#AAA",    // Subtitles, descriptions
   muted: "#666",        // Hints, footer text
 } as const;

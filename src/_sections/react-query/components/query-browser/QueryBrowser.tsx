@@ -5,6 +5,7 @@ import { FlashList, ContentStyle } from "@shopify/flash-list";
 import QueryRow from "./QueryRow";
 import useAllQueries from "../../hooks/useAllQueries";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface Props {
   selectedQuery: Query | undefined;
@@ -126,22 +127,24 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 16,
-    backgroundColor: "#171717", // If needed
+    backgroundColor: gameUIColors.background,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 32,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.panel,
     margin: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.border + "40",
   },
   emptyText: {
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
     fontSize: 14,
     textAlign: "center",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
   },
 });

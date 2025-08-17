@@ -6,7 +6,7 @@ import {
   useEnvVarsSubtitle,
   EnvVarsModal,
 } from "../../../_sections/env";
-import { StorageModal, RequiredStorageKey } from "../../../_sections/storage";
+import { StorageModalWithTabs, RequiredStorageKey } from "../../../_sections/storage";
 // import { SentryLogsModal } from "../../../_sections/sentry/components/SentryLogsModal"; // Temporarily disabled - causing import errors
 
 import {
@@ -327,8 +327,8 @@ export function RnBetterDevToolsBubble({
           enableSharedModalDimensions={enableSharedModalDimensions}
         /> */}
 
-        {/* Storage Browser Modal - Auto-opens if restored state indicates it was open */}
-        <StorageModal
+        {/* Storage Browser Modal with Tabs - Auto-opens if restored state indicates it was open */}
+        <StorageModalWithTabs
           key="storage-modal"
           visible={isStorageModalOpen}
           onClose={handleStorageModalDismiss}

@@ -6,6 +6,7 @@ import {
   LogType,
   LogLevel,
 } from "../../../_shared/logger/types";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface SentryLogsSectionProps {
   onPress: () => void;
@@ -26,8 +27,8 @@ export function SentryLogsSection({
       title="Sentry Events"
       subtitle={getSentrySubtitle()}
       icon={FileText}
-      iconColor="#8B5CF6"
-      iconBackgroundColor="rgba(139, 92, 246, 0.1)"
+      iconColor={gameUIColors.storage}
+      iconBackgroundColor={gameUIColors.storage + "1A"}
       onPress={onPress}
     />
   );

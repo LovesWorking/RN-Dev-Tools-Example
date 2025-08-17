@@ -9,6 +9,7 @@ import {
   LogLevel,
 } from "../../../_shared/logger/types";
 import { Filter, Pause, Play, FlaskConical, Trash } from "lucide-react-native";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 import { useSentryEvents } from "../hooks/useSentryEvents";
 import {
   clearSentryEvents,
@@ -90,7 +91,7 @@ export function SentryLogsModal({
         >
           <BackButton
             onPress={handleBackPress}
-            color="#FFFFFF"
+            color={gameUIColors.primary}
             size={16}
             sentry-label="ignore devtools sentry modal back button"
           />
@@ -114,7 +115,7 @@ export function SentryLogsModal({
         {onBack && (
           <BackButton
             onPress={handleBackPress}
-            color="#FFFFFF"
+            color={gameUIColors.primary}
             size={16}
             sentry-label="ignore devtools sentry modal back button"
           />
@@ -141,8 +142,8 @@ export function SentryLogsModal({
               size={16}
               color={
                 selectedTypes.size > 0 || selectedLevels.size > 0
-                  ? "#8B5CF6"
-                  : "#9CA3AF"
+                  ? gameUIColors.optional
+                  : gameUIColors.secondary
               }
             />
           </TouchableOpacity>
@@ -155,9 +156,9 @@ export function SentryLogsModal({
             }
           >
             {isLoggingEnabled ? (
-              <Pause size={16} color="#10B981" />
+              <Pause size={16} color={gameUIColors.success} />
             ) : (
-              <Play size={16} color="#10B981" />
+              <Play size={16} color={gameUIColors.success} />
             )}
           </TouchableOpacity>
           <TouchableOpacity
@@ -166,7 +167,7 @@ export function SentryLogsModal({
             style={styles.iconButton}
             accessibilityLabel="Generate test Sentry events"
           >
-            <FlaskConical size={16} color="#818CF8" />
+            <FlaskConical size={16} color={gameUIColors.info} />
           </TouchableOpacity>
           <TouchableOpacity
             sentry-label="ignore devtools sentry clear events"
@@ -174,7 +175,7 @@ export function SentryLogsModal({
             style={styles.iconButton}
             accessibilityLabel="Clear Sentry events"
           >
-            <Trash size={16} color="#F87171" />
+            <Trash size={16} color={gameUIColors.error} />
           </TouchableOpacity>
         </View>
       </View>
@@ -243,17 +244,21 @@ const styles = StyleSheet.create({
     minHeight: 32,
   },
   headerTitle: {
-    color: "#E5E7EB",
+    color: gameUIColors.primary,
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
     flex: 1,
     marginLeft: 8,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   eventCount: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: "600",
     marginLeft: 4,
+    fontFamily: "monospace",
   },
   headerActions: {
     flexDirection: "row",
@@ -264,12 +269,12 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 6,
     borderRadius: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.panel + "40",
   },
   activeButton: {
-    backgroundColor: "rgba(16, 185, 129, 0.15)",
+    backgroundColor: gameUIColors.success + "26",
   },
   activeFilterButton: {
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
+    backgroundColor: gameUIColors.optional + "26",
   },
 });

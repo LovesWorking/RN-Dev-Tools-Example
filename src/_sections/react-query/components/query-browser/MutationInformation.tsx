@@ -2,6 +2,7 @@ import { Mutation } from "@tanstack/react-query";
 import DataExplorer from "./Explorer";
 import { ScrollView, Text, View, StyleSheet } from "react-native";
 import MutationDetails from "./MutationDetails";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface Props {
   selectedMutation: Mutation | undefined;
@@ -64,7 +65,7 @@ export default function MutationInformation({ selectedMutation }: Props) {
 const styles = StyleSheet.create({
   flex1: {
     flex: 1,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
   },
   scrollContent: {
     paddingBottom: 16,
@@ -75,23 +76,26 @@ const styles = StyleSheet.create({
   },
   textHeader: {
     textAlign: "left",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.panel,
     padding: 12,
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "700",
+    color: gameUIColors.primary,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    borderBottomColor: gameUIColors.border + "40",
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   padding: {
     padding: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.panel + "80",
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderColor: gameUIColors.border + "40",
     borderTopWidth: 0,
   },
 });

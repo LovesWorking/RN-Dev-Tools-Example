@@ -4,7 +4,6 @@ import { ConsoleSectionList } from "./ConsoleSectionList";
 import { ReactQuerySection } from "./sections";
 import { EnvVarsSection } from "../../../_sections/env";
 import { StorageSection } from "../../../_sections/storage/components/StorageSection";
-import { StorageEventsSection } from "../../../_sections/storage";
 import { NetworkSection } from "../../../_sections/network";
 import { BubbleSettingsSection } from "../../../_sections/settings";
 import { SectionType } from "./DevToolsModalRouter";
@@ -81,9 +80,7 @@ export function DevToolsSectionListModal({
           getRnBetterDevToolsSubtitle={getRnBetterDevToolsSubtitle}
         />
         <StorageSection onPress={() => onSectionSelect("storage")} />
-        <StorageEventsSection
-          onPress={() => onSectionSelect("storage-events")}
-        />
+        {/* Storage Events is now integrated as a tab in StorageModalWithTabs */}
         <NetworkSection onPress={() => onSectionSelect("network")} />
         <BubbleSettingsSection
           onPress={() => onSectionSelect("bubble-settings")}

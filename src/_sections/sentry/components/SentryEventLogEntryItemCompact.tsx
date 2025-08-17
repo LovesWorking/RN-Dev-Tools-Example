@@ -11,6 +11,7 @@ import {
 import { formatRelativeTime } from "../utils/formatRelativeTime";
 import { useTickEveryMinute } from "../hooks/useTickEveryMinute";
 import { formatEventMessage } from "../utils/eventParsers";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface SentryEventLogEntryItemProps {
   entry: ConsoleTransportEntry;
@@ -63,7 +64,7 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
               {formatRelativeTime(entry.timestamp, tick)}
             </Text>
           </View>
-          <ChevronRight size={14} color="#6B7280" />
+          <ChevronRight size={14} color={gameUIColors.muted} />
         </View>
       </TouchableOpacity>
     );
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 6,
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -101,19 +102,22 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   badge: {
-    color: "#A78BFA",
+    color: gameUIColors.storage,
     fontSize: 9,
     fontWeight: "600",
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
+    backgroundColor: gameUIColors.storage + "26",
     paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 3,
     overflow: "hidden",
     marginBottom: 2,
     alignSelf: "flex-end",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   message: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 12,
     flex: 1,
     lineHeight: 16,
@@ -128,7 +132,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   timestamp: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 10,
     fontFamily: "monospace",
   },

@@ -2,6 +2,7 @@ import { Query } from "@tanstack/react-query";
 import QueryDetailsChip from "./QueryDetailsChip";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { displayValue } from "../../../../_shared/utils/displayValue";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface Props {
   query: Query | undefined;
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
-    color: "#06B6D4",
+    color: gameUIColors.info,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(6, 182, 212, 0.2)",
     letterSpacing: 0.5,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   },
   queryKeyText: {
     fontSize: 12,
-    color: "#F1F5F9",
+    color: gameUIColors.primary,
     fontFamily: "monospace",
     lineHeight: 18,
     flexShrink: 1,
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontSize: 10,
-    color: "#94A3B8",
+    color: gameUIColors.secondary,
     fontWeight: "600",
     letterSpacing: 0.5,
     textTransform: "uppercase",
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: 12,
-    color: "#E2E8F0",
+    color: gameUIColors.primaryLight,
     fontWeight: "500",
     fontVariant: ["tabular-nums"],
     fontFamily: "monospace",

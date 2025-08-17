@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Query, Mutation } from "@tanstack/react-query";
 import { BackButton } from "../../../../_shared/ui/components/BackButton";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface ReactQueryModalHeaderProps {
   selectedQuery?: Query;
@@ -53,7 +54,7 @@ export function ReactQueryModalHeader({
         <View style={styles.detailsView}>
           <BackButton
             onPress={onBack}
-            color="#FFFFFF"
+            color={gameUIColors.primary}
             size={16}
             accessibilityLabel="Back to list"
             accessibilityHint="Return to list view"
@@ -134,33 +135,33 @@ const styles = StyleSheet.create({
   browserView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "stretch", // Let navigation use full width
+    alignItems: "stretch",
   },
 
   tabNavigationContainer: {
     flexDirection: "row",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 6,
     padding: 2,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    justifyContent: "space-evenly", // Evenly distribute tabs
+    borderColor: gameUIColors.border + "40",
+    justifyContent: "space-evenly",
   },
 
   tabButton: {
-    paddingHorizontal: 8, // Reduced padding for better fit
+    paddingHorizontal: 8,
     paddingVertical: 5,
     borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",
-    flex: 1, // Use flex to evenly distribute space
-    marginHorizontal: 1, // Small margin between buttons
+    flex: 1,
+    marginHorizontal: 1,
   },
 
   tabButtonActive: {
-    backgroundColor: "rgba(14, 165, 233, 0.1)",
+    backgroundColor: gameUIColors.info + "20",
     borderWidth: 1,
-    borderColor: "rgba(14, 165, 233, 0.2)",
+    borderColor: gameUIColors.info + "40",
   },
 
   tabButtonInactive: {
@@ -169,24 +170,27 @@ const styles = StyleSheet.create({
 
   tabButtonText: {
     fontSize: 12,
-    fontWeight: "500",
-    letterSpacing: 0.2,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    fontFamily: "monospace",
+    textTransform: "uppercase",
   },
 
   tabButtonTextActive: {
-    color: "#0EA5E9",
+    color: gameUIColors.info,
   },
 
   tabButtonTextInactive: {
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
   },
 
   queryText: {
     flex: 1,
-    color: "#E5E7EB",
-    fontSize: 14,
-    fontWeight: "500",
+    color: gameUIColors.primary,
+    fontSize: 12,
+    fontWeight: "600",
     fontFamily: "monospace",
     paddingHorizontal: 4,
+    letterSpacing: 0.5,
   },
 });

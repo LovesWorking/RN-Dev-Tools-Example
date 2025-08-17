@@ -1,37 +1,40 @@
 import { Query } from "@tanstack/react-query";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
 import { Text, View, StyleSheet } from "react-native";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
+
 interface Props {
   query: Query;
 }
+
 const backgroundColors = {
-  fresh: "rgba(16, 185, 129, 0.1)", // Green
-  stale: "rgba(245, 158, 11, 0.1)", // Yellow
-  fetching: "rgba(59, 130, 246, 0.1)", // Blue
-  paused: "rgba(139, 92, 246, 0.1)", // Purple
-  noObserver: "rgba(107, 114, 128, 0.1)", // Grey
-  error: "rgba(239, 68, 68, 0.1)", // Red
-  inactive: "rgba(107, 114, 128, 0.1)", // Grey
+  fresh: gameUIColors.success + "1A",
+  stale: gameUIColors.warning + "1A",
+  fetching: gameUIColors.info + "1A",
+  paused: gameUIColors.storage + "1A",
+  noObserver: gameUIColors.muted + "1A",
+  error: gameUIColors.error + "1A",
+  inactive: gameUIColors.muted + "1A",
 };
 
 const borderColors = {
-  fresh: "rgba(16, 185, 129, 0.2)", // Green
-  stale: "rgba(245, 158, 11, 0.2)", // Yellow
-  fetching: "rgba(59, 130, 246, 0.2)", // Blue
-  paused: "rgba(139, 92, 246, 0.2)", // Purple
-  noObserver: "rgba(107, 114, 128, 0.2)", // Grey
-  error: "rgba(239, 68, 68, 0.2)", // Red
-  inactive: "rgba(107, 114, 128, 0.2)", // Grey
+  fresh: gameUIColors.success + "33",
+  stale: gameUIColors.warning + "33",
+  fetching: gameUIColors.info + "33",
+  paused: gameUIColors.storage + "33",
+  noObserver: gameUIColors.muted + "33",
+  error: gameUIColors.error + "33",
+  inactive: gameUIColors.muted + "33",
 };
 
 const textColors = {
-  fresh: "#10B981", // Green
-  stale: "#F59E0B", // Yellow
-  fetching: "#3B82F6", // Blue
-  paused: "#8B5CF6", // Purple
-  noObserver: "#6B7280", // Grey
-  error: "#EF4444", // Red
-  inactive: "#6B7280", // Grey
+  fresh: gameUIColors.success,
+  stale: gameUIColors.warning,
+  fetching: gameUIColors.info,
+  paused: gameUIColors.storage,
+  noObserver: gameUIColors.muted,
+  error: gameUIColors.error,
+  inactive: gameUIColors.muted,
 };
 type QueryStatus =
   | "fresh"
@@ -67,5 +70,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    fontFamily: "monospace",
   },
 });

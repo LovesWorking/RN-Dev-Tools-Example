@@ -8,6 +8,7 @@ import remove from "../../utils/actions/remove";
 import invalidate from "../../utils/actions/invalidate";
 import triggerError from "../../utils/actions/triggerError";
 import { View, Text, StyleSheet } from "react-native";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface Props {
   setSelectedQuery: React.Dispatch<React.SetStateAction<Query | undefined>>;
@@ -96,19 +97,22 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
 }
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.border + "40",
     padding: 16,
     gap: 12,
   },
   headerText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "700",
+    color: gameUIColors.primary,
     marginBottom: 8,
     textAlign: "left",
+    fontFamily: "monospace",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   buttonsContainer: {
     flexDirection: "row",

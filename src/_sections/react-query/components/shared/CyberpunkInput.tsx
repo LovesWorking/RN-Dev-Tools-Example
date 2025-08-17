@@ -187,11 +187,11 @@ export function CyberpunkInput({
                 onPress={onIncrement}
                 activeOpacity={0.7}
               >
-                <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+                <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                   <Path
                     d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                    stroke={isFocused ? "#00FFFF" : "#9CA3AF"}
-                    strokeWidth={2}
+                    stroke={isFocused ? "#06B6D4" : "#94A3B8"}
+                    strokeWidth={2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -203,11 +203,11 @@ export function CyberpunkInput({
                 onPress={onDecrement}
                 activeOpacity={0.7}
               >
-                <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+                <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                   <Path
                     d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                    stroke={isFocused ? "#00FFFF" : "#9CA3AF"}
-                    strokeWidth={2}
+                    stroke={isFocused ? "#06B6D4" : "#94A3B8"}
+                    strokeWidth={2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -223,11 +223,11 @@ export function CyberpunkInput({
               onPress={onDelete}
               activeOpacity={0.7}
             >
-              <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+              <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                 <Path
                   d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
-                  stroke={isFocused ? "#00FFFF" : "#9CA3AF"}
-                  strokeWidth={1.5}
+                  stroke={isFocused ? "#EF4444" : "#F87171"}
+                  strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -323,37 +323,50 @@ const styles = StyleSheet.create({
   },
 
   controlButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 3,
-    backgroundColor: "rgba(50, 50, 50, 0.6)",
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
     borderWidth: 1,
-    borderColor: "rgba(100, 100, 100, 0.6)",
+    borderColor: "rgba(148, 163, 184, 0.2)",
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
 
   controlButtonFocused: {
-    borderColor: "rgba(0, 255, 255, 0.6)",
-    backgroundColor: "rgba(0, 255, 255, 0.05)",
+    borderColor: "rgba(6, 182, 212, 0.8)",
+    backgroundColor: "rgba(6, 182, 212, 0.15)",
+    shadowColor: "#06B6D4",
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
 
   deleteButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 3,
-    backgroundColor: "rgba(0, 255, 255, 0.05)",
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
     borderWidth: 1,
-    borderColor: "rgba(0, 255, 255, 0.2)",
+    borderColor: "rgba(239, 68, 68, 0.3)",
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#EF4444",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
     marginRight: 4,
     zIndex: 2,
   },
 
   deleteButtonFocused: {
-    borderColor: "rgba(0, 255, 255, 0.6)",
-    backgroundColor: "rgba(0, 255, 255, 0.1)",
+    borderColor: "rgba(239, 68, 68, 0.8)",
+    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
 
   cornerAccent: {

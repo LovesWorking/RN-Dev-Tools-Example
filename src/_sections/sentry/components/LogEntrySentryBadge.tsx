@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { Metadata } from "../../../_shared/logger/types";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface LogEntrySentryBadgeProps {
   metadata: Metadata;
@@ -28,7 +29,7 @@ export const LogEntrySentryBadge = React.memo<LogEntrySentryBadgeProps>(
 
 const styles = StyleSheet.create({
   sentryBadge: {
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
+    backgroundColor: gameUIColors.optional + "26",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -36,9 +37,11 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   sentryBadgeText: {
-    color: "#A78BFA",
+    color: gameUIColors.optional,
     fontSize: 11,
-    fontWeight: "500",
+    fontWeight: "600",
     fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
 });

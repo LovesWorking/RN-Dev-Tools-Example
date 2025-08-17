@@ -23,13 +23,14 @@ import Svg, {
   Polygon,
   Pattern,
 } from "react-native-svg";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 export function Trash() {
   return (
     <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
       <Path
         d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
-        stroke="#EF4444"
+        stroke={gameUIColors.error}
         strokeWidth="1.5"
       />
     </Svg>
@@ -44,7 +45,7 @@ export function Copier() {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        stroke="#3B82F6"
+        stroke={gameUIColors.info}
       />
     </Svg>
   );
@@ -55,7 +56,7 @@ export function CopiedCopier(props: { theme: "light" | "dark" }) {
     <Svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <Path
         d="M7.5 12L10.5 15L16.5 9M7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V7.8C21 6.11984 21 5.27976 20.673 4.63803C20.3854 4.07354 19.9265 3.6146 19.362 3.32698C18.7202 3 17.8802 3 16.2 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21Z"
-        stroke={props.theme === "dark" ? "#12B76A" : "#027A48"}
+        stroke={gameUIColors.success}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -69,7 +70,7 @@ export function ErrorCopier() {
     <Svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <Path
         d="M9 9L15 15M15 9L9 15M7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V7.8C21 6.11984 21 5.27976 20.673 4.63803C20.3854 4.07354 19.9265 3.6146 19.362 3.32698C18.7202 3 17.8802 3 16.2 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21Z"
-        stroke="#F04438"
+        stroke={gameUIColors.error}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -85,7 +86,7 @@ export function List() {
       height="16"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#667085"
+      stroke={gameUIColors.muted}
       strokeWidth="2"
     >
       <Rect width="20" height="20" y="2" x="2" rx="2" />
@@ -101,7 +102,7 @@ export function CheckCircle() {
     <Svg width="14" height="14" viewBox="0 0 24 24" fill="none">
       <Path
         d="M7.5 12L10.5 15L16.5 9M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-        stroke="#027A48"
+        stroke={gameUIColors.success}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -115,7 +116,7 @@ export function LoadingCircle() {
     <Svg width="14" height="14" viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2V6M12 18V22M6 12H2M22 12H18M19.0784 19.0784L16.25 16.25M19.0784 4.99994L16.25 7.82837M4.92157 19.0784L7.75 16.25M4.92157 4.99994L7.75 7.82837"
-        stroke="#B54708"
+        stroke={gameUIColors.warning}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -129,7 +130,7 @@ export function XCircle() {
     <Svg width="14" height="14" viewBox="0 0 24 24" fill="none">
       <Path
         d="M15 9L9 15M9 9L15 15M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-        stroke="#b91c1c"
+        stroke={gameUIColors.error}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -143,7 +144,7 @@ export function PauseCircle() {
     <Svg width="14" height="14" viewBox="0 0 24 24" fill="none">
       <Path
         d="M9.5 15V9M14.5 15V9M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-        stroke="#5925DC"
+        stroke={gameUIColors.storage}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

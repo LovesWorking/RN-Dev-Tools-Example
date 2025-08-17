@@ -1,42 +1,43 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
-// Define the color mappings following the app's design system - vibrant cool tones
+// Define the color mappings using Game UI colors
 const buttonConfigs = {
   btnRefetch: {
-    color: "#10F981",
-    backgroundColor: "rgba(16, 249, 129, 0.15)",
-    borderColor: "rgba(16, 249, 129, 0.35)",
-    textColor: "#10F981",
+    color: gameUIColors.success,
+    backgroundColor: gameUIColors.success + "26",
+    borderColor: gameUIColors.success + "59",
+    textColor: gameUIColors.success,
   },
   btnInvalidate: {
-    color: "#FFA500",
-    backgroundColor: "rgba(255, 165, 0, 0.15)",
-    borderColor: "rgba(255, 165, 0, 0.35)",
-    textColor: "#FFA500",
+    color: gameUIColors.warning,
+    backgroundColor: gameUIColors.warning + "26",
+    borderColor: gameUIColors.warning + "59",
+    textColor: gameUIColors.warning,
   },
   btnReset: {
-    color: "#64748B",
-    backgroundColor: "rgba(100, 116, 139, 0.15)",
-    borderColor: "rgba(100, 116, 139, 0.35)",
-    textColor: "#94A3B8",
+    color: gameUIColors.secondary,
+    backgroundColor: gameUIColors.secondary + "26",
+    borderColor: gameUIColors.secondary + "59",
+    textColor: gameUIColors.secondary,
   },
   btnRemove: {
-    color: "#FF4757",
-    backgroundColor: "rgba(255, 71, 87, 0.15)",
-    borderColor: "rgba(255, 71, 87, 0.35)",
-    textColor: "#FF4757",
+    color: gameUIColors.error,
+    backgroundColor: gameUIColors.error + "26",
+    borderColor: gameUIColors.error + "59",
+    textColor: gameUIColors.error,
   },
   btnTriggerLoading: {
-    color: "#06B6D4",
-    backgroundColor: "rgba(6, 182, 212, 0.15)",
-    borderColor: "rgba(6, 182, 212, 0.35)",
-    textColor: "#06B6D4",
+    color: gameUIColors.info,
+    backgroundColor: gameUIColors.info + "26",
+    borderColor: gameUIColors.info + "59",
+    textColor: gameUIColors.info,
   },
   btnTriggerLoadiError: {
-    color: "#FF6348",
-    backgroundColor: "rgba(255, 99, 72, 0.15)",
-    borderColor: "rgba(255, 99, 72, 0.35)",
-    textColor: "#FF6348",
+    color: gameUIColors.optional,
+    backgroundColor: gameUIColors.optional + "26",
+    borderColor: gameUIColors.optional + "59",
+    textColor: gameUIColors.optional,
   },
 };
 
@@ -67,10 +68,10 @@ export default function ActionButton({
         styles.button,
         {
           backgroundColor: disabled
-            ? "rgba(107, 114, 128, 0.1)"
+            ? gameUIColors.muted + "1A"
             : config.backgroundColor,
           borderColor: disabled
-            ? "rgba(107, 114, 128, 0.2)"
+            ? gameUIColors.muted + "33"
             : config.borderColor,
           opacity: disabled ? 0.5 : 1,
         },
@@ -83,13 +84,13 @@ export default function ActionButton({
       <View
         style={[
           styles.dot,
-          { backgroundColor: disabled ? "#6B7280" : config.color },
+          { backgroundColor: disabled ? gameUIColors.muted : config.color },
         ]}
       />
       <Text
         style={[
           styles.text,
-          { color: disabled ? "#6B7280" : config.textColor },
+          { color: disabled ? gameUIColors.muted : config.textColor },
         ]}
       >
         {text}

@@ -68,6 +68,7 @@ export const devToolsStorageKeys = {
     modal: () => `${devToolsStorageKeys.storage.root()}_modal` as const,
     eventsModal: () => `${devToolsStorageKeys.storage.root()}_events_modal` as const,
     filters: () => `${devToolsStorageKeys.storage.root()}_filters` as const,
+    eventFilters: () => `${devToolsStorageKeys.storage.root()}_event_filters` as const,
     preferences: () => `${devToolsStorageKeys.storage.root()}_preferences` as const,
   },
 

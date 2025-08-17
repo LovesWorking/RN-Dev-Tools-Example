@@ -59,6 +59,7 @@ import {
   extractDeviceContext,
   extractComponentFileFromPath,
 } from "../utils/eventParsers";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 // Stable constants
 const MAX_EXPLORER_DEPTH = 15;
@@ -103,9 +104,9 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
     <View style={styles.urlBreakdown}>
       <View style={styles.urlRow}>
         {urlParts.isSecure ? (
-          <Lock size={12} color="#10B981" />
+          <Lock size={12} color={gameUIColors.success} />
         ) : (
-          <Unlock size={12} color="#F59E0B" />
+          <Unlock size={12} color={gameUIColors.warning} />
         )}
         <Text style={styles.urlDomain}>{urlParts.host}</Text>
         <Text style={styles.urlProtocol}>({urlParts.protocol.toUpperCase()})</Text>
@@ -114,7 +115,7 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
           onPress={() => handleCopy(url)}
           style={styles.copyButton}
         >
-          <Copy size={12} color="#6B7280" />
+          <Copy size={12} color={gameUIColors.muted} />
         </TouchableOpacity>
       </View>
       <View style={styles.urlPathRow}>
@@ -155,9 +156,9 @@ const CollapsibleSection: React.FC<{
           <Text style={styles.collapsibleTitleText}>{title}</Text>
         </View>
         {isOpen ? (
-          <ChevronUp size={16} color="#9CA3AF" />
+          <ChevronUp size={16} color={gameUIColors.secondary} />
         ) : (
-          <ChevronDown size={16} color="#9CA3AF" />
+          <ChevronDown size={16} color={gameUIColors.secondary} />
         )}
       </TouchableOpacity>
       {isOpen && <View style={styles.collapsibleContent}>{children}</View>}
@@ -171,12 +172,12 @@ const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({ fie
     <Text style={styles.fieldName}>{field}</Text>
     {editable ? (
       <View style={styles.editableTag}>
-        <Edit3 size={10} color="#8B5CF6" />
+        <Edit3 size={10} color={gameUIColors.optional} />
         <Text style={styles.editableText}>Editable</Text>
       </View>
     ) : (
       <View style={styles.autoTag}>
-        <Info size={10} color="#6B7280" />
+        <Info size={10} color={gameUIColors.muted} />
         <Text style={styles.autoText}>Auto</Text>
       </View>
     )}
@@ -202,7 +203,7 @@ const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({ request })
         )}
         {request.duration && (
           <View style={styles.httpDuration}>
-            <Clock size={10} color="#6B7280" />
+            <Clock size={10} color={gameUIColors.muted} />
             <Text style={styles.httpDurationText}>{formatDuration(request.duration)}</Text>
           </View>
         )}
@@ -507,7 +508,7 @@ export function SentryEventDetailView({
             {httpRequests.length > 0 && (
               <CollapsibleSection
                 title={`HTTP Requests (${httpRequests.length})`}
-                icon={<Globe size={14} color="#8B5CF6" />}
+                icon={<Globe size={14} color={gameUIColors.optional} />}
                 defaultOpen={true}
               >
                 {httpRequests.map((request, index) => (
@@ -520,7 +521,7 @@ export function SentryEventDetailView({
             {touchDetails && (
               <CollapsibleSection
                 title="Touch Event"
-                icon={<TouchpadIcon size={14} color="#8B5CF6" />}
+                icon={<TouchpadIcon size={14} color={gameUIColors.optional} />}
                 defaultOpen={true}
               >
                 <View style={styles.touchDetails}>
@@ -567,7 +568,7 @@ export function SentryEventDetailView({
             {navDetails && (
               <CollapsibleSection
                 title="Navigation Event"
-                icon={<Navigation size={14} color="#8B5CF6" />}
+                icon={<Navigation size={14} color={gameUIColors.optional} />}
                 defaultOpen={true}
               >
                 <View style={styles.navDetails}>
@@ -605,7 +606,7 @@ export function SentryEventDetailView({
             {errorDetails && (
               <CollapsibleSection
                 title="Error Details"
-                icon={<AlertCircle size={14} color="#EF4444" />}
+                icon={<AlertCircle size={14} color={gameUIColors.error} />}
                 defaultOpen={true}
               >
                 <View style={styles.errorDetails}>
@@ -668,7 +669,7 @@ export function SentryEventDetailView({
             {perfDetails && (
               <CollapsibleSection
                 title="Performance Event"
-                icon={<Zap size={14} color="#8B5CF6" />}
+                icon={<Zap size={14} color={gameUIColors.optional} />}
                 defaultOpen={true}
               >
                 <View style={styles.perfDetails}>
@@ -757,7 +758,7 @@ export function SentryEventDetailView({
               ))
             ) : (
               <View style={styles.noInsights}>
-                <CheckCircle size={20} color="#10B981" />
+                <CheckCircle size={20} color={gameUIColors.success} />
                 <Text style={styles.noInsightsText}>No issues detected</Text>
               </View>
             )}
@@ -783,7 +784,7 @@ export function SentryEventDetailView({
           >
             {deviceContext ? (
               <>
-                <CollapsibleSection title="App Context" icon={<Smartphone size={14} color="#8B5CF6" />}>
+                <CollapsibleSection title="App Context" icon={<Smartphone size={14} color={gameUIColors.optional} />}>
                   <View style={styles.contextSection}>
                     {deviceContext.app.name && (
                       <View style={styles.contextItem}>
@@ -807,7 +808,7 @@ export function SentryEventDetailView({
                   </View>
                 </CollapsibleSection>
                 
-                <CollapsibleSection title="Device Info" icon={<Server size={14} color="#8B5CF6" />}>
+                <CollapsibleSection title="Device Info" icon={<Server size={14} color={gameUIColors.optional} />}>
                   <View style={styles.contextSection}>
                     {deviceContext.device.model && (
                       <View style={styles.contextItem}>
@@ -833,7 +834,7 @@ export function SentryEventDetailView({
                   </View>
                 </CollapsibleSection>
                 
-                <CollapsibleSection title="Runtime" icon={<Layers size={14} color="#8B5CF6" />}>
+                <CollapsibleSection title="Runtime" icon={<Layers size={14} color={gameUIColors.optional} />}>
                   <View style={styles.contextSection}>
                     {deviceContext.runtime.name && (
                       <View style={styles.contextItem}>
@@ -855,7 +856,7 @@ export function SentryEventDetailView({
               </>
             ) : (
               <View style={styles.noContext}>
-                <Info size={20} color="#6B7280" />
+                <Info size={20} color={gameUIColors.muted} />
                 <Text style={styles.noContextText}>No device context available</Text>
               </View>
             )}
@@ -1001,14 +1002,14 @@ export function SentryEventDetailView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1F1F1F",
+    backgroundColor: gameUIColors.background,
   },
   metaSection: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: "#2A2A2A",
+    backgroundColor: gameUIColors.panel,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    borderBottomColor: gameUIColors.border + "40",
   },
   metaRow: {
     flexDirection: "row",
@@ -1033,6 +1034,9 @@ const styles = StyleSheet.create({
   typeText: {
     fontSize: 12,
     fontWeight: "600",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   levelContainer: {
     flexDirection: "row",
@@ -1050,37 +1054,37 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   sentryTypeContainer: {
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
+    backgroundColor: gameUIColors.optional + "26",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 4,
   },
   sentryTypeText: {
-    color: "#A78BFA",
+    color: gameUIColors.optional,
     fontSize: 10,
     fontWeight: "600",
     textTransform: "uppercase",
     fontFamily: "monospace",
   },
   timestamp: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontFamily: "monospace",
   },
   enhancedMessage: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 14,
     fontWeight: "500",
     marginTop: 4,
   },
   tabsContainer: {
     flexDirection: "row",
-    backgroundColor: "#2A2A2A",
+    backgroundColor: gameUIColors.panel,
     paddingHorizontal: 16,
     paddingVertical: 6,
     gap: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    borderBottomColor: gameUIColors.border + "40",
   },
   tab: {
     paddingVertical: 6,
@@ -1091,18 +1095,18 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   activeTab: {
-    borderBottomColor: "#8B5CF6",
+    borderBottomColor: gameUIColors.optional,
   },
   tabText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 13,
     fontWeight: "500",
   },
   activeTabText: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
   },
   tabBadge: {
-    backgroundColor: "rgba(245, 158, 11, 0.2)",
+    backgroundColor: gameUIColors.warning + "33",
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: 8,
@@ -1110,7 +1114,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabBadgeText: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 10,
     fontWeight: "600",
   },
@@ -1121,13 +1125,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageContainer: {
-    backgroundColor: "#2A2A2A",
+    backgroundColor: gameUIColors.panel,
     margin: 16,
     padding: 16,
     borderRadius: 8,
   },
   messageText: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 14,
     lineHeight: 20,
     fontFamily: "monospace",
@@ -1137,7 +1141,7 @@ const styles = StyleSheet.create({
   collapsibleSection: {
     marginHorizontal: 16,
     marginTop: 16,
-    backgroundColor: "#2A2A2A",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 8,
     overflow: "hidden",
   },
@@ -1153,7 +1157,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   collapsibleTitleText: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -1164,7 +1168,7 @@ const styles = StyleSheet.create({
   
   // HTTP request styles
   httpRequestCard: {
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: gameUIColors.background + "33",
     padding: 12,
     borderRadius: 6,
     marginBottom: 8,
@@ -1177,13 +1181,13 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   httpMethodBadge: {
-    backgroundColor: "rgba(139, 92, 246, 0.2)",
+    backgroundColor: gameUIColors.optional + "33",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 4,
   },
   httpMethod: {
-    color: "#8B5CF6",
+    color: gameUIColors.optional,
     fontSize: 12,
     fontWeight: "600",
   },
@@ -1202,7 +1206,7 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   httpDurationText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
   },
   httpSizes: {
@@ -1211,7 +1215,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    borderTopColor: gameUIColors.border + "40",
   },
   sizeItem: {
     flexDirection: "row",
@@ -1219,11 +1223,11 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   sizeLabel: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 11,
   },
   sizeValue: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontFamily: "monospace",
   },
@@ -1239,25 +1243,25 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   urlDomain: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 14,
     fontWeight: "600",
     flex: 1,
   },
   urlProtocol: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 11,
   },
   urlPathRow: {
     marginLeft: 18,
   },
   urlPath: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 13,
     fontFamily: "monospace",
   },
   urlText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 12,
     fontFamily: "monospace",
   },
@@ -1266,15 +1270,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    borderTopColor: gameUIColors.border + "40",
   },
   urlParamsTitle: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 11,
     marginBottom: 4,
   },
   urlParam: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontFamily: "monospace",
     marginLeft: 8,
@@ -1291,20 +1295,20 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   fieldName: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
   },
   editableTag: {
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: gameUIColors.optional + "1A",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
   editableText: {
-    color: "#8B5CF6",
+    color: gameUIColors.optional,
     fontSize: 10,
     fontWeight: "600",
   },
@@ -1312,13 +1316,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    backgroundColor: gameUIColors.muted + "1A",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
   autoText: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 10,
     fontWeight: "600",
   },
@@ -1326,24 +1330,24 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    borderTopColor: gameUIColors.border + "40",
   },
   customizableText: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 11,
     fontStyle: "italic",
   },
   
   // Event-specific detail styles
   detailLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 12,
     fontWeight: "600",
     marginTop: 8,
     marginBottom: 2,
   },
   detailValue: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 13,
     marginBottom: 4,
   },
@@ -1351,7 +1355,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   touchActionText: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 14,
     fontWeight: "500",
     marginBottom: 12,
@@ -1361,15 +1365,15 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   componentName: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 13,
   },
   componentLabel: {
-    color: "#8B5CF6",
+    color: gameUIColors.optional,
     fontSize: 12,
   },
   componentFile: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 11,
     fontFamily: "monospace",
   },
@@ -1380,17 +1384,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   errorType: {
-    color: "#EF4444",
+    color: gameUIColors.error,
     fontSize: 14,
     fontWeight: "600",
   },
   errorMessage: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 13,
     lineHeight: 18,
   },
   errorLocation: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 12,
     fontFamily: "monospace",
   },
@@ -1405,31 +1409,31 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   errorMetaLabel: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 11,
   },
   errorMetaValue: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontWeight: "600",
   },
   success: {
-    color: "#10B981",
+    color: gameUIColors.success,
   },
   error: {
-    color: "#EF4444",
+    color: gameUIColors.error,
   },
   stackTraceContainer: {
     marginTop: 12,
   },
   stackTrace: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     padding: 10,
     borderRadius: 4,
     maxHeight: 120,
   },
   stackTraceText: {
-    color: "#EF4444",
+    color: gameUIColors.error,
     fontSize: 11,
     fontFamily: "monospace",
     lineHeight: 16,
@@ -1440,11 +1444,11 @@ const styles = StyleSheet.create({
   appStartInfo: {
     marginTop: 8,
     padding: 8,
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: gameUIColors.optional + "1A",
     borderRadius: 4,
   },
   spanItem: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 12,
     marginLeft: 16,
     marginBottom: 2,
@@ -1456,24 +1460,24 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   insightItem: {
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    backgroundColor: gameUIColors.muted + "1A",
     padding: 12,
     borderRadius: 6,
     marginBottom: 8,
     borderLeftWidth: 3,
-    borderLeftColor: "#6B7280",
+    borderLeftColor: gameUIColors.muted,
   },
   insightHigh: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderLeftColor: "#EF4444",
+    backgroundColor: gameUIColors.error + "1A",
+    borderLeftColor: gameUIColors.error,
   },
   insightMedium: {
-    backgroundColor: "rgba(245, 158, 11, 0.1)",
-    borderLeftColor: "#F59E0B",
+    backgroundColor: gameUIColors.warning + "1A",
+    borderLeftColor: gameUIColors.warning,
   },
   insightLow: {
-    backgroundColor: "rgba(59, 130, 246, 0.1)",
-    borderLeftColor: "#3B82F6",
+    backgroundColor: gameUIColors.info + "1A",
+    borderLeftColor: gameUIColors.info,
   },
   insightHeader: {
     flexDirection: "row",
@@ -1482,25 +1486,25 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   insightType: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "600",
     letterSpacing: 0.5,
   },
   insightSeverity: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "600",
     textTransform: "uppercase",
   },
   insightMessage: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 13,
     fontWeight: "600",
     marginBottom: 4,
   },
   insightDetails: {
-    color: "#D1D5DB",
+    color: gameUIColors.primaryLight,
     fontSize: 12,
     lineHeight: 16,
     marginBottom: 4,
@@ -1509,16 +1513,16 @@ const styles = StyleSheet.create({
     marginTop: 6,
     paddingTop: 6,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    borderTopColor: gameUIColors.border + "40",
   },
   insightSuggestionLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontWeight: "600",
     marginBottom: 2,
   },
   insightSuggestionText: {
-    color: "#D1D5DB",
+    color: gameUIColors.primaryLight,
     fontSize: 12,
     lineHeight: 16,
   },
@@ -1528,7 +1532,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   noInsightsText: {
-    color: "#10B981",
+    color: gameUIColors.success,
     fontSize: 14,
   },
   
@@ -1545,12 +1549,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   contextLabel: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 12,
     width: 80,
   },
   contextValue: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 12,
     flex: 1,
   },
@@ -1560,7 +1564,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   noContextText: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 14,
   },
 });
