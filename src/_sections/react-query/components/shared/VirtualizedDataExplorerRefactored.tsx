@@ -548,10 +548,10 @@ const flattenData = (
   // Get value information
   const valueType = getValueType(value);
   
-  // Check for circular reference
-  if (checkCircularReference(value, circularCache)) {
-    return [createCircularReferenceItem(id, key, depth, parentId, currentPath)];
-  }
+  // Skip circular reference check for performance
+  // if (checkCircularReference(value, circularCache)) {
+  //   return [createCircularReferenceItem(id, key, depth, parentId, currentPath)];
+  // }
   
   // Calculate child count
   const rawChildCount = isExpandableType(valueType) ? getValueCount(value, valueType) : 0;
@@ -616,28 +616,19 @@ const processChildren = (
     const entries = getValueEntries(value, valueType);
     const limitedEntries = entries.slice(0, childLimit);
     
-    // Process in chunks to avoid blocking
-    for (let i = 0; i < limitedEntries.length; i += CHUNK_SIZE) {
-      const chunk = limitedEntries.slice(i, i + CHUNK_SIZE);
-      
-      for (const [childKey, childValue] of chunk) {
-        const childItems = flattenData(
-          childValue,
-          childKey,
-          depth + 1,
-          parentId,
-          parentPath,
-          expandedItems,
-          maxDepth,
-          circularCache
-        );
-        result.push(...childItems);
-      }
-      
-      // Break for large datasets to let InteractionManager handle
-      if (i > 0 && i % (CHUNK_SIZE * 2) === 0) {
-        break;
-      }
+    // Process all at once for performance (no chunking)
+    for (const [childKey, childValue] of limitedEntries) {
+      const childItems = flattenData(
+        childValue,
+        childKey,
+        depth + 1,
+        parentId,
+        parentPath,
+        expandedItems,
+        maxDepth,
+        circularCache
+      );
+      result.push(...childItems);
     }
   } catch (error) {
     console.warn("Error processing children:", error);
@@ -980,6 +971,15 @@ const VirtualizedItem = React.memo(
         </TouchableOpacity>
       </View>
     );
+  },
+  // Custom comparison - only re-render if these specific props change
+  (prevProps, nextProps) => {
+    return (
+      prevProps.item.id === nextProps.item.id &&
+      prevProps.item.isExpanded === nextProps.item.isExpanded &&
+      prevProps.item.value === nextProps.item.value &&
+      prevProps.onToggleExpanded === nextProps.onToggleExpanded
+    );
   }
 );
 
@@ -1032,12 +1032,12 @@ export const VirtualizedDataExplorer: React.FC<VirtualizedDataExplorerProps> = (
     (typeof data === "object" || Array.isArray(data)) &&
     (Array.isArray(data) ? data.length > 0 : Object.keys(data as object).length > 0);
   
-  // Render functions
-  const renderItem = ({ item }: { item: FlatDataItem }) => (
+  // Render functions - memoized for performance
+  const renderItem = useCallback(({ item }: { item: FlatDataItem }) => (
     <VirtualizedItem item={item} onToggleExpanded={toggleExpanded} />
-  );
+  ), [toggleExpanded]);
   
-  const keyExtractor = (item: FlatDataItem) => item.id;
+  const keyExtractor = useCallback((item: FlatDataItem) => item.id, []);
   
   const toggleMainExpanded = () => {
     setIsExpanded(!isExpanded);

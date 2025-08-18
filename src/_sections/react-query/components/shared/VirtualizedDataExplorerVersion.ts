@@ -8,16 +8,19 @@
  */
 
 export const VIRTUALIZED_DATA_EXPLORER_VERSION = {
-  version: "1.1.0",
-  name: "Full Expansion Support",
+  version: "1.6.0",
+  name: "Realistic Testing",
   date: "2024-01-18",
-  description: "Added fullyExpanded prop for accurate performance testing",
+  description: "Testing with realistic progressive expansion",
   changes: [
     "Separated state management into hooks",
     "Extracted pure utility functions",
     "Optimized re-renders with React.memo",
-    "Improved FlashList configuration",
-    "Added fullyExpanded prop for complete tree expansion",
+    "Added custom comparison function to VirtualizedItem",
+    "Memoized renderItem with useCallback",
+    "Removed circular reference checking",
+    "Removed chunk processing",
+    "Testing with initialExpanded only (realistic usage)",
   ],
 };
 

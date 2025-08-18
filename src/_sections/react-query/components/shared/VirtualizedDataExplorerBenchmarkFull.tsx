@@ -166,6 +166,7 @@ export const VirtualizedDataExplorerBenchmarkFull: React.FC = () => {
   const [savedSessions, setSavedSessions] = useState<BenchmarkSession[]>([]);
   const [showComparison, setShowComparison] = useState(false);
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
+  const [autoRunStarted, setAutoRunStarted] = useState(false);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -406,6 +407,16 @@ export const VirtualizedDataExplorerBenchmarkFull: React.FC = () => {
     setCurrentTestIndex(-1);
     setIsRunning(false);
     console.log("✅ All tests complete and saved!");
+    
+    // Log results for automated testing
+    console.log("📊 AUTOMATED TEST RESULTS:");
+    console.log("Version:", VIRTUALIZED_DATA_EXPLORER_VERSION.version);
+    console.log("Average Render Time:", session.averageRenderTime.toFixed(0) + "ms");
+    console.log("Average FPS:", session.averageFPS.toFixed(0));
+    console.log("Total Items Tested:", session.totalItemsTested);
+    sessionResults.forEach(result => {
+      console.log(`  ${result.name}: ${result.renderTime.toFixed(0)}ms @ ${result.fps}fps`);
+    });
   }, [isRunning]);
 
   const getPerformanceRating = (result: TestResult) => {
