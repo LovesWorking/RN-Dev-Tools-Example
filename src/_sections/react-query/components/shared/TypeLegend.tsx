@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { gameUIColors } from "../../../../_shared/ui/gameUI/constants/gameUIColors";
 
 interface TypeLegendProps {
   types: string[];
@@ -6,23 +7,23 @@ interface TypeLegendProps {
   onFilterChange: (type: string | null) => void;
 }
 
-// Type color mapping (same as VirtualizedDataExplorer)
+// Type color mapping using centralized theme colors
 export const getTypeColor = (type: string): string => {
   const colors: { [key: string]: string } = {
-    string: "#22D3EE", // Cyan for strings
-    number: "#3B82F6", // Blue for numbers
-    bigint: "#8B5CF6", // Purple for bigint
-    boolean: "#F59E0B", // Orange for booleans
-    null: "#6B7280", // Gray for null
-    undefined: "#9CA3AF", // Light gray for undefined
-    function: "#A855F7", // Magenta for functions
-    symbol: "#D946EF", // Hot pink for symbols
-    date: "#EC4899", // Pink for dates
-    error: "#EF4444", // Red for errors
-    array: "#10B981", // Green for arrays
-    object: "#F97316", // Orange-red for objects
+    string: gameUIColors.dataTypes.string,
+    number: gameUIColors.dataTypes.number,
+    bigint: gameUIColors.optional, // Purple for bigint
+    boolean: gameUIColors.dataTypes.boolean,
+    null: gameUIColors.dataTypes.null,
+    undefined: gameUIColors.dataTypes.undefined,
+    function: gameUIColors.dataTypes.function,
+    symbol: gameUIColors.critical, // Pink for symbols
+    date: gameUIColors.critical, // Pink for dates
+    error: gameUIColors.error, // Red for errors
+    array: gameUIColors.dataTypes.array,
+    object: gameUIColors.dataTypes.object,
   };
-  return colors[type] || "#9CA3AF";
+  return colors[type] || gameUIColors.secondary;
 };
 
 /**
@@ -58,7 +59,7 @@ export const TypeLegend: React.FC<TypeLegendProps> = ({
             style={[
               styles.typeBadge,
               isActive && styles.typeBadgeActive,
-              { borderColor: isActive ? color : "rgba(255, 255, 255, 0.1)" },
+              { borderColor: isActive ? color : gameUIColors.primary + "1A" },
             ]}
             onPress={() => handleTypeFilter(type)}
             accessibilityLabel={`Filter by ${type} values`}
@@ -80,14 +81,14 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.primary + "05",
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.05)",
+    borderBottomColor: gameUIColors.primary + "0D",
   },
   typeBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.primary + "08",
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginRight: 8,
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   typeBadgeActive: {
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: gameUIColors.primary + "14",
   },
   typeColor: {
     width: 8,
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   typeName: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontWeight: "500",
   },

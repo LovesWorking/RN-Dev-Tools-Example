@@ -52,6 +52,7 @@ export function GameUICompactStats({
   style,
   hideInactive = true,
 }: GameUICompactStatsProps) {
+  
   return (
     <View style={[styles.container, style]}>
       {/* Compact Header with Health */}

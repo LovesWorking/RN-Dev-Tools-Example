@@ -17,6 +17,7 @@ import {
 import Svg, { Path } from "react-native-svg";
 import { FlashList } from "@shopify/flash-list";
 import { displayValue } from "../../../../_shared/utils/displayValue";
+import { gameUIColors } from "../../../../_shared/ui/gameUI/constants/gameUIColors";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const HIT_SLOP_10 = { top: 10, bottom: 10, left: 10, right: 10 };
@@ -38,32 +39,32 @@ const INDENT_STYLES = Array.from(
     }).container
 );
 
-// Enhanced type color cache with distinct colors for better differentiation [[memory:4875251]]
+// Enhanced type color cache using centralized theme colors [[memory:4875251]]
 const TYPE_COLOR_CACHE = new Map([
-  ["string", "#22D3EE"], // Cyan for strings
-  ["number", "#3B82F6"], // Blue for numbers
-  ["bigint", "#8B5CF6"], // Purple for bigint (distinct from number)
-  ["boolean", "#F59E0B"], // Orange for booleans
-  ["null", "#6B7280"], // Gray for null
-  ["undefined", "#9CA3AF"], // Light gray for undefined (distinct from null)
-  ["function", "#A855F7"], // Magenta for functions
-  ["symbol", "#D946EF"], // Hot pink for symbols (distinct from function)
-  ["date", "#EC4899"], // Pink for dates
-  ["error", "#EF4444"], // Red for errors
-  ["array", "#10B981"], // Green for arrays
-  ["object", "#F97316"], // Orange-red for objects (distinct from array)
-  ["map", "#06B6D4"], // Teal for maps (distinct from object/array)
-  ["set", "#84CC16"], // Lime for sets (distinct from map/array/object)
-  ["circular", "#F59E0B"], // Amber for circular references
+  ["string", gameUIColors.dataTypes.string],
+  ["number", gameUIColors.dataTypes.number],
+  ["bigint", gameUIColors.optional], // Purple for bigint (distinct from number)
+  ["boolean", gameUIColors.dataTypes.boolean],
+  ["null", gameUIColors.dataTypes.null],
+  ["undefined", gameUIColors.dataTypes.undefined],
+  ["function", gameUIColors.dataTypes.function],
+  ["symbol", gameUIColors.critical], // Pink for symbols (distinct from function)
+  ["date", gameUIColors.critical], // Pink for dates
+  ["error", gameUIColors.error], // Red for errors
+  ["array", gameUIColors.dataTypes.array],
+  ["object", gameUIColors.dataTypes.object],
+  ["map", gameUIColors.info], // Cyan for maps (distinct from object/array)
+  ["set", gameUIColors.success], // Green for sets (distinct from map/array/object)
+  ["circular", gameUIColors.warning], // Yellow for circular references
 ]);
 
 // Pre-computed stable styles with React Query-inspired design
 const STABLE_STYLES = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)", // bg-white/[0.03]
+    backgroundColor: gameUIColors.primary + "08", // bg-white/[0.03]
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)", // border-white/[0.08]
+    borderColor: gameUIColors.primary + "14", // border-white/[0.08]
     // Remove flex: 1 and minHeight to allow natural sizing
   },
   header: {
@@ -78,12 +79,12 @@ const STABLE_STYLES = StyleSheet.create({
     marginBottom: 6,
   },
   title: {
-    color: "#FFFFFF", // text-white
+    color: gameUIColors.primary, // text-white
     fontSize: 14,
     fontWeight: "500", // font-medium
   },
   description: {
-    color: "#9CA3AF", // text-gray-400
+    color: gameUIColors.secondary, // text-gray-400
     fontSize: 12,
     marginTop: 2,
   },
@@ -94,7 +95,7 @@ const STABLE_STYLES = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.08)", // border-white/[0.08]
+    borderTopColor: gameUIColors.primary + "14", // border-white/[0.08]
   },
   typeBadge: {
     flexDirection: "row",
@@ -113,7 +114,7 @@ const STABLE_STYLES = StyleSheet.create({
   typeName: {
     fontSize: 10,
     fontWeight: "500",
-    color: "#9CA3AF", // text-gray-400
+    color: gameUIColors.secondary, // text-gray-400
   },
   itemContainer: {
     minHeight: ITEM_HEIGHT,
@@ -130,11 +131,11 @@ const STABLE_STYLES = StyleSheet.create({
     paddingRight: 16,
     paddingVertical: 2, // Further reduced for even tighter spacing
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.05)", // border-white/[0.05]
+    borderBottomColor: gameUIColors.primary + "0D", // border-white/[0.05]
     minHeight: 24, // Match ITEM_HEIGHT for consistency
   },
   itemTouchablePressed: {
-    backgroundColor: "rgba(255, 255, 255, 0.02)", // bg-white/[0.02]
+    backgroundColor: gameUIColors.primary + "05", // bg-white/[0.02]
   },
   expanderContainer: {
     width: 16, // Reduced to minimize space
@@ -165,7 +166,7 @@ const STABLE_STYLES = StyleSheet.create({
     marginBottom: 2,
   },
   labelText: {
-    color: "#FFFFFF", // text-white
+    color: gameUIColors.primary, // text-white
     fontSize: 12,
     fontWeight: "500", // font-medium
     fontFamily: "monospace",
@@ -174,7 +175,7 @@ const STABLE_STYLES = StyleSheet.create({
     flexWrap: "wrap",
   },
   labelTextTruncated: {
-    color: "#FFFFFF", // text-white
+    color: gameUIColors.primary, // text-white
     fontSize: 12,
     fontWeight: "500", // font-medium
     fontFamily: "monospace",
@@ -184,21 +185,21 @@ const STABLE_STYLES = StyleSheet.create({
   valueTextVertical: {
     fontSize: 12,
     fontFamily: "monospace",
-    color: "#D1D5DB", // text-gray-300
+    color: gameUIColors.primaryLight, // text-gray-300
     paddingLeft: 16, // Indent the value
   },
   valueText: {
     fontSize: 12,
     fontFamily: "monospace",
     flex: 1,
-    color: "#D1D5DB", // text-gray-300
+    color: gameUIColors.primaryLight, // text-gray-300
   },
   loadingContainer: {
     padding: 16,
     alignItems: "center",
   },
   loadingText: {
-    color: "#9CA3AF", // text-gray-400
+    color: gameUIColors.secondary, // text-gray-400
     fontSize: 12,
   },
   noDataContainer: {
@@ -206,7 +207,7 @@ const STABLE_STYLES = StyleSheet.create({
     alignItems: "center",
   },
   noDataText: {
-    color: "#9CA3AF", // text-gray-400
+    color: gameUIColors.secondary, // text-gray-400
     fontSize: 12,
   },
   listContent: {
@@ -313,7 +314,7 @@ const formatValue = (value: JsonValue, valueType: string): string => {
 
 // Optimized type color lookup using cache [[memory:4875251]]
 const getTypeColor = (valueType: string): string => {
-  return TYPE_COLOR_CACHE.get(valueType) || "#10B981";
+  return TYPE_COLOR_CACHE.get(valueType) || gameUIColors.dataTypes.array;
 };
 
 // Memoized components for performance
@@ -335,7 +336,7 @@ const Expander = React.memo(
           <Path
             d="M6 12l4-4-4-4"
             strokeWidth={2}
-            stroke="#9CA3AF" // text-gray-400
+            stroke={gameUIColors.secondary} // text-gray-400
             fill="none"
           />
         </Svg>
@@ -638,7 +639,7 @@ const VirtualizedItem = React.memo(
               top: 0,
               bottom: 0,
               width: 1,
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
+              backgroundColor: gameUIColors.primary + "26",
             }}
           />
         )}
@@ -650,7 +651,7 @@ const VirtualizedItem = React.memo(
               top: 10, // Center of the 20px height (marginTop: 4 + height: 12 / 2)
               width: 10, // Connect to the arrow
               height: 1,
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
+              backgroundColor: gameUIColors.primary + "26",
             }}
           />
         )}
@@ -695,7 +696,7 @@ const VirtualizedItem = React.memo(
                 <Text
                   style={[
                     STABLE_STYLES.valueTextVertical,
-                    { color: "#9CA3AF" },
+                    { color: gameUIColors.secondary },
                   ]}
                 >
                   {item.valueType} ({item.childCount}{" "}
@@ -715,7 +716,7 @@ const VirtualizedItem = React.memo(
               </Text>
 
               {item.isExpandable ? (
-                <Text style={[STABLE_STYLES.valueText, { color: "#9CA3AF" }]}>
+                <Text style={[STABLE_STYLES.valueText, { color: gameUIColors.secondary }]}>
                   {item.valueType} ({item.childCount}{" "}
                   {item.childCount === 1 ? "item" : "items"})
                 </Text>

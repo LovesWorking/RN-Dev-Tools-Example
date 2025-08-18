@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, View, Dimensions, Text } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
   useEnvVarsSubtitle,
   EnvVarsModal,
 } from "../../../_sections/env";
-import { StorageModalWithTabs, RequiredStorageKey } from "../../../_sections/storage";
+import {
+  StorageModalWithTabs,
+  RequiredStorageKey,
+} from "../../../_sections/storage";
 // import { SentryLogsModal } from "../../../_sections/sentry/components/SentryLogsModal"; // Temporarily disabled - causing import errors
 
 import {
@@ -26,6 +29,7 @@ import { ClaudeGridMenu } from "./ClaudeGridMenu";
 import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./DialDevTools";
 import Dial2 from "./Dial2";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 // Re-export types that developers will need
 export type { UserRole } from "../../../newDevTools/floatingTools";
@@ -43,6 +47,7 @@ interface RnBetterDevToolsBubbleProps {
   hideEnvButton?: boolean;
   hideSentryButton?: boolean;
   hideStorageButton?: boolean;
+  onOpenPerformanceTest?: () => void;
   requiredStorageKeys?: RequiredStorageKey[];
   hideUserStatus?: boolean;
 }
@@ -61,13 +66,14 @@ export function RnBetterDevToolsBubble({
   hideEnvButton,
   hideSentryButton,
   hideStorageButton,
+  onOpenPerformanceTest,
 }: RnBetterDevToolsBubbleProps) {
-  const [showFloatingMenu, setShowFloatingMenu] = useState(false);
+  const [showFloatingMenu, setShowFloatingMenu] = useState(false); // Set to false for production
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
 
   // Menu type selection
   type MenuType = "claude" | "dial" | "dial2";
-  const [menuType, setMenuType] = useState<MenuType>("dial2");
+  const [menuType, setMenuType] = useState<MenuType>("dial");
 
   // Get screen dimensions
   const { height: screenHeight } = Dimensions.get("window");
@@ -141,7 +147,7 @@ export function RnBetterDevToolsBubble({
   // Hide bubble when any modal is open to prevent visual overlap
   const isAnyModalOpen =
     isModalOpen ||
-    isDebugModalOpen ||
+    // isDebugModalOpen || // Not used anymore - we use showFloatingMenu instead
     isEnvModalOpen ||
     // isSentryModalOpen || // Disabled - Sentry modal causing import issues
     isStorageModalOpen;
@@ -149,10 +155,14 @@ export function RnBetterDevToolsBubble({
   // Debug which modal is stuck open
   useEffect(() => {
     if (isAnyModalOpen) {
+      console.log('Modal open states:', {
+        isModalOpen,
+        isEnvModalOpen,
+        isStorageModalOpen,
+      });
     }
   }, [
     isModalOpen,
-    isDebugModalOpen,
     isEnvModalOpen,
     isSentryModalOpen,
     isStorageModalOpen,
@@ -169,52 +179,14 @@ export function RnBetterDevToolsBubble({
       <QueryClientProvider client={queryClient}>
         {/* Floating Tools - Always mounted for stable tree; hidden via opacity/pointerEvents when modals open */}
         <View
-          pointerEvents={isAnyModalOpen ? "none" : "auto"}
-          style={{ opacity: isAnyModalOpen ? 0 : 1 }}
+          pointerEvents={isAnyModalOpen || showFloatingMenu ? "none" : "auto"}
+          style={{ opacity: isAnyModalOpen || showFloatingMenu ? 0 : 1 }}
         >
           <FloatingTools enablePositionPersistence>
             <EnvironmentIndicator environment={environment!} />
-            <UserStatus userRole={userRole} onPress={handleStatusPress} />
-
+            <UserStatus userRole={userRole} onPress={() => setShowFloatingMenu(true)} />
             {/* Menu selection buttons */}
-            <View style={{ flexDirection: "row", gap: 4, marginTop: 8 }}>
-              {/* Dial2 - Game UI */}
-              <Pressable
-                onPress={() => {
-                  setMenuType("dial2");
-                  setShowFloatingMenu(true);
-                }}
-                style={[styles.menuButton, { backgroundColor: "#00D4FF" }]}
-                hitSlop={8}
-              >
-                <Text style={styles.menuButtonText}>G</Text>
-              </Pressable>
-
-              {/* claude - claude  */}
-
-              <Pressable
-                onPress={() => {
-                  setMenuType("claude");
-                  setShowFloatingMenu(true);
-                }}
-                style={[styles.menuButton, { backgroundColor: "#FF10F0" }]}
-                hitSlop={8}
-              >
-                <Text style={styles.menuButtonText}>C</Text>
-              </Pressable>
-
-              {/* dial */}
-              <Pressable
-                onPress={() => {
-                  setMenuType("dial");
-                  setShowFloatingMenu(true);
-                }}
-                style={[styles.menuButton, { backgroundColor: "#FF10F0" }]}
-                hitSlop={8}
-              >
-                <Text style={styles.menuButtonText}>D</Text>
-              </Pressable>
-            </View>
+            <View style={{ flexDirection: "row", gap: 4, marginTop: 8 }}></View>
           </FloatingTools>
         </View>
 
@@ -239,6 +211,12 @@ export function RnBetterDevToolsBubble({
               onStoragePress: () => {
                 setShowFloatingMenu(false);
                 handleStoragePress();
+              },
+              onPerformancePress: () => {
+                setShowFloatingMenu(false);
+                if (onOpenPerformanceTest) {
+                  onOpenPerformanceTest();
+                }
               },
               onWifiToggle: () => {
                 setIsWifiEnabled(!isWifiEnabled);
@@ -278,35 +256,7 @@ export function RnBetterDevToolsBubble({
           onMutationSelect={handleMutationSelect}
         />
 
-        {/* Dial2 Menu - Opens when user button is clicked */}
-        {isDebugModalOpen && (
-          <DialDevTools
-            onQueryPress={() => {
-              handleDebugModalDismiss();
-              handleQueryPress();
-            }}
-            onEnvPress={() => {
-              handleDebugModalDismiss();
-              handleEnvPress();
-            }}
-            onSentryPress={() => {
-              // Disabled - Sentry modal has import issues
-              console.warn("Sentry modal is temporarily disabled");
-              handleDebugModalDismiss();
-            }}
-            onStoragePress={() => {
-              handleDebugModalDismiss();
-              handleStoragePress();
-            }}
-            onWifiToggle={() => {
-              setIsWifiEnabled(!isWifiEnabled);
-            }}
-            onClose={() => {
-              handleDebugModalDismiss();
-            }}
-            isWifiEnabled={isWifiEnabled}
-          />
-        )}
+        {/* Removed duplicate DialDevTools - now only rendered once in the switch statement above */}
 
         {/* Environment Variables Modal - Auto-opens if restored state indicates it was open */}
         <EnvVarsModal
@@ -335,6 +285,7 @@ export function RnBetterDevToolsBubble({
           enableSharedModalDimensions={enableSharedModalDimensions}
           requiredStorageKeys={requiredStorageKeys}
         />
+        
       </QueryClientProvider>
     </ErrorBoundary>
   );
@@ -344,9 +295,9 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.panel,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: gameUIColors.border,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -354,9 +305,9 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.panel,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: gameUIColors.border,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -364,14 +315,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: gameUIColors.panel,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.15)",
+    borderColor: gameUIColors.border,
     justifyContent: "center",
     alignItems: "center",
   },
   menuButtonText: {
-    color: "white",
+    color: gameUIColors.primary,
     fontSize: 12,
     fontWeight: "bold",
     fontFamily: "monospace",

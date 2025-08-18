@@ -55,9 +55,7 @@ const ENV_ALERT_STATES = {
   },
 };
 
-export function GameUIEnvContent({
-  requiredEnvVars,
-}: GameUIEnvContentProps) {
+export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
   // State
   const [issuesSectionExpanded, setIssuesSectionExpanded] = useState(true);
   const [requiredSectionExpanded, setRequiredSectionExpanded] = useState(true);
@@ -71,52 +69,52 @@ export function GameUIEnvContent({
     // Dev test mode mock data
     if (devTestMode) {
       switch (devTestMode) {
-        case 'SUCCESS':
+        case "SUCCESS":
           return {
-            EXPO_PUBLIC_API_URL: 'https://api.example.com',
-            EXPO_PUBLIC_API_KEY: 'sk_test_1234567890',
-            EXPO_PUBLIC_ENVIRONMENT: 'production',
-            EXPO_PUBLIC_DEBUG_MODE: 'false',
-            EXPO_PUBLIC_CACHE_TTL: '3600',
-            EXPO_PUBLIC_MAX_RETRIES: '3',
-            EXPO_PUBLIC_TIMEOUT: '30000',
-            EXPO_PUBLIC_FEATURE_FLAG_A: 'true',
-            EXPO_PUBLIC_FEATURE_FLAG_B: 'false',
-            EXPO_PUBLIC_LOG_LEVEL: 'info',
+            EXPO_PUBLIC_API_URL: "https://api.example.com",
+            EXPO_PUBLIC_API_KEY: "sk_test_1234567890",
+            EXPO_PUBLIC_ENVIRONMENT: "production",
+            EXPO_PUBLIC_DEBUG_MODE: "false",
+            EXPO_PUBLIC_CACHE_TTL: "3600",
+            EXPO_PUBLIC_MAX_RETRIES: "3",
+            EXPO_PUBLIC_TIMEOUT: "30000",
+            EXPO_PUBLIC_FEATURE_FLAG_A: "true",
+            EXPO_PUBLIC_FEATURE_FLAG_B: "false",
+            EXPO_PUBLIC_LOG_LEVEL: "info",
           };
-        case 'PARTIAL_FAILURE':
+        case "PARTIAL_FAILURE":
           return {
-            EXPO_PUBLIC_API_URL: 'https://api.example.com',
-            EXPO_PUBLIC_API_KEY: 'invalid_key_format',
-            EXPO_PUBLIC_ENVIRONMENT: 'dev',
-            EXPO_PUBLIC_DEBUG_MODE: 'yes', // Wrong type
-            EXPO_PUBLIC_TIMEOUT: 'thirty', // Wrong type
+            EXPO_PUBLIC_API_URL: "https://api.example.com",
+            EXPO_PUBLIC_API_KEY: "invalid_key_format",
+            EXPO_PUBLIC_ENVIRONMENT: "dev",
+            EXPO_PUBLIC_DEBUG_MODE: "yes", // Wrong type
+            EXPO_PUBLIC_TIMEOUT: "thirty", // Wrong type
           };
-        case 'CRITICAL_FAILURE':
+        case "CRITICAL_FAILURE":
           return {
-            EXPO_PUBLIC_LOG_LEVEL: 'debug',
-            EXPO_PUBLIC_FEATURE_FLAG_A: 'true',
+            EXPO_PUBLIC_LOG_LEVEL: "debug",
+            EXPO_PUBLIC_FEATURE_FLAG_A: "true",
           };
-        case 'EMPTY':
+        case "EMPTY":
           return {};
-        case 'TYPE_ERRORS':
+        case "TYPE_ERRORS":
           return {
-            EXPO_PUBLIC_API_URL: '12345', // Should be URL
-            EXPO_PUBLIC_API_KEY: 'sk_test_1234567890',
-            EXPO_PUBLIC_ENVIRONMENT: 'production',
-            EXPO_PUBLIC_DEBUG_MODE: 'yes', // Should be boolean
-            EXPO_PUBLIC_CACHE_TTL: 'one hour', // Should be number
-            EXPO_PUBLIC_MAX_RETRIES: 'three', // Should be number
-            EXPO_PUBLIC_TIMEOUT: 'thirty seconds', // Should be number
+            EXPO_PUBLIC_API_URL: "12345", // Should be URL
+            EXPO_PUBLIC_API_KEY: "sk_test_1234567890",
+            EXPO_PUBLIC_ENVIRONMENT: "production",
+            EXPO_PUBLIC_DEBUG_MODE: "yes", // Should be boolean
+            EXPO_PUBLIC_CACHE_TTL: "one hour", // Should be number
+            EXPO_PUBLIC_MAX_RETRIES: "three", // Should be number
+            EXPO_PUBLIC_TIMEOUT: "thirty seconds", // Should be number
           };
-        case 'VALUE_ERRORS':
+        case "VALUE_ERRORS":
           return {
-            EXPO_PUBLIC_API_URL: 'https://api.example.com',
-            EXPO_PUBLIC_API_KEY: 'wrong_prefix_1234567890', // Wrong prefix
-            EXPO_PUBLIC_ENVIRONMENT: 'staging', // Not allowed value
-            EXPO_PUBLIC_DEBUG_MODE: 'false',
-            EXPO_PUBLIC_LOG_LEVEL: 'verbose', // Invalid log level
-            EXPO_PUBLIC_MAX_RETRIES: '-1', // Invalid negative
+            EXPO_PUBLIC_API_URL: "https://api.example.com",
+            EXPO_PUBLIC_API_KEY: "wrong_prefix_1234567890", // Wrong prefix
+            EXPO_PUBLIC_ENVIRONMENT: "staging", // Not allowed value
+            EXPO_PUBLIC_DEBUG_MODE: "false",
+            EXPO_PUBLIC_LOG_LEVEL: "verbose", // Invalid log level
+            EXPO_PUBLIC_MAX_RETRIES: "-1", // Invalid negative
           };
         default:
           break;
@@ -136,15 +134,45 @@ export function GameUIEnvContent({
   // Process and categorize environment variables
   const { requiredVars, optionalVars } = useMemo(() => {
     const mockRequiredVars = devTestMode
-      ? [
-          { key: 'EXPO_PUBLIC_API_URL', expectedType: 'url', description: 'Base API endpoint URL' },
-          { key: 'EXPO_PUBLIC_API_KEY', expectedType: 'string', expectedValue: 'sk_*', description: 'API authentication key' },
-          { key: 'EXPO_PUBLIC_ENVIRONMENT', expectedType: 'string', expectedValue: 'production or development', description: 'Current environment' },
-          { key: 'EXPO_PUBLIC_DEBUG_MODE', expectedType: 'boolean', description: 'Enable debug logging' },
-          { key: 'EXPO_PUBLIC_CACHE_TTL', expectedType: 'number', description: 'Cache time-to-live in seconds' },
-          { key: 'EXPO_PUBLIC_MAX_RETRIES', expectedType: 'number', description: 'Maximum retry attempts' },
-          { key: 'EXPO_PUBLIC_TIMEOUT', expectedType: 'number', description: 'Request timeout in milliseconds' },
-        ] as RequiredEnvVar[]
+      ? ([
+          {
+            key: "EXPO_PUBLIC_API_URL",
+            expectedType: "url",
+            description: "Base API endpoint URL",
+          },
+          {
+            key: "EXPO_PUBLIC_API_KEY",
+            expectedType: "string",
+            expectedValue: "sk_*",
+            description: "API authentication key",
+          },
+          {
+            key: "EXPO_PUBLIC_ENVIRONMENT",
+            expectedType: "string",
+            expectedValue: "production or development",
+            description: "Current environment",
+          },
+          {
+            key: "EXPO_PUBLIC_DEBUG_MODE",
+            expectedType: "boolean",
+            description: "Enable debug logging",
+          },
+          {
+            key: "EXPO_PUBLIC_CACHE_TTL",
+            expectedType: "number",
+            description: "Cache time-to-live in seconds",
+          },
+          {
+            key: "EXPO_PUBLIC_MAX_RETRIES",
+            expectedType: "number",
+            description: "Maximum retry attempts",
+          },
+          {
+            key: "EXPO_PUBLIC_TIMEOUT",
+            expectedType: "number",
+            description: "Request timeout in milliseconds",
+          },
+        ] as RequiredEnvVar[])
       : requiredEnvVars;
 
     return processEnvVars(autoCollectedEnvVars, mockRequiredVars);
@@ -152,7 +180,7 @@ export function GameUIEnvContent({
 
   // Calculate statistics
   const stats = useMemo(() => {
-    if (devTestMode === 'EMPTY') {
+    if (devTestMode === "EMPTY") {
       return {
         totalCount: 0,
         requiredCount: 0,
@@ -167,7 +195,10 @@ export function GameUIEnvContent({
   }, [requiredVars, optionalVars, autoCollectedEnvVars, devTestMode]);
 
   // Use shared alert state hook
-  const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(stats, ENV_ALERT_STATES);
+  const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
+    stats,
+    ENV_ALERT_STATES
+  );
 
   // Transform issues for GameUIIssuesList
   const issues = useMemo<IssueItem[]>(() => {
@@ -195,62 +226,73 @@ export function GameUIEnvContent({
   }, [requiredVars]);
 
   // Stats configuration for GameUICompactStats
-  const statsConfig = useMemo<StatCardConfig[]>(() => [
-    {
-      key: "valid",
-      label: "VALID VARIABLES",
-      subtitle: "Correctly configured",
-      icon: CheckCircle2,
-      color: gameUIColors.success,
-      value: stats.presentRequiredCount,
-      pulseDelay: 0,
-    },
-    {
-      key: "missing",
-      label: "CRITICAL ERROR",
-      subtitle: "Missing required data",
-      icon: AlertCircle,
-      color: gameUIColors.error,
-      value: stats.missingCount,
-      pulseDelay: 200,
-    },
-    {
-      key: "wrongValue",
-      label: "CONFIG MISMATCH",
-      subtitle: "Invalid parameters",
-      icon: XCircle,
-      color: gameUIColors.warning,
-      value: stats.wrongValueCount,
-      pulseDelay: 400,
-    },
-    {
-      key: "wrongType",
-      label: "TYPE ERROR",
-      subtitle: "Incorrect format",
-      icon: Zap,
-      color: gameUIColors.info,
-      value: stats.wrongTypeCount,
-      pulseDelay: 600,
-    },
-    {
-      key: "optional",
-      label: "OPTIONAL VARS",
-      subtitle: "Available extras",
-      icon: Activity,
-      color: gameUIColors.optional,
-      value: stats.optionalCount,
-      pulseDelay: 800,
-    },
-  ], [stats]);
+  const statsConfig = useMemo<StatCardConfig[]>(
+    () => [
+      {
+        key: "valid",
+        label: "VALID VARIABLES",
+        subtitle: "Correctly configured",
+        icon: CheckCircle2,
+        color: gameUIColors.success,
+        value: stats.presentRequiredCount,
+        pulseDelay: 0,
+      },
+      {
+        key: "missing",
+        label: "CRITICAL ERROR",
+        subtitle: "Missing required data",
+        icon: AlertCircle,
+        color: gameUIColors.error,
+        value: stats.missingCount,
+        pulseDelay: 200,
+      },
+      {
+        key: "wrongValue",
+        label: "CONFIG MISMATCH",
+        subtitle: "Invalid parameters",
+        icon: XCircle,
+        color: gameUIColors.warning,
+        value: stats.wrongValueCount,
+        pulseDelay: 400,
+      },
+      {
+        key: "wrongType",
+        label: "TYPE ERROR",
+        subtitle: "Incorrect format",
+        icon: Zap,
+        color: gameUIColors.info,
+        value: stats.wrongTypeCount,
+        pulseDelay: 600,
+      },
+      {
+        key: "optional",
+        label: "OPTIONAL VARS",
+        subtitle: "Available extras",
+        icon: Activity,
+        color: gameUIColors.optional,
+        value: stats.optionalCount,
+        pulseDelay: 800,
+      },
+    ],
+    [stats]
+  );
 
   // Calculate health percentage
   const healthPercentage =
     stats.totalCount > 0
-      ? Math.round((stats.presentRequiredCount / (stats.totalCount - stats.optionalCount)) * 100)
+      ? Math.round(
+          (stats.presentRequiredCount /
+            (stats.totalCount - stats.optionalCount)) *
+            100
+        )
       : 0;
 
   const healthStatus =
-    healthPercentage >= 90 ? "OPTIMAL" : healthPercentage >= 70 ? "WARNING" : "CRITICAL";
+    healthPercentage >= 90
+      ? "OPTIMAL"
+      : healthPercentage >= 70
+      ? "WARNING"
+      : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
@@ -294,7 +336,8 @@ export function GameUIEnvContent({
           },
           {
             label: "ERRORS",
-            value: stats.missingCount + stats.wrongValueCount + stats.wrongTypeCount,
+            value:
+              stats.missingCount + stats.wrongValueCount + stats.wrongTypeCount,
             color: gameUIColors.error,
           },
         ]}

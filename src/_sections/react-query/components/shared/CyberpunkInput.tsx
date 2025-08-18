@@ -16,6 +16,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 interface CyberpunkInputProps extends TextInputProps {
   label?: string;
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
   },
 
   labelFocused: {
-    color: "#00FFFF",
+    color: gameUIColors.info,
   },
 
   inputContainer: {
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     bottom: -1,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#00FFFF",
+    borderColor: gameUIColors.info,
     backgroundColor: "rgba(0, 255, 255, 0.05)",
     zIndex: 10,
   },
@@ -378,7 +379,7 @@ const styles = StyleSheet.create({
   },
 
   cornerAccentFocused: {
-    backgroundColor: "#00FFFF",
+    backgroundColor: gameUIColors.info,
   },
 
   cornerTL: {

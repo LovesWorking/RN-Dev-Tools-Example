@@ -19,6 +19,7 @@ import { formatRelativeTime } from "../utils/formatRelativeTime";
 import { StorageEventDetailModal } from "./StorageEventDetailModal";
 import { StorageFilterView } from "./StorageFilterView";
 import { ValueTypeBadge } from "../../../_shared/ui/components/ValueTypeBadge";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface StorageEventsModalProps {
   visible: boolean;
@@ -267,16 +268,16 @@ export function StorageEventsModal({
     switch (action) {
       case "setItem":
       case "multiSet":
-        return "#10B981"; // Green for write
+        return gameUIColors.success; // Green for write
       case "removeItem":
       case "multiRemove":
       case "clear":
-        return "#EF4444"; // Red for delete
+        return gameUIColors.error; // Red for delete
       case "mergeItem":
       case "multiMerge":
-        return "#3B82F6"; // Blue for merge
+        return gameUIColors.info; // Blue for merge
       default:
-        return "#6B7280";
+        return gameUIColors.muted;
     }
   };
 
@@ -388,7 +389,7 @@ export function StorageEventsModal({
           {theme.name === "cyberpunk" ? `[${conversations.length}] KEYS` : `${conversations.length} keys`}
         </Text>
         {isListening && <View style={[styles.listeningIndicator, {
-          backgroundColor: theme.name === "cyberpunk" ? theme.colors.success : "#10B981"
+          backgroundColor: theme.name === "cyberpunk" ? theme.colors.success : gameUIColors.success
         }]} />}
       </View>
 
@@ -403,9 +404,9 @@ export function StorageEventsModal({
           ]}
         >
           {isListening ? (
-            <Pause size={14} color="#EF4444" />
+            <Pause size={14} color={gameUIColors.error} />
           ) : (
-            <Play size={14} color="#10B981" />
+            <Play size={14} color={gameUIColors.success} />
           )}
         </TouchableOpacity>
 
@@ -417,7 +418,7 @@ export function StorageEventsModal({
             showFilters && styles.filterButtonActive,
           ]}
         >
-          <Filter size={14} color={showFilters ? "#3B82F6" : "#6B7280"} />
+          <Filter size={14} color={showFilters ? gameUIColors.info : gameUIColors.muted} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -426,7 +427,7 @@ export function StorageEventsModal({
           style={styles.headerActionButton}
           disabled={events.length === 0}
         >
-          <Trash2 size={14} color={events.length > 0 ? "#6B7280" : "#374151"} />
+          <Trash2 size={14} color={events.length > 0 ? gameUIColors.muted : gameUIColors.muted + "80"} />
         </TouchableOpacity>
       </View>
     </View>
@@ -497,7 +498,7 @@ export function StorageEventsModal({
       <View style={styles.container}>
         {conversations.length === 0 ? (
           <View style={styles.emptyState}>
-            <Database size={32} color="#374151" />
+            <Database size={32} color={gameUIColors.muted} />
             <Text style={styles.emptyTitle}>No storage activity</Text>
             <Text style={styles.emptyText}>
               {isListening
@@ -528,7 +529,7 @@ export function StorageEventsModal({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.panel,
   },
   headerContainer: {
     flexDirection: "row",
@@ -542,7 +543,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -550,14 +551,14 @@ const styles = StyleSheet.create({
   },
   headerStatsText: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontWeight: "500",
   },
   listeningIndicator: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#10B981",
+    backgroundColor: gameUIColors.success,
   },
   headerActions: {
     flexDirection: "row",
@@ -568,29 +569,29 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.primary + "08",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.primary + "14",
     alignItems: "center",
     justifyContent: "center",
   },
   startButton: {
-    backgroundColor: "rgba(16, 185, 129, 0.1)",
-    borderColor: "rgba(16, 185, 129, 0.2)",
+    backgroundColor: gameUIColors.success + "1A",
+    borderColor: gameUIColors.success + "33",
   },
   stopButton: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderColor: "rgba(239, 68, 68, 0.2)",
+    backgroundColor: gameUIColors.error + "1A",
+    borderColor: gameUIColors.error + "33",
   },
   filterButtonActive: {
-    backgroundColor: "rgba(59, 130, 246, 0.1)",
-    borderColor: "rgba(59, 130, 246, 0.2)",
+    backgroundColor: gameUIColors.info + "1A",
+    borderColor: gameUIColors.info + "33",
   },
   headerInfo: {
     flex: 1,
   },
   headerTitle: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 14,
     fontWeight: "500",
   },
@@ -606,7 +607,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     marginTop: 12,
     marginBottom: 4,
   },
@@ -616,7 +617,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   conversationItem: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.primary + "08",
     borderRadius: 8,
     marginHorizontal: 12,
     marginBottom: 8,
@@ -632,7 +633,7 @@ const styles = StyleSheet.create({
   conversationKey: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     marginBottom: 4,
   },
   actionBadge: {
@@ -672,6 +673,6 @@ const styles = StyleSheet.create({
   },
   metaDot: {
     fontSize: 10,
-    color: "#4B5563",
+    color: gameUIColors.muted + "CC",
   },
 });

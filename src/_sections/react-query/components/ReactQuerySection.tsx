@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { CyberpunkSectionButton } from "../../../_components/floating-bubble/console/CyberpunkSectionButton";
 import { TanstackLogo } from "./query-browser/svgs";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface ReactQuerySectionProps {
   onPress: () => void;
@@ -38,8 +39,8 @@ export function ReactQuerySection({
       title="QUERY"
       subtitle={formatSubtitle()}
       icon={TanstackIcon as any}
-      iconColor="#FF006E"
-      iconBackgroundColor="rgba(255, 0, 110, 0.1)"
+      iconColor={gameUIColors.critical}
+      iconBackgroundColor={gameUIColors.critical + "1A"}
       onPress={onPress}
       index={1}
     />

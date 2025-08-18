@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet } from "react-native";
 import { ChevronLeft } from "lucide-react-native";
+import { gameUIColors } from "../gameUI/constants/gameUIColors";
 
 interface BackButtonProps {
   onPress: () => void;
@@ -11,7 +12,7 @@ interface BackButtonProps {
 
 export function BackButton({
   onPress,
-  color = "#FFFFFF",
+  color = gameUIColors.primary,
   size = 16,
   accessibilityLabel = "Go back",
   accessibilityHint = "Return to previous screen",
@@ -35,10 +36,10 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    backgroundColor: "rgba(156, 163, 175, 0.1)",
+    backgroundColor: gameUIColors.secondary + "1A",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(156, 163, 175, 0.2)",
+    borderColor: gameUIColors.secondary + "33",
   },
 });

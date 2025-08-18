@@ -176,10 +176,10 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 24,
     marginBottom: 8,
-    backgroundColor: "rgba(255, 0, 255, 0.05)",
+    backgroundColor: gameUIColors.critical + "0D",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 0, 255, 0.2)",
+    borderColor: gameUIColors.critical + "33",
     borderStyle: "dashed",
   },
   header: {
@@ -222,12 +222,12 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 6,
     marginBottom: 4,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: gameUIColors.background + "33",
   },
   optionActive: {
-    backgroundColor: "rgba(0, 212, 255, 0.1)",
+    backgroundColor: gameUIColors.info + "1A",
     borderWidth: 1,
-    borderColor: "rgba(0, 212, 255, 0.3)",
+    borderColor: gameUIColors.border,
   },
   optionText: {
     fontSize: 10,

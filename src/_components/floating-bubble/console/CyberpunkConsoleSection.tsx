@@ -12,6 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import type { LucideIcon } from "lucide-react-native";
 import { ChevronRightIcon } from "@/src/_shared/icons/lucide-icons";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 // CONFIGURABLE: Change this value to adjust glitch duration (in milliseconds)
 // Examples: 100 for very quick, 500 for half second, 1000 for 1 second, 2000 for 2 seconds
@@ -172,12 +173,12 @@ export function CyberpunkConsoleSection({
     if (iconColor === "#3B82F6") return "#3B82F6"; // Blue
     if (iconColor === "#8B5CF6") return "#8B5CF6"; // Purple
     if (iconColor === "#F59E0B") return "#F59E0B"; // Yellow
-    if (iconColor === "#00FFFF") return "#00FFFF"; // Cyan
+    if (iconColor === "#00FFFF") return gameUIColors.info; // Cyan
     if (iconColor === "#EC4899") return "#EC4899"; // Pink
     if (iconColor === "#14B8A6") return "#14B8A6"; // Teal
     if (iconColor === "#FF006E") return "#FF006E"; // React Query pink/red
     if (iconColor === "#00FF88") return "#00FF88"; // Storage green
-    if (iconColor === "#00E5FF") return "#00E5FF"; // Storage Events cyan
+    if (iconColor === "#00E5FF") return gameUIColors.info; // Storage Events cyan
     if (iconColor === "#E040FB") return "#E040FB"; // Network purple
     
     // Fallback pattern matching for any other colors
@@ -186,7 +187,7 @@ export function CyberpunkConsoleSection({
     if (iconColor.includes("00E5FF")) return "#00E5FF";
     if (iconColor.includes("E040FB")) return "#E040FB";
     
-    return "#00FFFF"; // Default cyan
+    return gameUIColors.info; // Default cyan
   };
 
   const accentColor = getAccentColor();
@@ -559,7 +560,7 @@ const styles = StyleSheet.create({
   binaryText: {
     fontSize: 8,
     fontFamily: "monospace",
-    color: "#00FFFF",
+    color: gameUIColors.info,
     letterSpacing: 1,
   },
 });

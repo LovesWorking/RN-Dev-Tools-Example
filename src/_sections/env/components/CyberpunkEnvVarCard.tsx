@@ -9,10 +9,18 @@ import Animated, {
   interpolate,
   Easing,
 } from "react-native-reanimated";
-import { AlertCircle, CheckCircle2, Eye, XCircle, ChevronDown, ChevronUp } from "lucide-react-native";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Eye,
+  XCircle,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react-native";
 import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "../../../_shared/utils/displayValue";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 // CONFIGURABLE: Glitch duration
 const GLITCH_DURATION_MS = 80; // Shorter glitch for less distraction
@@ -29,47 +37,47 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
     case "required_present":
       return {
         icon: CheckCircle2,
-        color: "#00FF88", // Bright green
-        bgColor: "rgba(0, 255, 136, 0.1)",
-        borderColor: "rgba(0, 255, 136, 0.3)",
+        color: gameUIColors.success,
+        bgColor: gameUIColors.success + "1A",
+        borderColor: gameUIColors.success + "4D",
         label: "✓ VALID",
-        labelColor: "#00FF88",
+        labelColor: gameUIColors.success,
       };
     case "required_missing":
       return {
         icon: AlertCircle,
-        color: "#FF006E", // Hot pink/red
-        bgColor: "rgba(255, 0, 110, 0.1)",
-        borderColor: "rgba(255, 0, 110, 0.3)",
+        color: gameUIColors.error,
+        bgColor: gameUIColors.error + "1A",
+        borderColor: gameUIColors.error + "4D",
         label: "⚠ MISSING",
-        labelColor: "#FF006E",
+        labelColor: gameUIColors.error,
       };
     case "required_wrong_value":
       return {
         icon: XCircle,
-        color: "#FF9500", // Orange
-        bgColor: "rgba(255, 149, 0, 0.1)",
-        borderColor: "rgba(255, 149, 0, 0.3)",
+        color: gameUIColors.warning,
+        bgColor: gameUIColors.warning + "1A",
+        borderColor: gameUIColors.warning + "4D",
         label: "⚠ WRONG VALUE",
-        labelColor: "#FF9500",
+        labelColor: gameUIColors.warning,
       };
     case "required_wrong_type":
       return {
         icon: XCircle,
-        color: "#00E5FF", // Cyan
-        bgColor: "rgba(0, 229, 255, 0.1)",
-        borderColor: "rgba(0, 229, 255, 0.3)",
+        color: gameUIColors.info,
+        bgColor: gameUIColors.info + "1A",
+        borderColor: gameUIColors.info + "4D",
         label: "⚠ WRONG TYPE",
-        labelColor: "#00E5FF",
+        labelColor: gameUIColors.info,
       };
     case "optional_present":
       return {
         icon: Eye,
-        color: "#E040FB", // Purple
-        bgColor: "rgba(224, 64, 251, 0.1)",
-        borderColor: "rgba(224, 64, 251, 0.2)",
+        color: gameUIColors.optional,
+        bgColor: gameUIColors.optional + "1A",
+        borderColor: gameUIColors.optional + "33",
         label: "OPTIONAL",
-        labelColor: "#E040FB",
+        labelColor: gameUIColors.optional,
       };
   }
 };
@@ -89,7 +97,12 @@ const formatValue = (value: unknown, isExpanded: boolean = false): string => {
     : stringified;
 };
 
-export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }: CyberpunkEnvVarCardProps) {
+export function CyberpunkEnvVarCard({
+  envVar,
+  isExpanded,
+  onToggle,
+  index = 0,
+}: CyberpunkEnvVarCardProps) {
   const config = getStatusConfig(envVar.status);
   const StatusIcon = config.icon;
   const hasValue = envVar.value !== undefined && envVar.value !== null;
@@ -163,7 +176,7 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
   const handlePressIn = () => {
     pulseScale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
     glowIntensity.value = withTiming(0.8, { duration: 100 });
-    
+
     // Quick glitch on press
     glitchOpacity.value = withSequence(
       withTiming(1, { duration: 20 }),
@@ -181,20 +194,16 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
   }));
 
   const borderAnimatedStyle = useAnimatedStyle(() => ({
-    borderColor: interpolate(
-      glowIntensity.value,
-      [0, 1],
-      [0.2, 0.8]
-    ) > 0.5 ? config.borderColor : `${config.borderColor}80`,
+    borderColor:
+      interpolate(glowIntensity.value, [0, 1], [0.2, 0.8]) > 0.5
+        ? config.borderColor
+        : `${config.borderColor}80`,
     shadowOpacity: glowIntensity.value * 0.5,
   }));
 
   const glitchStyle = useAnimatedStyle(() => ({
     opacity: glitchOpacity.value,
-    transform: [
-      { translateX: glitchX.value },
-      { translateY: glitchY.value },
-    ],
+    transform: [{ translateX: glitchX.value }, { translateY: glitchY.value }],
   }));
 
   const expandStyle = useAnimatedStyle(() => ({
@@ -205,11 +214,13 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
   // Convert hex to RGB
   const hexToRgb = (hex: string) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 255, b: 255 };
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : { r: 0, g: 255, b: 255 };
   };
 
   const rgb = hexToRgb(config.color);
@@ -229,15 +240,49 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
           ]}
         >
           {/* Glass effect layers */}
-          <View style={[styles.glassLayer1, { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.02)` }]} />
-          <View style={[styles.glassLayer2, { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.015)` }]} />
+          <View
+            style={[
+              styles.glassLayer1,
+              { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.02)` },
+            ]}
+          />
+          <View
+            style={[
+              styles.glassLayer2,
+              { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.015)` },
+            ]}
+          />
           <View style={[styles.glassLayer3]} />
 
           {/* Corner accents */}
-          <View style={[styles.cornerAccent, styles.cornerTL, { backgroundColor: config.color }]} />
-          <View style={[styles.cornerAccent, styles.cornerTR, { backgroundColor: `${config.color}60` }]} />
-          <View style={[styles.cornerAccent, styles.cornerBL, { backgroundColor: `${config.color}60` }]} />
-          <View style={[styles.cornerAccent, styles.cornerBR, { backgroundColor: config.color }]} />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerTL,
+              { backgroundColor: config.color },
+            ]}
+          />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerTR,
+              { backgroundColor: `${config.color}60` },
+            ]}
+          />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerBL,
+              { backgroundColor: `${config.color}60` },
+            ]}
+          />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerBR,
+              { backgroundColor: config.color },
+            ]}
+          />
 
           {/* Glitch overlay */}
           <Animated.View
@@ -256,19 +301,44 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
           <View style={styles.content}>
             <View style={styles.header}>
               <View style={styles.headerLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: config.bgColor, borderColor: `${config.color}40` }]}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor: config.bgColor,
+                      borderColor: `${config.color}40`,
+                    },
+                  ]}
+                >
                   <StatusIcon size={16} color={config.color} />
                 </View>
                 <View style={styles.headerInfo}>
-                  <Text style={[styles.envVarKey, { textShadowColor: config.color }]}>
+                  <Text
+                    style={[
+                      styles.envVarKey,
+                      { textShadowColor: config.color },
+                    ]}
+                  >
                     {envVar.key}
                   </Text>
                   {hasDescription && (
-                    <Text style={styles.envVarDescription}>{envVar.description}</Text>
+                    <Text style={styles.envVarDescription}>
+                      {envVar.description}
+                    </Text>
                   )}
                   <View style={styles.badges}>
-                    <View style={[styles.statusBadge, { backgroundColor: config.bgColor }]}>
-                      <Text style={[styles.statusText, { color: config.labelColor }]}>
+                    <View
+                      style={[
+                        styles.statusBadge,
+                        { backgroundColor: config.bgColor },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.statusText,
+                          { color: config.labelColor },
+                        ]}
+                      >
                         {config.label}
                       </Text>
                     </View>
@@ -283,7 +353,12 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
                 </View>
               </View>
               <View style={styles.headerRight}>
-                <View style={[styles.expandButton, { backgroundColor: `${config.color}10` }]}>
+                <View
+                  style={[
+                    styles.expandButton,
+                    { backgroundColor: `${config.color}10` },
+                  ]}
+                >
                   {isExpanded ? (
                     <ChevronUp size={14} color={config.color} />
                   ) : (
@@ -297,10 +372,17 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
             <Animated.View style={[styles.expandedContent, expandStyle]}>
               {hasValue && (
                 <View style={styles.valueSection}>
-                  <Text style={[styles.valueLabel, { color: `${config.color}99` }]}>
+                  <Text
+                    style={[styles.valueLabel, { color: `${config.color}99` }]}
+                  >
                     CURRENT VALUE
                   </Text>
-                  <View style={[styles.valueBox, { borderColor: `${config.color}20` }]}>
+                  <View
+                    style={[
+                      styles.valueBox,
+                      { borderColor: `${config.color}20` },
+                    ]}
+                  >
                     <Text style={styles.valueContent} selectable>
                       {formatValue(envVar.value, true)}
                     </Text>
@@ -310,11 +392,21 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
 
               {hasExpectedValue && (
                 <View style={styles.valueSection}>
-                  <Text style={[styles.valueLabel, { color: `${config.color}99` }]}>
+                  <Text
+                    style={[styles.valueLabel, { color: `${config.color}99` }]}
+                  >
                     EXPECTED VALUE
                   </Text>
-                  <View style={[styles.expectedBox, { borderColor: `${config.color}30` }]}>
-                    <Text style={[styles.valueContent, { color: config.color }]} selectable>
+                  <View
+                    style={[
+                      styles.expectedBox,
+                      { borderColor: `${config.color}30` },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.valueContent, { color: config.color }]}
+                      selectable
+                    >
                       {envVar.expectedValue}
                     </Text>
                   </View>
@@ -322,7 +414,12 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
               )}
 
               {!hasValue && (
-                <View style={[styles.emptyWarning, { borderColor: `${config.color}30` }]}>
+                <View
+                  style={[
+                    styles.emptyWarning,
+                    { borderColor: `${config.color}30` },
+                  ]}
+                >
                   <AlertCircle size={14} color={config.color} />
                   <Text style={[styles.emptyText, { color: config.color }]}>
                     Variable not defined
@@ -333,9 +430,24 @@ export function CyberpunkEnvVarCard({ envVar, isExpanded, onToggle, index = 0 }:
 
             {/* Data dots decoration */}
             <View style={styles.dataDots}>
-              <View style={[styles.dot, { backgroundColor: config.color, opacity: 0.8 }]} />
-              <View style={[styles.dot, { backgroundColor: config.color, opacity: 0.5 }]} />
-              <View style={[styles.dot, { backgroundColor: config.color, opacity: 0.3 }]} />
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: config.color, opacity: 0.8 },
+                ]}
+              />
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: config.color, opacity: 0.5 },
+                ]}
+              />
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: config.color, opacity: 0.3 },
+                ]}
+              />
             </View>
           </View>
         </Animated.View>
@@ -355,23 +467,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
-    backgroundColor: "rgba(10, 12, 18, 0.95)", // Darker, more opaque background
+    backgroundColor: gameUIColors.background + "F2", // Darker, more opaque background
   },
   glassLayer1: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(20, 25, 35, 0.3)", // Reduced transparency
+    backgroundColor: gameUIColors.panel + "4D", // Reduced transparency
     opacity: 0.7,
   },
   glassLayer2: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(30, 35, 45, 0.2)",
+    backgroundColor: gameUIColors.panel + "33",
     opacity: 0.5,
     top: "20%",
     left: "20%",
   },
   glassLayer3: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 255, 255, 0.01)",
+    backgroundColor: gameUIColors.primary + "03",
     opacity: 0.3,
   },
   glitchOverlay: {
@@ -436,7 +548,7 @@ const styles = StyleSheet.create({
   envVarKey: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     letterSpacing: 0.3,
     fontFamily: "monospace",
     textShadowOffset: { width: 0, height: 1 },
@@ -444,7 +556,7 @@ const styles = StyleSheet.create({
   },
   envVarDescription: {
     fontSize: 11,
-    color: "#B8BCC8", // Lighter gray for better readability
+    color: gameUIColors.secondary, // Lighter gray for better readability
     fontFamily: "monospace",
     opacity: 0.9,
     marginTop: 2,
@@ -468,12 +580,12 @@ const styles = StyleSheet.create({
   typeBadge: {
     paddingHorizontal: 6,
     paddingVertical: 3,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.primary + "0D",
     borderRadius: 4,
   },
   typeText: {
     fontSize: 8,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontWeight: "600",
     fontFamily: "monospace",
     letterSpacing: 0.5,
@@ -490,7 +602,7 @@ const styles = StyleSheet.create({
   },
   expandedContent: {
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.05)",
+    borderTopColor: gameUIColors.primary + "0D",
     paddingHorizontal: 12,
     paddingBottom: 12,
     gap: 10,
@@ -506,20 +618,20 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
   },
   valueBox: {
-    backgroundColor: "rgba(0, 0, 0, 0.7)", // Darker background for better contrast
+    backgroundColor: gameUIColors.background + "B3", // Darker background for better contrast
     borderRadius: 6,
     padding: 12,
     borderWidth: 1,
   },
   expectedBox: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: gameUIColors.background + "80",
     borderRadius: 6,
     padding: 12,
     borderWidth: 1,
     borderStyle: "dashed",
   },
   valueContent: {
-    color: "#F0F2F5", // Brighter text
+    color: gameUIColors.primaryLight, // Brighter text
     fontSize: 12,
     fontFamily: "monospace",
     lineHeight: 18,
@@ -529,7 +641,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     padding: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     borderRadius: 6,
     borderWidth: 1,
   },

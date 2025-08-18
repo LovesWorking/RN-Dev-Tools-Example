@@ -12,6 +12,7 @@ import Svg, {
   Rect,
   Line,
 } from "react-native-svg";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 export function CyberpunkConsoleTitle() {
   return (
@@ -20,7 +21,7 @@ export function CyberpunkConsoleTitle() {
         <Defs>
           {/* Cyan gradient for main text */}
           <LinearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <Stop offset="0%" stopColor="#00FFFF" stopOpacity="1" />
+            <Stop offset="0%" stopColor={gameUIColors.info} stopOpacity="1" />
             <Stop offset="50%" stopColor="#00E5FF" stopOpacity="1" />
             <Stop offset="100%" stopColor="#00BFFF" stopOpacity="1" />
           </LinearGradient>
@@ -41,7 +42,7 @@ export function CyberpunkConsoleTitle() {
           y1={15}
           x2={15}
           y2={15}
-          stroke="#00FFFF"
+          stroke={gameUIColors.info}
           strokeWidth={0.5}
           opacity={0.4}
         />
@@ -50,7 +51,7 @@ export function CyberpunkConsoleTitle() {
           y1={15}
           x2={280}
           y2={15}
-          stroke="#00FFFF"
+          stroke={gameUIColors.info}
           strokeWidth={0.5}
           opacity={0.4}
         />
@@ -59,7 +60,7 @@ export function CyberpunkConsoleTitle() {
         <SvgText
           x={5}
           y={22}
-          fill="#FF00FF"
+          fill={gameUIColors.critical}
           fontSize={16}
           fontWeight="bold"
           fontFamily="monospace"
@@ -86,7 +87,7 @@ export function CyberpunkConsoleTitle() {
         <SvgText
           x={235}
           y={20}
-          fill="#FF00FF"
+          fill={gameUIColors.critical}
           fontSize={12}
           fontWeight="bold"
           fontFamily="monospace"
@@ -101,7 +102,7 @@ export function CyberpunkConsoleTitle() {
           y={24}
           width={180}
           height={0.5}
-          fill="#00FFFF"
+          fill={gameUIColors.info}
           opacity={0.3}
         />
       </Svg>

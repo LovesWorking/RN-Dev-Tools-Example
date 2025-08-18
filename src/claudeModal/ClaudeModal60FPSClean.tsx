@@ -30,6 +30,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
+import { gameUIColors } from "../_shared/ui/gameUI";
 
 // ============================================================================
 // CONSTANTS - Modal dimensions and configuration
@@ -155,7 +156,7 @@ const MaximizeIcon = memo(function MaximizeIcon() {
           width: 12,
           height: 12,
           borderWidth: 1.5,
-          borderColor: "#E5E7EB",
+          borderColor: gameUIColors.primaryLight,
           borderRadius: 2,
         }}
       />
@@ -176,7 +177,7 @@ const MinimizeIcon = memo(function MinimizeIcon() {
           left: 2,
           width: 12,
           height: 1.5,
-          backgroundColor: "#E5E7EB",
+          backgroundColor: gameUIColors.primaryLight,
         }}
       />
     </View>
@@ -1181,12 +1182,12 @@ const styles = StyleSheet.create({
     right: 0,
   },
   bottomSheet: {
-    backgroundColor: "rgba(10, 10, 20, 0.98)", // Game UI panel
+    backgroundColor: gameUIColors.panel, // Game UI panel
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(0, 212, 255, 0.3)",
-    shadowColor: "#00D4FF",
+    borderColor: gameUIColors.border,
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -1194,11 +1195,11 @@ const styles = StyleSheet.create({
   },
   floatingModal: {
     position: "absolute",
-    backgroundColor: "rgba(10, 10, 20, 0.98)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(0, 212, 255, 0.3)",
-    shadowColor: "#00D4FF",
+    borderColor: gameUIColors.border,
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
@@ -1209,19 +1210,19 @@ const styles = StyleSheet.create({
     height: FLOATING_HEIGHT,
   },
   floatingModalDragging: {
-    borderColor: "rgba(34, 197, 94, 1)",
+    borderColor: gameUIColors.success,
     borderWidth: 2,
-    shadowColor: "rgba(34, 197, 94, 0.6)",
+    shadowColor: gameUIColors.success + "99",
     shadowOpacity: 0.8,
     shadowRadius: 12,
   },
   header: {
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    backgroundColor: "rgba(10, 10, 20, 0.98)", // Game UI panel color
+    backgroundColor: gameUIColors.panel, // Game UI panel color
     minHeight: 56,
     borderWidth: 1,
-    borderColor: "rgba(0, 212, 255, 0.3)", // Cyan border
+    borderColor: gameUIColors.border, // Theme border
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
@@ -1250,9 +1251,9 @@ const styles = StyleSheet.create({
   dragIndicator: {
     width: 40,
     height: 3,
-    backgroundColor: "rgba(0, 212, 255, 0.6)", // Cyan indicator
+    backgroundColor: gameUIColors.info + "99", // Theme indicator
     borderRadius: 2,
-    shadowColor: "#00D4FF",
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 4,
@@ -1260,10 +1261,10 @@ const styles = StyleSheet.create({
   floatingDragIndicator: {
     width: 50,
     height: 5,
-    backgroundColor: "#6B7280",
+    backgroundColor: gameUIColors.muted,
   },
   dragIndicatorActive: {
-    backgroundColor: "#10B981",
+    backgroundColor: gameUIColors.success,
     width: 40,
   },
   resizeGripContainer: {
@@ -1275,7 +1276,7 @@ const styles = StyleSheet.create({
   resizeGripLine: {
     width: 12,
     height: 1,
-    backgroundColor: "#10B981",
+    backgroundColor: gameUIColors.success,
     opacity: 0.6,
   },
   headerContent: {
@@ -1292,11 +1293,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     paddingTop: 4,
   },
   headerHintText: {
@@ -1310,7 +1311,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: 10,
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontStyle: "italic",
   },
   controlButton: {
@@ -1322,9 +1323,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   toggleButton: {
-    backgroundColor: "rgba(59, 130, 246, 0.1)",
+    backgroundColor: gameUIColors.info + "1A",
     borderWidth: 1,
-    borderColor: "rgba(59, 130, 246, 0.2)",
+    borderColor: gameUIColors.info + "33",
   },
   closeButton: {
     width: 28,
@@ -1332,9 +1333,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    backgroundColor: gameUIColors.error + "1A",
     borderWidth: 1,
-    borderColor: "rgba(239, 68, 68, 0.2)",
+    borderColor: gameUIColors.error + "33",
     marginLeft: 8,
   },
   iconLine: {
@@ -1343,11 +1344,11 @@ const styles = StyleSheet.create({
     left: 2,
     width: 12,
     height: 1.5,
-    backgroundColor: "#EF4444",
+    backgroundColor: gameUIColors.error,
   },
   content: {
     flex: 1,
-    backgroundColor: "rgba(5, 5, 10, 0.98)", // Darker game UI background
+    backgroundColor: gameUIColors.background,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
   },
@@ -1370,10 +1371,10 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   handlerActive: {
-    backgroundColor: "rgba(34, 197, 94, 0.1)",
-    borderColor: "rgba(34, 197, 94, 1)",
+    backgroundColor: gameUIColors.success + "1A",
+    borderColor: gameUIColors.success,
     borderWidth: 2,
-    shadowColor: "rgba(34, 197, 94, 0.6)",
+    shadowColor: gameUIColors.success + "99",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 8,

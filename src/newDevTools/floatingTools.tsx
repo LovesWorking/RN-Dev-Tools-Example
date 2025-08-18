@@ -21,6 +21,7 @@ import {
   type TextStyle,
 } from "react-native";
 import { useSafeAreaInsets as usePureJSSafeAreaInsets, getSafeAreaInsets as getPureJSSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
+import { gameUIColors } from "../_shared/ui/gameUI";
 // Using Views to render grip dots; no react-native-svg dependency
 
 // =============================
@@ -58,7 +59,7 @@ export type UserRole = "admin" | "internal" | "user";
 // =============================
 function GripVerticalIcon({
   size = 24,
-  color = "rgba(156, 163, 175, 0.8)",
+  color = gameUIColors.secondary + "CC",
 }: {
   size?: number;
   color?: string;
@@ -294,7 +295,7 @@ export function Divider() {
   const dividerStyle: ViewStyle = {
     width: 1,
     height: 12,
-    backgroundColor: "rgba(107, 114, 128, 0.4)",
+    backgroundColor: gameUIColors.muted + "66",
     flexShrink: 0,
   };
   return <View style={dividerStyle} />;
@@ -306,17 +307,17 @@ function getEnvironmentConfig(environment: Environment): {
 } {
   switch (environment) {
     case "local":
-      return { label: "LOCAL", backgroundColor: "#06B6D4" };
+      return { label: "LOCAL", backgroundColor: gameUIColors.info };
     case "dev":
-      return { label: "DEV", backgroundColor: "#F97316" };
+      return { label: "DEV", backgroundColor: gameUIColors.warning };
     case "qa":
-      return { label: "QA", backgroundColor: "#8B5CF6" };
+      return { label: "QA", backgroundColor: gameUIColors.optional };
     case "staging":
-      return { label: "STAGING", backgroundColor: "#10B981" };
+      return { label: "STAGING", backgroundColor: gameUIColors.success };
     case "prod":
-      return { label: "PROD", backgroundColor: "#DC2626" };
+      return { label: "PROD", backgroundColor: gameUIColors.error };
     default:
-      return { label: "LOCAL", backgroundColor: "#06B6D4" };
+      return { label: "LOCAL", backgroundColor: gameUIColors.info };
   }
 }
 
@@ -348,7 +349,7 @@ export function EnvironmentIndicator({
   const textStyle: TextStyle = {
     fontSize: 11,
     fontWeight: "600",
-    color: "#F9FAFB",
+    color: gameUIColors.primaryLight,
     letterSpacing: 0.5,
   };
   return (
@@ -362,12 +363,12 @@ export function EnvironmentIndicator({
 function getUserStatusConfig(userRole: UserRole) {
   switch (userRole) {
     case "admin":
-      return { label: "Admin", dotColor: "#10B981", textColor: "#10B981" };
+      return { label: "Admin", dotColor: gameUIColors.success, textColor: gameUIColors.success };
     case "internal":
-      return { label: "Internal", dotColor: "#6366F1", textColor: "#A5B4FC" };
+      return { label: "Internal", dotColor: gameUIColors.optional, textColor: gameUIColors.optional };
     case "user":
     default:
-      return { label: "User", dotColor: "#6B7280", textColor: "#9CA3AF" };
+      return { label: "User", dotColor: gameUIColors.muted, textColor: gameUIColors.secondary };
   }
 }
 
@@ -608,13 +609,13 @@ export function FloatingTools({
   const containerStyle: ViewStyle = {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 6,
     borderWidth: isDragging ? 2 : 1,
-    borderColor: isDragging ? "rgba(34, 197, 94, 1)" : "rgba(75, 85, 99, 0.4)",
+    borderColor: isDragging ? gameUIColors.info : gameUIColors.muted + "66",
     overflow: "hidden",
     elevation: 8,
-    shadowColor: isDragging ? "rgba(34, 197, 94, 0.6)" : "#000",
+    shadowColor: isDragging ? gameUIColors.info + "99" : "#000",
     shadowOffset: { width: 0, height: isDragging ? 6 : 4 },
     shadowOpacity: isDragging ? 0.6 : 0.3,
     shadowRadius: isDragging ? 12 : 8,
@@ -623,12 +624,12 @@ export function FloatingTools({
   const dragHandleStyle: ViewStyle = {
     paddingHorizontal: 6,
     paddingVertical: 6,
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    backgroundColor: gameUIColors.muted + "1A",
     alignItems: "center",
     justifyContent: "center",
     width: 32,
     borderRightWidth: 1,
-    borderRightColor: "rgba(75, 85, 99, 0.4)",
+    borderRightColor: gameUIColors.muted + "66",
   };
 
   const contentStyle: ViewStyle = {
@@ -656,7 +657,7 @@ export function FloatingTools({
         }}
       >
         <View style={dragHandleStyle}>
-          <GripVerticalIcon size={12} color="rgba(156, 163, 175, 0.8)" />
+          <GripVerticalIcon size={12} color={gameUIColors.secondary + "CC"} />
         </View>
         <FloatingToolsContext.Provider value={{ isDragging }}>
           <View style={contentStyle}>{actions}</View>

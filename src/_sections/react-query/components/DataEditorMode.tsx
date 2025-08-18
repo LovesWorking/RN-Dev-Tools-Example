@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   // Action footer matching main dev tools exactly
   actionFooter: {
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)", // Match DevToolsHeader border
+    borderTopColor: gameUIColors.primary + "0F", // Match DevToolsHeader border
     paddingVertical: 8,
     paddingHorizontal: 12,
     backgroundColor: gameUIColors.background,
@@ -228,25 +228,25 @@ const styles = StyleSheet.create({
   // Query Explorer styled container matching QueryDetails
   queryExplorerContainer: {
     minWidth: 200,
-    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    backgroundColor: gameUIColors.panel + "D9",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(6, 182, 212, 0.3)",
+    borderColor: gameUIColors.info + "4D",
     overflow: "hidden",
-    shadowColor: "#06B6D4",
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
   },
   queryExplorerHeader: {
-    backgroundColor: "rgba(6, 182, 212, 0.1)",
+    backgroundColor: gameUIColors.info + "1A",
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
     color: gameUIColors.info,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(6, 182, 212, 0.2)",
+    borderBottomColor: gameUIColors.info + "33",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     fontFamily: "monospace",
@@ -257,25 +257,25 @@ const styles = StyleSheet.create({
   // Data section with green accent - editable/success theme
   dataContainer: {
     minWidth: 200,
-    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    backgroundColor: gameUIColors.panel + "D9",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.3)", // Green for editable data
+    borderColor: gameUIColors.success + "4D", // Green for editable data
     overflow: "hidden",
-    shadowColor: "#22C55E",
+    shadowColor: gameUIColors.success,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
   },
   dataHeader: {
-    backgroundColor: "rgba(34, 197, 94, 0.1)", // Green background
+    backgroundColor: gameUIColors.success + "1A", // Green background
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
     color: gameUIColors.success, // Green text
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(34, 197, 94, 0.2)",
+    borderBottomColor: gameUIColors.success + "33",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     fontFamily: "monospace",

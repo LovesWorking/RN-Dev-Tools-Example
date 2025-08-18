@@ -18,6 +18,7 @@ import {
   WifiOffIcon,
   XIcon,
 } from "@/src/_shared/icons/lucide-icons";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface MagneticGridMenuProps {
   onQueryPress: () => void;
@@ -410,58 +411,58 @@ export function ClaudeGridMenu({
       ),
       label: "QUERY",
       sublabel: "DATABASE",
-      primaryColor: "#FF006E",
-      secondaryColor: "#FF4081",
-      accentColor: "#FF80AB",
+      primaryColor: gameUIColors.query,
+      secondaryColor: gameUIColors.info,
+      accentColor: gameUIColors.query,
     },
     {
       onPress: onEnvPress,
-      icon: <ServerIcon size={18} color="#00FFFF" />,
+      icon: <ServerIcon size={18} color={gameUIColors.env} />,
       label: "ENV",
       sublabel: "SYSTEM",
-      primaryColor: "#00FFFF",
-      secondaryColor: "#00E5FF",
-      accentColor: "#84FFFF",
+      primaryColor: gameUIColors.env,
+      secondaryColor: gameUIColors.success,
+      accentColor: gameUIColors.env,
     },
     {
       onPress: onSentryPress,
-      icon: <BugIcon size={18} color="#FF1744" />,
+      icon: <BugIcon size={18} color={gameUIColors.debug} />,
       label: "SENTRY",
       sublabel: "DEBUG",
-      primaryColor: "#FF1744",
-      secondaryColor: "#FF5252",
-      accentColor: "#FF8A80",
+      primaryColor: gameUIColors.debug,
+      secondaryColor: gameUIColors.error,
+      accentColor: gameUIColors.debug,
     },
     {
       onPress: onStoragePress,
-      icon: <DatabaseIcon size={18} color="#00FF88" />,
+      icon: <DatabaseIcon size={18} color={gameUIColors.storage} />,
       label: "STORAGE",
       sublabel: "MEMORY",
-      primaryColor: "#00FF88",
-      secondaryColor: "#00E676",
-      accentColor: "#69F0AE",
+      primaryColor: gameUIColors.storage,
+      secondaryColor: gameUIColors.warning,
+      accentColor: gameUIColors.storage,
     },
     {
       onPress: onWifiToggle,
       icon: isWifiEnabled ? (
-        <WifiIcon size={18} color="#E040FB" />
+        <WifiIcon size={18} color={gameUIColors.network} />
       ) : (
-        <WifiOffIcon size={18} color="#616161" />
+        <WifiOffIcon size={18} color={gameUIColors.muted} />
       ),
       label: isWifiEnabled ? "ONLINE" : "OFFLINE",
       sublabel: isWifiEnabled ? "CONNECTED" : "DISABLED",
-      primaryColor: isWifiEnabled ? "#E040FB" : "#616161",
-      secondaryColor: isWifiEnabled ? "#D500F9" : "#757575",
-      accentColor: isWifiEnabled ? "#EA80FC" : "#9E9E9E",
+      primaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
+      secondaryColor: isWifiEnabled ? gameUIColors.optional : gameUIColors.secondary,
+      accentColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
     },
     {
       onPress: onClose,
-      icon: <XIcon size={18} color="#9E9E9E" />,
+      icon: <XIcon size={18} color={gameUIColors.secondary} />,
       label: "EXIT",
       sublabel: "CLOSE",
-      primaryColor: "#424242",
-      secondaryColor: "#616161",
-      accentColor: "#757575",
+      primaryColor: gameUIColors.muted,
+      secondaryColor: gameUIColors.secondary,
+      accentColor: gameUIColors.muted,
     },
   ];
 
@@ -688,7 +689,7 @@ export function ClaudeGridMenu({
                   styles.shadowLayer,
                   styles.shadowLayerDark,
                   {
-                    shadowColor: "#000000",
+                    shadowColor: gameUIColors.background,
                     shadowRadius,
                     shadowOpacity: item.shadowIntensity,
                   },
@@ -879,15 +880,15 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
+    backgroundColor: gameUIColors.background + "F2",
   },
   scanline: {
     position: "absolute",
     left: 0,
     right: 0,
     height: 2,
-    backgroundColor: "#00FFFF",
-    shadowColor: "#00FFFF",
+    backgroundColor: gameUIColors.info,
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -922,7 +923,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-    backgroundColor: "rgba(0,0,0,0.98)",
+    backgroundColor: gameUIColors.background,
     position: "relative",
   },
   gradientLayer1: {
@@ -931,7 +932,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(10,10,10,0.95)",
+    backgroundColor: gameUIColors.panel,
     opacity: 0.7,
   },
   gradientLayer2: {
@@ -940,7 +941,7 @@ const styles = StyleSheet.create({
     left: "30%",
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(20,20,20,0.92)",
+    backgroundColor: gameUIColors.panel + "EB",
     opacity: 0.5,
     borderTopLeftRadius: 50,
   },

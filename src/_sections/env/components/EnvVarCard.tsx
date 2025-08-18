@@ -3,6 +3,7 @@ import { AlertCircle, CheckCircle2, Eye, XCircle } from "lucide-react-native";
 import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "../../../_shared/utils/displayValue";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 // Stable constants moved to module scope to prevent re-renders
 const HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 };
@@ -18,47 +19,47 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
     case "required_present":
       return {
         icon: CheckCircle2,
-        color: "#10B981",
-        bgColor: "rgba(16, 185, 129, 0.1)",
-        borderColor: "rgba(16, 185, 129, 0.2)",
+        color: gameUIColors.success,
+        bgColor: gameUIColors.success + "1A",
+        borderColor: gameUIColors.success + "33",
         label: "✓ VALID",
-        labelColor: "#10B981",
+        labelColor: gameUIColors.success,
       };
     case "required_missing":
       return {
         icon: AlertCircle,
-        color: "#EF4444",
-        bgColor: "rgba(239, 68, 68, 0.1)",
-        borderColor: "rgba(239, 68, 68, 0.3)",
+        color: gameUIColors.error,
+        bgColor: gameUIColors.error + "1A",
+        borderColor: gameUIColors.error + "4D",
         label: "⚠ MISSING",
-        labelColor: "#EF4444",
+        labelColor: gameUIColors.error,
       };
     case "required_wrong_value":
       return {
         icon: XCircle,
-        color: "#F97316",
-        bgColor: "rgba(249, 115, 22, 0.1)",
-        borderColor: "rgba(249, 115, 22, 0.3)",
+        color: gameUIColors.warning,
+        bgColor: gameUIColors.warning + "1A",
+        borderColor: gameUIColors.warning + "4D",
         label: "⚠ WRONG VALUE",
-        labelColor: "#F97316",
+        labelColor: gameUIColors.warning,
       };
     case "required_wrong_type":
       return {
         icon: XCircle,
-        color: "#0891B2",
-        bgColor: "rgba(8, 145, 178, 0.1)",
-        borderColor: "rgba(8, 145, 178, 0.3)",
+        color: gameUIColors.info,
+        bgColor: gameUIColors.info + "1A",
+        borderColor: gameUIColors.info + "4D",
         label: "⚠ WRONG TYPE",
-        labelColor: "#0891B2",
+        labelColor: gameUIColors.info,
       };
     case "optional_present":
       return {
         icon: Eye,
-        color: "#8B5CF6",
-        bgColor: "rgba(139, 92, 246, 0.1)",
-        borderColor: "rgba(139, 92, 246, 0.2)",
+        color: gameUIColors.optional,
+        bgColor: gameUIColors.optional + "1A",
+        borderColor: gameUIColors.optional + "33",
         label: "OPTIONAL",
-        labelColor: "#8B5CF6",
+        labelColor: gameUIColors.optional,
       };
   }
 };
@@ -138,7 +139,7 @@ export function EnvVarCard({ envVar, isExpanded, onToggle }: EnvVarCardProps) {
             onPress={onToggle}
             hitSlop={HIT_SLOP}
           >
-            <Eye size={12} color="#9CA3AF" />
+            <Eye size={12} color={gameUIColors.secondary} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -184,7 +185,7 @@ export function EnvVarCard({ envVar, isExpanded, onToggle }: EnvVarCardProps) {
       {isExpanded && !hasValue && (
         <View style={styles.cardBody}>
           <View style={styles.emptyValueContainer}>
-            <AlertCircle size={16} color="#F59E0B" />
+            <AlertCircle size={16} color={gameUIColors.warning} />
             <Text style={styles.emptyValueText}>
               Variable not defined or empty
             </Text>
@@ -236,12 +237,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   envVarKey: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontWeight: "500",
     fontSize: 12,
   },
   envVarDescription: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     marginTop: 2,
   },
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: 8,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontWeight: "500",
   },
   cardHeaderRight: {
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   valueLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "500",
     textTransform: "uppercase",
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.05)",
   },
   valueContent: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 10,
     fontFamily: "monospace",
     lineHeight: 14,
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.05)",
   },
   expectedValueContent: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 10,
     fontFamily: "monospace",
     lineHeight: 14,
@@ -337,7 +338,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   typeHelperText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 9,
     marginTop: 4,
     textAlign: "center",

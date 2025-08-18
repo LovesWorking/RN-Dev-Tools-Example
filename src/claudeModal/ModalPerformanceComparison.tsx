@@ -16,6 +16,7 @@ import {
   Text,
   StyleSheet,
   Pressable,
+  TouchableOpacity,
   ScrollView,
   Animated,
   Dimensions,
@@ -29,6 +30,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ClaudeModal60FPSClean from "./ClaudeModal60FPSClean";
 import Modal60fpsTest from "./Modal60fpsTest";
 // import { ThemedClaudeModal } from "./ThemedClaudeModal";
+import { VirtualizedDataExplorerBenchmarkFull } from "../_sections/react-query/components/shared/VirtualizedDataExplorerBenchmarkFull";
 import { JSFPSMonitor, JSFPSResult } from "./utils/JSFPSMonitor";
 import { mobileFPSMonitor, FPSMetrics, JankEvent } from "./utils/MobileFPSMonitor";
 import { nativeFrameTracker, FrameMetrics as NativeFrameMetrics } from "./utils/NativeFrameMetrics";
@@ -328,6 +330,7 @@ export const ModalPerformanceComparison: React.FC = () => {
   // Track this component's renders
   useRenderTracking('ModalPerformanceComparison');
   
+  const [activeTab, setActiveTab] = useState<"modals" | "lists">("modals");
   const [results, setResults] = useState<BenchmarkResult[]>([]);
   const [activeModal, setActiveModal] = useState<ModalType | "none">("none");
   const [currentFps, setCurrentFps] = useState(0);
@@ -1384,8 +1387,47 @@ export const ModalPerformanceComparison: React.FC = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>Modal Performance Comparison</Text>
+        <Text style={styles.title}>Performance Comparison</Text>
 
+        {/* Tab Navigation */}
+        <View style={styles.tabNavigationContainer}>
+          <TouchableOpacity
+            onPress={() => setActiveTab("modals")}
+            style={[
+              styles.tabButton,
+              activeTab === "modals" && styles.tabButtonActive,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabButtonText,
+                activeTab === "modals" && styles.tabButtonTextActive,
+              ]}
+            >
+              Modal Tests
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setActiveTab("lists")}
+            style={[
+              styles.tabButton,
+              activeTab === "lists" && styles.tabButtonActive,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabButtonText,
+                activeTab === "lists" && styles.tabButtonTextActive,
+              ]}
+            >
+              List Performance
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Modal Tests Tab Content */}
+        {activeTab === "modals" ? (
+          <>
         {/* Controls */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Benchmark Controls</Text>
@@ -2412,6 +2454,19 @@ export const ModalPerformanceComparison: React.FC = () => {
             )}
           </>
         )}
+          </>
+        ) : (
+          /* List Performance Tab Content */
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>VirtualizedDataExplorer Performance</Text>
+            <Text style={styles.instructions}>
+              Test the performance of the VirtualizedDataExplorer component with various data structures
+            </Text>
+            <View style={{ marginTop: 16, flex: 1 }}>
+              <VirtualizedDataExplorerBenchmarkFull />
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       {/* Test Modals */}
@@ -2476,6 +2531,37 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFFFFF",
     padding: 16,
+  },
+  tabNavigationContainer: {
+    flexDirection: "row",
+    marginHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: "#2A2A2A",
+    borderRadius: 8,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabButtonActive: {
+    backgroundColor: "#374151",
+    borderWidth: 1,
+    borderColor: "#60A5FA",
+  },
+  tabButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#9CA3AF",
+  },
+  tabButtonTextActive: {
+    color: "#60A5FA",
   },
   section: {
     margin: 16,

@@ -13,6 +13,7 @@ import {
   getStorageTypeLabel,
   getStorageTypeHexColor,
 } from "../../react-query/utils/storageQueryUtils";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 import { getEnvVarType } from "../../env/utils/envTypeDetector";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 
@@ -30,47 +31,47 @@ const getStatusConfig = (status: StorageKeyInfo["status"]) => {
     case "required_present":
       return {
         icon: CheckCircle2,
-        color: "#10B981",
-        bgColor: "rgba(16, 185, 129, 0.1)",
-        borderColor: "rgba(16, 185, 129, 0.2)",
+        color: gameUIColors.success,
+        bgColor: gameUIColors.success + "1A",
+        borderColor: gameUIColors.success + "33",
         label: "REQUIRED",
-        labelColor: "#10B981",
+        labelColor: gameUIColors.success,
       };
     case "required_missing":
       return {
         icon: AlertCircle,
-        color: "#EF4444",
-        bgColor: "rgba(239, 68, 68, 0.1)",
-        borderColor: "rgba(239, 68, 68, 0.3)",
+        color: gameUIColors.error,
+        bgColor: gameUIColors.error + "1A",
+        borderColor: gameUIColors.error + "4D",
         label: "MISSING",
-        labelColor: "#EF4444",
+        labelColor: gameUIColors.error,
       };
     case "required_wrong_value":
       return {
         icon: XCircle,
-        color: "#F97316",
-        bgColor: "rgba(249, 115, 22, 0.1)",
-        borderColor: "rgba(249, 115, 22, 0.3)",
-        label: "WRONG VALUE",
-        labelColor: "#F97316",
+        color: gameUIColors.warning,
+        bgColor: gameUIColors.warning + "1A",
+        borderColor: gameUIColors.warning + "4D",
+        label: "WRONG S",
+        labelColor: gameUIColors.warning,
       };
     case "required_wrong_type":
       return {
         icon: XCircle,
-        color: "#0891B2",
-        bgColor: "rgba(8, 145, 178, 0.1)",
-        borderColor: "rgba(8, 145, 178, 0.3)",
+        color: gameUIColors.info,
+        bgColor: gameUIColors.info + "1A",
+        borderColor: gameUIColors.info + "4D",
         label: "WRONG TYPE",
-        labelColor: "#0891B2",
+        labelColor: gameUIColors.info,
       };
     case "optional_present":
       return {
         icon: Eye,
-        color: "#8B5CF6",
-        bgColor: "rgba(139, 92, 246, 0.1)",
-        borderColor: "rgba(139, 92, 246, 0.2)",
+        color: gameUIColors.optional,
+        bgColor: gameUIColors.optional + "1A",
+        borderColor: gameUIColors.optional + "33",
         label: "OPTIONAL",
-        labelColor: "#8B5CF6",
+        labelColor: gameUIColors.optional,
       };
   }
 };
@@ -175,7 +176,7 @@ export function StorageKeyCard({
             onPress={onToggle}
             hitSlop={HIT_SLOP}
           >
-            <Eye size={12} color="#9CA3AF" />
+            <Eye size={12} color={gameUIColors.secondary} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -246,7 +247,7 @@ export function StorageKeyCard({
       {isExpanded && !hasValue && (
         <View style={styles.cardBody}>
           <View style={styles.emptyValueContainer}>
-            <AlertCircle size={16} color="#F59E0B" />
+            <AlertCircle size={16} color={gameUIColors.warning} />
             <Text style={styles.emptyValueText}>
               Storage key not found or empty
             </Text>
@@ -270,7 +271,7 @@ export function StorageKeyCard({
 
 const styles = StyleSheet.create({
   storageKeyCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.panel + "08",
     borderRadius: 8,
     borderWidth: 1,
     overflow: "hidden",
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   descriptionText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     marginTop: 2,
     flexWrap: "wrap",
@@ -341,12 +342,12 @@ const styles = StyleSheet.create({
   valueBadge: {
     paddingHorizontal: 4,
     paddingVertical: 2,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.primary + "0D",
     borderRadius: 3,
   },
   valueText: {
     fontSize: 8,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontWeight: "500",
   },
   cardHeaderRight: {
@@ -355,11 +356,11 @@ const styles = StyleSheet.create({
   actionButton: {
     padding: 4,
     borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.primary + "0D",
   },
   cardBody: {
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.05)",
+    borderTopColor: gameUIColors.primary + "0D",
     padding: 12,
     gap: 12,
   },
@@ -370,27 +371,27 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   simpleValueLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "500",
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   simpleValueBox: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     borderRadius: 4,
     padding: 10,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.primary + "0D",
   },
   simpleValueContent: {
-    color: "#10B981",
+    color: gameUIColors.success,
     fontSize: 12,
     fontFamily: "monospace",
     lineHeight: 16,
   },
   valueTypeText: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 9,
     fontStyle: "italic",
   },
@@ -398,34 +399,34 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   valueLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "500",
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   valueBox: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     borderRadius: 4,
     padding: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.primary + "0D",
   },
   valueContent: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 10,
     fontFamily: "monospace",
     lineHeight: 14,
   },
   expectedValueBox: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     borderRadius: 4,
     padding: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.primary + "0D",
   },
   expectedValueContent: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 10,
     fontFamily: "monospace",
     lineHeight: 14,
@@ -435,18 +436,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     padding: 8,
-    backgroundColor: "rgba(245, 158, 11, 0.05)",
+    backgroundColor: gameUIColors.warning + "0D",
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: gameUIColors.warning + "1A",
   },
   emptyValueText: {
-    color: "#F59E0B",
+    color: gameUIColors.warning,
     fontSize: 10,
     fontStyle: "italic",
   },
   typeHelperText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 9,
     marginTop: 4,
     textAlign: "center",
@@ -455,7 +456,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   metaLabel: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 9,
     fontStyle: "italic",
   },

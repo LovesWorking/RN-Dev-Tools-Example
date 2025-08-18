@@ -17,12 +17,14 @@ import {
   XIcon,
   ChevronRightIcon,
   LayersIcon,
+  PaletteIcon,
 } from "@/src/_shared/icons/lucide-icons";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
 import {
   getSafeAreaInsets,
   hasNotch as getHasNotch,
 } from "@/src/hooks/useSafeAreaInsets";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const insets = getSafeAreaInsets();
@@ -53,6 +55,7 @@ interface Dial2Props {
   onSentryPress: () => void;
   onStoragePress: () => void;
   onWifiToggle: () => void;
+  onThemePress: () => void;
   onClose?: () => void;
   isWifiEnabled?: boolean;
   environment?: "local" | "dev" | "qa" | "staging" | "prod";
@@ -64,6 +67,7 @@ const Dial2: React.FC<Dial2Props> = ({
   onSentryPress,
   onStoragePress,
   onWifiToggle,
+  onThemePress,
   onClose,
   isWifiEnabled = true,
   environment = "dev",
@@ -97,7 +101,7 @@ const Dial2: React.FC<Dial2Props> = ({
 
   // Button animations
   const buttonAnimations = useRef(
-    Array.from({ length: 6 }, () => ({
+    Array.from({ length: 7 }, () => ({
       scale: new Animated.Value(0),
       slide: new Animated.Value(-50),
       glow: new Animated.Value(0),
@@ -110,8 +114,8 @@ const Dial2: React.FC<Dial2Props> = ({
       subtitle: "DATA SYNCHRONIZATION",
       icon: <TanstackLogo />,
       onPress: onQueryPress,
-      color: "#00D4FF",
-      accentColor: "#0099CC",
+      color: gameUIColors.query,
+      accentColor: gameUIColors.info,
       stats: { active: 12, cached: 48, stale: 3 },
       level: "LVL 99",
       status: "ACTIVE",
@@ -119,10 +123,10 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "ENVIRONMENT",
       subtitle: "SYSTEM CONFIGURATION",
-      icon: <ServerIcon size={24} color="#00FF88" />,
+      icon: <ServerIcon size={24} color={gameUIColors.env} />,
       onPress: onEnvPress,
-      color: "#00FF88",
-      accentColor: "#00CC66",
+      color: gameUIColors.env,
+      accentColor: gameUIColors.success,
       stats: { vars: 24, secrets: 8, configs: 16 },
       level: "LVL 87",
       status: "SECURE",
@@ -130,10 +134,10 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "SENTRY",
       subtitle: "ERROR TRACKING",
-      icon: <BugIcon size={24} color="#FF4444" />,
+      icon: <BugIcon size={24} color={gameUIColors.debug} />,
       onPress: onSentryPress,
-      color: "#FF4444",
-      accentColor: "#CC0000",
+      color: gameUIColors.debug,
+      accentColor: gameUIColors.error,
       stats: { errors: 0, warnings: 3, logs: 156 },
       level: "LVL 92",
       status: "MONITORING",
@@ -141,10 +145,10 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "STORAGE",
       subtitle: "DATA PERSISTENCE",
-      icon: <DatabaseIcon size={24} color="#FFD700" />,
+      icon: <DatabaseIcon size={24} color={gameUIColors.storage} />,
       onPress: onStoragePress,
-      color: "#FFD700",
-      accentColor: "#CCAA00",
+      color: gameUIColors.storage,
+      accentColor: gameUIColors.warning,
       stats: { used: "2.4GB", free: "5.6GB", total: "8GB" },
       level: "LVL 78",
       status: "OPTIMAL",
@@ -153,13 +157,15 @@ const Dial2: React.FC<Dial2Props> = ({
       title: isWifiEnabled ? "NETWORK ONLINE" : "NETWORK OFFLINE",
       subtitle: isWifiEnabled ? "CONNECTION STABLE" : "CONNECTION LOST",
       icon: isWifiEnabled ? (
-        <WifiIcon size={24} color="#9D4EDD" />
+        <WifiIcon size={24} color={gameUIColors.network} />
       ) : (
-        <WifiOffIcon size={24} color="#666666" />
+        <WifiOffIcon size={24} color={gameUIColors.muted} />
       ),
       onPress: onWifiToggle,
-      color: isWifiEnabled ? "#9D4EDD" : "#666666",
-      accentColor: isWifiEnabled ? "#7B2CBF" : "#444444",
+      color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
+      accentColor: isWifiEnabled
+        ? gameUIColors.optional
+        : gameUIColors.secondary,
       stats: isWifiEnabled
         ? { ping: "12ms", upload: "45MB/s", download: "120MB/s" }
         : { ping: "---", upload: "---", download: "---" },
@@ -167,12 +173,23 @@ const Dial2: React.FC<Dial2Props> = ({
       status: isWifiEnabled ? "CONNECTED" : "OFFLINE",
     },
     {
+      title: "THEME SELECTOR",
+      subtitle: "VISUAL CUSTOMIZATION",
+      icon: <PaletteIcon size={24} color={gameUIColors.optional} />,
+      onPress: onThemePress,
+      color: gameUIColors.optional,
+      accentColor: gameUIColors.info,
+      stats: { themes: 9, current: "CYAN", saved: "YES" },
+      level: "LVL 100",
+      status: "CUSTOM",
+    },
+    {
       title: "EXIT INTERFACE",
       subtitle: "CLOSE ADMIN PANEL",
-      icon: <XIcon size={24} color="#FF0080" />,
+      icon: <XIcon size={24} color={gameUIColors.critical} />,
       onPress: () => {},
-      color: "#FF0080",
-      accentColor: "#CC0066",
+      color: gameUIColors.critical,
+      accentColor: gameUIColors.error,
       stats: { session: "12:34", actions: 42, score: 9999 },
       level: "MAX",
       status: "LOGOUT",
@@ -505,7 +522,7 @@ const Dial2: React.FC<Dial2Props> = ({
                   styles.statMiniFill,
                   {
                     width: `${systemStatus.bugs}%`,
-                    backgroundColor: "#FF4444",
+                    backgroundColor: gameUIColors.error,
                   },
                 ]}
               />
@@ -520,7 +537,7 @@ const Dial2: React.FC<Dial2Props> = ({
                   styles.statMiniFill,
                   {
                     width: `${systemStatus.coffee}%`,
-                    backgroundColor: "#8B4513",
+                    backgroundColor: gameUIColors.warning,
                   },
                 ]}
               />
@@ -535,7 +552,7 @@ const Dial2: React.FC<Dial2Props> = ({
                   styles.statMiniFill,
                   {
                     width: `${systemStatus.sanity}%`,
-                    backgroundColor: "#9D4EDD",
+                    backgroundColor: gameUIColors.network,
                   },
                 ]}
               />
@@ -580,7 +597,7 @@ const Dial2: React.FC<Dial2Props> = ({
           ]}
         >
           <View style={styles.headerLeft}>
-            <LayersIcon size={20} color="#00D4FF" />
+            <LayersIcon size={20} color={gameUIColors.info} />
             <Text style={styles.headerTitle}>ADMIN MENU</Text>
           </View>
           <View style={styles.headerRight}>
@@ -590,20 +607,20 @@ const Dial2: React.FC<Dial2Props> = ({
                 {
                   backgroundColor:
                     environment === "prod"
-                      ? "rgba(255, 68, 68, 0.15)"
+                      ? gameUIColors.error + "26"
                       : environment === "staging"
-                      ? "rgba(255, 215, 0, 0.15)"
+                      ? gameUIColors.warning + "26"
                       : environment === "qa"
-                      ? "rgba(0, 212, 255, 0.15)"
-                      : "rgba(0, 255, 136, 0.15)",
+                      ? gameUIColors.info + "26"
+                      : gameUIColors.success + "26",
                   borderColor:
                     environment === "prod"
-                      ? "#FF4444"
+                      ? gameUIColors.error
                       : environment === "staging"
-                      ? "#FFD700"
+                      ? gameUIColors.warning
                       : environment === "qa"
-                      ? "#00D4FF"
-                      : "#00FF88",
+                      ? gameUIColors.info
+                      : gameUIColors.success,
                 },
               ]}
             >
@@ -613,20 +630,20 @@ const Dial2: React.FC<Dial2Props> = ({
                   {
                     backgroundColor:
                       environment === "prod"
-                        ? "#FF4444"
+                        ? gameUIColors.error
                         : environment === "staging"
-                        ? "#FFD700"
+                        ? gameUIColors.warning
                         : environment === "qa"
-                        ? "#00D4FF"
-                        : "#00FF88",
+                        ? gameUIColors.info
+                        : gameUIColors.success,
                     shadowColor:
                       environment === "prod"
-                        ? "#FF4444"
+                        ? gameUIColors.error
                         : environment === "staging"
-                        ? "#FFD700"
+                        ? gameUIColors.warning
                         : environment === "qa"
-                        ? "#00D4FF"
-                        : "#00FF88",
+                        ? gameUIColors.info
+                        : gameUIColors.success,
                     opacity: envPulse,
                   },
                 ]}
@@ -638,20 +655,20 @@ const Dial2: React.FC<Dial2Props> = ({
                   {
                     color:
                       environment === "prod"
-                        ? "#FF4444"
+                        ? gameUIColors.error
                         : environment === "staging"
-                        ? "#FFD700"
+                        ? gameUIColors.warning
                         : environment === "qa"
-                        ? "#00D4FF"
-                        : "#00FF88",
+                        ? gameUIColors.info
+                        : gameUIColors.success,
                     textShadowColor:
                       environment === "prod"
-                        ? "#FF4444"
+                        ? gameUIColors.error
                         : environment === "staging"
-                        ? "#FFD700"
+                        ? gameUIColors.warning
                         : environment === "qa"
-                        ? "#00D4FF"
-                        : "#00FF88",
+                        ? gameUIColors.info
+                        : gameUIColors.success,
                   },
                 ]}
               >
@@ -773,7 +790,10 @@ const Dial2: React.FC<Dial2Props> = ({
                   key={i}
                   style={[
                     styles.footerDot,
-                    { backgroundColor: i < 3 ? "#00D4FF" : "#333" },
+                    {
+                      backgroundColor:
+                        i < 3 ? gameUIColors.info : gameUIColors.muted,
+                    },
                   ]}
                 />
               ))}
@@ -799,13 +819,13 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
+    backgroundColor: gameUIColors.backdrop,
   },
   scanline: {
     position: "absolute",
     width: "100%",
     height: 2,
-    backgroundColor: "rgba(0, 255, 255, 0.1)",
+    backgroundColor: gameUIColors.info + "1A",
   },
   gridOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -847,29 +867,29 @@ const styles = StyleSheet.create({
   hudTitle: {
     fontSize: hasNotch ? 18 : 14,
     fontWeight: "900",
-    color: "#00D4FF",
+    color: gameUIColors.info,
     letterSpacing: hasNotch ? 3 : 2,
-    textShadowColor: "#00D4FF",
+    textShadowColor: gameUIColors.info,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
     fontFamily: "monospace",
   },
   hudSubtitle: {
     fontSize: hasNotch ? 10 : 8,
-    color: "#888",
+    color: gameUIColors.secondary,
     letterSpacing: hasNotch ? 2 : 1,
     marginTop: hasNotch ? 2 : 0,
     fontFamily: "monospace",
   },
   hudLabel: {
     fontSize: 9,
-    color: "#666",
+    color: gameUIColors.muted,
     letterSpacing: 1,
     fontFamily: "monospace",
   },
   hudValue: {
     fontSize: 12,
-    color: "#00D4FF",
+    color: gameUIColors.info,
     fontWeight: "bold",
     marginTop: 2,
     fontFamily: "monospace",
@@ -902,7 +922,7 @@ const styles = StyleSheet.create({
   },
   statMiniLabel: {
     fontSize: hasNotch ? 8 : 7,
-    color: "#00D4FF",
+    color: gameUIColors.info,
     marginBottom: hasNotch ? 3 : 2,
     fontFamily: "monospace",
     letterSpacing: 1,
@@ -911,7 +931,7 @@ const styles = StyleSheet.create({
   statMiniBar: {
     width: hasNotch ? 60 : 45,
     height: hasNotch ? 3 : 2,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: gameUIColors.primary + "1A",
     borderRadius: 2,
     overflow: "hidden",
   },
@@ -921,7 +941,7 @@ const styles = StyleSheet.create({
   },
   statMiniValue: {
     fontSize: 9,
-    color: "#AAA",
+    color: gameUIColors.secondary,
     marginTop: 2,
     fontFamily: "monospace",
   },
@@ -930,15 +950,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     padding: 6,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: gameUIColors.background + "B3",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: gameUIColors.primary + "1A",
     marginBottom: 8,
   },
   badgeText: {
     fontSize: 9,
-    color: "#AAA",
+    color: gameUIColors.secondary,
     fontFamily: "monospace",
     fontWeight: "bold",
     letterSpacing: 0.5,
@@ -952,11 +972,11 @@ const styles = StyleSheet.create({
     width: MENU_WIDTH,
     height: MENU_HEIGHT,
     maxHeight: MENU_HEIGHT,
-    backgroundColor: "rgba(10, 10, 20, 0.98)",
+    backgroundColor: gameUIColors.panel,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "rgba(0, 212, 255, 0.3)",
-    shadowColor: "#00D4FF",
+    borderColor: gameUIColors.border,
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 30,
@@ -970,8 +990,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: hasNotch ? 20 : 15,
     paddingVertical: hasNotch ? 15 : 10,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.1)",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderBottomColor: gameUIColors.primary + "1A",
+    backgroundColor: gameUIColors.background + "80",
   },
   headerLeft: {
     flexDirection: "row",
@@ -981,7 +1001,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: hasNotch ? 14 : 12,
     fontWeight: "bold",
-    color: "#FFF",
+    color: gameUIColors.primary,
     letterSpacing: hasNotch ? 2 : 1,
     fontFamily: "monospace",
   },
@@ -1009,7 +1029,7 @@ const styles = StyleSheet.create({
   },
   envLabel: {
     fontSize: 9,
-    color: "#666",
+    color: gameUIColors.muted,
     fontFamily: "monospace",
     letterSpacing: 1,
     fontWeight: "bold",
@@ -1038,16 +1058,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: hasNotch ? 15 : 10,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.primary + "05",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.primary + "0D",
     position: "relative",
     overflow: "hidden",
   },
   menuItemSelected: {
-    backgroundColor: "rgba(0, 212, 255, 0.05)",
-    borderColor: "rgba(0, 212, 255, 0.2)",
+    backgroundColor: gameUIColors.info + "0D",
+    borderColor: gameUIColors.info + "33",
   },
   itemGlow: {
     ...StyleSheet.absoluteFillObject,
@@ -1070,7 +1090,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.2)",
+    borderColor: gameUIColors.primary + "33",
   },
   itemInfo: {
     flex: 1,
@@ -1084,7 +1104,7 @@ const styles = StyleSheet.create({
   },
   itemSubtitle: {
     fontSize: hasNotch ? 10 : 8,
-    color: "#888",
+    color: gameUIColors.secondary,
     letterSpacing: 0.5,
     marginBottom: hasNotch ? 4 : 2,
     fontFamily: "monospace",
@@ -1095,7 +1115,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 9,
-    color: "#666",
+    color: gameUIColors.muted,
     fontFamily: "monospace",
   },
   itemRight: {
@@ -1126,15 +1146,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: hasNotch ? 20 : 15,
     paddingVertical: hasNotch ? 12 : 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.1)",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderTopColor: gameUIColors.primary + "1A",
+    backgroundColor: gameUIColors.background + "80",
   },
   footerLeft: {},
   footerCenter: {},
   footerRight: {},
   footerText: {
     fontSize: 9,
-    color: "#666",
+    color: gameUIColors.muted,
     letterSpacing: 1,
     fontFamily: "monospace",
   },

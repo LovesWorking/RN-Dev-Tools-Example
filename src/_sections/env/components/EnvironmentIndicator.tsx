@@ -1,5 +1,6 @@
 import { LayoutChangeEvent, Text, View } from "react-native";
 import { FlaskConical, TestTube2, Bug, Zap } from "lucide-react-native";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 export type Environment = "local" | "dev" | "qa" | "staging" | "prod";
 
@@ -20,42 +21,42 @@ function getEnvironmentConfig(environment: Environment): EnvironmentConfig {
     case "local":
       return {
         label: "LOCAL",
-        backgroundColor: "#06B6D4",
+        backgroundColor: gameUIColors.info,
         icon: FlaskConical,
         isLocal: true,
       };
     case "dev":
       return {
         label: "DEV",
-        backgroundColor: "#F97316",
+        backgroundColor: gameUIColors.warning,
         icon: FlaskConical,
         isLocal: false,
       };
     case "qa":
       return {
         label: "QA",
-        backgroundColor: "#8B5CF6",
+        backgroundColor: gameUIColors.optional,
         icon: Bug,
         isLocal: false,
       };
     case "staging":
       return {
         label: "STAGING",
-        backgroundColor: "#10B981",
+        backgroundColor: gameUIColors.success,
         icon: Zap,
         isLocal: false,
       };
     case "prod":
       return {
         label: "PROD",
-        backgroundColor: "#DC2626",
+        backgroundColor: gameUIColors.error,
         icon: TestTube2,
         isLocal: false,
       };
     default:
       return {
         label: "LOCAL",
-        backgroundColor: "#06B6D4",
+        backgroundColor: gameUIColors.info,
         icon: FlaskConical,
         isLocal: true,
       };
@@ -97,7 +98,7 @@ export function EnvironmentIndicator({
           fontSize: 11,
           fontWeight: "600",
           fontFamily: "Poppins-SemiBold",
-          color: "#F9FAFB",
+          color: gameUIColors.primaryLight,
           letterSpacing: 0.5,
         }}
       >

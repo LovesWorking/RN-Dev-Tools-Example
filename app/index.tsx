@@ -826,13 +826,14 @@ export default function PokemonScreen() {
     envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
   ]);
   return (
-    <View style={styles.container}>
-      <RnBetterDevToolsBubble
-        queryClient={queryClient}
-        environment={environment}
-        userRole={userRole}
-        requiredEnvVars={requiredEnvVars}
-      />
+      <View style={styles.container}>
+        <RnBetterDevToolsBubble
+          queryClient={queryClient}
+          environment={environment}
+          userRole={userRole}
+          requiredEnvVars={requiredEnvVars}
+          onOpenPerformanceTest={() => setPerformanceTestVisible(true)}
+        />
 
       {/* Premium Animated Background */}
       <LinearGradient
@@ -1435,10 +1436,11 @@ export default function PokemonScreen() {
       <ClaudeModal60FPSClean
         visible={performanceTestVisible}
         onClose={useCallback(() => setPerformanceTestVisible(false), [])}
+        variant="fullScreen"
         header={useMemo(
           () => ({
-            title: "Modal Performance Test",
-            subtitle: "Compare 60FPS modals",
+            title: "Performance Comparison",
+            subtitle: "Modal & List Tests",
             showToggleButton: true,
           }),
           []

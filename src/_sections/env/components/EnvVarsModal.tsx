@@ -9,6 +9,7 @@ import { devToolsStorageKeys } from "../../../_shared/storage/devToolsStorageKey
 import { useState, useCallback } from "react";
 import { useTheme } from "../../../_themes/DevToolsThemeContext";
 import { FileCode } from "lucide-react-native";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface EnvVarsModalProps {
   visible: boolean;
@@ -59,7 +60,7 @@ export function EnvVarsModal({
           backgroundColor:
             theme.name === "cyberpunk"
               ? `${theme.colors.envColor}15`
-              : "rgba(16, 185, 129, 0.1)",
+              : gameUIColors.success + "1A",
           borderRadius: theme.name === "cyberpunk" ? 8 : 16,
           borderWidth: theme.name === "cyberpunk" ? 1 : 0,
           borderColor:
@@ -93,7 +94,7 @@ export function EnvVarsModal({
             color:
               theme.name === "cyberpunk"
                 ? theme.colors.textSecondary
-                : "#9CA3AF",
+                : gameUIColors.secondary,
             fontSize: 10,
             fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
             marginTop: 2,

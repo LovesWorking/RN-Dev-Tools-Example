@@ -15,11 +15,15 @@ import {
   WifiIcon,
   WifiOffIcon,
   XIcon,
+  PaletteIcon,
 } from "@/src/_shared/icons/lucide-icons";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
+import SpaceInvadersBackground from "./SpaceInvadersBackground";
+import BrickBreakerBackground from "./BrickBreakerBackground";
+import { gameUIColors, getThemedDialColors, THEME_ACCENT } from "../../../_shared/ui/gameUI";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
 const BUTTON_SIZE = 80; // Fixed button size
 
@@ -36,6 +40,7 @@ interface DialDevToolsProps {
   onSentryPress: () => void;
   onStoragePress: () => void;
   onWifiToggle: () => void;
+  onThemePress?: () => void;
   onClose?: () => void;
   isWifiEnabled?: boolean;
 }
@@ -46,10 +51,14 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   onSentryPress,
   onStoragePress,
   onWifiToggle,
+  onThemePress,
   onClose,
   isWifiEnabled = true,
 }) => {
   const [selectedIcon, setSelectedIcon] = React.useState(-1);
+  const [playerX, setPlayerX] = React.useState(SCREEN_WIDTH / 2);
+  const [isUserTouching, setIsUserTouching] = React.useState(false);
+  const [currentGame, setCurrentGame] = React.useState<'spaceInvaders' | 'brickBreaker'>('spaceInvaders');
 
   // React Native Animated values
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -59,6 +68,11 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const iconsProgress = useRef(new Animated.Value(0)).current;
   const glitchOffset = useRef(new Animated.Value(0)).current;
   const pulseScale = useRef(new Animated.Value(1)).current;
+
+  // Subtle animations
+  const floatingAnim = useRef(new Animated.Value(0)).current;
+  const breathingScale = useRef(new Animated.Value(1)).current;
+  const circuitOpacity = useRef(new Animated.Value(0)).current;
 
   // Animation tracking refs
   const glitchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -72,44 +86,42 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           <TanstackLogo />
         </View>
       ),
-      color: "#00FFFF",
+      color: gameUIColors.query,
       onPress: onQueryPress,
     },
     {
       name: "Env",
-      icon: <ServerIcon size={24} color="#00FFFF" />,
-      color: "#00FFFF",
+      icon: <ServerIcon size={24} color={gameUIColors.env} />,
+      color: gameUIColors.env,
       onPress: onEnvPress,
     },
     {
       name: "Sentry",
-      icon: <BugIcon size={24} color="#FF1744" />,
-      color: "#FF1744",
+      icon: <BugIcon size={24} color={gameUIColors.debug} />,
+      color: gameUIColors.debug,
       onPress: onSentryPress,
     },
     {
       name: "Storage",
-      icon: <DatabaseIcon size={24} color="#00FF88" />,
-      color: "#00FF88",
+      icon: <DatabaseIcon size={24} color={gameUIColors.storage} />,
+      color: gameUIColors.storage,
       onPress: onStoragePress,
     },
     {
       name: "WiFi",
       icon: isWifiEnabled ? (
-        <WifiIcon size={24} color="#E040FB" />
+        <WifiIcon size={24} color={gameUIColors.network} />
       ) : (
-        <WifiOffIcon size={24} color="#616161" />
+        <WifiOffIcon size={24} color={gameUIColors.muted} />
       ),
-      color: isWifiEnabled ? "#E040FB" : "#616161",
+      color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
       onPress: onWifiToggle,
     },
     {
-      name: "Close",
-      icon: <XIcon size={24} color="#9E9E9E" />,
-      color: "#424242",
-      onPress: () => {
-        // Empty function - handleIconPress will handle the close animation
-      },
+      name: "Theme",
+      icon: <PaletteIcon size={24} color={gameUIColors.optional} />,
+      color: gameUIColors.optional,
+      onPress: onThemePress || (() => {}),
     },
   ];
 
@@ -210,6 +222,50 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
     startPulse();
 
+    // Subtle floating animation for the dial
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatingAnim, {
+          toValue: -8,
+          duration: 3000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatingAnim, {
+          toValue: 0,
+          duration: 3000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Gentle breathing effect for center button
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathingScale, {
+          toValue: 1.05,
+          duration: 2500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(breathingScale, {
+          toValue: 0.98,
+          duration: 2500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Circuit traces fade in
+    Animated.timing(circuitOpacity, {
+      toValue: 1,
+      duration: 1000,
+      delay: 600,
+      useNativeDriver: true,
+    }).start();
+
     return () => {
       if (glitchIntervalRef.current) {
         clearInterval(glitchIntervalRef.current);
@@ -286,21 +342,11 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       }),
     ]).start();
 
-    // Check if it's the close button (last item)
-    const isCloseButton = icons[index].name === "Close";
-
-    if (isCloseButton) {
-      // For close button, just trigger the close animation
-      setTimeout(() => {
-        handleClose();
-      }, 50);
-    } else {
-      // For other buttons, trigger action then close
-      setTimeout(() => {
-        icons[index].onPress();
-        handleClose();
-      }, 50);
-    }
+    // Trigger action then close
+    setTimeout(() => {
+      icons[index].onPress();
+      handleClose();
+    }, 50);
   };
 
   // Animated styles
@@ -308,24 +354,16 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     opacity: backdropOpacity,
   };
 
-  const dialAnimatedStyle = {
-    transform: [
-      { scale: dialScale },
-      {
-        rotate: dialRotation.interpolate({
-          inputRange: [0, 1],
-          outputRange: ["0deg", "360deg"],
-        }),
-      },
-    ],
-  };
-
   const glitchAnimatedStyle = {
     transform: [{ translateX: glitchOffset }],
   };
 
   const centerButtonAnimatedStyle = {
-    transform: [{ scale: centerButtonScale }],
+    transform: [
+      { 
+        scale: Animated.multiply(centerButtonScale, breathingScale)
+      }
+    ],
   };
 
   const pulseAnimatedStyle = {
@@ -334,13 +372,33 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Dark overlay backdrop */}
+      {/* Game Background - runs behind everything */}
+      <View style={styles.gameBackground}>
+        {currentGame === 'spaceInvaders' && (
+          <SpaceInvadersBackground playerX={playerX} isUserTouching={isUserTouching} />
+        )}
+        {currentGame === 'brickBreaker' && (
+          <BrickBreakerBackground paddleX={playerX} isUserControlling={isUserTouching} />
+        )}
+      </View>
+
+      {/* Dark overlay backdrop - detects touch for player movement */}
       <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
         <Pressable
           style={StyleSheet.absoluteFillObject}
-          onPress={handleClose}
+          onPressIn={(event) => {
+            // Move player and fire on touch
+            const touchX = event.nativeEvent.locationX;
+            setPlayerX(Math.max(30, Math.min(SCREEN_WIDTH - 30, touchX)));
+            setIsUserTouching(true);
+          }}
+          onPressOut={() => {
+            setIsUserTouching(false);
+          }}
+          onLongPress={handleClose}
         />
       </Animated.View>
+
 
       <Animated.View
         style={[
@@ -349,8 +407,17 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             position: "absolute",
             left: (SCREEN_WIDTH - CIRCLE_SIZE) / 2,
             bottom: 80,
+            transform: [
+              { translateY: floatingAnim },
+              { scale: dialScale },
+              {
+                rotate: dialRotation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0deg", "360deg"],
+                }),
+              },
+            ],
           },
-          dialAnimatedStyle,
         ]}
       >
         {/* Cyberpunk dial background with glitch */}
@@ -414,11 +481,24 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           </View>
         </Animated.View>
       </Animated.View>
+      
+      {/* Game switcher button - above everything so it's clickable */}
+      <Pressable
+        style={styles.gameSwitcher}
+        onPress={() => setCurrentGame(prev => prev === 'spaceInvaders' ? 'brickBreaker' : 'spaceInvaders')}
+      >
+        <Text style={styles.gameSwitcherText}>
+          {currentGame === 'spaceInvaders' ? '🧱' : '👾'}
+        </Text>
+      </Pressable>
     </View>
   );
 };
 
 export default DialDevTools;
+
+// Get themed colors based on the global theme accent
+const themedDialColors = getThemedDialColors(THEME_ACCENT);
 
 const styles = StyleSheet.create({
   container: {
@@ -427,8 +507,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    opacity: 0.8,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Much more transparent to see the game
   },
   parent: {
     width: CIRCLE_SIZE,
@@ -443,8 +522,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: "rgba(0, 255, 255, 0.2)",
-    shadowColor: "#00FFFF",
+    borderColor: themedDialColors.dialBorder,
+    shadowColor: themedDialColors.dialShadow,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
@@ -455,27 +534,30 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: CIRCLE_SIZE / 2,
     position: "relative",
-    backgroundColor: "rgba(0,0,0,0.95)",
+    backgroundColor: themedDialColors.dialBackground,
     overflow: "hidden",
   },
   gradientLayer1: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10,10,20,0.98)",
-    opacity: 0.9,
+    backgroundColor: themedDialColors.dialGradient1,
+    opacity: 0.6,
+    borderRadius: CIRCLE_SIZE / 2,
   },
   gradientLayer2: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,10,0.95)",
-    opacity: 0.7,
+    backgroundColor: themedDialColors.dialGradient2,
+    opacity: 0.4,
     top: "30%",
     left: "30%",
+    borderRadius: CIRCLE_SIZE / 2,
   },
   gradientLayer3: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10,10,30,0.9)",
-    opacity: 0.5,
+    backgroundColor: themedDialColors.dialGradient3,
+    opacity: 0.3,
     top: "50%",
     left: "50%",
+    borderRadius: CIRCLE_SIZE / 2,
   },
   gridPattern: {
     ...StyleSheet.absoluteFillObject,
@@ -486,7 +568,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: CIRCLE_SIZE,
     height: 1,
-    backgroundColor: "rgba(0, 255, 255, 0.1)",
+    backgroundColor: themedDialColors.dialGridLine,
   },
   buttonContainer: {
     zIndex: 1,
@@ -505,41 +587,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 4,
-    backgroundColor: "rgba(0,0,0,0.95)",
+    backgroundColor: themedDialColors.dialBackground,
     position: "relative",
     overflow: "hidden",
   },
   buttonGradientLayer1: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10,10,20,0.98)",
-    opacity: 0.8,
+    backgroundColor: themedDialColors.dialGradient1,
+    opacity: 0.5,
     borderRadius: BUTTON_SIZE,
   },
   buttonGradientLayer2: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,10,0.95)",
-    opacity: 0.6,
+    backgroundColor: themedDialColors.dialGradient2,
+    opacity: 0.3,
     top: "20%",
     left: "20%",
     borderRadius: BUTTON_SIZE,
   },
   buttonGradientLayer3: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10,10,30,0.9)",
-    opacity: 0.4,
+    backgroundColor: themedDialColors.dialGradient3,
+    opacity: 0.2,
     top: "40%",
     left: "40%",
     borderRadius: BUTTON_SIZE,
   },
   buttonBorder: {
-    backgroundColor: "rgba(0, 255, 255, 0.1)",
+    backgroundColor: themedDialColors.dialGridLine,
     alignItems: "center",
     justifyContent: "center",
     width: BUTTON_SIZE * 1.2,
     height: BUTTON_SIZE * 1.2,
     borderRadius: BUTTON_SIZE * 0.6,
     borderWidth: 2,
-    borderColor: "rgba(0, 255, 255, 0.3)",
+    borderColor: themedDialColors.dialBorder,
   },
   button: {
     width: BUTTON_SIZE,
@@ -563,15 +645,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   centerText: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 10,
     fontWeight: "900",
     fontFamily: "monospace",
     letterSpacing: 1,
     textAlign: "center",
     textTransform: "uppercase",
-    textShadowColor: "#00FFFF",
+    textShadowColor: gameUIColors.info,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 4,
+  },
+  gameBackground: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "transparent",
+  },
+  gameSwitcher: {
+    position: 'absolute',
+    top: 90,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: gameUIColors.backdrop + '88',
+    borderWidth: 1,
+    borderColor: gameUIColors.info + '66',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gameSwitcherText: {
+    fontSize: 20,
   },
 });

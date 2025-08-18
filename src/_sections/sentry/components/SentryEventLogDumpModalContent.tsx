@@ -363,8 +363,8 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.06)",
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    borderBottomColor: gameUIColors.primary + "0F",
+    backgroundColor: gameUIColors.background + "33",
   },
   mainHeader: {
     flexDirection: "row",
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   iconContainer: {
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: gameUIColors.optional + "1A",
     padding: 8,
     borderRadius: 8,
     marginRight: 8,
@@ -399,22 +399,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   testButton: {
-    backgroundColor: "rgba(129, 140, 248, 0.2)",
+    backgroundColor: gameUIColors.info + "33",
     padding: 8,
     borderRadius: 8,
   },
   clearButton: {
-    backgroundColor: "rgba(248, 113, 113, 0.2)",
+    backgroundColor: gameUIColors.error + "33",
     padding: 8,
     borderRadius: 8,
   },
   refreshButton: {
-    backgroundColor: "rgba(139, 92, 246, 0.2)",
+    backgroundColor: gameUIColors.optional + "33",
     padding: 8,
     borderRadius: 8,
   },
   closeButton: {
-    backgroundColor: "rgba(107, 114, 128, 0.2)",
+    backgroundColor: gameUIColors.secondary + "33",
     padding: 8,
     borderRadius: 8,
   },

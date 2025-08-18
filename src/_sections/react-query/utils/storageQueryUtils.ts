@@ -1,3 +1,5 @@
+import { gameUIColors } from "../../../_shared/ui/gameUI";
+
 /**
  * Centralized storage query keys for all storage hooks
  * This ensures consistency across MMKV, AsyncStorage, and SecureStorage hooks
@@ -112,20 +114,20 @@ export function getStorageTypeColor(
 /**
  * Get storage type hex color for UI components
  * Design rationale:
- * - MMKV: Purple (#8B5CF6) - Premium, high-performance, sophisticated
- * - Async: Blue (#3B82F6) - Standard, reliable, default
- * - Secure: Green (#10B981) - Security, safety, protection
+ * - MMKV: Info color - Premium, high-performance, sophisticated
+ * - Async: Warning color - Standard, reliable, default
+ * - Secure: Success color - Security, safety, protection
  */
 export function getStorageTypeHexColor(storageType: StorageType): string {
   switch (storageType) {
     case "mmkv":
-      return "#8B5CF6"; // Purple - Premium, high-performance
+      return gameUIColors.info; // Premium, high-performance
     case "async":
-      return "#3B82F6"; // Blue - Standard, reliable
+      return gameUIColors.warning; // Standard, reliable
     case "secure":
-      return "#10B981"; // Green - Security, safety
+      return gameUIColors.success; // Security, safety
     default:
-      return "#6B7280"; // Gray
+      return gameUIColors.muted; // Gray
   }
 }
 

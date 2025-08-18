@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { CheckCircle, XCircle } from "lucide-react-native";
+import { gameUIColors } from "../gameUI/constants/gameUIColors";
 
 type ValueType =
   | "string"
@@ -38,9 +39,9 @@ export function ValueTypeBadge({
       >
         {showIcon &&
           (isTrue ? (
-            <CheckCircle size={10} color="#10B981" />
+            <CheckCircle size={10} color={gameUIColors.success} />
           ) : (
-            <XCircle size={10} color="#EF4444" />
+            <XCircle size={10} color={gameUIColors.error} />
           ))}
         <Text
           style={[
@@ -97,19 +98,19 @@ export function ValueTypeBadge({
   const getTypeColor = () => {
     switch (type) {
       case "string":
-        return "#22D3EE";
+        return gameUIColors.dataTypes.string;
       case "number":
-        return "#3B82F6";
+        return gameUIColors.dataTypes.number;
       case "null":
-        return "#6B7280";
+        return gameUIColors.dataTypes.null;
       case "undefined":
-        return "#9CA3AF";
+        return gameUIColors.dataTypes.undefined;
       case "object":
-        return "#F97316";
+        return gameUIColors.dataTypes.object;
       case "array":
-        return "#10B981";
+        return gameUIColors.dataTypes.array;
       default:
-        return "#6B7280";
+        return gameUIColors.muted;
     }
   };
 
@@ -155,36 +156,36 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   trueBadge: {
-    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    backgroundColor: gameUIColors.success + "1A",
   },
   falseBadge: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    backgroundColor: gameUIColors.error + "1A",
   },
   trueText: {
-    color: "#10B981",
+    color: gameUIColors.success,
   },
   falseText: {
-    color: "#EF4444",
+    color: gameUIColors.error,
   },
   stringBadge: {
-    backgroundColor: "rgba(34, 211, 238, 0.1)",
+    backgroundColor: gameUIColors.dataTypes.string + "1A",
   },
   numberBadge: {
-    backgroundColor: "rgba(59, 130, 246, 0.1)",
+    backgroundColor: gameUIColors.dataTypes.number + "1A",
   },
   nullBadge: {
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    backgroundColor: gameUIColors.dataTypes.null + "1A",
   },
   undefinedBadge: {
-    backgroundColor: "rgba(156, 163, 175, 0.1)",
+    backgroundColor: gameUIColors.dataTypes.undefined + "1A",
   },
   objectBadge: {
-    backgroundColor: "rgba(249, 115, 22, 0.1)",
+    backgroundColor: gameUIColors.dataTypes.object + "1A",
   },
   arrayBadge: {
-    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    backgroundColor: gameUIColors.dataTypes.array + "1A",
   },
   defaultBadge: {
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
+    backgroundColor: gameUIColors.muted + "1A",
   },
 });

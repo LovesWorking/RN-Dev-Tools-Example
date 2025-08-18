@@ -409,7 +409,6 @@ export function StorageEventDetailContent({
                 title="" 
                 data={parsed} 
                 showTypeFilter={false}
-                compact={true}
               />
             ) : (
               <Text style={styles.valueText}>

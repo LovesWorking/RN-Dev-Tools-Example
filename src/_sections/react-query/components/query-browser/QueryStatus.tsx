@@ -77,7 +77,7 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
   // Create active style based on the status color - React Query DevTools style
   const activeStyle = isActive
     ? {
-        backgroundColor: "rgba(255, 255, 255, 0.12)",
+        backgroundColor: gameUIColors.primary + "1F",
         transform: [{ scale: 1.05 }],
       }
     : {};
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   queryStatusTag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.06)", // Light background like React Query DevTools
+    backgroundColor: gameUIColors.primary + "0F", // Light background like React Query DevTools
     borderRadius: 12, // Pill shape
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 11,
     fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.7)", // Neutral text color
+    color: gameUIColors.secondary, // Neutral text color
     textTransform: "capitalize", // Not all caps like RQ DevTools
     fontFamily: "system",
   },

@@ -8,6 +8,7 @@ import Svg, { Path } from "react-native-svg";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { copyToClipboard } from "../../../../_shared/clipboard/copyToClipboard";
 import { CyberpunkInput } from "../shared/CyberpunkInput";
+import { gameUIColors } from "../../../../_shared/ui/gameUI";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const CHUNK_SIZE = 100;
@@ -54,7 +55,7 @@ const Expander = React.memo(
         >
           <Path
             d={expanded ? "M6 9l6 6 6-6" : "M9 6l6 6-6 6"}
-            stroke={isFocused ? "#06B6D4" : (isMain ? "#CBD5E1" : "#94A3B8")}
+            stroke={isFocused ? gameUIColors.info : isMain ? gameUIColors.primaryLight : gameUIColors.secondary}
             strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -110,7 +111,7 @@ const CopyButton = React.memo(
           <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
             <Path
               d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              stroke={isFocused ? "#06B6D4" : "#94A3B8"}
+              stroke={isFocused ? gameUIColors.info : gameUIColors.secondary}
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -121,14 +122,14 @@ const CopyButton = React.memo(
           <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
             <Path
               d="M9 11l3 3 8-8"
-              stroke="#10B981"
+              stroke={gameUIColors.success}
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <Path
               d="M20 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h9"
-              stroke="#10B981"
+              stroke={gameUIColors.success}
               strokeWidth={1.5}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -139,7 +140,7 @@ const CopyButton = React.memo(
           <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
             <Path
               d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"
-              stroke="#EF4444"
+              stroke={gameUIColors.error}
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -191,7 +192,7 @@ const DeleteItemButton = React.memo(
         <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
           <Path
             d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
-            stroke={isFocused ? "#EF4444" : "#F87171"}
+            stroke={isFocused ? gameUIColors.error : gameUIColors.error + "CC"}
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -239,7 +240,7 @@ const ClearArrayButton = React.memo(
         <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
           <Path
             d="M21 10H7m14-6H7m14 12H7m14 6H7M3 10h.01M3 6h.01M3 14h.01M3 18h.01"
-            stroke={isFocused ? "#FB923C" : "#FDBA74"}
+            stroke={isFocused ? gameUIColors.warning : gameUIColors.warning + "CC"}
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -462,7 +463,11 @@ export default function Explorer({
                 hitSlop={HIT_SLOP_OPTIMIZED}
                 activeOpacity={0.6}
               >
-                <Expander expanded={isExpanded} isFocused={isRowFocused} isMain={isMainSection} />
+                <Expander
+                  expanded={isExpanded}
+                  isFocused={isRowFocused}
+                  isMain={isMainSection}
+                />
                 <Text
                   style={[
                     styles.labelText,
@@ -668,9 +673,9 @@ export default function Explorer({
 }
 const styles = StyleSheet.create({
   buttonStyle: {
-    backgroundColor: "rgba(15, 23, 42, 0.9)",
+    backgroundColor: gameUIColors.panel + "E6",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.2)",
+    borderColor: gameUIColors.secondary + "33",
     borderRadius: 6,
     flexDirection: "row",
     alignItems: "center",
@@ -684,15 +689,15 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   buttonStyleFocused: {
-    borderColor: "rgba(6, 182, 212, 0.8)",
-    backgroundColor: "rgba(6, 182, 212, 0.15)",
-    shadowColor: "#06B6D4",
+    borderColor: gameUIColors.info + "CC",
+    backgroundColor: gameUIColors.info + "26",
+    shadowColor: gameUIColors.info,
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
   deleteButton: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderColor: "rgba(239, 68, 68, 0.3)",
+    backgroundColor: gameUIColors.error + "1A",
+    borderColor: gameUIColors.error + "4D",
     borderWidth: 1,
     borderRadius: 6,
     padding: 0,
@@ -701,21 +706,21 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     position: "relative",
-    shadowColor: "#EF4444",
+    shadowColor: gameUIColors.error,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
   },
   deleteButtonFocused: {
-    borderColor: "rgba(239, 68, 68, 0.8)",
-    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    borderColor: gameUIColors.error + "CC",
+    backgroundColor: gameUIColors.error + "33",
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
   clearButton: {
-    backgroundColor: "rgba(251, 146, 60, 0.1)",
+    backgroundColor: gameUIColors.warning + "1A",
     borderWidth: 1,
-    borderColor: "rgba(251, 146, 60, 0.3)",
+    borderColor: gameUIColors.warning + "4D",
     borderRadius: 6,
     flexDirection: "row",
     padding: 0,
@@ -725,14 +730,14 @@ const styles = StyleSheet.create({
     height: 28,
     position: "relative",
     zIndex: 10,
-    shadowColor: "#FB923C",
+    shadowColor: gameUIColors.warning,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
   },
   clearButtonFocused: {
-    borderColor: "rgba(251, 146, 60, 0.8)",
-    backgroundColor: "rgba(251, 146, 60, 0.2)",
+    borderColor: gameUIColors.warning + "CC",
+    backgroundColor: gameUIColors.warning + "33",
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
@@ -742,16 +747,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 1,
-    backgroundColor: "rgba(148, 163, 184, 0.08)",
+    backgroundColor: gameUIColors.secondary + "14",
     borderRadius: 3,
   },
   expanderIconMain: {
-    backgroundColor: "rgba(6, 182, 212, 0.12)",
+    backgroundColor: gameUIColors.info + "1F",
     width: 20,
     height: 20,
     borderRadius: 4,
     borderWidth: 0.5,
-    borderColor: "rgba(6, 182, 212, 0.3)",
+    borderColor: gameUIColors.info + "4D",
   },
   expanded: {
     transform: [{ rotate: "0deg" }],
@@ -780,20 +785,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     marginVertical: 1,
     borderRadius: 4,
-    backgroundColor: "rgba(15, 23, 42, 0.4)",
+    backgroundColor: gameUIColors.panel + "66",
     borderWidth: 0.5,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: gameUIColors.secondary + "1A",
   },
   flexRowItemsCenterGapMain: {
-    backgroundColor: "rgba(15, 23, 42, 0.9)",
+    backgroundColor: gameUIColors.panel + "E6",
     borderLeftWidth: 2.5,
-    borderLeftColor: "rgba(6, 182, 212, 0.6)",
-    borderColor: "rgba(6, 182, 212, 0.15)",
+    borderLeftColor: gameUIColors.info + "99",
+    borderColor: gameUIColors.info + "26",
     paddingVertical: 5,
     paddingHorizontal: 8,
     marginBottom: 3,
     borderWidth: 1,
-    shadowColor: "#06B6D4",
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -810,7 +815,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   labelText: {
-    color: "#94A3B8",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "600",
     marginRight: 4,
@@ -819,23 +824,23 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   labelTextFocused: {
-    color: "#06B6D4",
+    color: gameUIColors.info,
   },
   labelTextMain: {
-    color: "#E2E8F0",
+    color: gameUIColors.primaryLight,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 0.6,
   },
   textGray500: {
-    color: "#64748B",
+    color: gameUIColors.muted,
     fontSize: 10,
     fontWeight: "400",
     fontFamily: "monospace",
     opacity: 0.7,
   },
   pageRangeText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "600",
     fontFamily: "monospace",
@@ -851,10 +856,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
     paddingLeft: 8,
     borderLeftWidth: 1.5,
-    borderLeftColor: "rgba(148, 163, 184, 0.25)",
+    borderLeftColor: gameUIColors.secondary + "40",
   },
   singleEntryContainerMain: {
-    borderLeftColor: "rgba(6, 182, 212, 0.3)",
+    borderLeftColor: gameUIColors.info + "4D",
     marginLeft: 4,
     paddingLeft: 10,
   },
@@ -863,10 +868,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
     paddingLeft: 8,
     borderLeftWidth: 1.5,
-    borderLeftColor: "rgba(148, 163, 184, 0.25)",
+    borderLeftColor: gameUIColors.secondary + "40",
   },
   multiEntryContainerMain: {
-    borderLeftColor: "rgba(6, 182, 212, 0.3)",
+    borderLeftColor: gameUIColors.info + "4D",
     marginLeft: 4,
     paddingLeft: 10,
   },
@@ -876,13 +881,13 @@ const styles = StyleSheet.create({
   pageExpanderButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.4)",
+    backgroundColor: gameUIColors.panel + "66",
     paddingVertical: 3,
     paddingHorizontal: 6,
     gap: 6,
     borderRadius: 4,
     borderWidth: 0.5,
-    borderColor: "rgba(148, 163, 184, 0.1)",
+    borderColor: gameUIColors.secondary + "1A",
     marginBottom: 2,
     minHeight: 24,
   },
@@ -891,15 +896,15 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     marginTop: 2,
     borderLeftWidth: 1.5,
-    borderLeftColor: "rgba(148, 163, 184, 0.25)",
+    borderLeftColor: gameUIColors.secondary + "40",
   },
   textNumber: {
-    color: "#60A5FA",
+    color: gameUIColors.info,
     fontWeight: "600",
     fontFamily: "monospace",
   },
   textString: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontFamily: "monospace",
   },
   flexRowGapFullWidth: {
@@ -911,10 +916,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 3,
-    backgroundColor: "rgba(148, 163, 184, 0.03)",
+    backgroundColor: gameUIColors.secondary + "08",
   },
   text344054: {
-    color: "#94A3B8",
+    color: gameUIColors.secondary,
     fontWeight: "600",
     fontSize: 9,
     minWidth: 50,
@@ -936,9 +941,9 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 6,
-    backgroundColor: "rgba(15, 23, 42, 0.9)",
+    backgroundColor: gameUIColors.panel + "E6",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.2)",
+    borderColor: gameUIColors.secondary + "33",
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 2,
@@ -948,9 +953,9 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   touchableButtonFocused: {
-    borderColor: "rgba(6, 182, 212, 0.8)",
-    backgroundColor: "rgba(6, 182, 212, 0.15)",
-    shadowColor: "#06B6D4",
+    borderColor: gameUIColors.info + "CC",
+    backgroundColor: gameUIColors.info + "26",
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -963,16 +968,16 @@ const styles = StyleSheet.create({
   },
   displayValueText: {
     flex: 1,
-    color: "#E5E5E5",
+    color: gameUIColors.primaryLight,
     fontWeight: "400",
     fontFamily: "monospace",
     fontSize: 12,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    backgroundColor: "rgba(30, 30, 30, 0.6)",
+    backgroundColor: gameUIColors.background + "99",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(100, 100, 100, 0.6)",
+    borderColor: gameUIColors.muted + "99",
     minHeight: 34,
   },
   // New redesigned styles (kept for future use)
@@ -985,7 +990,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   dataLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 13,
     fontWeight: "500",
     minWidth: 80,
@@ -1011,23 +1016,23 @@ const styles = StyleSheet.create({
   numberButton: {
     width: 32,
     height: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.primary + "08",
     borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderColor: gameUIColors.primary + "0F",
   },
   readOnlyValue: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 13,
     fontFamily: "monospace",
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.primary + "05",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.primary + "0D",
     flex: 1,
   },
   actionButtons: {
@@ -1040,14 +1045,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 8,
     borderRadius: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.primary + "08",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: gameUIColors.primary + "1A",
     flex: 1,
   },
   booleanText: {
     marginLeft: 8,
-    color: "#F59E0B",
+    color: gameUIColors.warning,
     fontWeight: "500",
     fontFamily: "monospace",
   },
@@ -1055,10 +1060,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgba(30, 30, 30, 0.6)",
+    backgroundColor: gameUIColors.background + "99",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(100, 100, 100, 0.6)",
+    borderColor: gameUIColors.muted + "99",
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginVertical: 2,
@@ -1112,27 +1117,27 @@ const styles = StyleSheet.create({
   },
   // Pre-computed toggle icon styles to avoid inline objects [[memory:4875251]]
   toggleIconTrue: {
-    backgroundColor: "#00FFFF",
+    backgroundColor: gameUIColors.info,
   },
   toggleIconFalse: {
-    backgroundColor: "#6B7280",
+    backgroundColor: gameUIColors.muted,
   },
   // Pre-computed toggle badge styles [[memory:4875251]]
   toggleBadgeTrue: {
-    backgroundColor: "rgba(0, 255, 255, 0.1)",
-    borderColor: "rgba(0, 255, 255, 0.3)",
+    backgroundColor: gameUIColors.info + "1A",
+    borderColor: gameUIColors.info + "4D",
   },
   toggleBadgeFalse: {
-    backgroundColor: "rgba(100, 100, 100, 0.1)",
-    borderColor: "rgba(100, 100, 100, 0.3)",
+    backgroundColor: gameUIColors.muted + "1A",
+    borderColor: gameUIColors.muted + "4D",
   },
   // Pre-computed toggle text styles [[memory:4875251]]
   toggleTextTrue: {
-    color: "#00FFFF",
+    color: gameUIColors.info,
     fontWeight: "600",
   },
   toggleTextFalse: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontWeight: "500",
   },
 });

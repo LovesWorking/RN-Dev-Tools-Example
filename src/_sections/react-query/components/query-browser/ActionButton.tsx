@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     marginRight: 6,
-    shadowColor: "#FFFFFF",
+    shadowColor: gameUIColors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 2,

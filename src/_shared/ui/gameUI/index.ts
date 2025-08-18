@@ -24,5 +24,9 @@ export { useGameUIAlertState, GAME_UI_ALERT_STATES } from "./hooks/useGameUIAler
 export type { AlertStateType, AlertStateConfig, GameUIStats } from "./hooks/useGameUIAlertState";
 
 // Constants
-export { gameUIColors } from "./constants/gameUIColors";
+export { 
+  gameUIColors, 
+  getThemedDialColors,
+  THEME_ACCENT
+} from "./constants/gameUIColors";
 export type { GameUIColorKey } from "./constants/gameUIColors";

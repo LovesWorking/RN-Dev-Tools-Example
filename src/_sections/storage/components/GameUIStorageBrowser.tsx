@@ -850,14 +850,14 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.primary + "08",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.primary + "14",
   },
   actionButtonActive: {
-    backgroundColor: "rgba(0, 255, 136, 0.1)",
-    borderColor: "rgba(0, 255, 136, 0.3)",
+    backgroundColor: gameUIColors.success + "1A",
+    borderColor: gameUIColors.success + "4D",
   },
   actionButtonText: {
     fontSize: 9,

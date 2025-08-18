@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Filter, X, Plus, Check } from "lucide-react-native";
 import { useState, useEffect } from "react";
-import { 
+import {
   GameUIStatusHeader,
   GameUICompactStats,
   gameUIColors,
@@ -69,23 +69,24 @@ export function StorageFilterView({
   };
 
   // Determine alert state based on active filters
-  const alertState = ignoredPatterns.size > 0 
-    ? FILTER_ALERT_STATES.ACTIVE 
-    : FILTER_ALERT_STATES.INACTIVE;
-  
+  const alertState =
+    ignoredPatterns.size > 0
+      ? FILTER_ALERT_STATES.ACTIVE
+      : FILTER_ALERT_STATES.INACTIVE;
+
   const { animatedStyle } = useGameUIAlertState(alertState);
 
   // Count system vs custom filters
   const systemFilters = ["@devtools", "@rnasyncstorage"];
-  const systemCount = Array.from(ignoredPatterns).filter(p => 
-    systemFilters.some(sys => p.toLowerCase().includes(sys))
+  const systemCount = Array.from(ignoredPatterns).filter((p) =>
+    systemFilters.some((sys) => p.toLowerCase().includes(sys))
   ).length;
   const customCount = ignoredPatterns.size - systemCount;
 
   // Filter out already filtered keys from suggestions
-  const suggestedKeys = availableKeys.filter(key => {
+  const suggestedKeys = availableKeys.filter((key) => {
     // Don't suggest keys that are already filtered
-    return !Array.from(ignoredPatterns).some(pattern => 
+    return !Array.from(ignoredPatterns).some((pattern) =>
       key.includes(pattern)
     );
   });
@@ -110,7 +111,11 @@ export function StorageFilterView({
           statsConfig={[]}
           bottomStats={[
             { label: "TOTAL", value: ignoredPatterns.size },
-            { label: "SYSTEM", value: systemCount, color: gameUIColors.warning },
+            {
+              label: "SYSTEM",
+              value: systemCount,
+              color: gameUIColors.warning,
+            },
             { label: "CUSTOM", value: customCount, color: gameUIColors.info },
           ]}
         />
@@ -166,14 +171,14 @@ export function StorageFilterView({
                   <X size={14} color={gameUIColors.error} />
                 </TouchableOpacity>
               </View>
-              
+
               {/* Available Keys Section */}
               {suggestedKeys.length > 0 && (
                 <View style={styles.availableKeysContainer}>
                   <Text style={styles.availableKeysTitle}>
                     AVAILABLE KEYS FROM EVENTS
                   </Text>
-                  <ScrollView 
+                  <ScrollView
                     style={styles.availableKeysScroll}
                     horizontal={false}
                     showsVerticalScrollIndicator={true}
@@ -231,14 +236,20 @@ export function StorageFilterView({
             <Text style={styles.howItWorksTitle}>HOW FILTERS WORK</Text>
           </View>
           <Text style={styles.howItWorksText}>
-            Filtered keys will not appear in the storage events list.
-            Patterns match if the key contains the specified text.
+            Filtered keys will not appear in the storage events list. Patterns
+            match if the key contains the specified text.
           </Text>
           <View style={styles.examplesContainer}>
             <Text style={styles.examplesTitle}>EXAMPLES:</Text>
-            <Text style={styles.exampleItem}>• @temp → filters @temp_user, @temp_data</Text>
-            <Text style={styles.exampleItem}>• redux → filters redux-persist:root</Text>
-            <Text style={styles.exampleItem}>• : → filters all keys with colons</Text>
+            <Text style={styles.exampleItem}>
+              • @temp → filters @temp_user, @temp_data
+            </Text>
+            <Text style={styles.exampleItem}>
+              • redux → filters redux-persist:root
+            </Text>
+            <Text style={styles.exampleItem}>
+              • : → filters all keys with colons
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -259,7 +270,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 24,
   },
-  
+
   // Section
   section: {
     marginBottom: 16,
@@ -277,7 +288,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: gameUIColors.secondary,
   },
-  
+
   // Add Button
   addButton: {
     flexDirection: "row",
@@ -296,7 +307,7 @@ const styles = StyleSheet.create({
     color: gameUIColors.info,
     fontWeight: "500",
   },
-  
+
   // Input Container
   addInputContainer: {
     flexDirection: "row",
@@ -334,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  
+
   // Filter List
   filterList: {
     flexDirection: "row",
@@ -365,14 +376,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  
+
   // Empty state
   emptyText: {
     fontSize: 12,
     color: gameUIColors.muted,
     fontStyle: "italic",
   },
-  
+
   // Available Keys Section
   availableKeysContainer: {
     marginTop: 12,
@@ -413,7 +424,7 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
     marginRight: 8,
   },
-  
+
   // How It Works Section
   howItWorksSection: {
     padding: 16,

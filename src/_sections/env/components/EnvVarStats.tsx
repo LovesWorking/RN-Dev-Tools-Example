@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text } from "react-native";
 import { AlertCircle, CheckCircle2, Eye, XCircle } from "lucide-react-native";
 import { EnvVarStats } from "../types";
+import { gameUIColors } from "../../../_shared/ui/gameUI";
 
 interface EnvVarStatsProps {
   stats: EnvVarStats;
@@ -40,9 +41,9 @@ const variableTypeData = [
     label: "Wrong Types",
     description: "Value has incorrect data type",
     icon: XCircle,
-    color: "#0891B2",
-    textColor: "#0891B2",
-    bgColor: "rgba(8, 145, 178, 0.1)",
+    color: gameUIColors.info,
+    textColor: gameUIColors.info,
+    bgColor: gameUIColors.info + "1A",
   },
   {
     key: "optional",

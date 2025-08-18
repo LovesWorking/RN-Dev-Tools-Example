@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 215, 0, 0.2)",
+    borderColor: gameUIColors.warning + "33",
   },
   issueRow: {
     flexDirection: "row",
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.05)",
+    borderTopColor: gameUIColors.primary + "0D",
   },
 
   // Expanded details
@@ -264,9 +264,9 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingTop: 8,
     paddingBottom: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.background + "4D",
     borderLeftWidth: 2,
-    borderLeftColor: "rgba(255, 255, 255, 0.1)",
+    borderLeftColor: gameUIColors.primary + "1A",
     borderRadius: 4,
   },
   detailRow: {
@@ -291,10 +291,10 @@ const styles = StyleSheet.create({
   fixSection: {
     marginTop: 12,
     padding: 10,
-    backgroundColor: "rgba(0, 212, 255, 0.08)",
+    backgroundColor: gameUIColors.info + "14",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(0, 212, 255, 0.2)",
+    borderColor: gameUIColors.info + "33",
   },
   fixLabel: {
     fontSize: 10,
@@ -306,10 +306,10 @@ const styles = StyleSheet.create({
   },
   fixText: {
     fontSize: 11,
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontFamily: "monospace",
     lineHeight: 18,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    backgroundColor: gameUIColors.background + "66",
     padding: 8,
     borderRadius: 4,
     overflow: "hidden",
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.05)",
+    borderTopColor: gameUIColors.primary + "0D",
   },
   descText: {
     fontSize: 10,
