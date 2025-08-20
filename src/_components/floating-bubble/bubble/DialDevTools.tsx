@@ -15,7 +15,7 @@ import {
   WifiIcon,
   WifiOffIcon,
   XIcon,
-  PaletteIcon,
+  GlobeIcon,
 } from "@/src/_shared/icons/lucide-icons";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
@@ -38,7 +38,7 @@ interface DialDevToolsProps {
   onSentryPress: () => void;
   onStoragePress: () => void;
   onWifiToggle: () => void;
-  onThemePress?: () => void;
+  onNetworkPress?: () => void;
   onClose?: () => void;
   isWifiEnabled?: boolean;
 }
@@ -49,7 +49,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   onSentryPress,
   onStoragePress,
   onWifiToggle,
-  onThemePress,
+  onNetworkPress,
   onClose,
   isWifiEnabled = true,
 }) => {
@@ -113,10 +113,10 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       onPress: onWifiToggle,
     },
     {
-      name: "Theme",
-      icon: <PaletteIcon size={24} color={gameUIColors.optional} />,
-      color: gameUIColors.optional,
-      onPress: onThemePress || (() => {}),
+      name: "Network",
+      icon: <GlobeIcon size={24} color={gameUIColors.network} />,
+      color: gameUIColors.network,
+      onPress: onNetworkPress || (() => {}),
     },
   ];
 

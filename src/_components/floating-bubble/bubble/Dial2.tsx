@@ -17,7 +17,7 @@ import {
   XIcon,
   ChevronRightIcon,
   LayersIcon,
-  PaletteIcon,
+  GlobeIcon,
 } from "@/src/_shared/icons/lucide-icons";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
 import {
@@ -55,7 +55,7 @@ interface Dial2Props {
   onSentryPress: () => void;
   onStoragePress: () => void;
   onWifiToggle: () => void;
-  onThemePress: () => void;
+  onNetworkPress?: () => void;
   onClose?: () => void;
   isWifiEnabled?: boolean;
   environment?: "local" | "dev" | "qa" | "staging" | "prod";
@@ -67,7 +67,7 @@ const Dial2: React.FC<Dial2Props> = ({
   onSentryPress,
   onStoragePress,
   onWifiToggle,
-  onThemePress,
+  onNetworkPress,
   onClose,
   isWifiEnabled = true,
   environment = "dev",
@@ -173,15 +173,15 @@ const Dial2: React.FC<Dial2Props> = ({
       status: isWifiEnabled ? "CONNECTED" : "OFFLINE",
     },
     {
-      title: "THEME SELECTOR",
-      subtitle: "VISUAL CUSTOMIZATION",
-      icon: <PaletteIcon size={24} color={gameUIColors.optional} />,
-      onPress: onThemePress,
-      color: gameUIColors.optional,
+      title: "NETWORK MONITOR",
+      subtitle: "HTTP TRAFFIC ANALYZER",
+      icon: <GlobeIcon size={24} color={gameUIColors.network} />,
+      onPress: onNetworkPress || (() => {}),
+      color: gameUIColors.network,
       accentColor: gameUIColors.info,
-      stats: { themes: 9, current: "CYAN", saved: "YES" },
-      level: "LVL 100",
-      status: "CUSTOM",
+      stats: { requests: 0, pending: 0, failed: 0 },
+      level: "LVL 75",
+      status: "ACTIVE",
     },
     {
       title: "EXIT INTERFACE",

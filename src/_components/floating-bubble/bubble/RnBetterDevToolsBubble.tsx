@@ -10,6 +10,7 @@ import {
   StorageModalWithTabs,
   RequiredStorageKey,
 } from "../../../_sections/storage";
+import { NetworkModal } from "../../../_sections/network";
 // import { SentryLogsModal } from "../../../_sections/sentry/components/SentryLogsModal"; // Temporarily disabled - causing import errors
 
 import {
@@ -70,6 +71,7 @@ export function RnBetterDevToolsBubble({
 }: RnBetterDevToolsBubbleProps) {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false); // Set to false for production
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
 
   // Menu type selection
   type MenuType = "claude" | "dial" | "dial2";
@@ -150,7 +152,8 @@ export function RnBetterDevToolsBubble({
     // isDebugModalOpen || // Not used anymore - we use showFloatingMenu instead
     isEnvModalOpen ||
     // isSentryModalOpen || // Disabled - Sentry modal causing import issues
-    isStorageModalOpen;
+    isStorageModalOpen ||
+    isNetworkModalOpen;
 
   // Debug which modal is stuck open
   useEffect(() => {
@@ -221,6 +224,10 @@ export function RnBetterDevToolsBubble({
               onWifiToggle: () => {
                 setIsWifiEnabled(!isWifiEnabled);
               },
+              onNetworkPress: () => {
+                setShowFloatingMenu(false);
+                setIsNetworkModalOpen(true);
+              },
               onClose: () => {
                 setShowFloatingMenu(false);
               },
@@ -284,6 +291,14 @@ export function RnBetterDevToolsBubble({
           onClose={handleStorageModalDismiss}
           enableSharedModalDimensions={enableSharedModalDimensions}
           requiredStorageKeys={requiredStorageKeys}
+        />
+
+        {/* Network Modal - Shows all network requests */}
+        <NetworkModal
+          key="network-modal"
+          visible={isNetworkModalOpen}
+          onClose={() => setIsNetworkModalOpen(false)}
+          enableSharedModalDimensions={enableSharedModalDimensions}
         />
         
       </QueryClientProvider>

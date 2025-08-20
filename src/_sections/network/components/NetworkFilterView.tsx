@@ -70,23 +70,35 @@ export function NetworkFilterView({ events, filter, onFilterChange, onClose }: N
   };
 
   const handleStatusFilter = (status: "all" | "success" | "error" | "pending") => {
-    onFilterChange({ ...filter, status });
+    if (status === "all") {
+      onFilterChange({ ...filter, status: undefined });
+    } else {
+      onFilterChange({ ...filter, status });
+    }
   };
 
   const handleMethodFilter = (method: string) => {
     const currentMethods = filter.method || [];
-    const newMethods = currentMethods.includes(method)
-      ? currentMethods.filter(m => m !== method)
-      : [...currentMethods, method];
-    onFilterChange({ ...filter, method: newMethods.length > 0 ? newMethods : undefined });
+    if (currentMethods.includes(method)) {
+      // Remove the method from filter
+      const newMethods = currentMethods.filter(m => m !== method);
+      onFilterChange({ ...filter, method: newMethods.length > 0 ? newMethods : undefined });
+    } else {
+      // Add the method to filter - this shows only this method
+      onFilterChange({ ...filter, method: [method] });
+    }
   };
 
   const handleContentTypeFilter = (type: string) => {
     const currentTypes = filter.contentType || [];
-    const newTypes = currentTypes.includes(type)
-      ? currentTypes.filter(t => t !== type)
-      : [...currentTypes, type];
-    onFilterChange({ ...filter, contentType: newTypes.length > 0 ? newTypes : undefined });
+    if (currentTypes.includes(type)) {
+      // Remove the type from filter
+      const newTypes = currentTypes.filter(t => t !== type);
+      onFilterChange({ ...filter, contentType: newTypes.length > 0 ? newTypes : undefined });
+    } else {
+      // Add the type to filter - this shows only this type
+      onFilterChange({ ...filter, contentType: [type] });
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -124,14 +136,6 @@ export function NetworkFilterView({ events, filter, onFilterChange, onClose }: N
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Filters</Text>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton} sentry-label="ignore close filter">
-          <X size={20} color="#E5E7EB" />
-        </TouchableOpacity>
-      </View>
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false} sentry-label="ignore filter scroll">
         {/* Status Filters */}
         <View style={styles.section}>

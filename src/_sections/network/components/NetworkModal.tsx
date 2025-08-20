@@ -18,6 +18,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
+  Zap,
 } from "lucide-react-native";
 import ClaudeModal60FPSClean, {
   type ModalMode,
@@ -29,6 +30,8 @@ import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
 import { NetworkFilterView } from "./NetworkFilterView";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
 import { NetworkEventDetailView } from "./NetworkEventDetailView";
+import { NetworkDevTestMode } from "./NetworkDevTestMode";
+import { NetworkIgnoreFilterView } from "./NetworkIgnoreFilterView";
 import { useNetworkEvents } from "../hooks/useNetworkEvents";
 import type { NetworkEvent } from "../types";
 
@@ -74,7 +77,10 @@ function NetworkModalInner({
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
+  const [showIgnoreView, setShowIgnoreView] = useState(false);
+  const [showDevMode, setShowDevMode] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(new Set());
   const flatListRef = useRef<FlashList<NetworkEvent>>(null);
 
   const handleModeChange = useCallback((mode: ModalMode) => {
@@ -95,6 +101,19 @@ function NetworkModalInner({
     setFilter((prev) => ({ ...prev, searchText: text }));
   };
 
+  // Filter events based on ignored patterns
+  const filteredEvents = useMemo(() => {
+    if (ignoredPatterns.size === 0) return events;
+    
+    return events.filter(event => {
+      const url = event.url.toLowerCase();
+      // Check if URL matches any ignored pattern
+      return !Array.from(ignoredPatterns).some(pattern => 
+        url.includes(pattern.toLowerCase())
+      );
+    });
+  }, [events, ignoredPatterns]);
+
   // FlashList optimization - only keep what's needed for FlashList performance
   const ESTIMATED_ITEM_SIZE = 52;
   const keyExtractor = (item: NetworkEvent) => item.id;
@@ -109,6 +128,62 @@ function NetworkModalInner({
 
   // Compact header with actions (like Sentry/Storage modals)
   const renderHeaderContent = () => {
+    if (showDevMode) {
+      return (
+        <View style={styles.headerContainer}>
+          <BackButton
+            onPress={() => setShowDevMode(false)}
+            color={theme.colors.text}
+          />
+          <Text
+            style={[
+              styles.headerTitle,
+              {
+                color: theme.colors.text,
+                fontFamily:
+                  theme.name === "cyberpunk" ? "monospace" : undefined,
+                fontSize: theme.name === "cyberpunk" ? 14 : 14,
+                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+                textTransform:
+                  theme.name === "cyberpunk" ? "uppercase" : undefined,
+              },
+            ]}
+          >
+            {theme.name === "cyberpunk" ? "// DEV TEST MODE" : "Dev Test Mode"}
+          </Text>
+        </View>
+      );
+    }
+    
+    if (showIgnoreView) {
+      return (
+        <View style={styles.headerContainer}>
+          <BackButton
+            onPress={() => setShowIgnoreView(false)}
+            color={theme.colors.text}
+          />
+          <Text
+            style={[
+              styles.headerTitle,
+              {
+                color: theme.colors.text,
+                fontFamily:
+                  theme.name === "cyberpunk" ? "monospace" : undefined,
+                fontSize: theme.name === "cyberpunk" ? 14 : 14,
+                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+                textTransform:
+                  theme.name === "cyberpunk" ? "uppercase" : undefined,
+              },
+            ]}
+          >
+            {theme.name === "cyberpunk" ? "// IGNORE FILTERS" : "Ignore Filters"}
+          </Text>
+        </View>
+      );
+    }
+    
     if (showFilterView) {
       return (
         <View style={styles.headerContainer}>
@@ -154,12 +229,12 @@ function NetworkModalInner({
                 color: theme.colors.text,
                 fontFamily:
                   theme.name === "cyberpunk" ? "monospace" : undefined,
-                fontSize: theme.name === "cyberpunk" ? 12 : 14,
+                fontSize: theme.name === "cyberpunk" ? 11 : 12,
                 letterSpacing: theme.name === "cyberpunk" ? 0.5 : undefined,
               },
             ]}
           >
-            {theme.name === "cyberpunk" ? `[${events.length}]` : events.length}
+            {filteredEvents.length} {filteredEvents.length === 1 ? "REQUEST" : "REQUESTS"}
           </Text>
           {isEnabled ? (
             <View
@@ -178,6 +253,34 @@ function NetworkModalInner({
 
         {/* Action buttons in header */}
         <View style={styles.headerActions}>
+          <TouchableOpacity
+            sentry-label="ignore dev mode"
+            onPress={() => setShowDevMode(true)}
+            style={[
+              styles.headerActionButton,
+              showDevMode && styles.activeDevButton,
+            ]}
+          >
+            <Zap
+              size={14}
+              color={showDevMode ? "#EF4444" : "#6B7280"}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            sentry-label="ignore patterns"
+            onPress={() => setShowIgnoreView(true)}
+            style={[
+              styles.headerActionButton,
+              ignoredPatterns.size > 0 && styles.activeIgnoreButton,
+            ]}
+          >
+            <X
+              size={14}
+              color={ignoredPatterns.size > 0 ? "#F59E0B" : "#6B7280"}
+            />
+          </TouchableOpacity>
+
           <TouchableOpacity
             sentry-label="ignore filter"
             onPress={() => setShowFilterView(true)}
@@ -293,8 +396,43 @@ function NetworkModalInner({
       styles={{}}
     >
       <View style={styles.container}>
-        {/* Show filter view if active */}
-        {showFilterView ? (
+        {/* Show dev mode if active */}
+        {showDevMode ? (
+          <NetworkDevTestMode onClose={() => setShowDevMode(false)} />
+        ) : showIgnoreView ? (
+          <NetworkIgnoreFilterView
+            ignoredPatterns={ignoredPatterns}
+            onTogglePattern={(pattern) => {
+              const newPatterns = new Set(ignoredPatterns);
+              if (newPatterns.has(pattern)) {
+                newPatterns.delete(pattern);
+              } else {
+                newPatterns.add(pattern);
+              }
+              setIgnoredPatterns(newPatterns);
+            }}
+            onAddPattern={(pattern) => {
+              const newPatterns = new Set(ignoredPatterns);
+              newPatterns.add(pattern);
+              setIgnoredPatterns(newPatterns);
+            }}
+            onBack={() => setShowIgnoreView(false)}
+            availableDomains={[
+              ...new Set(
+                events
+                  .map((e) => {
+                    try {
+                      const url = new URL(e.url);
+                      return url.hostname;
+                    } catch {
+                      return null;
+                    }
+                  })
+                  .filter(Boolean) as string[]
+              ),
+            ]}
+          />
+        ) : showFilterView ? (
           <NetworkFilterView
             events={events}
             filter={filter}
@@ -305,27 +443,36 @@ function NetworkModalInner({
           <>
             {renderSearchBar()}
 
-            {/* Compact stats bar */}
+            {/* Compact stats bar - clickable for quick filtering */}
             <View style={styles.statsBar}>
-              <View style={styles.statChip}>
+              <TouchableOpacity 
+                style={styles.statChip}
+                onPress={() => setFilter({ ...filter, status: 'success' })}
+              >
                 <CheckCircle size={12} color="#10B981" />
                 <Text style={styles.statValue}>{stats.successfulRequests}</Text>
                 <Text style={styles.statLabel}>OK</Text>
-              </View>
-              <View style={styles.statChip}>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.statChip}
+                onPress={() => setFilter({ ...filter, status: 'error' })}
+              >
                 <XCircle size={12} color="#EF4444" />
                 <Text style={[styles.statValue, styles.errorText]}>
                   {stats.failedRequests}
                 </Text>
                 <Text style={styles.statLabel}>ERR</Text>
-              </View>
-              <View style={styles.statChip}>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.statChip}
+                onPress={() => setFilter({ ...filter, status: 'pending' })}
+              >
                 <Clock size={12} color="#F59E0B" />
                 <Text style={[styles.statValue, styles.pendingText]}>
                   {stats.pendingRequests}
                 </Text>
                 <Text style={styles.statLabel}>WAIT</Text>
-              </View>
+              </TouchableOpacity>
             </View>
 
             {!isEnabled ? (
@@ -338,10 +485,10 @@ function NetworkModalInner({
             ) : null}
 
             {/* Use FlashList for performance */}
-            {events.length > 0 ? (
+            {filteredEvents.length > 0 ? (
               <FlashList
                 ref={flatListRef}
-                data={events}
+                data={filteredEvents}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
                 getItemType={getItemType}
@@ -409,6 +556,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 6,
     marginLeft: "auto",
+    marginRight: 4,
   },
   headerActionButton: {
     width: 28,
@@ -431,6 +579,14 @@ const styles = StyleSheet.create({
   activeFilterButton: {
     backgroundColor: "rgba(139, 92, 246, 0.1)",
     borderColor: "rgba(139, 92, 246, 0.2)",
+  },
+  activeDevButton: {
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderColor: "rgba(239, 68, 68, 0.2)",
+  },
+  activeIgnoreButton: {
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: "rgba(245, 158, 11, 0.2)",
   },
   // Search bar
   searchContainer: {

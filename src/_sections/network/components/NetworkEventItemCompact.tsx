@@ -210,7 +210,8 @@ const styles = StyleSheet.create({
   },
   leftSection: {
     marginRight: 8,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingTop: 2,
   },
   methodBadge: {
     paddingHorizontal: 6,
