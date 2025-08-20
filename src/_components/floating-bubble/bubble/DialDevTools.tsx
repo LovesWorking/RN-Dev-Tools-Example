@@ -19,8 +19,6 @@ import {
 } from "@/src/_shared/icons/lucide-icons";
 import { TanstackLogo } from "@/src/_sections/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
-import SpaceInvadersBackground from "./SpaceInvadersBackground";
-import BrickBreakerBackground from "./BrickBreakerBackground";
 import { gameUIColors, getThemedDialColors, THEME_ACCENT } from "../../../_shared/ui/gameUI";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -56,9 +54,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   isWifiEnabled = true,
 }) => {
   const [selectedIcon, setSelectedIcon] = React.useState(-1);
-  const [playerX, setPlayerX] = React.useState(SCREEN_WIDTH / 2);
-  const [isUserTouching, setIsUserTouching] = React.useState(false);
-  const [currentGame, setCurrentGame] = React.useState<'spaceInvaders' | 'brickBreaker'>('spaceInvaders');
 
   // React Native Animated values
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -372,30 +367,11 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Game Background - runs behind everything */}
-      <View style={styles.gameBackground}>
-        {currentGame === 'spaceInvaders' && (
-          <SpaceInvadersBackground playerX={playerX} isUserTouching={isUserTouching} />
-        )}
-        {currentGame === 'brickBreaker' && (
-          <BrickBreakerBackground paddleX={playerX} isUserControlling={isUserTouching} />
-        )}
-      </View>
-
-      {/* Dark overlay backdrop - detects touch for player movement */}
+      {/* Dark overlay backdrop */}
       <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
         <Pressable
           style={StyleSheet.absoluteFillObject}
-          onPressIn={(event) => {
-            // Move player and fire on touch
-            const touchX = event.nativeEvent.locationX;
-            setPlayerX(Math.max(30, Math.min(SCREEN_WIDTH - 30, touchX)));
-            setIsUserTouching(true);
-          }}
-          onPressOut={() => {
-            setIsUserTouching(false);
-          }}
-          onLongPress={handleClose}
+          onPress={handleClose}
         />
       </Animated.View>
 
@@ -481,16 +457,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           </View>
         </Animated.View>
       </Animated.View>
-      
-      {/* Game switcher button - above everything so it's clickable */}
-      <Pressable
-        style={styles.gameSwitcher}
-        onPress={() => setCurrentGame(prev => prev === 'spaceInvaders' ? 'brickBreaker' : 'spaceInvaders')}
-      >
-        <Text style={styles.gameSwitcherText}>
-          {currentGame === 'spaceInvaders' ? '🧱' : '👾'}
-        </Text>
-      </Pressable>
     </View>
   );
 };
@@ -507,7 +473,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Much more transparent to see the game
+    backgroundColor: 'rgba(0, 0, 0, 0.85)', // Darker overlay for better contrast without games
   },
   parent: {
     width: CIRCLE_SIZE,
@@ -655,25 +621,5 @@ const styles = StyleSheet.create({
     textShadowColor: gameUIColors.info,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 4,
-  },
-  gameBackground: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "transparent",
-  },
-  gameSwitcher: {
-    position: 'absolute',
-    top: 90,
-    right: 20,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: gameUIColors.backdrop + '88',
-    borderWidth: 1,
-    borderColor: gameUIColors.info + '66',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gameSwitcherText: {
-    fontSize: 20,
   },
 });

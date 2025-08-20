@@ -55,7 +55,13 @@ const Expander = React.memo(
         >
           <Path
             d={expanded ? "M6 9l6 6 6-6" : "M9 6l6 6-6 6"}
-            stroke={isFocused ? gameUIColors.info : isMain ? gameUIColors.primaryLight : gameUIColors.secondary}
+            stroke={
+              isFocused
+                ? gameUIColors.info
+                : isMain
+                ? gameUIColors.primaryLight
+                : gameUIColors.secondary
+            }
             strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -240,7 +246,9 @@ const ClearArrayButton = React.memo(
         <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
           <Path
             d="M21 10H7m14-6H7m14 12H7m14 6H7M3 10h.01M3 6h.01M3 14h.01M3 18h.01"
-            stroke={isFocused ? gameUIColors.warning : gameUIColors.warning + "CC"}
+            stroke={
+              isFocused ? gameUIColors.warning : gameUIColors.warning + "CC"
+            }
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -916,7 +924,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 3,
-    backgroundColor: gameUIColors.secondary + "08",
   },
   text344054: {
     color: gameUIColors.secondary,
@@ -974,7 +981,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    backgroundColor: gameUIColors.background + "99",
     borderRadius: 6,
     borderWidth: 1,
     borderColor: gameUIColors.muted + "99",
@@ -1016,7 +1022,6 @@ const styles = StyleSheet.create({
   numberButton: {
     width: 32,
     height: 16,
-    backgroundColor: gameUIColors.primary + "08",
     borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",
@@ -1029,7 +1034,6 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: gameUIColors.primary + "05",
     borderRadius: 6,
     borderWidth: 1,
     borderColor: gameUIColors.primary + "0D",
@@ -1045,7 +1049,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 8,
     borderRadius: 6,
-    backgroundColor: gameUIColors.primary + "08",
     borderWidth: 1,
     borderColor: gameUIColors.primary + "1A",
     flex: 1,
@@ -1060,7 +1063,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: gameUIColors.background + "99",
     borderRadius: 6,
     borderWidth: 1,
     borderColor: gameUIColors.muted + "99",

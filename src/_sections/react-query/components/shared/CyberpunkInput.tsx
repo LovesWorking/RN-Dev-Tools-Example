@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -13,10 +13,9 @@ import Animated, {
   withTiming,
   withSequence,
   withRepeat,
-  Easing,
 } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
-import { gameUIColors } from "../../../../_shared/ui/gameUI";
+import { gameUIColors } from "../../../../_shared/ui/gameUI/constants/gameUIColors";
 
 interface CyberpunkInputProps extends TextInputProps {
   label?: string;
@@ -39,7 +38,7 @@ export function CyberpunkInput({
   ...props
 }: CyberpunkInputProps) {
   const [isFocused, setIsFocused] = useState(false);
-  
+
   // Animated values for glitch effect
   const glitchOpacity = useSharedValue(0);
   const glitchX = useSharedValue(0);
@@ -125,7 +124,7 @@ export function CyberpunkInput({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: borderGlow.value,
-    borderColor: isFocused ? "rgba(0, 255, 255, 1)" : "rgba(100, 100, 100, 1)",
+    borderColor: isFocused ? gameUIColors.info : gameUIColors.muted + "4D",
   }));
 
   const glitchAnimatedStyle = useAnimatedStyle(() => ({
@@ -148,18 +147,10 @@ export function CyberpunkInput({
         )}
 
         {/* Input container */}
-        <Animated.View
-          style={[
-            styles.inputContainer,
-            containerAnimatedStyle,
-          ]}
-        >
+        <Animated.View style={[styles.inputContainer, containerAnimatedStyle]}>
           {/* Glitch overlay when focused */}
           <Animated.View
-            style={[
-              styles.glitchOverlay,
-              glitchAnimatedStyle,
-            ]}
+            style={[styles.glitchOverlay, glitchAnimatedStyle]}
             pointerEvents="none"
           />
 
@@ -173,7 +164,7 @@ export function CyberpunkInput({
             ]}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            placeholderTextColor="#808080"
+            placeholderTextColor={gameUIColors.muted + "99"}
             autoComplete="off"
             autoCorrect={false}
             autoCapitalize="none"
@@ -184,14 +175,17 @@ export function CyberpunkInput({
           {showNumberControls && (
             <View style={styles.numberControls}>
               <TouchableOpacity
-                style={[styles.controlButton, isFocused && styles.controlButtonFocused]}
+                style={[
+                  styles.controlButton,
+                  isFocused && styles.controlButtonFocused,
+                ]}
                 onPress={onIncrement}
                 activeOpacity={0.7}
               >
                 <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                   <Path
                     d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                    stroke={isFocused ? "#06B6D4" : "#94A3B8"}
+                    stroke={isFocused ? gameUIColors.info : gameUIColors.muted}
                     strokeWidth={2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -200,14 +194,17 @@ export function CyberpunkInput({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.controlButton, isFocused && styles.controlButtonFocused]}
+                style={[
+                  styles.controlButton,
+                  isFocused && styles.controlButtonFocused,
+                ]}
                 onPress={onDecrement}
                 activeOpacity={0.7}
               >
                 <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                   <Path
                     d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                    stroke={isFocused ? "#06B6D4" : "#94A3B8"}
+                    stroke={isFocused ? gameUIColors.info : gameUIColors.muted}
                     strokeWidth={2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -220,14 +217,17 @@ export function CyberpunkInput({
           {/* Delete button */}
           {showDeleteButton && (
             <TouchableOpacity
-              style={[styles.deleteButton, isFocused && styles.deleteButtonFocused]}
+              style={[
+                styles.deleteButton,
+                isFocused && styles.deleteButtonFocused,
+              ]}
               onPress={onDelete}
               activeOpacity={0.7}
             >
               <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                 <Path
                   d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
-                  stroke={isFocused ? "#EF4444" : "#F87171"}
+                  stroke={isFocused ? gameUIColors.error : gameUIColors.error + "CC"}
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -237,10 +237,34 @@ export function CyberpunkInput({
           )}
 
           {/* Corner accents */}
-          <View style={[styles.cornerAccent, styles.cornerTL, isFocused && styles.cornerAccentFocused]} />
-          <View style={[styles.cornerAccent, styles.cornerTR, isFocused && styles.cornerAccentFocused]} />
-          <View style={[styles.cornerAccent, styles.cornerBL, isFocused && styles.cornerAccentFocused]} />
-          <View style={[styles.cornerAccent, styles.cornerBR, isFocused && styles.cornerAccentFocused]} />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerTL,
+              isFocused && styles.cornerAccentFocused,
+            ]}
+          />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerTR,
+              isFocused && styles.cornerAccentFocused,
+            ]}
+          />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerBL,
+              isFocused && styles.cornerAccentFocused,
+            ]}
+          />
+          <View
+            style={[
+              styles.cornerAccent,
+              styles.cornerBR,
+              isFocused && styles.cornerAccentFocused,
+            ]}
+          />
         </Animated.View>
       </View>
     </View>
@@ -263,7 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "600",
     fontFamily: "monospace",
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
     letterSpacing: 0.5,
     minWidth: 60,
   },
@@ -276,7 +300,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderRadius: 6,
-    backgroundColor: "rgba(30, 30, 30, 0.6)",
     position: "relative",
     minHeight: 34,
     justifyContent: "center",
@@ -293,7 +316,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: gameUIColors.info,
-    backgroundColor: "rgba(0, 255, 255, 0.05)",
     zIndex: 10,
   },
 
@@ -301,7 +323,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    color: "#E5E5E5",
+    color: gameUIColors.primaryLight,
     fontSize: 12,
     fontFamily: "monospace",
     backgroundColor: "transparent",
@@ -327,9 +349,8 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    backgroundColor: "rgba(15, 23, 42, 0.9)",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.2)",
+    borderColor: gameUIColors.muted + "33",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -339,8 +360,7 @@ const styles = StyleSheet.create({
   },
 
   controlButtonFocused: {
-    borderColor: "rgba(6, 182, 212, 0.8)",
-    backgroundColor: "rgba(6, 182, 212, 0.15)",
+    borderColor: gameUIColors.info + "CC",
     shadowColor: "#06B6D4",
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -350,9 +370,8 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
     borderWidth: 1,
-    borderColor: "rgba(239, 68, 68, 0.3)",
+    borderColor: gameUIColors.error + "4D",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#EF4444",
@@ -364,8 +383,7 @@ const styles = StyleSheet.create({
   },
 
   deleteButtonFocused: {
-    borderColor: "rgba(239, 68, 68, 0.8)",
-    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    borderColor: gameUIColors.error + "CC",
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
@@ -374,7 +392,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 6,
     height: 1.2,
-    backgroundColor: "rgba(100, 100, 100, 0.8)",
+    backgroundColor: gameUIColors.muted + "CC",
     zIndex: 0,
   },
 

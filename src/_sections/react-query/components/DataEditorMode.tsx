@@ -260,22 +260,23 @@ const styles = StyleSheet.create({
     backgroundColor: gameUIColors.panel + "D9",
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.success + "4D", // Green for editable data
+    borderColor: gameUIColors.info + "4D",
     overflow: "hidden",
-    shadowColor: gameUIColors.success,
+    shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
+    marginTop: 8,
   },
   dataHeader: {
-    backgroundColor: gameUIColors.success + "1A", // Green background
+    backgroundColor: gameUIColors.info + "1A",
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
-    color: gameUIColors.success, // Green text
+    color: gameUIColors.info,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.success + "33",
+    borderBottomColor: gameUIColors.info + "33",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     fontFamily: "monospace",
