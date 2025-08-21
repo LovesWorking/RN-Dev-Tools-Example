@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,12 +13,13 @@ import {
   Trash2,
   Power,
   Search,
-  X,
   Filter,
   CheckCircle,
   XCircle,
   Clock,
   Zap,
+  X,
+  Link,
 } from "lucide-react-native";
 import ClaudeModal60FPSClean, {
   type ModalMode,
@@ -31,7 +32,6 @@ import { NetworkFilterView } from "./NetworkFilterView";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
 import { NetworkEventDetailView } from "./NetworkEventDetailView";
 import { NetworkDevTestMode } from "./NetworkDevTestMode";
-import { NetworkIgnoreFilterView } from "./NetworkIgnoreFilterView";
 import { useNetworkEvents } from "../hooks/useNetworkEvents";
 import type { NetworkEvent } from "../types";
 
@@ -77,15 +77,70 @@ function NetworkModalInner({
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
-  const [showIgnoreView, setShowIgnoreView] = useState(false);
   const [showDevMode, setShowDevMode] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(new Set());
+  const [ignoredDomains, setIgnoredDomains] = useState<Set<string>>(new Set());
+  const [ignoredUrls, setIgnoredUrls] = useState<Set<string>>(new Set());
   const flatListRef = useRef<FlashList<NetworkEvent>>(null);
+  const hasLoadedFilters = useRef(false);
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
   }, []);
+
+  // Load persisted filters on mount
+  useEffect(() => {
+    if (!visible || hasLoadedFilters.current) return;
+    
+    const loadFilters = async () => {
+      try {
+        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
+        
+        // Load ignored domains
+        const storedDomains = await AsyncStorage.getItem(devToolsStorageKeys.network.ignoredDomains());
+        if (storedDomains) {
+          const domains = JSON.parse(storedDomains) as string[];
+          setIgnoredDomains(new Set(domains));
+        }
+        
+        // Load ignored URLs
+        const storedUrls = await AsyncStorage.getItem(devToolsStorageKeys.network.ignoredUrls());
+        if (storedUrls) {
+          const urls = JSON.parse(storedUrls) as string[];
+          setIgnoredUrls(new Set(urls));
+        }
+        
+        hasLoadedFilters.current = true;
+      } catch (error) {
+        console.warn("Failed to load network filters:", error);
+      }
+    };
+    
+    loadFilters();
+  }, [visible]);
+
+  // Save filters when they change
+  useEffect(() => {
+    if (!hasLoadedFilters.current) return; // Don't save on initial load
+    
+    const saveFilters = async () => {
+      try {
+        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
+        
+        // Save ignored domains
+        const domains = Array.from(ignoredDomains);
+        await AsyncStorage.setItem(devToolsStorageKeys.network.ignoredDomains(), JSON.stringify(domains));
+        
+        // Save ignored URLs
+        const urls = Array.from(ignoredUrls);
+        await AsyncStorage.setItem(devToolsStorageKeys.network.ignoredUrls(), JSON.stringify(urls));
+      } catch (error) {
+        console.warn("Failed to save network filters:", error);
+      }
+    };
+    
+    saveFilters();
+  }, [ignoredDomains, ignoredUrls]);
 
   // Simple handlers - no useCallback needed per rule2
   const handleEventPress = (event: NetworkEvent) => {
@@ -103,16 +158,38 @@ function NetworkModalInner({
 
   // Filter events based on ignored patterns
   const filteredEvents = useMemo(() => {
-    if (ignoredPatterns.size === 0) return events;
+    if (ignoredDomains.size === 0 && ignoredUrls.size === 0) return events;
     
     return events.filter(event => {
       const url = event.url.toLowerCase();
-      // Check if URL matches any ignored pattern
-      return !Array.from(ignoredPatterns).some(pattern => 
-        url.includes(pattern.toLowerCase())
-      );
+      
+      // Check domain filters
+      if (ignoredDomains.size > 0) {
+        try {
+          const urlObj = new URL(event.url);
+          const hostname = urlObj.hostname.toLowerCase();
+          if (Array.from(ignoredDomains).some(domain => 
+            hostname.includes(domain.toLowerCase())
+          )) {
+            return false;
+          }
+        } catch {
+          // If URL parsing fails, check as string
+        }
+      }
+      
+      // Check URL pattern filters
+      if (ignoredUrls.size > 0) {
+        if (Array.from(ignoredUrls).some(pattern => 
+          url.includes(pattern.toLowerCase())
+        )) {
+          return false;
+        }
+      }
+      
+      return true;
     });
-  }, [events, ignoredPatterns]);
+  }, [events, ignoredDomains, ignoredUrls]);
 
   // FlashList optimization - only keep what's needed for FlashList performance
   const ESTIMATED_ITEM_SIZE = 52;
@@ -155,35 +232,6 @@ function NetworkModalInner({
         </View>
       );
     }
-    
-    if (showIgnoreView) {
-      return (
-        <View style={styles.headerContainer}>
-          <BackButton
-            onPress={() => setShowIgnoreView(false)}
-            color={theme.colors.text}
-          />
-          <Text
-            style={[
-              styles.headerTitle,
-              {
-                color: theme.colors.text,
-                fontFamily:
-                  theme.name === "cyberpunk" ? "monospace" : undefined,
-                fontSize: theme.name === "cyberpunk" ? 14 : 14,
-                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-                textTransform:
-                  theme.name === "cyberpunk" ? "uppercase" : undefined,
-              },
-            ]}
-          >
-            {theme.name === "cyberpunk" ? "// IGNORE FILTERS" : "Ignore Filters"}
-          </Text>
-        </View>
-      );
-    }
-    
     if (showFilterView) {
       return (
         <View style={styles.headerContainer}>
@@ -212,11 +260,40 @@ function NetworkModalInner({
       );
     }
 
+    // Don't show main header action buttons when viewing event details
+    if (selectedEvent) {
+      return (
+        <View style={styles.headerContainer}>
+          <BackButton
+            onPress={handleBack}
+            color={theme.colors.text}
+          />
+          <Text
+            style={[
+              styles.headerTitle,
+              {
+                color: theme.colors.text,
+                fontFamily:
+                  theme.name === "cyberpunk" ? "monospace" : undefined,
+                fontSize: theme.name === "cyberpunk" ? 14 : 14,
+                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
+                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
+                textTransform:
+                  theme.name === "cyberpunk" ? "uppercase" : undefined,
+              },
+            ]}
+          >
+            {theme.name === "cyberpunk" ? "// REQUEST DETAILS" : "Request Details"}
+          </Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.headerContainer}>
-        {selectedEvent || onBack ? (
+        {onBack ? (
           <BackButton
-            onPress={selectedEvent ? handleBack : onBack!}
+            onPress={onBack}
             color={theme.colors.text}
           />
         ) : null}
@@ -236,6 +313,21 @@ function NetworkModalInner({
           >
             {filteredEvents.length} {filteredEvents.length === 1 ? "REQUEST" : "REQUESTS"}
           </Text>
+          {events.length - filteredEvents.length > 0 ? (
+            <Text
+              style={[
+                styles.headerFilteredText,
+                {
+                  color: "#F59E0B",
+                  fontFamily:
+                    theme.name === "cyberpunk" ? "monospace" : undefined,
+                  fontSize: theme.name === "cyberpunk" ? 10 : 11,
+                },
+              ]}
+            >
+              ({events.length - filteredEvents.length} HIDDEN)
+            </Text>
+          ) : null}
           {isEnabled ? (
             <View
               style={[
@@ -264,20 +356,6 @@ function NetworkModalInner({
             <Zap
               size={14}
               color={showDevMode ? "#EF4444" : "#6B7280"}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            sentry-label="ignore patterns"
-            onPress={() => setShowIgnoreView(true)}
-            style={[
-              styles.headerActionButton,
-              ignoredPatterns.size > 0 && styles.activeIgnoreButton,
-            ]}
-          >
-            <X
-              size={14}
-              color={ignoredPatterns.size > 0 ? "#F59E0B" : "#6B7280"}
             />
           </TouchableOpacity>
 
@@ -374,7 +452,30 @@ function NetworkModalInner({
         styles={{}}
       >
         <View style={styles.container}>
-          <NetworkEventDetailView event={selectedEvent} onBack={handleBack} />
+          <NetworkEventDetailView 
+            event={selectedEvent} 
+            onBack={handleBack}
+            ignoredDomains={ignoredDomains}
+            ignoredUrls={ignoredUrls}
+            onToggleDomain={(domain) => {
+              const newDomains = new Set(ignoredDomains);
+              if (newDomains.has(domain)) {
+                newDomains.delete(domain);
+              } else {
+                newDomains.add(domain);
+              }
+              setIgnoredDomains(newDomains);
+            }}
+            onToggleUrl={(url) => {
+              const newUrls = new Set(ignoredUrls);
+              if (newUrls.has(url)) {
+                newUrls.delete(url);
+              } else {
+                newUrls.add(url);
+              }
+              setIgnoredUrls(newUrls);
+            }}
+          />
         </View>
       </ClaudeModal60FPSClean>
     );
@@ -399,45 +500,42 @@ function NetworkModalInner({
         {/* Show dev mode if active */}
         {showDevMode ? (
           <NetworkDevTestMode onClose={() => setShowDevMode(false)} />
-        ) : showIgnoreView ? (
-          <NetworkIgnoreFilterView
-            ignoredPatterns={ignoredPatterns}
-            onTogglePattern={(pattern) => {
-              const newPatterns = new Set(ignoredPatterns);
-              if (newPatterns.has(pattern)) {
-                newPatterns.delete(pattern);
-              } else {
-                newPatterns.add(pattern);
-              }
-              setIgnoredPatterns(newPatterns);
-            }}
-            onAddPattern={(pattern) => {
-              const newPatterns = new Set(ignoredPatterns);
-              newPatterns.add(pattern);
-              setIgnoredPatterns(newPatterns);
-            }}
-            onBack={() => setShowIgnoreView(false)}
-            availableDomains={[
-              ...new Set(
-                events
-                  .map((e) => {
-                    try {
-                      const url = new URL(e.url);
-                      return url.hostname;
-                    } catch {
-                      return null;
-                    }
-                  })
-                  .filter(Boolean) as string[]
-              ),
-            ]}
-          />
         ) : showFilterView ? (
           <NetworkFilterView
             events={events}
             filter={filter}
             onFilterChange={setFilter}
             onClose={() => setShowFilterView(false)}
+            ignoredDomains={ignoredDomains}
+            ignoredUrls={ignoredUrls}
+            onToggleDomain={(domain) => {
+              const newDomains = new Set(ignoredDomains);
+              if (newDomains.has(domain)) {
+                newDomains.delete(domain);
+              } else {
+                newDomains.add(domain);
+              }
+              setIgnoredDomains(newDomains);
+            }}
+            onAddDomain={(domain) => {
+              const newDomains = new Set(ignoredDomains);
+              newDomains.add(domain);
+              setIgnoredDomains(newDomains);
+            }}
+            onToggleUrl={(url) => {
+              const newUrls = new Set(ignoredUrls);
+              if (newUrls.has(url)) {
+                newUrls.delete(url);
+              } else {
+                newUrls.add(url);
+              }
+              setIgnoredUrls(newUrls);
+            }}
+            onAddUrl={(url) => {
+              const newUrls = new Set(ignoredUrls);
+              newUrls.add(url);
+              setIgnoredUrls(newUrls);
+            }}
           />
         ) : (
           <>
@@ -446,16 +544,28 @@ function NetworkModalInner({
             {/* Compact stats bar - clickable for quick filtering */}
             <View style={styles.statsBar}>
               <TouchableOpacity 
-                style={styles.statChip}
-                onPress={() => setFilter({ ...filter, status: 'success' })}
+                style={[
+                  styles.statChip,
+                  filter.status === 'success' && styles.statChipActive
+                ]}
+                onPress={() => setFilter({ 
+                  ...filter, 
+                  status: filter.status === 'success' ? undefined : 'success' 
+                })}
               >
                 <CheckCircle size={12} color="#10B981" />
                 <Text style={styles.statValue}>{stats.successfulRequests}</Text>
                 <Text style={styles.statLabel}>OK</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.statChip}
-                onPress={() => setFilter({ ...filter, status: 'error' })}
+                style={[
+                  styles.statChip,
+                  filter.status === 'error' && styles.statChipActive
+                ]}
+                onPress={() => setFilter({ 
+                  ...filter, 
+                  status: filter.status === 'error' ? undefined : 'error' 
+                })}
               >
                 <XCircle size={12} color="#EF4444" />
                 <Text style={[styles.statValue, styles.errorText]}>
@@ -464,8 +574,14 @@ function NetworkModalInner({
                 <Text style={styles.statLabel}>ERR</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.statChip}
-                onPress={() => setFilter({ ...filter, status: 'pending' })}
+                style={[
+                  styles.statChip,
+                  filter.status === 'pending' && styles.statChipActive
+                ]}
+                onPress={() => setFilter({ 
+                  ...filter, 
+                  status: filter.status === 'pending' ? undefined : 'pending' 
+                })}
               >
                 <Clock size={12} color="#F59E0B" />
                 <Text style={[styles.statValue, styles.pendingText]}>
@@ -546,6 +662,12 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     fontWeight: "500",
   },
+  headerFilteredText: {
+    fontSize: 11,
+    color: "#F59E0B",
+    fontWeight: "500",
+    marginLeft: 4,
+  },
   listeningIndicator: {
     width: 6,
     height: 6,
@@ -588,6 +710,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(245, 158, 11, 0.1)",
     borderColor: "rgba(245, 158, 11, 0.2)",
   },
+  detailHeaderActions: {
+    flexDirection: "row",
+    gap: 6,
+    marginLeft: "auto",
+    marginRight: 4,
+  },
   // Search bar
   searchContainer: {
     flexDirection: "row",
@@ -624,6 +752,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  statChipActive: {
+    backgroundColor: "rgba(139, 92, 246, 0.15)",
+    borderColor: "rgba(139, 92, 246, 0.4)",
   },
   statValue: {
     fontSize: 14,

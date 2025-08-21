@@ -16,7 +16,10 @@ import {
   Lock,
   Unlock,
   Copy,
-  FileJson
+  FileJson,
+  Filter,
+  Globe,
+  Link
 } from 'lucide-react-native';
 import { DataViewer } from '../../react-query/components/shared/DataViewer';
 import type { NetworkEvent } from '../types';
@@ -26,6 +29,10 @@ import { formatRelativeTime } from '../../sentry/utils/formatRelativeTime';
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
   onBack: () => void;
+  ignoredDomains?: Set<string>;
+  ignoredUrls?: Set<string>;
+  onToggleDomain?: (domain: string) => void;
+  onToggleUrl?: (url: string) => void;
 }
 
 // Component for collapsible sections matching Sentry style
@@ -132,7 +139,14 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
   );
 };
 
-export function NetworkEventDetailView({ event }: NetworkEventDetailViewProps) {
+export function NetworkEventDetailView({ 
+  event,
+  onBack,
+  ignoredDomains = new Set(),
+  ignoredUrls = new Set(),
+  onToggleDomain = () => {},
+  onToggleUrl = () => {}
+}: NetworkEventDetailViewProps) {
   const status = event.status ? formatHttpStatus(event.status) : null;
   const isPending = !event.status && !event.error;
 
@@ -286,6 +300,100 @@ export function NetworkEventDetailView({ event }: NetworkEventDetailViewProps) {
           </View>
         </CollapsibleSection>
       ) : null}
+
+      {/* Filter Options - Collapsible */}
+      <CollapsibleSection
+        title="Filter Options"
+        icon={<Filter size={14} color="#F59E0B" />}
+        defaultOpen={false}
+      >
+        <View style={styles.filterOptionsContainer}>
+          {(() => {
+            let domain = "";
+            let urlPath = "";
+            try {
+              const url = new URL(event.url);
+              domain = url.hostname;
+              urlPath = url.pathname;
+            } catch {
+              urlPath = event.url;
+            }
+
+            const isDomainIgnored = ignoredDomains.has(domain);
+            const isUrlIgnored = ignoredUrls.has(urlPath);
+
+            return (
+              <>
+                {/* Domain Filter */}
+                <TouchableOpacity
+                  style={[
+                    styles.filterOption,
+                    isDomainIgnored && styles.filterOptionActive
+                  ]}
+                  onPress={() => domain && onToggleDomain(domain)}
+                >
+                  <View style={styles.filterOptionLeft}>
+                    <Globe size={16} color={isDomainIgnored ? "#F59E0B" : "#6B7280"} />
+                    <View style={styles.filterOptionContent}>
+                      <Text style={styles.filterOptionLabel}>Ignore Domain</Text>
+                      <Text style={styles.filterOptionValue}>{domain || "N/A"}</Text>
+                    </View>
+                  </View>
+                  <View style={[
+                    styles.filterToggle,
+                    isDomainIgnored && styles.filterToggleActive
+                  ]}>
+                    <Text style={[
+                      styles.filterToggleText,
+                      isDomainIgnored && styles.filterToggleTextActive
+                    ]}>
+                      {isDomainIgnored ? "IGNORED" : "IGNORE"}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* URL Filter */}
+                <TouchableOpacity
+                  style={[
+                    styles.filterOption,
+                    isUrlIgnored && styles.filterOptionActive
+                  ]}
+                  onPress={() => urlPath && onToggleUrl(urlPath)}
+                >
+                  <View style={styles.filterOptionLeft}>
+                    <Link size={16} color={isUrlIgnored ? "#F59E0B" : "#6B7280"} />
+                    <View style={styles.filterOptionContent}>
+                      <Text style={styles.filterOptionLabel}>Ignore URL Pattern</Text>
+                      <Text style={styles.filterOptionValue} numberOfLines={1}>
+                        {urlPath || "N/A"}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={[
+                    styles.filterToggle,
+                    isUrlIgnored && styles.filterToggleActive
+                  ]}>
+                    <Text style={[
+                      styles.filterToggleText,
+                      isUrlIgnored && styles.filterToggleTextActive
+                    ]}>
+                      {isUrlIgnored ? "IGNORED" : "IGNORE"}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Info Text */}
+                <View style={styles.filterInfoBox}>
+                  <Text style={styles.filterInfoText}>
+                    Ignored requests will be hidden from the network list. 
+                    You can manage filters in the Filters tab.
+                  </Text>
+                </View>
+              </>
+            );
+          })()}
+        </View>
+      </CollapsibleSection>
     </ScrollView>
   );
 }
@@ -519,5 +627,77 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontStyle: 'italic',
     textAlign: 'center',
+  },
+  // Filter options styles
+  filterOptionsContainer: {
+    gap: 12,
+  },
+  filterOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  filterOptionActive: {
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderColor: 'rgba(245, 158, 11, 0.2)',
+  },
+  filterOptionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  filterOptionContent: {
+    flex: 1,
+  },
+  filterOptionLabel: {
+    color: '#9CA3AF',
+    fontSize: 11,
+    marginBottom: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  filterOptionValue: {
+    color: '#E5E7EB',
+    fontSize: 13,
+    fontFamily: 'monospace',
+  },
+  filterToggle: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  filterToggleActive: {
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    borderColor: 'rgba(245, 158, 11, 0.3)',
+  },
+  filterToggleText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#6B7280',
+    letterSpacing: 0.5,
+  },
+  filterToggleTextActive: {
+    color: '#F59E0B',
+  },
+  filterInfoBox: {
+    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    borderRadius: 6,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(139, 92, 246, 0.2)',
+  },
+  filterInfoText: {
+    color: '#9CA3AF',
+    fontSize: 11,
+    lineHeight: 16,
   },
 });
