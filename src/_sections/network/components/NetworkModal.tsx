@@ -91,54 +91,68 @@ function NetworkModalInner({
   // Load persisted filters on mount
   useEffect(() => {
     if (!visible || hasLoadedFilters.current) return;
-    
+
     const loadFilters = async () => {
       try {
-        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
-        
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+
         // Load ignored domains
-        const storedDomains = await AsyncStorage.getItem(devToolsStorageKeys.network.ignoredDomains());
+        const storedDomains = await AsyncStorage.getItem(
+          devToolsStorageKeys.network.ignoredDomains()
+        );
         if (storedDomains) {
           const domains = JSON.parse(storedDomains) as string[];
           setIgnoredDomains(new Set(domains));
         }
-        
+
         // Load ignored URLs
-        const storedUrls = await AsyncStorage.getItem(devToolsStorageKeys.network.ignoredUrls());
+        const storedUrls = await AsyncStorage.getItem(
+          devToolsStorageKeys.network.ignoredUrls()
+        );
         if (storedUrls) {
           const urls = JSON.parse(storedUrls) as string[];
           setIgnoredUrls(new Set(urls));
         }
-        
+
         hasLoadedFilters.current = true;
       } catch (error) {
         console.warn("Failed to load network filters:", error);
       }
     };
-    
+
     loadFilters();
   }, [visible]);
 
   // Save filters when they change
   useEffect(() => {
     if (!hasLoadedFilters.current) return; // Don't save on initial load
-    
+
     const saveFilters = async () => {
       try {
-        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
-        
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+
         // Save ignored domains
         const domains = Array.from(ignoredDomains);
-        await AsyncStorage.setItem(devToolsStorageKeys.network.ignoredDomains(), JSON.stringify(domains));
-        
+        await AsyncStorage.setItem(
+          devToolsStorageKeys.network.ignoredDomains(),
+          JSON.stringify(domains)
+        );
+
         // Save ignored URLs
         const urls = Array.from(ignoredUrls);
-        await AsyncStorage.setItem(devToolsStorageKeys.network.ignoredUrls(), JSON.stringify(urls));
+        await AsyncStorage.setItem(
+          devToolsStorageKeys.network.ignoredUrls(),
+          JSON.stringify(urls)
+        );
       } catch (error) {
         console.warn("Failed to save network filters:", error);
       }
     };
-    
+
     saveFilters();
   }, [ignoredDomains, ignoredUrls]);
 
@@ -159,34 +173,38 @@ function NetworkModalInner({
   // Filter events based on ignored patterns
   const filteredEvents = useMemo(() => {
     if (ignoredDomains.size === 0 && ignoredUrls.size === 0) return events;
-    
-    return events.filter(event => {
+
+    return events.filter((event) => {
       const url = event.url.toLowerCase();
-      
+
       // Check domain filters
       if (ignoredDomains.size > 0) {
         try {
           const urlObj = new URL(event.url);
           const hostname = urlObj.hostname.toLowerCase();
-          if (Array.from(ignoredDomains).some(domain => 
-            hostname.includes(domain.toLowerCase())
-          )) {
+          if (
+            Array.from(ignoredDomains).some((domain) =>
+              hostname.includes(domain.toLowerCase())
+            )
+          ) {
             return false;
           }
         } catch {
           // If URL parsing fails, check as string
         }
       }
-      
+
       // Check URL pattern filters
       if (ignoredUrls.size > 0) {
-        if (Array.from(ignoredUrls).some(pattern => 
-          url.includes(pattern.toLowerCase())
-        )) {
+        if (
+          Array.from(ignoredUrls).some((pattern) =>
+            url.includes(pattern.toLowerCase())
+          )
+        ) {
           return false;
         }
       }
-      
+
       return true;
     });
   }, [events, ignoredDomains, ignoredUrls]);
@@ -264,10 +282,7 @@ function NetworkModalInner({
     if (selectedEvent) {
       return (
         <View style={styles.headerContainer}>
-          <BackButton
-            onPress={handleBack}
-            color={theme.colors.text}
-          />
+          <BackButton onPress={handleBack} color={theme.colors.text} />
           <Text
             style={[
               styles.headerTitle,
@@ -283,7 +298,9 @@ function NetworkModalInner({
               },
             ]}
           >
-            {theme.name === "cyberpunk" ? "// REQUEST DETAILS" : "Request Details"}
+            {theme.name === "cyberpunk"
+              ? "// REQUEST DETAILS"
+              : "Request Details"}
           </Text>
         </View>
       );
@@ -292,10 +309,7 @@ function NetworkModalInner({
     return (
       <View style={styles.headerContainer}>
         {onBack ? (
-          <BackButton
-            onPress={onBack}
-            color={theme.colors.text}
-          />
+          <BackButton onPress={onBack} color={theme.colors.text} />
         ) : null}
 
         <View style={styles.headerStats}>
@@ -311,7 +325,8 @@ function NetworkModalInner({
               },
             ]}
           >
-            {filteredEvents.length} {filteredEvents.length === 1 ? "REQUEST" : "REQUESTS"}
+            {filteredEvents.length}{" "}
+            {filteredEvents.length === 1 ? "REQUEST" : "REQUESTS"}
           </Text>
           {events.length - filteredEvents.length > 0 ? (
             <Text
@@ -353,10 +368,7 @@ function NetworkModalInner({
               showDevMode && styles.activeDevButton,
             ]}
           >
-            <Zap
-              size={14}
-              color={showDevMode ? "#EF4444" : "#6B7280"}
-            />
+            <Zap size={14} color={showDevMode ? "#EF4444" : "#6B7280"} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -452,8 +464,8 @@ function NetworkModalInner({
         styles={{}}
       >
         <View style={styles.container}>
-          <NetworkEventDetailView 
-            event={selectedEvent} 
+          <NetworkEventDetailView
+            event={selectedEvent}
             onBack={handleBack}
             ignoredDomains={ignoredDomains}
             ignoredUrls={ignoredUrls}
@@ -543,29 +555,33 @@ function NetworkModalInner({
 
             {/* Compact stats bar - clickable for quick filtering */}
             <View style={styles.statsBar}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
                   styles.statChip,
-                  filter.status === 'success' && styles.statChipActive
+                  filter.status === "success" && styles.statChipActive,
                 ]}
-                onPress={() => setFilter({ 
-                  ...filter, 
-                  status: filter.status === 'success' ? undefined : 'success' 
-                })}
+                onPress={() =>
+                  setFilter({
+                    ...filter,
+                    status: filter.status === "success" ? undefined : "success",
+                  })
+                }
               >
                 <CheckCircle size={12} color="#10B981" />
                 <Text style={styles.statValue}>{stats.successfulRequests}</Text>
                 <Text style={styles.statLabel}>OK</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
                   styles.statChip,
-                  filter.status === 'error' && styles.statChipActive
+                  filter.status === "error" && styles.statChipActive,
                 ]}
-                onPress={() => setFilter({ 
-                  ...filter, 
-                  status: filter.status === 'error' ? undefined : 'error' 
-                })}
+                onPress={() =>
+                  setFilter({
+                    ...filter,
+                    status: filter.status === "error" ? undefined : "error",
+                  })
+                }
               >
                 <XCircle size={12} color="#EF4444" />
                 <Text style={[styles.statValue, styles.errorText]}>
@@ -573,15 +589,17 @@ function NetworkModalInner({
                 </Text>
                 <Text style={styles.statLabel}>ERR</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[
                   styles.statChip,
-                  filter.status === 'pending' && styles.statChipActive
+                  filter.status === "pending" && styles.statChipActive,
                 ]}
-                onPress={() => setFilter({ 
-                  ...filter, 
-                  status: filter.status === 'pending' ? undefined : 'pending' 
-                })}
+                onPress={() =>
+                  setFilter({
+                    ...filter,
+                    status: filter.status === "pending" ? undefined : "pending",
+                  })
+                }
               >
                 <Clock size={12} color="#F59E0B" />
                 <Text style={[styles.statValue, styles.pendingText]}>
@@ -609,7 +627,6 @@ function NetworkModalInner({
                 keyExtractor={keyExtractor}
                 getItemType={getItemType}
                 estimatedItemSize={ESTIMATED_ITEM_SIZE}
-                inverted
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator
                 removeClippedSubviews
