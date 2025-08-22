@@ -39,19 +39,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   RnBetterDevToolsBubble,
   UserRole,
-} from "@/src/_components/floating-bubble/bubble";
-import ClaudeModal60FPSClean from "@/src/claudeModal/ClaudeModal60FPSClean";
-import { Modal60fpsTest } from "@/src/claudeModal/Modal60fpsTest";
-import ModalPerformanceComparison from "@/src/claudeModal/ModalPerformanceComparison";
-import { Environment } from "@/src/newDevTools/floatingTools";
+  Environment,
+} from "@/rn-better-dev-tools/src";
+import ClaudeModal60FPSClean from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import { Modal60fpsTest } from "@/rn-better-dev-tools/src/components/modals/claudeModal/Modal60fpsTest";
+import ModalPerformanceComparison from "@/rn-better-dev-tools/src/components/modals/claudeModal/ModalPerformanceComparison";
 import {
   createEnvVarConfig,
   envVar,
   GameUIEnvContent,
-} from "@/src/_sections/env";
-import QueryStatusCount from "@/src/_sections/react-query/components/query-browser/QueryStatusCount";
-import MutationStatusCount from "@/src/_sections/react-query/components/query-browser/MutationStatusCount";
-import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
+} from "@/rn-better-dev-tools/src/features/env";
+import QueryStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/QueryStatusCount";
+import MutationStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/MutationStatusCount";
+import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 
 const { width, height } = Dimensions.get("window");
 const SCREEN = Dimensions.get("window");

@@ -1,0 +1,693 @@
+/**
+ * Modal Performance Comparison - 60FPS Variants Only
+ *
+ * Tests only the 60FPS modal versions with performance benchmarks:
+ *
+ * 1. ClaudeModal60FPSClean - 60FPS optimized with separated animations
+ * 2. Modal60fpsTest - 60FPS test modal with height animation
+ */
+
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Animated,
+  Dimensions,
+} from "react-native";
+import ClaudeModal60FPSClean from "./ClaudeModal60FPSClean";
+import Modal60fpsTest from "./Modal60fpsTest";
+import { JSFPSMonitor, JSFPSResult } from "./utils/JSFPSMonitor";
+import { mobileFPSMonitor, FPSMetrics } from "./utils/MobileFPSMonitor";
+import { nativeFrameTracker, FrameMetrics as NativeFrameMetrics } from "./utils/NativeFrameMetrics";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+type ModalType = "60fps" | "60fpsTest";
+
+interface BenchmarkResult {
+  modalType: ModalType;
+  fpsData: JSFPSResult;
+  mobileFPSData?: FPSMetrics;
+  nativeFrameMetrics?: NativeFrameMetrics;
+  duration: number;
+  timestamp: number;
+}
+
+// Get modal display name
+const getModalName = (type: ModalType) => {
+  switch (type) {
+    case "60fps":
+      return "ClaudeModal60FPSClean";
+    case "60fpsTest":
+      return "Modal60fpsTest";
+    default:
+      return type;
+  }
+};
+
+export default function ModalPerformanceComparison() {
+  const [modal60fpsVisible, setModal60fpsVisible] = useState(false);
+  const [modal60fpsTestVisible, setModal60fpsTestVisible] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [testMode, setTestMode] = useState<"floating" | "bottomSheet">("bottomSheet");
+  const [currentFps, setCurrentFps] = useState(0);
+  const [testProgress, setTestProgress] = useState(0);
+  const [results, setResults] = useState<BenchmarkResult[]>([]);
+  const [activeModal, setActiveModal] = useState<ModalType | "none">("none");
+  
+  // Refs for performance monitoring
+  const fpsMonitorRef = useRef<JSFPSMonitor | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const progressIntervalRef = useRef<number | null>(null);
+  const modalHeightRef = useRef(new Animated.Value(400)).current;
+  const resizeIntervalRef = useRef<number | null>(null);
+  const resizeHeightRef = useRef(400);
+  const testDurationRef = useRef(5000); // 5 second test
+
+  // Initialize FPS monitor on mount
+  useEffect(() => {
+    fpsMonitorRef.current = new JSFPSMonitor();
+    
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+      if (resizeIntervalRef.current) {
+        clearInterval(resizeIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Simulate resize animation during test
+  const runResizeSimulation = useCallback(() => {
+    console.log('Starting resize simulation...');
+    resizeIntervalRef.current = setInterval(() => {
+      // Oscillate height between 300 and 500
+      resizeHeightRef.current = 400 + Math.sin(Date.now() / 1000) * 100;
+      modalHeightRef.setValue(resizeHeightRef.current);
+    }, 16) as unknown as number; // ~60fps
+  }, [modalHeightRef]);
+
+  const stopResizeSimulation = useCallback(() => {
+    console.log('Stopping resize simulation...');
+    if (resizeIntervalRef.current) {
+      clearInterval(resizeIntervalRef.current);
+      resizeIntervalRef.current = null;
+    }
+    // Reset to default height
+    resizeHeightRef.current = 400;
+    modalHeightRef.setValue(400);
+  }, [modalHeightRef]);
+
+  // Heavy JS work to stress the thread
+  const stressJSThread = useCallback(() => {
+    let stressInterval: number;
+    stressInterval = setInterval(() => {
+      const start = Date.now();
+      // Run for ~5ms per iteration
+      while (Date.now() - start < 5) {
+        // Heavy computation
+        Math.sqrt(Math.random());
+      }
+    }, 10) as unknown as number;
+
+    return () => clearInterval(stressInterval);
+  }, []);
+
+  // Start benchmark
+  const startBenchmark = useCallback((modalType: ModalType) => {
+    console.log(`🚀 Starting benchmark for: ${getModalName(modalType)}`);
+    
+    // Initialize FPS monitor if needed
+    if (!fpsMonitorRef.current) {
+      fpsMonitorRef.current = new JSFPSMonitor();
+    }
+    
+    // Reset state
+    startTimeRef.current = performance.now();
+    setCurrentFps(0);
+    setTestProgress(0);
+    setIsRunning(true);
+    setActiveModal(modalType);
+
+    // Start FPS monitoring
+    if (fpsMonitorRef.current) {
+      fpsMonitorRef.current.startTracking();
+    }
+    
+    // Start Mobile FPS Monitor
+    mobileFPSMonitor.reset();
+    mobileFPSMonitor.start();
+    
+    // Start Native Frame Tracker
+    nativeFrameTracker.start();
+
+    // Start resize simulation
+    runResizeSimulation();
+
+    // Start JS stress
+    const cleanup = stressJSThread();
+
+    // Update progress and live FPS
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = performance.now() - startTimeRef.current;
+      const progress = Math.min(
+        (elapsed / testDurationRef.current) * 100,
+        100
+      );
+      setTestProgress(progress);
+      
+      // Update current FPS display
+      if (fpsMonitorRef.current) {
+        setCurrentFps(fpsMonitorRef.current.getCurrentFPS());
+      }
+
+      if (progress >= 100) {
+        cleanup(); // Stop JS stress
+        stopResizeSimulation(); // Stop resize simulation
+        stopBenchmark(modalType);
+      }
+    }, 100) as unknown as number;
+  }, [runResizeSimulation, stopResizeSimulation, stressJSThread]);
+
+  // Stop benchmark
+  const stopBenchmark = useCallback((modalType: ModalType) => {
+    // Clear progress interval
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
+    // Stop resize simulation
+    stopResizeSimulation();
+
+    // Get FPS statistics
+    if (fpsMonitorRef.current) {
+      const fpsData = fpsMonitorRef.current.stopAndGetData();
+      const duration = performance.now() - startTimeRef.current;
+      
+      // Get Mobile FPS data
+      const mobileFPSData = mobileFPSMonitor.stop();
+      
+      // Get Native Frame Metrics
+      const nativeFrameMetrics = nativeFrameTracker.stop();
+      
+      if (nativeFrameMetrics) {
+        console.log(`📊 Native Frame Metrics for ${getModalName(modalType)}:`);
+        console.log(`  - Average FPS: ${nativeFrameMetrics.averageFPS}`);
+        console.log(`  - Min/Max FPS: ${nativeFrameMetrics.minFPS}/${nativeFrameMetrics.maxFPS}`);
+        console.log(`  - Dropped Frames: ${nativeFrameMetrics.droppedFrames}`);
+        console.log(`  - Jank Score: ${nativeFrameMetrics.jankScore}% (lower is better)`);
+      }
+
+      const result: BenchmarkResult = {
+        modalType,
+        fpsData,
+        mobileFPSData,
+        nativeFrameMetrics,
+        duration,
+        timestamp: Date.now(),
+      };
+
+      setResults(prev => [...prev, result]);
+    }
+
+    // Reset state
+    setActiveModal("none");
+    setIsRunning(false);
+    setCurrentFps(0);
+    setTestProgress(0);
+  }, [stopResizeSimulation]);
+
+  // Test content component with performance info
+  const TestContent = ({ modalType, onStartTest }: { modalType: ModalType; onStartTest: () => void }) => (
+    <ScrollView style={{ flex: 1, padding: 20 }}>
+      <Text style={{ color: "white", fontSize: 18, fontWeight: "bold", marginBottom: 10 }}>
+        {getModalName(modalType)} Performance Test
+      </Text>
+      <Text style={{ color: "rgba(255,255,255,0.7)", marginBottom: 20 }}>
+        Mode: {testMode}
+      </Text>
+      
+      <Pressable
+        style={[styles.button, isRunning && styles.buttonDisabled]}
+        onPress={onStartTest}
+        disabled={isRunning}
+      >
+        <Text style={styles.buttonText}>
+          {isRunning ? "Testing..." : "Start Performance Test"}
+        </Text>
+      </Pressable>
+
+      {/* Live Performance Stats */}
+      {isRunning && activeModal === modalType && (
+        <View style={styles.liveStats}>
+          <Text style={styles.liveStatsTitle}>Live Performance</Text>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${testProgress}%` }]} />
+          </View>
+          <Text style={styles.fpsStat}>Current FPS: {currentFps.toFixed(1)}</Text>
+          <Text style={styles.progressText}>Progress: {testProgress.toFixed(0)}%</Text>
+        </View>
+      )}
+
+      {/* Test Results for this Modal */}
+      {results.filter(r => r.modalType === modalType).length > 0 && (
+        <View style={styles.resultsSection}>
+          <Text style={styles.resultsTitle}>Test Results</Text>
+          {results
+            .filter(r => r.modalType === modalType)
+            .slice(-3) // Show last 3 results
+            .map((result, idx) => (
+              <View key={idx} style={styles.resultCard}>
+                <Text style={styles.resultLabel}>Test #{results.filter(r => r.modalType === modalType).indexOf(result) + 1}</Text>
+                <Text style={styles.resultValue}>
+                  Avg FPS: {result.nativeFrameMetrics?.averageFPS?.toFixed(1) || result.fpsData.averageFPS?.toFixed(1) || "0"}
+                </Text>
+                <Text style={styles.resultValue}>
+                  Min FPS: {result.nativeFrameMetrics?.minFPS?.toFixed(1) || result.fpsData.minFPS?.toFixed(1) || "0"}
+                </Text>
+                <Text style={styles.resultValue}>
+                  Dropped Frames: {result.nativeFrameMetrics?.droppedFrames || result.mobileFPSData?.jankCount || 0}
+                </Text>
+                <Text style={styles.resultValue}>
+                  Jank Score: {result.nativeFrameMetrics?.jankScore ? `${result.nativeFrameMetrics.jankScore}%` : 'N/A'}
+                </Text>
+              </View>
+            ))}
+        </View>
+      )}
+
+      <View style={{ marginTop: 20 }}>
+        {Array.from({ length: 20 }).map((_, i) => (
+          <Animated.View
+            key={i}
+            style={{
+              padding: 15,
+              backgroundColor: "rgba(255,255,255,0.05)",
+              borderRadius: 8,
+              marginBottom: 10,
+              height: i === 0 ? modalHeightRef.interpolate({
+                inputRange: [300, 500],
+                outputRange: [40, 80],
+              }) : undefined,
+            }}
+          >
+            <Text style={{ color: "white" }}>
+              {i === 0 ? "Animated Item (Height Changes)" : `Test Item ${i + 1}`}
+            </Text>
+          </Animated.View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Modal Performance Comparison</Text>
+          <Text style={styles.sectionSubtitle}>60FPS Optimized Modals Only</Text>
+
+          {/* Test Mode Selector */}
+          <View style={styles.modeSelector}>
+            <Text style={styles.modeSelectorLabel}>Test Mode:</Text>
+            <View style={styles.modeButtons}>
+              <Pressable
+                style={[
+                  styles.modeButton,
+                  testMode === "floating" && styles.modeButtonActive,
+                ]}
+                onPress={() => setTestMode("floating")}
+                disabled={isRunning}
+              >
+                <Text style={[
+                  styles.modeButtonText,
+                  testMode === "floating" && styles.modeButtonTextActive,
+                ]}>
+                  🎈 Floating
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.modeButton,
+                  testMode === "bottomSheet" && styles.modeButtonActive,
+                ]}
+                onPress={() => setTestMode("bottomSheet")}
+                disabled={isRunning}
+              >
+                <Text style={[
+                  styles.modeButtonText,
+                  testMode === "bottomSheet" && styles.modeButtonTextActive,
+                ]}>
+                  📱 Bottom Sheet
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Modal Buttons */}
+          <View style={styles.modalGrid}>
+            <Pressable
+              style={[styles.modalButton, styles.modalButton60fps]}
+              onPress={() => setModal60fpsVisible(true)}
+            >
+              <Text style={styles.modalButtonTitle}>🚀 60FPS Clean</Text>
+              <Text style={styles.modalButtonDescription}>
+                Native animations separated
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[styles.modalButton, styles.modalButton60fpsTest]}
+              onPress={() => setModal60fpsTestVisible(true)}
+            >
+              <Text style={styles.modalButtonTitle}>🧪 60FPS Test</Text>
+              <Text style={styles.modalButtonDescription}>
+                Height animation testing
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Overall Results Summary */}
+          {results.length > 0 && (
+            <View style={styles.summarySection}>
+              <Text style={styles.summaryTitle}>Performance Summary</Text>
+              <View style={styles.summaryGrid}>
+                {["60fps", "60fpsTest"].map(type => {
+                  const modalResults = results.filter(r => r.modalType === type);
+                  if (modalResults.length === 0) return null;
+                  
+                  const avgFPS = modalResults.reduce((sum, r) => 
+                    sum + (r.nativeFrameMetrics?.averageFPS || r.fpsData.averageFPS || 0), 0
+                  ) / modalResults.length;
+                  
+                  return (
+                    <View key={type} style={styles.summaryCard}>
+                      <Text style={styles.summaryModalName}>
+                        {getModalName(type as ModalType)}
+                      </Text>
+                      <Text style={styles.summaryFPS}>
+                        {avgFPS.toFixed(1)} FPS
+                      </Text>
+                      <Text style={styles.summaryTests}>
+                        {modalResults.length} test{modalResults.length > 1 ? 's' : ''}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+
+          {/* Clear Results Button */}
+          {results.length > 0 && !isRunning && (
+            <Pressable
+              style={[styles.button, styles.buttonClear]}
+              onPress={() => setResults([])}
+            >
+              <Text style={styles.buttonText}>Clear All Results</Text>
+            </Pressable>
+          )}
+
+          {/* Status */}
+          {isRunning && (
+            <View style={styles.statusContainer}>
+              <View style={styles.recordingDot} />
+              <Text style={styles.statusText}>
+                Testing {getModalName(activeModal as ModalType)}... {testProgress.toFixed(0)}%
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* ClaudeModal60FPSClean */}
+      <ClaudeModal60FPSClean
+        visible={modal60fpsVisible}
+        onClose={useCallback(() => setModal60fpsVisible(false), [])}
+        header={{
+          title: "60FPS Clean Modal",
+          subtitle: "Optimized with separated animations",
+          showToggleButton: true,
+        }}
+        styles={{}}
+        initialMode={testMode}
+        animatedHeight={modalHeightRef}
+      >
+        <TestContent
+          modalType="60fps"
+          onStartTest={() => startBenchmark("60fps")}
+        />
+      </ClaudeModal60FPSClean>
+
+      {/* Modal60fpsTest */}
+      <Modal60fpsTest
+        visible={modal60fpsTestVisible}
+        onClose={() => setModal60fpsTestVisible(false)}
+        header={{
+          title: "60FPS Test Modal",
+          subtitle: "Height animation for comparison",
+        }}
+        minHeight={100}
+        maxHeight={600}
+        initialHeight={400}
+      >
+        <TestContent
+          modalType="60fpsTest"
+          onStartTest={() => startBenchmark("60fpsTest")}
+        />
+      </Modal60fpsTest>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#1a1a2e",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  section: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 5,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.6)",
+    marginBottom: 20,
+  },
+  modeSelector: {
+    marginBottom: 20,
+  },
+  modeSelectorLabel: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.7)",
+    marginBottom: 10,
+  },
+  modeButtons: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  modeButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  modeButtonActive: {
+    backgroundColor: "rgba(0,255,255,0.1)",
+    borderColor: "rgba(0,255,255,0.5)",
+  },
+  modeButtonText: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  modeButtonTextActive: {
+    color: "#00FFFF",
+  },
+  modalGrid: {
+    flexDirection: "row",
+    gap: 15,
+    marginBottom: 20,
+  },
+  modalButton: {
+    flex: 1,
+    padding: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    borderWidth: 1,
+  },
+  modalButton60fps: {
+    backgroundColor: "rgba(0,255,255,0.1)",
+    borderColor: "rgba(0,255,255,0.3)",
+  },
+  modalButton60fpsTest: {
+    backgroundColor: "rgba(255,100,0,0.1)",
+    borderColor: "rgba(255,100,0,0.3)",
+  },
+  modalButtonTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 5,
+  },
+  modalButtonDescription: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.6)",
+    textAlign: "center",
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15,
+    backgroundColor: "rgba(255,100,0,0.1)",
+    borderRadius: 8,
+  },
+  recordingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#FF6400",
+    marginRight: 10,
+  },
+  statusText: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 14,
+  },
+  button: {
+    backgroundColor: "rgba(0,255,255,0.2)",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  buttonClear: {
+    backgroundColor: "rgba(255,100,0,0.2)",
+    marginTop: 10,
+  },
+  liveStats: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "rgba(0,255,255,0.05)",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(0,255,255,0.2)",
+  },
+  liveStatsTitle: {
+    color: "#00FFFF",
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 2,
+    marginBottom: 10,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#00FFFF",
+  },
+  fpsStat: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  progressText: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 12,
+  },
+  resultsSection: {
+    marginTop: 20,
+  },
+  resultsTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  resultCard: {
+    padding: 12,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  resultLabel: {
+    color: "rgba(255,255,255,0.6)",
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  resultValue: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  summarySection: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "rgba(255,255,255,0.02)",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  summaryTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  summaryGrid: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  summaryCard: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "rgba(0,255,255,0.05)",
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  summaryModalName: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 11,
+    marginBottom: 5,
+  },
+  summaryFPS: {
+    color: "#00FFFF",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  summaryTests: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 10,
+    marginTop: 2,
+  },
+});

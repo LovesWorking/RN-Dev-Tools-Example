@@ -1,8 +1,8 @@
 import React from "react";
 import { View, StyleSheet, SafeAreaView, Text } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import QueryStatusCount from "@/src/_sections/react-query/components/query-browser/QueryStatusCount";
-import MutationStatusCount from "@/src/_sections/react-query/components/query-browser/MutationStatusCount";
+import QueryStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/QueryStatusCount";
+import MutationStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/MutationStatusCount";
 
 const queryClient = new QueryClient();
 

@@ -16,7 +16,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { View } from "react-native";
-import { DevToolsThemeProvider } from "@/src/_themes/DevToolsThemeContext";
+import { DevToolsThemeProvider } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useEffect } from "react";
 
 // import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble/RnBetterDevToolsBubble";
