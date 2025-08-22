@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { VirtualizedDataExplorerBenchmark } from '../src/_sections/react-query/components/shared/VirtualizedDataExplorerBenchmark';
+import { VirtualizedDataExplorerBenchmark } from '@/rn-better-dev-tools/src/features/react-query/components/shared/VirtualizedDataExplorerBenchmark';
 
 export default function PerformanceTestScreen() {
   return (
