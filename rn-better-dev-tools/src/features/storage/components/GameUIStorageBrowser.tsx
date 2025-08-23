@@ -7,7 +7,6 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import * as Clipboard from "expo-clipboard";
 import {
   AlertCircle,
   CheckCircle2,
@@ -38,14 +37,13 @@ import {
   GameUIStatusHeader,
   GameUICompactStats,
   GameUIIssuesList,
-  GameUIDevTestMode,
   useGameUIAlertState,
   gameUIColors,
   GAME_UI_ALERT_STATES,
-  DEFAULT_TEST_SCENARIOS,
   type IssueItem,
   type StatCardConfig,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { getAutoDetectedClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/autoDetectClipboard";
 
 // Custom alert states for Storage specific needs
 const STORAGE_ALERT_STATES = {
@@ -430,7 +428,7 @@ export function GameUIStorageBrowser({
 
   // Copy to clipboard helper
   const copyToClipboard = useCallback(async (text: string, label: string) => {
-    await Clipboard.setStringAsync(text);
+    await getAutoDetectedClipboard()(text);
     Alert.alert("Copied!", `${label} copied to clipboard`);
   }, []);
 
@@ -775,30 +773,10 @@ export function GameUIStorageBrowser({
       )}
 
       <Text style={styles.techFooter}>
-        // ASYNC STORAGE | MMKV | SECURE STORAGE BACKENDS
+        ASYNC STORAGE | MMKV | SECURE STORAGE BACKENDS
       </Text>
 
-      {/* Dev Test Mode using shared component */}
-      <GameUIDevTestMode
-        scenarios={DEFAULT_TEST_SCENARIOS.map((s) => {
-          // Customize labels for storage context
-          if (s.id === "SUCCESS")
-            return { ...s, description: "All keys stored correctly" };
-          if (s.id === "PARTIAL_FAILURE")
-            return { ...s, description: "Some missing, wrong types" };
-          if (s.id === "CRITICAL_FAILURE")
-            return { ...s, description: "Most keys missing" };
-          if (s.id === "EMPTY")
-            return {
-              ...s,
-              label: "NO STORAGE",
-              description: "Empty storage state",
-            };
-          return s;
-        })}
-        currentMode={devTestMode}
-        onModeChange={setDevTestMode}
-      />
+      {/* Dev Test Mode removed - test component no longer needed */}
     </ScrollView>
   );
 }

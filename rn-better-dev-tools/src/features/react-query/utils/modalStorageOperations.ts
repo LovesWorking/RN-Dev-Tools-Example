@@ -9,9 +9,7 @@ try {
   });
 } catch {
   // AsyncStorage not available - will fall back to in-memory storage
-  console.warn(
-    "AsyncStorage not found. Panel position will not persist across app restarts. To enable persistence, install @react-native-async-storage/async-storage"
-  );
+  // AsyncStorage not found - using in-memory storage
 }
 
 // Fallback in-memory storage when AsyncStorage is not available
@@ -71,7 +69,7 @@ export const savePanelDimensions = async (
       JSON.stringify(dimensions)
     );
   } catch {
-    console.warn("Failed to save panel dimensions");
+    // Silently fail - persistence is optional
   }
 };
 
@@ -82,7 +80,7 @@ export const savePanelHeight = async (
   try {
     await setItem(`${storagePrefix}_panel_height`, height.toString());
   } catch {
-    console.warn("Failed to save panel height");
+    // Silently fail - persistence is optional
   }
 };
 
@@ -92,8 +90,8 @@ export const saveFloatingMode = async (
 ) => {
   try {
     await setItem(`${storagePrefix}_is_floating_mode`, isFloating.toString());
-  } catch (error) {
-    console.warn("Failed to save floating mode:", error);
+  } catch {
+    // Silently fail - persistence is optional
   }
 };
 
@@ -113,7 +111,7 @@ export const loadPanelState = async (
 
     return { dimensions, height, isFloating };
   } catch {
-    console.warn("Failed to load panel state");
+    // Return defaults on error
     return { dimensions: null, height: null, isFloating: null };
   }
 };

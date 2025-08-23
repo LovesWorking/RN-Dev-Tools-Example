@@ -12,7 +12,7 @@ export default function deleteItem({
   queryClient,
 }: Props) {
   if (!dataPath) {
-    console.error("delete item data path is missing!");
+    // Early return if path is missing
     return;
   }
   const oldData = activeQuery.state.data;

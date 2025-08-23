@@ -13,7 +13,7 @@ interface SentryEventLogEntryItemProps {
   onSelectEntry: (entry: ConsoleTransportEntry) => void;
 }
 
-// Memoized leaf component to prevent unnecessary re-renders in FlashList [[memory:4875251]]
+// Memoized leaf component to prevent unnecessary re-renders in FlatList [[memory:4875251]]
 export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
   ({ entry, onSelectEntry }) => {
     return (

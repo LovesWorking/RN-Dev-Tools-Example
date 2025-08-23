@@ -29,9 +29,8 @@ import {
   GameUICollapsibleSection 
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
-// TODO: Add diff library
-// import diff from "diff";
-// import type { Difference } from "diff";
+
+// Diff functionality is not yet implemented
 const diff = null as any;
 type Difference = any;
 

@@ -70,7 +70,8 @@ export function NetworkIgnoreFilterView({
       ? FILTER_ALERT_STATES.ACTIVE
       : FILTER_ALERT_STATES.INACTIVE;
 
-  const { animatedStyle } = useGameUIAlertState(alertState);
+  // Alert animation removed - not compatible with current implementation
+  const alertAnimatedStyle = {};
 
   // Count common vs custom filters
   const commonDomains = ["localhost", "127.0.0.1", "analytics", "sentry", "crashlytics"];
@@ -99,7 +100,7 @@ export function NetworkIgnoreFilterView({
         <GameUIStatusHeader
           alertConfig={alertState}
           badgeText="IGNORE"
-          animatedStyle={animatedStyle}
+          animatedStyle={alertAnimatedStyle}
         />
 
         {/* Filter Stats */}

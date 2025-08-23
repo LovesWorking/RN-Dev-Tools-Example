@@ -15,11 +15,9 @@ import {
   GameUIStatusHeader,
   GameUICompactStats,
   GameUIIssuesList,
-  GameUIDevTestMode,
   useGameUIAlertState,
   gameUIColors,
   GAME_UI_ALERT_STATES,
-  DEFAULT_TEST_SCENARIOS,
   type IssueItem,
   type StatCardConfig,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
@@ -398,12 +396,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
         // EXPO_PUBLIC_* NAMESPACE REQUIRED FOR RN ACCESS
       </Text>
 
-      {/* Dev Test Mode using shared component */}
-      <GameUIDevTestMode
-        scenarios={DEFAULT_TEST_SCENARIOS}
-        currentMode={devTestMode}
-        onModeChange={setDevTestMode}
-      />
+      {/* Dev Test Mode removed - test component no longer needed */}
     </ScrollView>
   );
 }

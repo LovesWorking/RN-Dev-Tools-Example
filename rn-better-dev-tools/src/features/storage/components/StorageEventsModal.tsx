@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FlashList } from "@shopify/flash-list";
-import { ScrollView } from "react-native-gesture-handler";
 import { Database, Pause, Play, Trash2, Filter } from "lucide-react-native";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -281,19 +279,16 @@ export function StorageEventsModal({
     }
   };
 
-  // FlashList optimization constants
+  // FlatList optimization constants
   const ESTIMATED_ITEM_SIZE = 80;
   const END_REACHED_THRESHOLD = 0.8;
 
-  // Stable keyExtractor for FlashList
+  // Stable keyExtractor for FlatList
   const keyExtractor = useCallback((item: StorageKeyConversation) => {
     return item.key;
   }, []);
 
-  // Stable getItemType for FlashList optimization
-  const getItemType = useCallback(() => {
-    return "conversation";
-  }, []);
+  // Removed getItemType as it's FlatList-specific
 
   // Create stable ref for event handler
   const selectConversationRef = useRef<
@@ -507,18 +502,18 @@ export function StorageEventsModal({
             </Text>
           </View>
         ) : (
-          <FlashList
+          <FlatList
             data={conversations}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            getItemType={getItemType}
-            estimatedItemSize={ESTIMATED_ITEM_SIZE}
             inverted
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator
             removeClippedSubviews
             onEndReachedThreshold={END_REACHED_THRESHOLD}
-            renderScrollComponent={ScrollView}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
           />
         )}
       </View>

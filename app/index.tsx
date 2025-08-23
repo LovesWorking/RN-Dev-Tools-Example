@@ -42,8 +42,7 @@ import {
   Environment,
 } from "@/rn-better-dev-tools/src";
 import ClaudeModal60FPSClean from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
-import { Modal60fpsTest } from "@/rn-better-dev-tools/src/components/modals/claudeModal/Modal60fpsTest";
-import ModalPerformanceComparison from "@/rn-better-dev-tools/src/components/modals/claudeModal/ModalPerformanceComparison";
+// Performance test modals removed - no longer needed
 import {
   createEnvVarConfig,
   envVar,
@@ -509,7 +508,6 @@ export default function PokemonScreen() {
   // Modal states for our modal versions
   const [claudeModalUltra60FPSVisible, setClaudeModalUltra60FPSVisible] =
     useState(false); // Auto-open for testing ENV UI
-  const [modal60fpsTestVisible, setModal60fpsTestVisible] = useState(false);
   // Auto-open performance test modal for testing (set to false to disable)
   const AUTO_OPEN_PERFORMANCE_TEST = false;
   const [performanceTestVisible, setPerformanceTestVisible] = useState(
@@ -1273,20 +1271,7 @@ export default function PokemonScreen() {
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Modal60fpsTest Button */}
-        <TouchableOpacity
-          onPress={() => setModal60fpsTestVisible(true)}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(255,100,0,0.25)", "rgba(255,50,0,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons name="flask" size={16} color="rgba(255,255,255,0.8)" />
-            <Text style={styles.debugText}>60FPS Test</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        {/* Modal60fpsTest Button removed - no longer needed */}
 
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
@@ -1384,59 +1369,12 @@ export default function PokemonScreen() {
         <GameUIEnvContent requiredEnvVars={requiredEnvVars} />
       </ClaudeModal60FPSClean>
 
-      {/* Modal60fpsTest - Height Animation Version */}
-      <Modal60fpsTest
-        visible={modal60fpsTestVisible}
-        onClose={() => setModal60fpsTestVisible(false)}
-        header={{
-          title: "60FPS Test Modal",
-          subtitle: "Height animation (non-native) for comparison",
-        }}
-        minHeight={100}
-        maxHeight={600}
-        initialHeight={400}
-      >
-        <ScrollView style={{ flex: 1, padding: 20 }}>
-          <Text style={{ color: "white", fontSize: 16, marginBottom: 10 }}>
-            60FPS Test Modal (Height Animation)
-          </Text>
-          <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 14 }}>
-            This modal uses height animation instead of transforms to compare
-            performance.
-          </Text>
-
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ color: "white", fontSize: 14, fontWeight: "600" }}>
-              Key Differences:
-            </Text>
-            {[
-              "• Uses Animated.Value for height (non-native)",
-              "• Position and opacity use native driver",
-              "• Height changes cannot use native driver",
-              "• May show lower FPS during resize",
-              "• Useful for comparing animation approaches",
-            ].map((item, i) => (
-              <Text
-                key={i}
-                style={{
-                  color: "rgba(255,255,255,0.8)",
-                  fontSize: 13,
-                  marginTop: 6,
-                  marginLeft: 10,
-                }}
-              >
-                {item}
-              </Text>
-            ))}
-          </View>
-        </ScrollView>
-      </Modal60fpsTest>
+      {/* Modal60fpsTest removed - no longer needed */}
 
       {/* Performance Test Modal */}
       <ClaudeModal60FPSClean
         visible={performanceTestVisible}
         onClose={useCallback(() => setPerformanceTestVisible(false), [])}
-        variant="fullScreen"
         header={useMemo(
           () => ({
             title: "Performance Comparison",
@@ -1447,7 +1385,9 @@ export default function PokemonScreen() {
         )}
         styles={EMPTY_STYLES}
       >
-        <ModalPerformanceComparison />
+        <View style={{ padding: 20 }}>
+          <Text style={{ color: "white" }}>Performance comparison component removed</Text>
+        </View>
       </ClaudeModal60FPSClean>
     </View>
   );

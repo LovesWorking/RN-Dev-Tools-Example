@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
 import {
   FileText,
   FlaskConical,
@@ -16,8 +15,15 @@ import {
   X,
 } from "lucide-react-native";
 
-import { clearEntries, getEntries, testLogger } from "@/rn-better-dev-tools/src/shared/logger";
-import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  clearEntries,
+  getEntries,
+} from "@/rn-better-dev-tools/src/shared/logger";
+import {
+  ConsoleTransportEntry,
+  LogLevel,
+  LogType,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 
 import { EmptyFilterState, EmptyState } from "./EmptyStates";
 import { LogDetailView } from "./LogDetailView";
@@ -38,8 +44,6 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
     new Set()
   );
   const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const insets = useSafeAreaInsets();
 
   // Function to calculate entries
   const calculateEntries = () => {
@@ -157,62 +161,7 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
 
     // Add test logs
 
-    testLogger.error(new Error("Test error message"), { category: "error" });
-    testLogger.info("Generic information message");
-    testLogger.info("GET /api/users/123", {
-      category: "xhr",
-      method: "GET",
-      url: "/api/users/123",
-      status: 200,
-    });
-    testLogger.info("From Inbox To Account Profile", {
-      category: "navigation",
-      from: "inbox",
-      to: "account/index",
-    });
-    testLogger.info("User authentication successful", {
-      category: "auth",
-      method: "otp",
-      userId: "user_123",
-    });
-    testLogger.info("User clicked profile button", {
-      category: "touch",
-      action: "profile_update",
-      userId: "123",
-    });
-    testLogger.info("User focused on input field", {
-      category: "ui.input",
-      element: "message_input",
-      screen: "conversation",
-    });
-    testLogger.info("Redux state updated", {
-      category: "redux.action",
-      action: "SET_USER_PROFILE",
-      payload: { name: "John Doe" },
-    });
-    testLogger.info("Session replay mutation detected", {
-      category: "replay.mutations",
-      mutationType: "childList",
-      target: "conversation-list",
-    });
-    testLogger.warn("Resource usage high", { category: "console" });
-
-    // Custom events
-    testLogger.info("Custom payment processing started", {
-      category: "payment.processor",
-      amount: 29.99,
-      paymentMethod: "stripe",
-    });
-    testLogger.info("Custom analytics event tracked", {
-      category: "custom.analytics",
-      event: "feature_usage",
-      featureName: "dark_mode_toggle",
-    });
-    testLogger.info("Custom integration webhook received", {
-      category: "webhook.integration",
-      source: "external_service",
-      eventType: "order_completed",
-    });
+    // Test logger removed - feature no longer available
 
     await new Promise((resolve) => setTimeout(resolve, 100));
     refreshEntries();

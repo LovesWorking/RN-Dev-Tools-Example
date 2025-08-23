@@ -5,13 +5,10 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import {
-  Gesture,
-  GestureDetector,
   ScrollView,
-} from "react-native-gesture-handler";
-import { FlashList } from "@shopify/flash-list";
+  PanResponder,
+  FlatList,
+} from "react-native";
 import {
   FileText,
   FlaskConical,
@@ -43,17 +40,14 @@ const MAINTAIN_VISIBLE_CONTENT_POSITION = {
   autoscrollToTopThreshold: 1,
 };
 
-// Stable module-scope functions to prevent FlashList view recreation [[memory:4875251]]
+// Stable module-scope functions to prevent FlatList view recreation [[memory:4875251]]
 const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
   return `${item.id}-${index}-${item.timestamp}`;
 };
 
-const getItemType = (item: ConsoleTransportEntry) => {
-  // Optimize FlashList recycling by categorizing items for separate pools
-  return `${item.type}-${item.level}`;
-};
+// Removed getItemType as it's FlatList-specific
 
-// Stable renderItem function using ref pattern to avoid recreating FlashList items [[memory:4875251]]
+// Stable renderItem function using ref pattern to avoid recreating FlatList items [[memory:4875251]]
 const createRenderSentryEventItem = (
   selectEntryRef: React.MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
@@ -74,8 +68,15 @@ interface SentryEventLogDumpModalContentProps {
 function SentryEventLogDumpModalContentInner({
   onClose,
 }: SentryEventLogDumpModalContentProps) {
-  // Create pan gesture using modern Gesture.Pan() API to fix Android FlashList integration with modal
-  const panGesture = Gesture.Pan().runOnJS(true);
+  // Create a simple PanResponder for handling gestures with FlatList
+  // This helps with Android FlatList integration with modal
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: () => false,
+      // Let FlatList handle all touch events
+    })
+  ).current;
 
   const [selectedEntry, setSelectedEntry] =
     useState<ConsoleTransportEntry | null>(null);
@@ -87,7 +88,7 @@ function SentryEventLogDumpModalContentInner({
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
     new Set()
   );
-  const flatListRef = useRef<FlashList<ConsoleTransportEntry>>(null);
+  const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
   // Function to calculate entries
   const calculateEntries = () => {
     const rawSentryEvents = getSentryEvents();
@@ -330,24 +331,24 @@ function SentryEventLogDumpModalContentInner({
         </View>
       ) : (
         <View style={styles.listContainer} sentry-label="ignore devtools sentry dump list container">
-          <GestureDetector gesture={panGesture}>
-            <FlashList
+          <View {...panResponder.panHandlers}>
+            <FlatList
               sentry-label="ignore sentry events list"
               ref={flatListRef}
               data={filteredEntries}
               renderItem={renderSentryEventItem}
               keyExtractor={keyExtractor}
-              getItemType={getItemType}
-              estimatedItemSize={ESTIMATED_ITEM_SIZE}
               inverted
               contentContainerStyle={styles.listContent}
               showsVerticalScrollIndicator
               removeClippedSubviews
               onEndReachedThreshold={END_REACHED_THRESHOLD}
               maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
-              renderScrollComponent={ScrollView}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
             />
-          </GestureDetector>
+          </View>
         </View>
       )}
         </>

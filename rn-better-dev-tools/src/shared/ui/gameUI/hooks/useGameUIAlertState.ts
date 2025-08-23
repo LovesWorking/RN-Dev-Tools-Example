@@ -1,10 +1,5 @@
-import { useMemo, useEffect } from "react";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
+import { useMemo, useEffect, useRef } from "react";
+import { Animated, Easing } from "react-native";
 import {
   CheckCircle,
   AlertTriangle,
@@ -111,24 +106,32 @@ export function useGameUIAlertState(
   const alertConfig = alertStates[alertState];
 
   // Animation values
-  const alertOpacity = useSharedValue(1);
-  const alertScale = useSharedValue(1);
+  const alertOpacity = useRef(new Animated.Value(1)).current;
+  const alertScale = useRef(new Animated.Value(1)).current;
 
   // Animate on state change
   useEffect(() => {
-    alertOpacity.value = 0;
-    alertOpacity.value = withTiming(1, { duration: 300 });
-    alertScale.value = 0.95;
-    alertScale.value = withTiming(1, {
-      duration: 300,
-      easing: Easing.out(Easing.ease),
-    });
-  }, [alertState]);
+    alertOpacity.setValue(0);
+    alertScale.setValue(0.95);
+    Animated.parallel([
+      Animated.timing(alertOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(alertScale, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, [alertState, alertOpacity, alertScale]);
 
-  const alertAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: alertScale.value }],
-    opacity: alertOpacity.value,
-  }));
+  const alertAnimatedStyle = {
+    transform: [{ scale: alertScale }],
+    opacity: alertOpacity,
+  };
 
   return {
     alertState,

@@ -87,7 +87,8 @@ export function NetworkCombinedFilterView({
       ? FILTER_ALERT_STATES.ACTIVE
       : FILTER_ALERT_STATES.INACTIVE;
 
-  const { animatedStyle } = useGameUIAlertState(alertState);
+  // Alert animation removed - not compatible with current implementation
+  const alertAnimatedStyle = {};
 
   // Get current patterns and available options based on tab
   const currentPatterns = activeTab === "domains" ? ignoredDomains : ignoredUrls;
@@ -184,7 +185,7 @@ export function NetworkCombinedFilterView({
         <GameUIStatusHeader
           alertConfig={alertState}
           badgeText="FILTERS"
-          animatedStyle={animatedStyle}
+          animatedStyle={alertAnimatedStyle}
         />
 
         {/* Filter Stats */}

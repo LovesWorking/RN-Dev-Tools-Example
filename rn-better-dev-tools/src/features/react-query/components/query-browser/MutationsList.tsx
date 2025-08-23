@@ -7,13 +7,13 @@ import {
   PanResponder,
   Animated,
   Dimensions,
+  FlatList,
+  ViewStyle,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
 import { Mutation } from "@tanstack/react-query";
 import MutationButton from "./MutationButton";
 import MutationInformation from "./MutationInformation";
 import useAllMutations from "../../hooks/useAllMutations";
-import { ContentStyle } from "@shopify/flash-list";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
   >;
   activeFilter?: string | null;
   hideInfoPanel?: boolean;
-  contentContainerStyle?: ContentStyle;
+  contentContainerStyle?: ViewStyle;
 }
 
 export default function MutationsList({
@@ -126,16 +126,17 @@ export default function MutationsList({
     <View style={styles.container}>
       {filteredMutations.length > 0 ? (
         <View style={styles.listWrapper}>
-          <FlashList
+          <FlatList
             sentry-label="ignore devtools mutations list"
             data={filteredMutations}
             renderItem={renderMutation}
             keyExtractor={(item, index) => `${item.mutationId}-${index}`}
-            estimatedItemSize={60}
             showsVerticalScrollIndicator
             removeClippedSubviews
-            renderScrollComponent={ScrollView}
             contentContainerStyle={contentContainerStyle || styles.listContent}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
           />
         </View>
       ) : (

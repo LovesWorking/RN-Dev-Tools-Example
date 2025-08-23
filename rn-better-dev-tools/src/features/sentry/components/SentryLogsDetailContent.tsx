@@ -1,11 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import {
-  Gesture,
-  GestureDetector,
-  ScrollView,
-} from "react-native-gesture-handler";
-import { FlashList } from "@shopify/flash-list";
+import { StyleSheet, View, ScrollView, PanResponder, FlatList } from "react-native";
 
 import {
   ConsoleTransportEntry,
@@ -33,9 +27,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
   return `${item.id}-${index}-${item.timestamp}`;
 };
 
-const getItemType = (item: ConsoleTransportEntry) => {
-  return `${item.type}-${item.level}`;
-};
+// Removed getItemType as it's FlatList-specific
 
 // Stable renderItem function using ref pattern [[memory:4875251]]
 const createRenderSentryEventItem = (
@@ -78,7 +70,15 @@ function SentryLogsDetailContentInner({
   onToggleLevelFilter: externalToggleLevelFilter,
   isLoggingEnabled: externalIsLoggingEnabled,
 }: SentryLogsDetailContentProps) {
-  const panGesture = Gesture.Pan().runOnJS(true);
+  // Create a simple PanResponder for handling gestures with FlatList
+  // This helps with Android FlatList integration with modal
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: () => false,
+      // Let FlatList handle all touch events
+    })
+  ).current;
 
   // Use props if provided, otherwise use local state
   const [localSelectedTypes, setLocalSelectedTypes] = useState<Set<LogType>>(
@@ -93,7 +93,7 @@ function SentryLogsDetailContentInner({
   const selectedLevels = externalSelectedLevels ?? localSelectedLevels;
   const _isLoggingEnabled = externalIsLoggingEnabled ?? _localIsLoggingEnabled;
 
-  const flatListRef = useRef<FlashList<ConsoleTransportEntry>>(null);
+  const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
 
   // Use reactive hook for automatic updates [[memory:4875074]]
   const { entries: filteredEntries, totalCount } = useSentryEvents({
@@ -194,8 +194,8 @@ function SentryLogsDetailContentInner({
               style={styles.listContainer}
               sentry-label="ignore devtools sentry list container"
             >
-              <GestureDetector gesture={panGesture}>
-                <FlashList
+              <View {...panResponder.panHandlers}>
+                <FlatList
                   accessibilityLabel="Sentry logs detail content"
                   accessibilityHint="View sentry logs detail content"
                   sentry-label="ignore devtools sentry logs detail list"
@@ -203,8 +203,6 @@ function SentryLogsDetailContentInner({
                   data={filteredEntries}
                   renderItem={renderSentryEventItem}
                   keyExtractor={keyExtractor}
-                  getItemType={getItemType}
-                  estimatedItemSize={ESTIMATED_ITEM_SIZE}
                   inverted
                   contentContainerStyle={styles.listContent}
                   showsVerticalScrollIndicator
@@ -213,9 +211,11 @@ function SentryLogsDetailContentInner({
                   maintainVisibleContentPosition={
                     MAINTAIN_VISIBLE_CONTENT_POSITION
                   }
-                  renderScrollComponent={ScrollView}
+                  initialNumToRender={15}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
                 />
-              </GestureDetector>
+              </View>
             </View>
           )}
         </View>

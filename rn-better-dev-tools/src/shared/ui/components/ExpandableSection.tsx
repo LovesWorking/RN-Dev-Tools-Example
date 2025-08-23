@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import { StyleSheet, View, Animated } from "react-native";
 import type { LucideIcon } from "lucide-react-native";
 
 import { ExpandableSectionHeader } from "./ExpandableSectionHeader";
@@ -52,7 +51,7 @@ export function ExpandableSection({
         <View style={styles.divider} />
 
         {isExpanded && (
-          <Animated.View entering={FadeIn.duration(300)}>
+          <Animated.View style={{ opacity: 1 }}>
             {children}
           </Animated.View>
         )}

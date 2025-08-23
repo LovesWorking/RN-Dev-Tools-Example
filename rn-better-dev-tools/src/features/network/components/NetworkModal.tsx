@@ -5,9 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  FlatList,
+  ScrollView,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
-import { ScrollView } from "react-native-gesture-handler";
 import {
   Globe,
   Trash2,
@@ -31,7 +31,6 @@ import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
 import { NetworkFilterView } from "./NetworkFilterView";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
 import { NetworkEventDetailView } from "./NetworkEventDetailView";
-import { NetworkDevTestMode } from "./NetworkDevTestMode";
 import { useNetworkEvents } from "../hooks/useNetworkEvents";
 import type { NetworkEvent } from "../types";
 
@@ -81,7 +80,7 @@ function NetworkModalInner({
   const [searchText, setSearchText] = useState("");
   const [ignoredDomains, setIgnoredDomains] = useState<Set<string>>(new Set());
   const [ignoredUrls, setIgnoredUrls] = useState<Set<string>>(new Set());
-  const flatListRef = useRef<FlashList<NetworkEvent>>(null);
+  const flatListRef = useRef<FlatList<NetworkEvent>>(null);
   const hasLoadedFilters = useRef(false);
 
   const handleModeChange = useCallback((mode: ModalMode) => {
@@ -118,7 +117,7 @@ function NetworkModalInner({
 
         hasLoadedFilters.current = true;
       } catch (error) {
-        console.warn("Failed to load network filters:", error);
+        // Silently fail - filters will use defaults
       }
     };
 
@@ -149,7 +148,7 @@ function NetworkModalInner({
           JSON.stringify(urls)
         );
       } catch (error) {
-        console.warn("Failed to save network filters:", error);
+        // Silently fail - filters will remain in memory
       }
     };
 
@@ -209,12 +208,11 @@ function NetworkModalInner({
     });
   }, [events, ignoredDomains, ignoredUrls]);
 
-  // FlashList optimization - only keep what's needed for FlashList performance
+  // FlatList optimization - only keep what's needed for FlatList performance
   const ESTIMATED_ITEM_SIZE = 52;
   const keyExtractor = (item: NetworkEvent) => item.id;
-  const getItemType = () => "network-event";
 
-  // Keep renderItem memoized for FlashList performance (justified by FlashList docs)
+  // Keep renderItem memoized for FlatList performance (justified by FlatList docs)
   const renderItem = useMemo(() => {
     return ({ item }: { item: NetworkEvent }) => (
       <NetworkEventItemCompact event={item} onPress={handleEventPress} />
@@ -511,7 +509,7 @@ function NetworkModalInner({
       <View style={styles.container}>
         {/* Show dev mode if active */}
         {showDevMode ? (
-          <NetworkDevTestMode onClose={() => setShowDevMode(false)} />
+          <></>
         ) : showFilterView ? (
           <NetworkFilterView
             events={events}
@@ -618,20 +616,20 @@ function NetworkModalInner({
               </View>
             ) : null}
 
-            {/* Use FlashList for performance */}
+            {/* Use FlatList for performance */}
             {filteredEvents.length > 0 ? (
-              <FlashList
+              <FlatList
                 ref={flatListRef}
                 data={filteredEvents}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
-                getItemType={getItemType}
-                estimatedItemSize={ESTIMATED_ITEM_SIZE}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator
                 removeClippedSubviews
                 onEndReachedThreshold={0.8}
-                renderScrollComponent={ScrollView}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={10}
                 sentry-label="ignore network events list"
               />
             ) : (

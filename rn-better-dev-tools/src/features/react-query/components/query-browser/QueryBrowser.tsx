@@ -1,7 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { View, StyleSheet, Text, ScrollView, FlatList, ViewStyle } from "react-native";
 import { Query } from "@tanstack/react-query";
-import { FlashList, ContentStyle } from "@shopify/flash-list";
 import QueryRow from "./QueryRow";
 import useAllQueries from "../../hooks/useAllQueries";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
@@ -12,11 +11,11 @@ interface Props {
   onQuerySelect: (query: Query | undefined) => void;
   activeFilter?: string | null;
   emptyStateMessage?: string;
-  contentContainerStyle?: ContentStyle;
+  contentContainerStyle?: ViewStyle;
   queries?: Query[]; // Optional external queries to override useAllQueries
 }
 
-// Stable module-scope functions to prevent FlashList view recreation [[memory:4875251]]
+// Stable module-scope functions to prevent FlatList view recreation [[memory:4875251]]
 interface ExtraData {
   selectedQuery: Query | undefined;
   handleQuerySelect: (query: Query) => void;
@@ -37,11 +36,8 @@ const renderItem = ({
   />
 );
 
-// Key extractor for FlashList optimization [[memory:4875251]]
+// Key extractor for FlatList optimization [[memory:4875251]]
 const keyExtractor = (item: Query) => item.queryHash;
-
-// EstimatedItemSize for FlashList performance [[memory:4875251]]
-const ESTIMATED_ITEM_SIZE = 53;
 
 export default function QueryBrowser({
   selectedQuery,
@@ -97,25 +93,22 @@ export default function QueryBrowser({
 
   return (
     <View style={styles.listWrapper}>
-      <FlashList
+      <FlatList
         sentry-label="ignore devtools query browser list"
         data={filteredQueries}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        estimatedItemSize={ESTIMATED_ITEM_SIZE}
         contentContainerStyle={contentContainerStyle || styles.listContent}
         showsVerticalScrollIndicator
         removeClippedSubviews
-        overrideItemLayout={(layout, _item) => {
-          layout.size = ESTIMATED_ITEM_SIZE;
-        }}
-        drawDistance={200}
-        renderScrollComponent={ScrollView}
         extraData={{
           selectedQuery,
           handleQuerySelect,
           filteredQueries,
         }}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={10}
       />
     </View>
   );

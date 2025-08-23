@@ -34,10 +34,10 @@ export function useNetworkEvents() {
     });
 
     // Check if already listening
-    setIsEnabled(networkListener.isActive);
+    setIsEnabled(networkListener().isActive);
 
     // Start listening if not already
-    if (!networkListener.isActive) {
+    if (!networkListener().isActive) {
       startNetworkListener();
       setIsEnabled(true);
     }

@@ -1,8 +1,7 @@
 // Main Sentry logger for capturing events
 export { LogLevel, LogType, SentryLogger, sentryLogger } from "@/rn-better-dev-tools/src/features/sentry/logger/index-sentry";
 
-// Test logger for generating sample logs
-export { TestLogger, testLogger } from "./testLogger";
+// Test logger removed - no longer needed
 
 // Log storage and retrieval
 export { add, clearEntries, getEntries } from "./logDump";

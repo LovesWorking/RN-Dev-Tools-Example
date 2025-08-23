@@ -1,14 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  withRepeat,
-  Easing,
-  FadeIn,
-} from "react-native-reanimated";
+import { StyleSheet, View, Text, Animated } from "react-native";
 import { AlertCircle, CheckCircle2, Eye, XCircle, Zap, Server } from "lucide-react-native";
 import { EnvVarStats } from "../types";
 
@@ -44,7 +35,6 @@ const variableTypeData = [
     subtitle: "Correctly configured",
     icon: CheckCircle2,
     color: gameColors.online,
-    pulseDelay: 0,
   },
   {
     key: "missing",
@@ -52,7 +42,6 @@ const variableTypeData = [
     subtitle: "Missing required data",
     icon: AlertCircle,
     color: gameColors.error,
-    pulseDelay: 200,
   },
   {
     key: "wrongValue",
@@ -60,7 +49,6 @@ const variableTypeData = [
     subtitle: "Invalid parameters",
     icon: XCircle,
     color: gameColors.warning,
-    pulseDelay: 400,
   },
   {
     key: "wrongType",
@@ -68,7 +56,6 @@ const variableTypeData = [
     subtitle: "Incorrect format",
     icon: Zap,
     color: gameColors.info,
-    pulseDelay: 600,
   },
   {
     key: "optional",
@@ -76,7 +63,6 @@ const variableTypeData = [
     subtitle: "Available extras",
     icon: Server,
     color: gameColors.optional,
-    pulseDelay: 800,
   },
 ];
 
@@ -91,27 +77,37 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
   } = stats;
 
   // Minimal animation values - only for status indicator
-  const statusPulse = useSharedValue(1);
+  const statusPulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     // Simple status pulse for critical states only
     if (missingCount > 0 || wrongValueCount > 0 || wrongTypeCount > 0) {
-      statusPulse.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 1500 }),
-          withTiming(0.6, { duration: 1500 })
-        ),
-        -1,
-        true
-      );
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(statusPulse, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(statusPulse, {
+            toValue: 0.6,
+            duration: 1500,
+            useNativeDriver: true,
+          })
+        ])
+      ).start();
     } else {
-      statusPulse.value = withTiming(1, { duration: 300 });
+      Animated.timing(statusPulse, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     }
-  }, [missingCount, wrongValueCount, wrongTypeCount]);
+  }, [missingCount, wrongValueCount, wrongTypeCount, statusPulse]);
 
-  const statusPulseStyle = useAnimatedStyle(() => ({
-    opacity: statusPulse.value,
-  }));
+  const statusPulseStyle = {
+    opacity: statusPulse,
+  };
 
   // Calculate system health
   const healthPercentage = totalCount > 0 
@@ -172,7 +168,6 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
         <View style={styles.healthBarWrapper}>
           <View style={styles.healthBarBg}>
             <Animated.View 
-              entering={FadeIn.duration(500)}
               style={[
                 styles.healthBarFill, 
                 { 
@@ -225,7 +220,6 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
           return (
             <Animated.View
               key={item.key}
-              entering={FadeIn.duration(300).delay(item.pulseDelay)}
               style={[
                 styles.compactStatCard,
                 { borderColor: item.color + "30" },

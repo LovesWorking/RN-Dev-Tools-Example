@@ -16,8 +16,7 @@ export type { GameUICompactStatsProps, StatCardConfig } from "./components/GameU
 export { GameUIIssuesList } from "./components/GameUIIssuesList";
 export type { GameUIIssuesListProps, IssueItem } from "./components/GameUIIssuesList";
 
-export { GameUIDevTestMode, DEFAULT_TEST_SCENARIOS } from "./components/GameUIDevTestMode";
-export type { GameUIDevTestModeProps, TestScenario } from "./components/GameUIDevTestMode";
+// GameUIDevTestMode removed - test component no longer needed
 
 // Hooks
 export { useGameUIAlertState, GAME_UI_ALERT_STATES } from "./hooks/useGameUIAlertState";

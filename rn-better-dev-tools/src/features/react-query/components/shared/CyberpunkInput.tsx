@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -6,14 +6,8 @@ import {
   TextInputProps,
   TouchableOpacity,
   Text,
+  Animated,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  withRepeat,
-} from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
@@ -40,77 +34,177 @@ export function CyberpunkInput({
   const [isFocused, setIsFocused] = useState(false);
 
   // Animated values for glitch effect
-  const glitchOpacity = useSharedValue(0);
-  const glitchX = useSharedValue(0);
-  const glitchY = useSharedValue(0);
-  const glitchScale = useSharedValue(1);
-  const borderGlow = useSharedValue(0.6);
+  const glitchOpacity = useRef(new Animated.Value(0)).current;
+  const glitchX = useRef(new Animated.Value(0)).current;
+  const glitchY = useRef(new Animated.Value(0)).current;
+  const glitchScale = useRef(new Animated.Value(1)).current;
+  const borderGlow = useRef(new Animated.Value(0.6)).current;
 
   useEffect(() => {
     if (isFocused) {
       // Border glow animation
-      borderGlow.value = withTiming(1, { duration: 200 });
+      Animated.timing(borderGlow, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
 
       // Glitch opacity animation
-      glitchOpacity.value = withRepeat(
-        withSequence(
-          withTiming(0, { duration: 2000 }),
-          withTiming(0.8, { duration: 30 }),
-          withTiming(0, { duration: 20 }),
-          withTiming(0.6, { duration: 40 }),
-          withTiming(0, { duration: 30 }),
-          withTiming(0.4, { duration: 20 }),
-          withTiming(0, { duration: 50 })
-        ),
-        -1,
-        false
-      );
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glitchOpacity, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.8,
+            duration: 30,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.6,
+            duration: 40,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0,
+            duration: 30,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.4,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0,
+            duration: 50,
+            useNativeDriver: true,
+          })
+        ])
+      ).start();
 
       // Glitch X displacement
-      glitchX.value = withRepeat(
-        withSequence(
-          withTiming(0, { duration: 2500 }),
-          withTiming(3, { duration: 20 }),
-          withTiming(-3, { duration: 20 }),
-          withTiming(2, { duration: 20 }),
-          withTiming(0, { duration: 20 })
-        ),
-        -1,
-        false
-      );
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glitchX, {
+            toValue: 0,
+            duration: 2500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 3,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: -3,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 2,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 0,
+            duration: 20,
+            useNativeDriver: true,
+          })
+        ])
+      ).start();
 
       // Glitch Y displacement
-      glitchY.value = withRepeat(
-        withSequence(
-          withTiming(0, { duration: 2200 }),
-          withTiming(-2, { duration: 30 }),
-          withTiming(1, { duration: 20 }),
-          withTiming(0, { duration: 30 })
-        ),
-        -1,
-        false
-      );
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glitchY, {
+            toValue: 0,
+            duration: 2200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: -2,
+            duration: 30,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 1,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 0,
+            duration: 30,
+            useNativeDriver: true,
+          })
+        ])
+      ).start();
 
       // Glitch scale effect
-      glitchScale.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 3000 }),
-          withTiming(1.01, { duration: 20 }),
-          withTiming(0.99, { duration: 20 }),
-          withTiming(1, { duration: 20 })
-        ),
-        -1,
-        false
-      );
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glitchScale, {
+            toValue: 1,
+            duration: 3000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 1.01,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 0.99,
+            duration: 20,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 1,
+            duration: 20,
+            useNativeDriver: true,
+          })
+        ])
+      ).start();
     } else {
       // Reset animations when not focused
-      borderGlow.value = withTiming(0.6, { duration: 200 });
-      glitchOpacity.value = withTiming(0, { duration: 100 });
-      glitchX.value = withTiming(0, { duration: 100 });
-      glitchY.value = withTiming(0, { duration: 100 });
-      glitchScale.value = withTiming(1, { duration: 100 });
+      Animated.timing(borderGlow, {
+        toValue: 0.6,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+      
+      Animated.timing(glitchOpacity, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }).start();
+      
+      Animated.timing(glitchX, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }).start();
+      
+      Animated.timing(glitchY, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }).start();
+      
+      Animated.timing(glitchScale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }).start();
     }
-  }, [isFocused]);
+  }, [isFocused, borderGlow, glitchOpacity, glitchX, glitchY, glitchScale]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -122,19 +216,19 @@ export function CyberpunkInput({
     props.onBlur?.({} as any);
   };
 
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: borderGlow.value,
+  const containerAnimatedStyle = {
+    opacity: borderGlow,
     borderColor: isFocused ? gameUIColors.info : gameUIColors.muted + "4D",
-  }));
+  };
 
-  const glitchAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: glitchOpacity.value,
+  const glitchAnimatedStyle = {
+    opacity: glitchOpacity,
     transform: [
-      { translateX: glitchX.value },
-      { translateY: glitchY.value },
-      { scale: glitchScale.value },
+      { translateX: glitchX },
+      { translateY: glitchY },
+      { scale: glitchScale },
     ],
-  }));
+  };
 
   return (
     <View style={[styles.container, containerStyle]}>

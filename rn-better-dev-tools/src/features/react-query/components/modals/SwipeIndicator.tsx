@@ -1,10 +1,5 @@
-import { View, StyleSheet } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  interpolate,
-  Extrapolate,
-  SharedValue,
-} from "react-native-reanimated";
+import { View, StyleSheet, Animated } from "react-native";
+import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 
 /**
@@ -13,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react-native";
  */
 
 interface SwipeIndicatorProps {
-  translationX: SharedValue<number>; // gesture translation
+  translationX: Animated.Value; // gesture translation
   maxTranslation?: number; // distance that maps to progress 1.0 (px)
   canSwipeRight?: boolean; // left-edge back gesture
   canSwipeLeft?: boolean; // right-edge gesture (optional)
@@ -35,9 +30,8 @@ export function SwipeIndicator({
   canSwipeLeft = true,
   canSwipeRight = true,
 }: SwipeIndicatorProps) {
-  /* Utility executed on UI thread */
+  /* Utility function for indicator style */
   const buildIndicatorStyle = (progress: number) => {
-    "worklet";
     const width = MIN_WIDTH + (MAX_WIDTH - MIN_WIDTH) * progress;
     const popOutProgress = Math.max(
       0,
@@ -57,128 +51,183 @@ export function SwipeIndicator({
   };
 
   /* ---------------- LEFT EDGE (Back) ---------------- */
-  const leftIndicatorStyle = useAnimatedStyle(() => {
-    if (!canSwipeRight) return { opacity: 0, width: 0 } as const;
+  const leftProgress = useMemo(() => {
+    return translationX.interpolate({
+      inputRange: [0, maxTranslation],
+      outputRange: [0, 1],
+      extrapolate: 'clamp'
+    });
+  }, [translationX, maxTranslation]);
 
-    const progress = interpolate(
-      translationX.value,
-      [0, maxTranslation],
-      [0, 1],
-      Extrapolate.CLAMP
-    );
+  const leftIndicatorWidth = useMemo(() => {
+    return leftProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [MIN_WIDTH, MAX_WIDTH]
+    });
+  }, [leftProgress]);
 
-    const base = buildIndicatorStyle(progress);
-    const commitProgress = Math.max(0, (progress - 0.99) / 0.01);
-    const translateX = 16 * commitProgress; // shift circle 16px into screen at full commit
+  const leftIndicatorScale = useMemo(() => {
+    return leftProgress.interpolate({
+      inputRange: [0, POP_OUT_START, 1],
+      outputRange: [1, 1, POP_OUT_SCALE]
+    });
+  }, [leftProgress]);
 
-    return {
-      ...base,
-      opacity: progress > 0 ? 1 : 0,
-      transform: [...(base.transform || []), { translateX }],
-    } as const;
-  });
+  const leftIndicatorTranslateX = useMemo(() => {
+    return leftProgress.interpolate({
+      inputRange: [0, 0.99, 1],
+      outputRange: [0, 0, 16]
+    });
+  }, [leftProgress]);
 
-  const leftArrowStyle = useAnimatedStyle(() => {
-    if (!canSwipeRight)
-      return { opacity: 0, transform: [{ scale: 0 }] } as const;
+  const leftIndicatorOpacity = useMemo(() => {
+    return leftProgress.interpolate({
+      inputRange: [0, 0.01],
+      outputRange: [0, 1],
+      extrapolate: 'clamp'
+    });
+  }, [leftProgress]);
 
-    const progress = interpolate(
-      translationX.value,
-      [0, maxTranslation],
-      [0, 1],
-      Extrapolate.CLAMP
-    );
+  const leftArrowOpacity = useMemo(() => {
+    return leftProgress.interpolate({
+      inputRange: [0, 0.5, 1],
+      outputRange: [0, 0, 1],
+      extrapolate: 'clamp'
+    });
+  }, [leftProgress]);
 
-    // Arrow becomes visible after 50% expansion of the indicator
-    const visibleProgress = Math.max(0, (progress - 0.5) / 0.5);
-
-    // Additional pop-out growth once we cross POP_OUT_START (95%)
-    const popOutProgress = Math.max(
-      0,
-      (progress - POP_OUT_START) / (1 - POP_OUT_START)
-    );
-
-    // Base scale 0.8 → 1.0 through visibleProgress, plus 0.2 in the pop-out window
-    const scale = 0.8 + 0.2 * visibleProgress + 0.2 * popOutProgress;
-
-    return {
-      opacity: visibleProgress,
-      transform: [{ scale }],
-    } as const;
-  });
+  const leftArrowScale = useMemo(() => {
+    return leftProgress.interpolate({
+      inputRange: [0, 0.5, POP_OUT_START, 1],
+      outputRange: [0.8, 0.8, 1, 1.2]
+    });
+  }, [leftProgress]);
 
   /* ---------------- RIGHT EDGE ---------------- */
-  const rightIndicatorStyle = useAnimatedStyle(() => {
-    if (!canSwipeLeft) return { opacity: 0, width: 0 } as const;
+  const rightProgress = useMemo(() => {
+    return translationX.interpolate({
+      inputRange: [-maxTranslation, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp'
+    });
+  }, [translationX, maxTranslation]);
 
-    const progress = interpolate(
-      translationX.value,
-      [-maxTranslation, 0],
-      [1, 0],
-      Extrapolate.CLAMP
-    );
+  const rightIndicatorWidth = useMemo(() => {
+    return rightProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [MIN_WIDTH, MAX_WIDTH]
+    });
+  }, [rightProgress]);
 
-    const base = buildIndicatorStyle(progress);
-    const commitProgress = Math.max(0, (progress - 0.99) / 0.01);
-    const translateX = -16 * commitProgress; // shift circle inwards from right edge
+  const rightIndicatorScale = useMemo(() => {
+    return rightProgress.interpolate({
+      inputRange: [0, POP_OUT_START, 1],
+      outputRange: [1, 1, POP_OUT_SCALE]
+    });
+  }, [rightProgress]);
 
-    return {
-      ...base,
-      opacity: progress > 0 ? 1 : 0,
-      transform: [...(base.transform || []), { translateX }],
-    } as const;
-  });
+  const rightIndicatorTranslateX = useMemo(() => {
+    return rightProgress.interpolate({
+      inputRange: [0, 0.99, 1],
+      outputRange: [0, 0, -16]
+    });
+  }, [rightProgress]);
 
-  const rightArrowStyle = useAnimatedStyle(() => {
-    if (!canSwipeLeft)
-      return { opacity: 0, transform: [{ scale: 0 }] } as const;
+  const rightIndicatorOpacity = useMemo(() => {
+    return rightProgress.interpolate({
+      inputRange: [0, 0.01],
+      outputRange: [0, 1],
+      extrapolate: 'clamp'
+    });
+  }, [rightProgress]);
 
-    const progress = interpolate(
-      translationX.value,
-      [-maxTranslation, 0],
-      [1, 0],
-      Extrapolate.CLAMP
-    );
+  const rightArrowOpacity = useMemo(() => {
+    return rightProgress.interpolate({
+      inputRange: [0, 0.5, 1],
+      outputRange: [0, 0, 1],
+      extrapolate: 'clamp'
+    });
+  }, [rightProgress]);
 
-    const visibleProgress = Math.max(0, (progress - 0.5) / 0.5);
-    const popOutProgress = Math.max(
-      0,
-      (progress - POP_OUT_START) / (1 - POP_OUT_START)
-    );
-
-    // for right side progress goes 1→0, invert for scale
-    const scale = 0.8 + 0.2 * visibleProgress + 0.2 * popOutProgress;
-
-    return {
-      opacity: visibleProgress,
-      transform: [{ scale }],
-    } as const;
-  });
+  const rightArrowScale = useMemo(() => {
+    return rightProgress.interpolate({
+      inputRange: [0, 0.5, POP_OUT_START, 1],
+      outputRange: [0.8, 0.8, 1, 1.2]
+    });
+  }, [rightProgress]);
 
   /* ---------------- Render ---------------- */
   return (
     <View style={styles.container} pointerEvents="none">
       {/* LEFT indicator (back gesture) */}
-      <Animated.View style={[styles.leftWrapper, leftIndicatorStyle]}>
-        <Animated.View style={leftArrowStyle}>
-          <ChevronLeft
-            size={INDICATOR_HEIGHT * 0.6}
-            color="#007AFF"
-            strokeWidth={3}
-          />
+      {canSwipeRight && (
+        <Animated.View
+          style={[
+            styles.leftWrapper,
+            {
+              width: leftIndicatorWidth,
+              height: INDICATOR_HEIGHT,
+              borderRadius: INDICATOR_HEIGHT / 2,
+              backgroundColor: "rgba(255,255,255,0.9)",
+              justifyContent: "center",
+              alignItems: "center",
+              opacity: leftIndicatorOpacity,
+              transform: [
+                { scale: leftIndicatorScale },
+                { translateX: leftIndicatorTranslateX }
+              ],
+            },
+          ]}
+        >
+          <Animated.View
+            style={{
+              opacity: leftArrowOpacity,
+              transform: [{ scale: leftArrowScale }],
+            }}
+          >
+            <ChevronLeft
+              size={INDICATOR_HEIGHT * 0.6}
+              color="#007AFF"
+              strokeWidth={3}
+            />
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
+      )}
 
       {/* RIGHT indicator */}
-      <Animated.View style={[styles.rightWrapper, rightIndicatorStyle]}>
-        <Animated.View style={rightArrowStyle}>
-          <ChevronRight
-            size={INDICATOR_HEIGHT * 0.6}
-            color="#007AFF"
-            strokeWidth={3}
-          />
+      {canSwipeLeft && (
+        <Animated.View
+          style={[
+            styles.rightWrapper,
+            {
+              width: rightIndicatorWidth,
+              height: INDICATOR_HEIGHT,
+              borderRadius: INDICATOR_HEIGHT / 2,
+              backgroundColor: "rgba(255,255,255,0.9)",
+              justifyContent: "center",
+              alignItems: "center",
+              opacity: rightIndicatorOpacity,
+              transform: [
+                { scale: rightIndicatorScale },
+                { translateX: rightIndicatorTranslateX }
+              ],
+            },
+          ]}
+        >
+          <Animated.View
+            style={{
+              opacity: rightArrowOpacity,
+              transform: [{ scale: rightArrowScale }],
+            }}
+          >
+            <ChevronRight
+              size={INDICATOR_HEIGHT * 0.6}
+              color="#007AFF"
+              strokeWidth={3}
+            />
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
+      )}
     </View>
   );
 }

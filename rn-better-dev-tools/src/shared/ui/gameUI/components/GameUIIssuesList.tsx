@@ -5,8 +5,8 @@ import {
   View,
   TouchableOpacity,
   ViewStyle,
+  Animated,
 } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
 import {
   AlertOctagon,
   AlertTriangle,
@@ -137,7 +137,6 @@ export function GameUIIssuesList({
 
             {expandable && isExpanded && (
               <Animated.View
-                entering={FadeIn.duration(200)}
                 style={styles.issueDetails}
               >
                 <View style={styles.detailRow}>

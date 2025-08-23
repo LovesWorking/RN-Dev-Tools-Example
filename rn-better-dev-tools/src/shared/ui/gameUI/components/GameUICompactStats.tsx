@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, ViewStyle } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import { StyleSheet, Text, View, ViewStyle, Animated } from "react-native";
 import { gameUIColors } from "../constants/gameUIColors";
 
 export interface StatCardConfig {
@@ -92,7 +91,6 @@ export function GameUICompactStats({
           <View style={styles.healthBarWrapper}>
             <View style={styles.healthBarBg}>
               <Animated.View
-                entering={FadeIn.duration(500)}
                 style={[
                   styles.healthBarFill,
                   {
@@ -126,7 +124,6 @@ export function GameUICompactStats({
           return (
             <Animated.View
               key={stat.key}
-              entering={FadeIn.duration(300).delay(stat.pulseDelay || 0)}
               style={[
                 styles.statCard,
                 { borderColor: stat.color + "30" },

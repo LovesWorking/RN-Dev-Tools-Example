@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { LogType } from '../../../_shared/logger/types';
+import { LogType } from '@/rn-better-dev-tools/src/shared/logger/types';
 import { getTypeColor, getTypeIcon } from '../utils';
 
 interface LogEntryTypeIndicatorProps {

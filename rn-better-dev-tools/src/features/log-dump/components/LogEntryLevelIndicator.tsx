@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { LogLevel } from '../../../_shared/logger/types';
+import { LogLevel } from '@/rn-better-dev-tools/src/shared/logger/types';
 import { getLevelDotStyle, getLevelTextColor } from '../utils';
 
 interface LogEntryLevelIndicatorProps {

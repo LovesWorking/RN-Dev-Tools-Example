@@ -3,21 +3,13 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Animated as RNAnimated,
+  Animated,
   TextInputProps,
-  Dimensions,
   Platform,
+  Easing,
 } from "react-native";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import Animated, {
-  Easing,
-  useAnimatedProps,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from "react-native-reanimated";
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 const runningBorderPath = (width: number, height: number, radius: number, padding: number = 0) => {
   const offset = 1 + padding;
@@ -52,7 +44,7 @@ export function NebulaInput({
   const [dimensions, setDimensions] = useState({ width: 300, height: 56 });
 
   // Animated values for label
-  const labelAnimation = useRef(new RNAnimated.Value(!!props.value && props.value !== '' ? 1 : 0)).current;
+  const labelAnimation = useRef(new Animated.Value(!!props.value && props.value !== '' ? 1 : 0)).current;
   
   // For animated border
   const radius = 10;
@@ -73,7 +65,7 @@ export function NebulaInput({
   // Create dash pattern with asymmetric segments
   const dashPattern = `${segment1Length} ${gap1Length} ${segment2Length} ${gap2Length}`;
   
-  const offset = useSharedValue(0);
+  const offset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Check if input has value from props
@@ -81,7 +73,7 @@ export function NebulaInput({
     setHasValue(currentHasValue);
     
     // Animate label when focused or has value
-    RNAnimated.timing(labelAnimation, {
+    Animated.timing(labelAnimation, {
       toValue: isFocused || currentHasValue ? 1 : 0,
       duration: 400,
       useNativeDriver: true,
@@ -92,24 +84,31 @@ export function NebulaInput({
     // Only animate when focused
     if (isFocused) {
       // Single animation that rotates both segments together
-      offset.value = withRepeat(
-        withTiming(perimeter, {
+      Animated.loop(
+        Animated.timing(offset, {
+          toValue: perimeter,
           duration: 4000,
           easing: Easing.linear,
+          useNativeDriver: false,
         }),
-        -1,
-        false
-      );
+        { resetBeforeIteration: true }
+      ).start();
     } else {
-      offset.value = 0;
+      offset.setValue(0);
     }
   }, [isFocused, offset, perimeter]);
 
-  const animatedProps = useAnimatedProps(() => {
-    return {
-      strokeDashoffset: -offset.value, // Negative to move forward
+  // For SVG animation, we'll use a simpler approach
+  const [strokeDashoffset, setStrokeDashoffset] = useState(0);
+  
+  useEffect(() => {
+    const listener = offset.addListener(({ value }) => {
+      setStrokeDashoffset(-value);
+    });
+    return () => {
+      offset.removeListener(listener);
     };
-  });
+  }, [offset]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -156,7 +155,7 @@ export function NebulaInput({
         />
 
         {/* Animated label */}
-        <RNAnimated.View
+        <Animated.View
           style={[
             styles.label,
             {
@@ -178,7 +177,7 @@ export function NebulaInput({
           ]}
           pointerEvents="none"
         >
-          <RNAnimated.Text
+          <Animated.Text
             style={[
               styles.labelText,
               {
@@ -190,8 +189,8 @@ export function NebulaInput({
             ]}
           >
             {label}
-          </RNAnimated.Text>
-        </RNAnimated.View>
+          </Animated.Text>
+        </Animated.View>
 
         {/* Animated gradient border with glow - only show when focused */}
         {isFocused && (
@@ -216,50 +215,50 @@ export function NebulaInput({
               
               {/* Task 3: Multiple blur layers with different intensities */}
               {/* Massive soft blur - creates the aura */}
-              <AnimatedPath
+              <Path
                 d={glowBorderData}
                 strokeLinecap="butt"
                 fill="none"
                 stroke="url(#glowGradient)"
                 strokeWidth={30}
                 strokeDasharray={dashPattern}
-                animatedProps={animatedProps}
+                strokeDashoffset={strokeDashoffset}
                 opacity={0.15}
               />
               
               {/* Medium blur - transition layer */}
-              <AnimatedPath
+              <Path
                 d={glowBorderData}
                 strokeLinecap="butt"
                 fill="none"
                 stroke="url(#glowGradient)"
                 strokeWidth={15}
                 strokeDasharray={dashPattern}
-                animatedProps={animatedProps}
+                strokeDashoffset={strokeDashoffset}
                 opacity={0.25}
               />
               
               {/* Tight blur - near the border */}
-              <AnimatedPath
+              <Path
                 d={glowBorderData}
                 strokeLinecap="butt"
                 fill="none"
                 stroke="url(#glowGradient)"
                 strokeWidth={8}
                 strokeDasharray={dashPattern}
-                animatedProps={animatedProps}
+                strokeDashoffset={strokeDashoffset}
                 opacity={0.4}
               />
               
               {/* Sharp core glow */}
-              <AnimatedPath
+              <Path
                 d={glowBorderData}
                 strokeLinecap="butt"
                 fill="none"
                 stroke="url(#glowGradient)"
                 strokeWidth={4}
                 strokeDasharray={dashPattern}
-                animatedProps={animatedProps}
+                strokeDashoffset={strokeDashoffset}
                 opacity={0.8}
               />
             </Svg>
@@ -277,14 +276,14 @@ export function NebulaInput({
               </Defs>
               
               {/* Main border with two segments */}
-              <AnimatedPath
+              <Path
                 d={runningBorderData}
                 strokeLinecap="butt"
                 fill="none"
                 stroke="url(#gradient)"
                 strokeWidth={3.5}
                 strokeDasharray={dashPattern}
-                animatedProps={animatedProps}
+                strokeDashoffset={strokeDashoffset}
               />
             </Svg>
           </>

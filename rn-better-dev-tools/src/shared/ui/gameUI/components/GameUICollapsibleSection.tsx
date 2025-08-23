@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ViewStyle,
   TextStyle,
+  Animated,
 } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
 import { ChevronDown, ChevronUp } from "lucide-react-native";
 import { gameUIColors } from "../constants/gameUIColors";
 
@@ -83,7 +83,7 @@ export function GameUICollapsibleSection({
       </TouchableOpacity>
 
       {expanded && (
-        <Animated.View entering={FadeIn.duration(200)}>
+        <Animated.View style={{ opacity: 1 }}>
           {children}
         </Animated.View>
       )}

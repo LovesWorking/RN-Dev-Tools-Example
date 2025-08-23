@@ -74,7 +74,8 @@ export function StorageFilterView({
       ? FILTER_ALERT_STATES.ACTIVE
       : FILTER_ALERT_STATES.INACTIVE;
 
-  const { animatedStyle } = useGameUIAlertState(alertState);
+  // Alert animation removed - not compatible with current implementation
+  const alertAnimatedStyle = {};
 
   // Count system vs custom filters
   const systemFilters = ["@devtools", "@rnasyncstorage"];
@@ -103,7 +104,7 @@ export function StorageFilterView({
         <GameUIStatusHeader
           alertConfig={alertState}
           badgeText="FILTERS"
-          animatedStyle={animatedStyle}
+          animatedStyle={alertAnimatedStyle}
         />
 
         {/* Filter Stats */}

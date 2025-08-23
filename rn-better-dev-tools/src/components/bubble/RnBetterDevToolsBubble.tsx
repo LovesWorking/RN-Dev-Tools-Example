@@ -5,6 +5,8 @@ import {
   RequiredEnvVar,
   useEnvVarsSubtitle,
   EnvVarsModal,
+  EnvironmentIndicator,
+  type Environment,
 } from "@/rn-better-dev-tools/src/features/env";
 import {
   StorageModalWithTabs,
@@ -16,10 +18,8 @@ import { NetworkModal } from "@/rn-better-dev-tools/src/features/network";
 import {
   FloatingTools,
   type UserRole,
-  EnvironmentIndicator,
   UserStatus,
 } from "./floatingTools";
-import type { Environment } from "@/rn-better-dev-tools/src/features/env";
 import { ErrorBoundary } from "@/rn-better-dev-tools/src/shared/ui/components/ErrorBoundary";
 import {
   ReactQueryModal,

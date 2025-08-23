@@ -1,6 +1,5 @@
 import { Mutation } from "@tanstack/react-query";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
@@ -8,8 +7,8 @@ import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
-import { View } from "react-native";
-import { useSharedValue, withSpring } from "react-native-reanimated";
+import { View, Animated, PanResponder } from "react-native";
+import { useRef } from "react";
 import { SwipeIndicator } from "./SwipeIndicator";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -50,8 +49,8 @@ export function MutationBrowserModal({
     ? devToolsStorageKeys.reactQuery.modal()
     : devToolsStorageKeys.reactQuery.mutationModal();
 
-  // Shared values for gesture tracking [[memory:4875251]]
-  const translationX = useSharedValue(0);
+  // Animated value for gesture tracking [[memory:4875251]]
+  const translationX = useRef(new Animated.Value(0)).current;
 
   const handleSwipeNavigation = useCallback(
     (direction: "left" | "right") => {
@@ -66,31 +65,52 @@ export function MutationBrowserModal({
     setModalMode(mode);
   }, []);
 
-  const panGesture = Gesture.Pan()
-    .onChange((event) => {
-      // Update translation for visual feedback
-      translationX.value = event.translationX;
-    })
-    .onEnd((event) => {
-      const { translationX: eventTranslationX, velocityX } = event;
-      const swipeThreshold = 80; // Match EDGE_THRESHOLD from SwipeIndicator
-      const velocityThreshold = 500;
+  // Create PanResponder for swipe navigation
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Only capture horizontal swipes
+        return Math.abs(gestureState.dx) > 5 && Math.abs(gestureState.dy) < 10;
+      },
+      
+      onPanResponderMove: (evt, gestureState) => {
+        // Update translation for visual feedback
+        translationX.setValue(gestureState.dx);
+      },
+      
+      onPanResponderRelease: (evt, gestureState) => {
+        const { dx, vx } = gestureState;
+        const swipeThreshold = 80; // Match EDGE_THRESHOLD from SwipeIndicator
+        const velocityThreshold = 0.5;
 
-      // Reset visual feedback with spring animation
-      translationX.value = withSpring(0);
+        // Reset visual feedback with spring animation
+        Animated.spring(translationX, {
+          toValue: 0,
+          useNativeDriver: true
+        }).start();
 
-      if (
-        Math.abs(eventTranslationX) > swipeThreshold ||
-        Math.abs(velocityX) > velocityThreshold
-      ) {
-        if (eventTranslationX > 0 || velocityX > 0) {
-          handleSwipeNavigation("right");
-        } else {
-          handleSwipeNavigation("left");
+        if (
+          Math.abs(dx) > swipeThreshold ||
+          Math.abs(vx) > velocityThreshold
+        ) {
+          if (dx > 0 || vx > 0) {
+            handleSwipeNavigation("right");
+          } else {
+            handleSwipeNavigation("left");
+          }
         }
+      },
+      
+      onPanResponderTerminate: () => {
+        // Reset on termination
+        Animated.spring(translationX, {
+          toValue: 0,
+          useNativeDriver: true
+        }).start();
       }
     })
-    .runOnJS(true);
+  ).current;
 
   if (!visible) return null;
 
@@ -119,8 +139,7 @@ export function MutationBrowserModal({
       styles={{}}
     >
       <View style={{ flex: 1 }}>
-        <GestureDetector gesture={panGesture}>
-          <View style={{ flex: 1 }}>
+        <View {...panResponder.panHandlers} style={{ flex: 1 }}>
             <SwipeIndicator
               translationX={translationX}
               canSwipeLeft={false}
@@ -131,8 +150,7 @@ export function MutationBrowserModal({
               onMutationSelect={onMutationSelect}
               activeFilter={activeFilter}
             />
-          </View>
-        </GestureDetector>
+        </View>
         <MutationBrowserFooter
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}

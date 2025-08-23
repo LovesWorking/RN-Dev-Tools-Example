@@ -20,7 +20,10 @@ import {
   type ViewStyle,
   type TextStyle,
 } from "react-native";
-import { useSafeAreaInsets as usePureJSSafeAreaInsets, getSafeAreaInsets as getPureJSSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
+import {
+  useSafeAreaInsets as usePureJSSafeAreaInsets,
+  getSafeAreaInsets as getPureJSSafeAreaInsets,
+} from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 // Using Views to render grip dots; no react-native-svg dependency
 
@@ -51,7 +54,6 @@ function getSafeAreaInsets(): {
 // =============================
 // Local Types (self-contained)
 // =============================
-export type Environment = "local" | "dev" | "qa" | "staging" | "prod";
 export type UserRole = "admin" | "internal" | "user";
 
 // =============================
@@ -301,74 +303,29 @@ export function Divider() {
   return <View style={dividerStyle} />;
 }
 
-function getEnvironmentConfig(environment: Environment): {
-  label: string;
-  backgroundColor: string;
-} {
-  switch (environment) {
-    case "local":
-      return { label: "LOCAL", backgroundColor: gameUIColors.info };
-    case "dev":
-      return { label: "DEV", backgroundColor: gameUIColors.warning };
-    case "qa":
-      return { label: "QA", backgroundColor: gameUIColors.optional };
-    case "staging":
-      return { label: "STAGING", backgroundColor: gameUIColors.success };
-    case "prod":
-      return { label: "PROD", backgroundColor: gameUIColors.error };
-    default:
-      return { label: "LOCAL", backgroundColor: gameUIColors.info };
-  }
-}
-
-export function EnvironmentIndicator({
-  environment,
-}: {
-  environment: Environment;
-}) {
-  const env = getEnvironmentConfig(environment);
-  const containerStyle: ViewStyle = {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    flexShrink: 0,
-  };
-  const dotStyle: ViewStyle = {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: env.backgroundColor,
-    marginRight: 6,
-    shadowColor: env.backgroundColor,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 4,
-    elevation: 2,
-  };
-  const textStyle: TextStyle = {
-    fontSize: 11,
-    fontWeight: "600",
-    color: gameUIColors.primaryLight,
-    letterSpacing: 0.5,
-  };
-  return (
-    <View style={containerStyle}>
-      <View style={dotStyle} />
-      <Text style={textStyle}>{env.label}</Text>
-    </View>
-  );
-}
+// EnvironmentIndicator moved to features/env - import from there instead
 
 function getUserStatusConfig(userRole: UserRole) {
   switch (userRole) {
     case "admin":
-      return { label: "Admin", dotColor: gameUIColors.success, textColor: gameUIColors.success };
+      return {
+        label: "Admin",
+        dotColor: gameUIColors.success,
+        textColor: gameUIColors.success,
+      };
     case "internal":
-      return { label: "Internal", dotColor: gameUIColors.optional, textColor: gameUIColors.optional };
+      return {
+        label: "Internal",
+        dotColor: gameUIColors.optional,
+        textColor: gameUIColors.optional,
+      };
     case "user":
     default:
-      return { label: "User", dotColor: gameUIColors.muted, textColor: gameUIColors.secondary };
+      return {
+        label: "User",
+        dotColor: gameUIColors.muted,
+        textColor: gameUIColors.secondary,
+      };
   }
 }
 
@@ -463,7 +420,6 @@ export function FloatingTools({
   const [bubbleSize, setBubbleSize] = useState({ width: 100, height: 32 });
   const [isHidden, setIsHidden] = useState(false);
 
-  // Get safe area insets (will use react-native-safe-area-context if available)
   const safeAreaInsets = useFloatingToolsSafeArea();
 
   // Position persistence (state/IO extracted to hook)

@@ -1,14 +1,5 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  withSpring,
-  interpolate,
-  Easing,
-} from "react-native-reanimated";
+import React, { useEffect, useRef } from "react";
+import { View, Text, StyleSheet, Pressable, Animated, Easing } from "react-native";
 import {
   AlertCircle,
   CheckCircle2,
@@ -111,21 +102,23 @@ export function CyberpunkEnvVarCard({
   const hasDescription = envVar.description !== undefined;
 
   // Animation values
-  const glowIntensity = useSharedValue(0.3);
-  const borderGlow = useSharedValue(0);
-  const glitchX = useSharedValue(0);
-  const glitchY = useSharedValue(0);
-  const glitchOpacity = useSharedValue(0);
-  const pulseScale = useSharedValue(1);
-  const expandHeight = useSharedValue(isExpanded ? 1 : 0);
+  const glowIntensity = useRef(new Animated.Value(0.3)).current;
+  const borderGlow = useRef(new Animated.Value(0)).current;
+  const glitchX = useRef(new Animated.Value(0)).current;
+  const glitchY = useRef(new Animated.Value(0)).current;
+  const glitchOpacity = useRef(new Animated.Value(0)).current;
+  const pulseScale = useRef(new Animated.Value(1)).current;
+  const expandHeight = useRef(new Animated.Value(isExpanded ? 1 : 0)).current;
 
   // Handle expansion animation
   useEffect(() => {
-    expandHeight.value = withSpring(isExpanded ? 1 : 0, {
+    Animated.spring(expandHeight, {
+      toValue: isExpanded ? 1 : 0,
       damping: 15,
       stiffness: 100,
-    });
-  }, [isExpanded]);
+      useNativeDriver: false,
+    }).start();
+  }, [isExpanded, expandHeight]);
 
   // Random glitch effect (less frequent)
   useEffect(() => {
@@ -136,32 +129,84 @@ export function CyberpunkEnvVarCard({
         const d = GLITCH_DURATION_MS;
 
         // Glitch opacity (more subtle)
-        glitchOpacity.value = withSequence(
-          withTiming(0.4, { duration: d * 0.2 }), // Less intense
-          withTiming(0.2, { duration: d * 0.1 }),
-          withTiming(0.3, { duration: d * 0.2 }),
-          withTiming(0, { duration: d * 0.5 })
-        );
+        Animated.sequence([
+          Animated.timing(glitchOpacity, {
+            toValue: 0.4,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.2,
+            duration: d * 0.1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.3,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0,
+            duration: d * 0.5,
+            useNativeDriver: true,
+          })
+        ]).start();
 
         // Glitch displacement
-        glitchX.value = withSequence(
-          withTiming(5, { duration: d * 0.2 }),
-          withTiming(-5, { duration: d * 0.3 }),
-          withTiming(3, { duration: d * 0.2 }),
-          withTiming(0, { duration: d * 0.3 })
-        );
+        Animated.sequence([
+          Animated.timing(glitchX, {
+            toValue: 5,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: -5,
+            duration: d * 0.3,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 3,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 0,
+            duration: d * 0.3,
+            useNativeDriver: true,
+          })
+        ]).start();
 
-        glitchY.value = withSequence(
-          withTiming(-2, { duration: d * 0.3 }),
-          withTiming(2, { duration: d * 0.4 }),
-          withTiming(0, { duration: d * 0.3 })
-        );
+        Animated.sequence([
+          Animated.timing(glitchY, {
+            toValue: -2,
+            duration: d * 0.3,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 2,
+            duration: d * 0.4,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 0,
+            duration: d * 0.3,
+            useNativeDriver: true,
+          })
+        ]).start();
 
         // Glow intensity during glitch
-        glowIntensity.value = withSequence(
-          withTiming(0.8, { duration: d * 0.3 }),
-          withTiming(0.3, { duration: d * 0.7 })
-        );
+        Animated.sequence([
+          Animated.timing(glowIntensity, {
+            toValue: 0.8,
+            duration: d * 0.3,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowIntensity, {
+            toValue: 0.3,
+            duration: d * 0.7,
+            useNativeDriver: true,
+          })
+        ]).start();
 
         startRandomGlitch();
       }, nextGlitchDelay);
@@ -171,45 +216,76 @@ export function CyberpunkEnvVarCard({
 
     const cleanup = startRandomGlitch();
     return cleanup;
-  }, [index]);
+  }, [index, glitchOpacity, glitchX, glitchY, glowIntensity]);
 
   const handlePressIn = () => {
-    pulseScale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
-    glowIntensity.value = withTiming(0.8, { duration: 100 });
+    Animated.spring(pulseScale, {
+      toValue: 0.98,
+      damping: 15,
+      stiffness: 400,
+      useNativeDriver: true,
+    }).start();
+    
+    Animated.timing(glowIntensity, {
+      toValue: 0.8,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
 
     // Quick glitch on press
-    glitchOpacity.value = withSequence(
-      withTiming(1, { duration: 20 }),
-      withTiming(0, { duration: 30 })
-    );
+    Animated.sequence([
+      Animated.timing(glitchOpacity, {
+        toValue: 1,
+        duration: 20,
+        useNativeDriver: true,
+      }),
+      Animated.timing(glitchOpacity, {
+        toValue: 0,
+        duration: 30,
+        useNativeDriver: true,
+      })
+    ]).start();
   };
 
   const handlePressOut = () => {
-    pulseScale.value = withSpring(1, { damping: 15, stiffness: 400 });
-    glowIntensity.value = withTiming(0.3, { duration: 200 });
+    Animated.spring(pulseScale, {
+      toValue: 1,
+      damping: 15,
+      stiffness: 400,
+      useNativeDriver: true,
+    }).start();
+    
+    Animated.timing(glowIntensity, {
+      toValue: 0.3,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
   };
 
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-  }));
+  const containerAnimatedStyle = {
+    transform: [{ scale: pulseScale }],
+  };
 
-  const borderAnimatedStyle = useAnimatedStyle(() => ({
-    borderColor:
-      interpolate(glowIntensity.value, [0, 1], [0.2, 0.8]) > 0.5
-        ? config.borderColor
-        : `${config.borderColor}80`,
-    shadowOpacity: glowIntensity.value * 0.5,
-  }));
+  const borderAnimatedStyle = {
+    borderColor: config.borderColor,
+    shadowOpacity: glowIntensity.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 0.5],
+    }),
+  };
 
-  const glitchStyle = useAnimatedStyle(() => ({
-    opacity: glitchOpacity.value,
-    transform: [{ translateX: glitchX.value }, { translateY: glitchY.value }],
-  }));
+  const glitchStyle = {
+    opacity: glitchOpacity,
+    transform: [{ translateX: glitchX }, { translateY: glitchY }],
+  };
 
-  const expandStyle = useAnimatedStyle(() => ({
-    opacity: expandHeight.value,
-    maxHeight: expandHeight.value * 300,
-  }));
+  const expandStyle = {
+    opacity: expandHeight,
+    maxHeight: expandHeight.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 300],
+    }),
+  };
 
   // Convert hex to RGB
   const hexToRgb = (hex: string) => {

@@ -14,7 +14,7 @@ import {
   User,
 } from 'lucide-react-native';
 
-import { ConsoleTransportEntry, LogLevel, LogType } from '../../_shared/logger/types';
+import { ConsoleTransportEntry, LogLevel, LogType } from '@/rn-better-dev-tools/src/shared/logger/types';
 
 import { getLevelCount, getTypeCount } from './utils';
 

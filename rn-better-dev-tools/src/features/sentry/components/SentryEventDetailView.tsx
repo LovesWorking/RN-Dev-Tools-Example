@@ -95,9 +95,8 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
   }
   
   const handleCopy = (text: string) => {
-    // TODO: Implement clipboard functionality
-    // Clipboard functionality temporarily disabled due to deprecated API
-    console.log('Copy to clipboard:', text);
+    // Clipboard functionality not implemented
+    // This function is reserved for future clipboard integration
   };
   
   return (

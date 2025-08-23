@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from "re
 import { Settings, EyeOff, Database, Palette } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
-import { useDevToolsTheme } from "../../../_themes/DevToolsThemeContext";
+import { useDevToolsTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 // AsyncStorage will be loaded lazily
 type AsyncStorageType = {

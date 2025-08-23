@@ -538,13 +538,22 @@ class NetworkListener {
   }
 }
 
-// Create singleton instance
-export const networkListener = new NetworkListener();
+// Create lazy singleton instance
+let _networkListener: NetworkListener | null = null;
+
+const getNetworkListener = () => {
+  if (!_networkListener) {
+    _networkListener = new NetworkListener();
+  }
+  return _networkListener;
+};
+
+export const networkListener = getNetworkListener;
 
 // Simple API functions
-export const startNetworkListener = () => networkListener.startListening();
-export const stopNetworkListener = () => networkListener.stopListening();
-export const addNetworkListener = (listener: NetworkingEventListener) => networkListener.addListener(listener);
-export const removeAllNetworkListeners = () => networkListener.removeAllListeners();
-export const isNetworkListening = () => networkListener.isActive;
-export const getNetworkListenerCount = () => networkListener.listenerCount;
+export const startNetworkListener = () => getNetworkListener().startListening();
+export const stopNetworkListener = () => getNetworkListener().stopListening();
+export const addNetworkListener = (listener: NetworkingEventListener) => getNetworkListener().addListener(listener);
+export const removeAllNetworkListeners = () => getNetworkListener().removeAllListeners();
+export const isNetworkListening = () => getNetworkListener().isActive;
+export const getNetworkListenerCount = () => getNetworkListener().listenerCount;

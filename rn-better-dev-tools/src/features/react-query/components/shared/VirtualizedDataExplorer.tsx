@@ -13,9 +13,9 @@ import {
   View,
   StyleSheet,
   InteractionManager,
+  FlatList,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { FlashList } from "@shopify/flash-list";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
@@ -236,7 +236,7 @@ interface FlatDataItem {
   hasChildren: boolean;
   childCount: number;
   path: string[];
-  type: string; // For FlashList getItemType optimization
+  type: string; // For FlatList optimization
 }
 
 // Enhanced type detection optimized for performance
@@ -530,7 +530,7 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
             }
           }
         } catch (error) {
-          console.warn("Error processing children:", error);
+          // Skip malformed data
         }
       }
 
@@ -561,7 +561,7 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
             setIsProcessing(false);
           }
         } catch (error) {
-          console.error("Error flattening data:", error);
+          // Reset to empty data on error
           if (!isCancelled) {
             setFlatData([]);
             setIsProcessing(false);
@@ -768,7 +768,7 @@ export const VirtualizedDataExplorer: React.FC<
     <VirtualizedItem item={item} onToggleExpanded={toggleExpanded} />
   );
 
-  // Calculate average item size for better FlashList performance [[memory:4875251]]
+  // Calculate average item size for better FlatList performance [[memory:4875251]]
   const averageItemSize = useMemo(() => {
     const longKeyCount = flatData.filter(
       (item) => item.key.length > LONG_KEY_THRESHOLD
@@ -818,15 +818,16 @@ export const VirtualizedDataExplorer: React.FC<
             <Text style={STABLE_STYLES.loadingText}>Processing data...</Text>
           </View>
         ) : (
-          <FlashList
+          <FlatList
             sentry-label="ignore devtools data explorer list"
             data={flatData}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            estimatedItemSize={averageItemSize}
-            getItemType={(item) => item.type}
             showsVerticalScrollIndicator={true}
             contentContainerStyle={STABLE_STYLES.listContent}
+            initialNumToRender={15}
+            maxToRenderPerBatch={10}
+            windowSize={10}
           />
         )}
       </View>
@@ -893,15 +894,16 @@ export const VirtualizedDataExplorer: React.FC<
                 height: Math.min(flatData.length * averageItemSize, 400),
               }}
             >
-              <FlashList
+              <FlatList
                 sentry-label="ignore devtools data explorer collapsed list"
                 data={flatData}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
-                estimatedItemSize={averageItemSize}
-                getItemType={(item) => item.type}
                 showsVerticalScrollIndicator={true}
                 contentContainerStyle={STABLE_STYLES.listContent}
+                initialNumToRender={15}
+                maxToRenderPerBatch={10}
+                windowSize={10}
               />
             </View>
           )}

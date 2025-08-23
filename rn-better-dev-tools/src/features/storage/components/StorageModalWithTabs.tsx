@@ -3,10 +3,8 @@ import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, FlatList, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FlashList } from "@shopify/flash-list";
-import { ScrollView } from "react-native-gesture-handler";
 import { HardDrive, Database, Pause, Play, Trash2, Filter, Activity, Clock } from "lucide-react-native";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -282,19 +280,16 @@ export function StorageModalWithTabs({
     }
   };
 
-  // FlashList optimization constants
+  // FlatList optimization constants
   const ESTIMATED_ITEM_SIZE = 80;
   const END_REACHED_THRESHOLD = 0.8;
 
-  // Stable keyExtractor for FlashList
+  // Stable keyExtractor for FlatList
   const keyExtractor = useCallback((item: StorageKeyConversation) => {
     return item.key;
   }, []);
 
-  // Stable getItemType for FlashList optimization
-  const getItemType = useCallback(() => {
-    return "conversation";
-  }, []);
+  // Removed getItemType as it's FlatList-specific
 
   // Create stable ref for event handler
   const selectConversationRef = useRef<
@@ -568,15 +563,16 @@ export function StorageModalWithTabs({
     }
 
     return (
-      <FlashList
+      <FlatList
         data={conversations}
         renderItem={renderConversationItem}
         keyExtractor={keyExtractor}
-        getItemType={getItemType}
-        estimatedItemSize={ESTIMATED_ITEM_SIZE}
         onEndReachedThreshold={END_REACHED_THRESHOLD}
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={10}
       />
     );
   };

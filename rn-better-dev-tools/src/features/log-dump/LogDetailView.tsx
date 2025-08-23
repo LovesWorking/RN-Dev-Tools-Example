@@ -1,14 +1,19 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "@/src/hooks/useSafeAreaInsets";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+} from "react-native";
 import { ChevronLeft } from "lucide-react-native";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { FlashList } from "@shopify/flash-list";
 import { useState } from "react";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import { VirtualizedDataExplorer } from "../react-query/components/shared/VirtualizedDataExplorer";
 
 import { formatTimestamp, getTypeColor, getTypeIcon } from "./utils";
+import useSafeAreaInsets from "../../shared/hooks/useSafeAreaInsets";
 
 // Fullscreen data explorer modal
 const DataExplorerModal = ({
@@ -59,7 +64,7 @@ export const LogDetailView = ({
   const insets = useSafeAreaInsets();
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // Create sections data for FlashList
+  // Create sections data for FlatList
   const sections: SectionItem[] = [
     {
       id: "header",
@@ -242,17 +247,18 @@ export const LogDetailView = ({
       </View>
 
       <View style={styles.flashListContainer}>
-        <FlashList
+        <FlatList
           data={sections}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          estimatedItemSize={150}
-          getItemType={(item) => item.type}
           contentContainerStyle={{
             ...styles.contentContainer,
             paddingBottom: 16 + insets.bottom,
           }}
           showsVerticalScrollIndicator={true}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={10}
           sentry-label="ignore log entries list"
           accessibilityLabel="Log entries list"
           accessibilityHint="Scroll through log entries sections"
