@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { LucideIcon } from 'lucide-react-native';
+import { LucideIcon } from 'rn-better-dev-tools/icons';
 
 interface EmptyStateProps {
   /** Primary message to display */

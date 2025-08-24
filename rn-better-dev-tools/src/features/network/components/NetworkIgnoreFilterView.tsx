@@ -6,7 +6,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { Filter, X, Plus, Check, Globe } from "lucide-react-native";
+import { Filter, X, Plus, Check, Globe } from 'rn-better-dev-tools/icons';
 import { useState } from "react";
 import {
   GameUIStatusHeader,

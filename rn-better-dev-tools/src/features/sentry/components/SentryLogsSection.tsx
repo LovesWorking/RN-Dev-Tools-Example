@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react-native";
+import { FileText } from 'rn-better-dev-tools/icons';
 import { ConsoleSection } from "@/rn-better-dev-tools/src/shared/ui/console/ConsoleSection";
 import { SentryLogsDetailContent } from "./SentryLogsDetailContent";
 import {

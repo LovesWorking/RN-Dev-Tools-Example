@@ -8,7 +8,7 @@ import {
   Activity,
   Database,
   HelpCircle,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { gameUIColors } from "../constants/gameUIColors";
 
 export type AlertStateType = 

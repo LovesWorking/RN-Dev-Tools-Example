@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import type { LucideIcon } from "lucide-react-native";
-import { ChevronDown, ChevronRight } from "lucide-react-native";
+import type { LucideIcon } from 'rn-better-dev-tools/icons';
+import { ChevronDown, ChevronRight } from 'rn-better-dev-tools/icons';
 
 interface ExpandableSectionHeaderProps {
   icon: LucideIcon;

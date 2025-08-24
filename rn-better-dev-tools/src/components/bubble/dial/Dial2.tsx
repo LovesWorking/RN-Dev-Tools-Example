@@ -9,16 +9,16 @@ import {
   Easing,
 } from "react-native";
 import {
-  DatabaseIcon,
-  BugIcon,
-  ServerIcon,
-  WifiIcon,
-  WifiOffIcon,
-  XIcon,
-  ChevronRightIcon,
-  LayersIcon,
-  GlobeIcon,
-} from "@/rn-better-dev-tools/src/shared/icons/lucide-icons";
+  Database,
+  Bug,
+  Server,
+  Wifi,
+  WifiOff,
+  X,
+  ChevronRight,
+  Layers,
+  Globe,
+} from 'rn-better-dev-tools/icons';
 import {
   getSafeAreaInsets,
   hasNotch as getHasNotch,
@@ -123,7 +123,7 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "ENVIRONMENT",
       subtitle: "SYSTEM CONFIGURATION",
-      icon: <ServerIcon size={24} color={gameUIColors.env} />,
+      icon: <Server size={24} color={gameUIColors.env} />,
       onPress: onEnvPress,
       color: gameUIColors.env,
       accentColor: gameUIColors.success,
@@ -134,7 +134,7 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "SENTRY",
       subtitle: "ERROR TRACKING",
-      icon: <BugIcon size={24} color={gameUIColors.debug} />,
+      icon: <Bug size={24} color={gameUIColors.debug} />,
       onPress: onSentryPress,
       color: gameUIColors.debug,
       accentColor: gameUIColors.error,
@@ -145,7 +145,7 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "STORAGE",
       subtitle: "DATA PERSISTENCE",
-      icon: <DatabaseIcon size={24} color={gameUIColors.storage} />,
+      icon: <Database size={24} color={gameUIColors.storage} />,
       onPress: onStoragePress,
       color: gameUIColors.storage,
       accentColor: gameUIColors.warning,
@@ -157,9 +157,9 @@ const Dial2: React.FC<Dial2Props> = ({
       title: isWifiEnabled ? "NETWORK ONLINE" : "NETWORK OFFLINE",
       subtitle: isWifiEnabled ? "CONNECTION STABLE" : "CONNECTION LOST",
       icon: isWifiEnabled ? (
-        <WifiIcon size={24} color={gameUIColors.network} />
+        <Wifi size={24} color={gameUIColors.network} />
       ) : (
-        <WifiOffIcon size={24} color={gameUIColors.muted} />
+        <WifiOff size={24} color={gameUIColors.muted} />
       ),
       onPress: onWifiToggle,
       color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
@@ -175,7 +175,7 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "NETWORK MONITOR",
       subtitle: "HTTP TRAFFIC ANALYZER",
-      icon: <GlobeIcon size={24} color={gameUIColors.network} />,
+      icon: <Globe size={24} color={gameUIColors.network} />,
       onPress: onNetworkPress || (() => {}),
       color: gameUIColors.network,
       accentColor: gameUIColors.info,
@@ -186,7 +186,7 @@ const Dial2: React.FC<Dial2Props> = ({
     {
       title: "EXIT INTERFACE",
       subtitle: "CLOSE ADMIN PANEL",
-      icon: <XIcon size={24} color={gameUIColors.critical} />,
+      icon: <X size={24} color={gameUIColors.critical} />,
       onPress: () => {},
       color: gameUIColors.critical,
       accentColor: gameUIColors.error,
@@ -597,7 +597,7 @@ const Dial2: React.FC<Dial2Props> = ({
           ]}
         >
           <View style={styles.headerLeft}>
-            <LayersIcon size={20} color={gameUIColors.info} />
+            <Layers size={20} color={gameUIColors.info} />
             <Text style={styles.headerTitle}>ADMIN MENU</Text>
           </View>
           <View style={styles.headerRight}>
@@ -770,7 +770,7 @@ const Dial2: React.FC<Dial2Props> = ({
                         {item.status}
                       </Text>
                     </View>
-                    <ChevronRightIcon size={20} color={item.color} />
+                    <ChevronRight size={20} color={item.color} />
                   </View>
                 </Pressable>
               </Animated.View>

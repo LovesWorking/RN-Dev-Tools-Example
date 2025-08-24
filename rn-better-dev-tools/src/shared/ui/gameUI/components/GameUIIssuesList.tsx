@@ -12,7 +12,7 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronUp,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { gameUIColors } from "../constants/gameUIColors";
 
 export interface IssueItem {

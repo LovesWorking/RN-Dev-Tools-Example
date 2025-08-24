@@ -9,7 +9,7 @@ import {
   XCircle, 
   Eye, 
   Zap 
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { StorageKeyStats } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 

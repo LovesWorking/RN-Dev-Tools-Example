@@ -4,7 +4,7 @@ import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackB
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import { Text, View } from "react-native";
-import { HardDrive } from "lucide-react-native";
+import { HardDrive } from 'rn-better-dev-tools/icons';
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 

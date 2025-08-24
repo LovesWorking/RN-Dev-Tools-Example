@@ -1,5 +1,5 @@
 import { LayoutChangeEvent, Text, View } from "react-native";
-import { FlaskConical, TestTube2, Bug, Zap } from "lucide-react-native";
+import { FlaskConical, TestTube2, Bug, Zap } from 'rn-better-dev-tools/icons';
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 export type Environment = "local" | "dev" | "qa" | "staging" | "prod";

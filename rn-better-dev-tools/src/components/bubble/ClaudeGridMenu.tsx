@@ -11,14 +11,14 @@ import {
 import { CyberpunkGlitchBackground } from "./CyberpunkGlitchBackground";
 import { TanstackLogo } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
 import {
-  DatabaseIcon,
-  BugIcon,
-  ServerIcon,
-  WifiIcon,
-  WifiOffIcon,
-  XIcon,
-} from "@/rn-better-dev-tools/src/shared/icons/lucide-icons";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+  Database,
+  Bug,
+  Server,
+  Wifi,
+  WifiOff,
+  X,
+} from "rn-better-dev-tools/icons";
+import { gameUIColors } from "rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface MagneticGridMenuProps {
   onQueryPress: () => void;
@@ -417,7 +417,7 @@ export function ClaudeGridMenu({
     },
     {
       onPress: onEnvPress,
-      icon: <ServerIcon size={18} color={gameUIColors.env} />,
+      icon: <Server size={18} color={gameUIColors.env} />,
       label: "ENV",
       sublabel: "SYSTEM",
       primaryColor: gameUIColors.env,
@@ -426,7 +426,7 @@ export function ClaudeGridMenu({
     },
     {
       onPress: onSentryPress,
-      icon: <BugIcon size={18} color={gameUIColors.debug} />,
+      icon: <Bug size={18} color={gameUIColors.debug} />,
       label: "SENTRY",
       sublabel: "DEBUG",
       primaryColor: gameUIColors.debug,
@@ -435,7 +435,7 @@ export function ClaudeGridMenu({
     },
     {
       onPress: onStoragePress,
-      icon: <DatabaseIcon size={18} color={gameUIColors.storage} />,
+      icon: <Database size={18} color={gameUIColors.storage} />,
       label: "STORAGE",
       sublabel: "MEMORY",
       primaryColor: gameUIColors.storage,
@@ -445,19 +445,21 @@ export function ClaudeGridMenu({
     {
       onPress: onWifiToggle,
       icon: isWifiEnabled ? (
-        <WifiIcon size={18} color={gameUIColors.network} />
+        <Wifi size={18} color={gameUIColors.network} />
       ) : (
-        <WifiOffIcon size={18} color={gameUIColors.muted} />
+        <WifiOff size={18} color={gameUIColors.muted} />
       ),
       label: isWifiEnabled ? "ONLINE" : "OFFLINE",
       sublabel: isWifiEnabled ? "CONNECTED" : "DISABLED",
       primaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
-      secondaryColor: isWifiEnabled ? gameUIColors.optional : gameUIColors.secondary,
+      secondaryColor: isWifiEnabled
+        ? gameUIColors.optional
+        : gameUIColors.secondary,
       accentColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
     },
     {
       onPress: onClose,
-      icon: <XIcon size={18} color={gameUIColors.secondary} />,
+      icon: <X size={18} color={gameUIColors.secondary} />,
       label: "EXIT",
       sublabel: "CLOSE",
       primaryColor: gameUIColors.muted,

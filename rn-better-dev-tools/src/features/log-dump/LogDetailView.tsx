@@ -5,7 +5,7 @@ import {
   View,
   FlatList,
 } from "react-native";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft } from 'rn-better-dev-tools/icons';
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { useState } from "react";
 

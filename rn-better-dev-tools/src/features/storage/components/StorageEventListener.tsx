@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { Play, Pause, Trash2 } from "lucide-react-native";
+import { Play, Pause, Trash2 } from 'rn-better-dev-tools/icons';
 import {
   startListening,
   stopListening,

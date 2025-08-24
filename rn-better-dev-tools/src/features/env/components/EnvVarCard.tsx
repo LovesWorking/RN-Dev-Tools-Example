@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { AlertCircle, CheckCircle2, Eye, XCircle } from "lucide-react-native";
+import { AlertCircle, CheckCircle2, Eye, XCircle } from 'rn-better-dev-tools/icons';
 import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";

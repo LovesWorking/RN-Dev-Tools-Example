@@ -21,7 +21,7 @@ import {
   CheckCircle,
   XCircle,
   Copy,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 // import Clipboard from "@react-native-clipboard/clipboard"; // Removed due to missing dependency

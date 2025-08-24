@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import type { LucideIcon } from "lucide-react-native";
-import { ChevronRightIcon } from "@/rn-better-dev-tools/src/shared/icons/lucide-icons";
+import type { LucideIcon } from 'rn-better-dev-tools/icons';
+import { ChevronRight } from 'rn-better-dev-tools/icons';
 import { CyberpunkButtonOutline } from "./CyberpunkButtonOutline";
 import { CyberpunkIconContainer } from "./CyberpunkIconContainer";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -75,7 +75,7 @@ export function CyberpunkSectionButton({
         </View>
         
         <View style={styles.arrowContainer}>
-          <ChevronRightIcon size={20} color={`${iconColor}CC`} />
+          <ChevronRight size={20} color={`${iconColor}CC`} />
         </View>
       </View>
     </CyberpunkButtonOutline>

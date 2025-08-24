@@ -13,7 +13,7 @@ import {
   RefreshCw,
   Trash,
   X,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 
 import {
   clearEntries,

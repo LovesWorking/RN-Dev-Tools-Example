@@ -15,13 +15,13 @@ import {
   AnimatedCyberpunkBorderBox,
 } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
 import {
-  DatabaseIcon,
-  BugIcon,
-  ServerIcon,
-  WifiIcon,
-  WifiOffIcon,
-  XIcon,
-} from "@/rn-better-dev-tools/src/shared/icons/lucide-icons";
+  Database,
+  Bug,
+  Server,
+  Wifi,
+  WifiOff,
+  X,
+} from 'rn-better-dev-tools/icons';
 
 interface MagneticGridMenuProps {
   onQueryPress: () => void;
@@ -104,7 +104,7 @@ export function ClaudeGridMenuSVGGlitch({
       },
       {
         onPress: onEnvPress,
-        icon: <ServerIcon size={18} color="#00FFFF" />,
+        icon: <Server size={18} color="#00FFFF" />,
         label: "ENV",
         sublabel: "SYSTEM",
         primaryColor: "#00FFFF",
@@ -115,7 +115,7 @@ export function ClaudeGridMenuSVGGlitch({
       },
       {
         onPress: onSentryPress,
-        icon: <BugIcon size={18} color="#FF1744" />,
+        icon: <Bug size={18} color="#FF1744" />,
         label: "SENTRY",
         sublabel: "DEBUG",
         primaryColor: "#FF1744",
@@ -126,7 +126,7 @@ export function ClaudeGridMenuSVGGlitch({
       },
       {
         onPress: onStoragePress,
-        icon: <DatabaseIcon size={18} color="#00FF88" />,
+        icon: <Database size={18} color="#00FF88" />,
         label: "STORAGE",
         sublabel: "MEMORY",
         primaryColor: "#00FF88",
@@ -138,9 +138,9 @@ export function ClaudeGridMenuSVGGlitch({
       {
         onPress: onWifiToggle,
         icon: isWifiEnabled ? (
-          <WifiIcon size={18} color="#E040FB" />
+          <Wifi size={18} color="#E040FB" />
         ) : (
-          <WifiOffIcon size={18} color="#616161" />
+          <WifiOff size={18} color="#616161" />
         ),
         label: isWifiEnabled ? "ONLINE" : "OFFLINE",
         sublabel: isWifiEnabled ? "CONNECTED" : "DISABLED",
@@ -152,7 +152,7 @@ export function ClaudeGridMenuSVGGlitch({
       },
       {
         onPress: onClose,
-        icon: <XIcon size={18} color="#9E9E9E" />,
+        icon: <X size={18} color="#9E9E9E" />,
         label: "EXIT",
         sublabel: "CLOSE",
         primaryColor: "#424242",

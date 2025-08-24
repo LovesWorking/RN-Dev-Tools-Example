@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { StyleSheet, View, Animated } from "react-native";
-import type { LucideIcon } from "lucide-react-native";
+import type { LucideIcon } from 'rn-better-dev-tools/icons';
 
 import { ExpandableSectionHeader } from "./ExpandableSectionHeader";
 

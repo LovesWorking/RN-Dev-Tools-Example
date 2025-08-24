@@ -7,7 +7,7 @@ import {
   Upload,
   Download,
   Timer
-} from 'lucide-react-native';
+} from 'rn-better-dev-tools/icons';
 import type { NetworkStats } from '../types';
 import { formatBytes, formatDuration } from '../utils/formatting';
 

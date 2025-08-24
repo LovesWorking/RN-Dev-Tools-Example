@@ -9,14 +9,14 @@ import {
   Easing,
 } from "react-native";
 import {
-  DatabaseIcon,
-  BugIcon,
-  ServerIcon,
-  WifiIcon,
-  WifiOffIcon,
-  XIcon,
-  GlobeIcon,
-} from "@/rn-better-dev-tools/src/shared/icons/lucide-icons";
+  Database,
+  Bug,
+  Server,
+  Wifi,
+  WifiOff,
+  X,
+  Globe,
+} from 'rn-better-dev-tools/icons';
 import { TanstackLogo } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
 import { gameUIColors, getThemedDialColors, THEME_ACCENT } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
@@ -86,35 +86,35 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
     {
       name: "Env",
-      icon: <ServerIcon size={24} color={gameUIColors.env} />,
+      icon: <Server size={24} color={gameUIColors.env} />,
       color: gameUIColors.env,
       onPress: onEnvPress,
     },
     {
       name: "Sentry",
-      icon: <BugIcon size={24} color={gameUIColors.debug} />,
+      icon: <Bug size={24} color={gameUIColors.debug} />,
       color: gameUIColors.debug,
       onPress: onSentryPress,
     },
     {
       name: "Storage",
-      icon: <DatabaseIcon size={24} color={gameUIColors.storage} />,
+      icon: <Database size={24} color={gameUIColors.storage} />,
       color: gameUIColors.storage,
       onPress: onStoragePress,
     },
     {
       name: "WiFi",
       icon: isWifiEnabled ? (
-        <WifiIcon size={24} color={gameUIColors.network} />
+        <Wifi size={24} color={gameUIColors.network} />
       ) : (
-        <WifiOffIcon size={24} color={gameUIColors.muted} />
+        <WifiOff size={24} color={gameUIColors.muted} />
       ),
       color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
       onPress: onWifiToggle,
     },
     {
       name: "Network",
-      icon: <GlobeIcon size={24} color={gameUIColors.network} />,
+      icon: <Globe size={24} color={gameUIColors.network} />,
       color: gameUIColors.network,
       onPress: onNetworkPress || (() => {}),
     },

@@ -8,7 +8,7 @@ import {
   LogType,
   LogLevel,
 } from "@/rn-better-dev-tools/src/shared/logger/types";
-import { Filter, Pause, Play, FlaskConical, Trash } from "lucide-react-native";
+import { Filter, Pause, Play, FlaskConical, Trash } from 'rn-better-dev-tools/icons';
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { useSentryEvents } from "../hooks/useSentryEvents";
 import {

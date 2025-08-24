@@ -1,0 +1,5 @@
+{
+  "name": "rn-better-dev-tools/icons",
+  "main": "./index.tsx",
+  "types": "./index.tsx"
+}

@@ -1,8 +1,4 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+// Removed @react-navigation/native - not needed
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 // import * as SecureStore from "expo-secure-store";
 // Removed GestureHandlerRootView - using View instead
@@ -12,7 +8,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { QueryClient } from "@tanstack/react-query";
 import { QueryClientWrapper } from "@/src/components/QueryClientWrapper";
-import { useColorScheme } from "@/hooks/useColorScheme";
+// Removed useColorScheme - not needed
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { View } from "react-native";
@@ -55,8 +51,6 @@ const queryClient = global.__queryClient;
 
 // App content component
 function AppContent() {
-  const colorScheme = useColorScheme();
-  
   return (
     <DevToolsThemeProvider defaultTheme="cyberpunk">
       <View style={{ flex: 1 }}>
@@ -64,15 +58,11 @@ function AppContent() {
           colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
           style={{ flex: 1 }}
         >
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="light" />
-          </ThemeProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="light" />
         </LinearGradient>
       </View>
     </DevToolsThemeProvider>

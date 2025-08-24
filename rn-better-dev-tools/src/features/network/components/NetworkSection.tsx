@@ -1,4 +1,4 @@
-import { Globe } from 'lucide-react-native';
+import { Globe } from 'rn-better-dev-tools/icons';
 import { CyberpunkSectionButton } from '@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton';
 import { useNetworkEvents } from '../hooks/useNetworkEvents';
 

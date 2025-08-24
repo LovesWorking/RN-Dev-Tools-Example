@@ -14,7 +14,7 @@ import {
   RefreshCw,
   X,
   XCircle,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 
 import { useDynamicEnv } from "../hooks";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";

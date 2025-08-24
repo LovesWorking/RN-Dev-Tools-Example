@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
-import { ChevronRight } from "lucide-react-native";
+import { ChevronRight } from 'rn-better-dev-tools/icons';
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import {

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { Query, Mutation } from "@tanstack/react-query";
-import { Database, Activity } from "lucide-react-native";
+import { Database, Activity } from 'rn-better-dev-tools/icons';
 
 // Import shared Game UI components
 import {

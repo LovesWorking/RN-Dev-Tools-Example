@@ -5,7 +5,8 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "rn-better-dev-tools/icons": ["rn-better-dev-tools/icons"]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

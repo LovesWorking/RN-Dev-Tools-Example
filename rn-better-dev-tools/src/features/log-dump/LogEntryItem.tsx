@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ChevronRight } from "lucide-react-native";
+import { ChevronRight } from 'rn-better-dev-tools/icons';
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 

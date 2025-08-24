@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Animated } from "react-native";
-import { AlertCircle, CheckCircle2, Eye, XCircle, Zap, Server } from "lucide-react-native";
+import { AlertCircle, CheckCircle2, Eye, XCircle, Zap, Server } from 'rn-better-dev-tools/icons';
 import { EnvVarStats } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 

@@ -5,7 +5,7 @@ import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import { Text, View, TouchableOpacity, StyleSheet, FlatList, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { HardDrive, Database, Pause, Play, Trash2, Filter, Activity, Clock } from "lucide-react-native";
+import { HardDrive, Database, Pause, Play, Trash2, Filter, Activity, Clock } from 'rn-better-dev-tools/icons';
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";

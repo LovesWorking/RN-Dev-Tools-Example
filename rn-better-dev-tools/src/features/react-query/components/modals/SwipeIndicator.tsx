@@ -1,6 +1,6 @@
 import { View, StyleSheet, Animated } from "react-native";
 import { useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { ChevronLeft, ChevronRight } from 'rn-better-dev-tools/icons';
 
 /**
  * Morphing swipe indicator – thin line ➜ pill ➜ circle with a pop-out cue at

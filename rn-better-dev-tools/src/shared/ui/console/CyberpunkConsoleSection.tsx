@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Pressable, ViewStyle, Animated, Easing } from "react-native";
-import type { LucideIcon } from "lucide-react-native";
-import { ChevronRightIcon } from "@/rn-better-dev-tools/src/shared/icons/lucide-icons";
+import type { LucideIcon } from 'rn-better-dev-tools/icons';
+import { ChevronRight } from 'rn-better-dev-tools/icons';
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // CONFIGURABLE: Change this value to adjust glitch duration (in milliseconds)
@@ -375,7 +375,7 @@ export function CyberpunkConsoleSection({
 
             {/* Arrow indicator */}
             <View style={styles.arrowContainer}>
-              <ChevronRightIcon size={16} color={`${accentColor}80`} />
+              <ChevronRight size={16} color={`${accentColor}80`} />
             </View>
 
             {/* Data dots */}

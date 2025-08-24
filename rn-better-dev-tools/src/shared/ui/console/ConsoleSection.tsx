@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import type { LucideIcon } from "lucide-react-native";
+import type { LucideIcon } from 'rn-better-dev-tools/icons';
 import { ExpandableSectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ExpandableSectionHeader";
 import { GalaxyButton } from "./GalaxyButton";
 

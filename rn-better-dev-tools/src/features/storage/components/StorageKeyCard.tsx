@@ -7,7 +7,7 @@ import {
   HardDrive,
   Database,
   Shield,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { StorageKeyInfo } from "../types";
 import {
   getStorageTypeLabel,

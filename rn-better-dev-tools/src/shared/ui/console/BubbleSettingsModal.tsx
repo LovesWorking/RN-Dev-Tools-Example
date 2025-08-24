@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Text, View } from "react-native";
 import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BubbleSettingsDetail, type BubbleVisibilitySettings } from "@/rn-better-dev-tools/src/features/settings";
-import { ChevronLeft, Settings } from "lucide-react-native";
+import { ChevronLeft, Settings } from 'rn-better-dev-tools/icons';
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 

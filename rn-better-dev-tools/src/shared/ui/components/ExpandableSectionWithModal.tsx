@@ -8,8 +8,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
-import type { LucideIcon } from "lucide-react-native";
-import { X } from "lucide-react-native";
+import type { LucideIcon } from 'rn-better-dev-tools/icons';
+import { X } from 'rn-better-dev-tools/icons';
 
 import { ExpandableSection } from "./ExpandableSection";
 

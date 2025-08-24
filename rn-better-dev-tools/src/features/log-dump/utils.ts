@@ -11,7 +11,7 @@ import {
   Settings,
   TriangleAlert,
   User,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 
 import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
 

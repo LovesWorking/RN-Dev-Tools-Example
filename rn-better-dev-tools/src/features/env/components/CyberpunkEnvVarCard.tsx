@@ -7,7 +7,7 @@ import {
   XCircle,
   ChevronDown,
   ChevronUp,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";

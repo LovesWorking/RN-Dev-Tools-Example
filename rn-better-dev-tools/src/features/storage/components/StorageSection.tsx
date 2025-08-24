@@ -1,4 +1,4 @@
-import { HardDrive } from "lucide-react-native";
+import { HardDrive } from 'rn-better-dev-tools/icons';
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 import { useStorageQueryCounts } from "../../react-query/hooks/useStorageQueryCounts";
 

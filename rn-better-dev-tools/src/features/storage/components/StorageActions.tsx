@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { RefreshCw, Copy, Trash2 } from "lucide-react-native";
+import { RefreshCw, Copy, Trash2 } from 'rn-better-dev-tools/icons';
 import { useState, useCallback } from "react";
 import superjson from "superjson";
 import { StorageKeyInfo } from "../types";

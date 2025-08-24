@@ -7,7 +7,7 @@ import {
   HardDrive,
   Database,
   Shield,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { StorageKeyStats } from "../types";
 import {
   getStorageTypeHexColor,

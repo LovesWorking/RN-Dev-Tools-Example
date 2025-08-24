@@ -7,7 +7,7 @@ import {
   Activity,
   Zap,
   XCircle,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 
 // Import shared Game UI components
 import {

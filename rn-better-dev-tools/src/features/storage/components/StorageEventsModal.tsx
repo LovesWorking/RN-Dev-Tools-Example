@@ -3,7 +3,7 @@ import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Database, Pause, Play, Trash2, Filter } from "lucide-react-native";
+import { Database, Pause, Play, Trash2, Filter } from 'rn-better-dev-tools/icons';
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import {

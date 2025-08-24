@@ -20,7 +20,7 @@ import {
   Zap,
   X,
   Link,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";

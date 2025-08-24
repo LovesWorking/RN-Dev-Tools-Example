@@ -17,7 +17,7 @@ import {
   Link,
   Plus,
   Check
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import type { NetworkEvent } from "../types";
 
 interface NetworkFilterViewProps {

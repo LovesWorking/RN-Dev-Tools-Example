@@ -3,7 +3,7 @@ import {
   AlertCircle, 
   CheckCircle, 
   Clock
-} from 'lucide-react-native';
+} from 'rn-better-dev-tools/icons';
 import type { NetworkEvent } from '../types';
 import { formatBytes, formatDuration } from '../utils/formatting';
 

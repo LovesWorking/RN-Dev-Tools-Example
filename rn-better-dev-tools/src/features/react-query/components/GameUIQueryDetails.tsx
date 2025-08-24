@@ -12,7 +12,7 @@ import {
   XCircle,
   Loader2,
   PauseCircle,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 
 // Import shared Game UI components
 import {

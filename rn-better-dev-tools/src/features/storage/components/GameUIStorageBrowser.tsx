@@ -18,7 +18,7 @@ import {
   Zap,
   XCircle,
   Server,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { useQueryClient } from "@tanstack/react-query";
 import {
   StorageType,

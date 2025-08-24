@@ -19,7 +19,7 @@ import {
   Settings,
   User,
   Check,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import {
   LogLevel,
   LogType,

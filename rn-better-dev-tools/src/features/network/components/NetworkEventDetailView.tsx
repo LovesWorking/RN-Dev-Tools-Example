@@ -20,7 +20,7 @@ import {
   Filter,
   Globe,
   Link
-} from 'lucide-react-native';
+} from 'rn-better-dev-tools/icons';
 import { DataViewer } from '../../react-query/components/shared/DataViewer';
 import type { NetworkEvent } from '../types';
 import { formatBytes, formatDuration, formatHttpStatus } from '../utils/formatting';

@@ -32,9 +32,9 @@ import {
   Smartphone,
   Layers,
   Navigation,
-  TouchpadIcon,
+  Touchpad,
   Zap,
-} from "lucide-react-native";
+} from 'rn-better-dev-tools/icons';
 import { 
   extractHttpDataFromSentryEvent, 
   HttpRequestInfo,
@@ -520,7 +520,7 @@ export function SentryEventDetailView({
             {touchDetails && (
               <CollapsibleSection
                 title="Touch Event"
-                icon={<TouchpadIcon size={14} color={gameUIColors.optional} />}
+                icon={<Touchpad size={14} color={gameUIColors.optional} />}
                 defaultOpen={true}
               >
                 <View style={styles.touchDetails}>

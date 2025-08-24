@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from "react-native";
-import { Settings, EyeOff, Database, Palette } from "lucide-react-native";
+import { Settings, EyeOff, Database, Palette } from 'rn-better-dev-tools/icons';
 import { useState, useEffect } from "react";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 import { useDevToolsTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
