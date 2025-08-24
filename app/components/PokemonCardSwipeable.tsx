@@ -11,20 +11,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
-import ReanimatedAnimated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  interpolate,
-} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { usePokemon } from "@/src/hooks/usePokemon";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { getTypeColor } from "@/src/utils/pokemonTypeColors";
 
 const { width } = Dimensions.get("window");
-const AnimatedReanimatedView = ReanimatedAnimated.View;
 
 interface PokemonCardSwipeableProps {
   pokemonId: string;
@@ -49,32 +41,39 @@ export function PokemonCardSwipeable({
 }: PokemonCardSwipeableProps) {
   const { data, isLoading } = usePokemon(pokemonId);
 
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const scale = useSharedValue(index === 0 ? 1 : 1 - index * 0.05);
-  const gestureRotation = useSharedValue(0);
-  const opacity = useSharedValue(index === 0 ? 1 : index < 3 ? 0.8 : 0);
+  // Use React Native Animated Values
+  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(index === 0 ? 1 : 1 - index * 0.05)).current;
+  const gestureRotation = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0)).current;
 
   useEffect(() => {
     if (index === 0) {
-      scale.value = withSpring(1);
-      translateY.value = withSpring(0);
-      translateX.value = withSpring(0);
-      opacity.value = withSpring(1);
+      Animated.parallel([
+        Animated.spring(scale, { toValue: 1, useNativeDriver: true }),
+        Animated.spring(translateY, { toValue: 0, useNativeDriver: true }),
+        Animated.spring(translateX, { toValue: 0, useNativeDriver: true }),
+        Animated.spring(opacity, { toValue: 1, useNativeDriver: true }),
+      ]).start();
     } else if (index === 1) {
-      scale.value = withSpring(0.95);
-      translateY.value = withSpring(8);
-      translateX.value = withSpring(8);
-      opacity.value = withSpring(0.9);
+      Animated.parallel([
+        Animated.spring(scale, { toValue: 0.95, useNativeDriver: true }),
+        Animated.spring(translateY, { toValue: 8, useNativeDriver: true }),
+        Animated.spring(translateX, { toValue: 8, useNativeDriver: true }),
+        Animated.spring(opacity, { toValue: 0.9, useNativeDriver: true }),
+      ]).start();
     } else if (index === 2) {
-      scale.value = withSpring(0.9);
-      translateY.value = withSpring(16);
-      translateX.value = withSpring(16);
-      opacity.value = withSpring(0.8);
+      Animated.parallel([
+        Animated.spring(scale, { toValue: 0.9, useNativeDriver: true }),
+        Animated.spring(translateY, { toValue: 16, useNativeDriver: true }),
+        Animated.spring(translateX, { toValue: 16, useNativeDriver: true }),
+        Animated.spring(opacity, { toValue: 0.8, useNativeDriver: true }),
+      ]).start();
     } else {
-      opacity.value = withSpring(0);
+      Animated.spring(opacity, { toValue: 0, useNativeDriver: true }).start();
     }
-  }, [index, scale, translateY, translateX, opacity]);
+  }, [index]);
 
   const panResponder = useMemo(
     () => PanResponder.create({
@@ -82,26 +81,25 @@ export function PokemonCardSwipeable({
       onPanResponderGrant: () => {
         // Stop any ongoing animations when starting a gesture
         if (isActive) {
-          'worklet';
+          translateX.stopAnimation();
+          translateY.stopAnimation();
+          gestureRotation.stopAnimation();
+          opacity.stopAnimation();
         }
       },
       onPanResponderMove: (_evt, gestureState) => {
         if (!isActive) return;
 
-        translateX.value = gestureState.dx;
-        translateY.value = gestureState.dy / 4 + index * -10;
+        translateX.setValue(gestureState.dx);
+        translateY.setValue(gestureState.dy / 4 + index * -10);
 
-        gestureRotation.value = interpolate(
-          gestureState.dx,
-          [-width, 0, width],
-          [-30, 0, 30]
-        );
+        // Manual interpolation for rotation
+        const rotationValue = (gestureState.dx / width) * 30;
+        gestureRotation.setValue(Math.max(-30, Math.min(30, rotationValue)));
 
-        opacity.value = interpolate(
-          Math.abs(gestureState.dx),
-          [0, width],
-          [1, 0.3]
-        );
+        // Manual interpolation for opacity
+        const opacityValue = 1 - (Math.abs(gestureState.dx) / width) * 0.7;
+        opacity.setValue(Math.max(0.3, Math.min(1, opacityValue)));
       },
       onPanResponderRelease: (_evt, gestureState) => {
         if (!isActive) return;
@@ -116,37 +114,56 @@ export function PokemonCardSwipeable({
         if (shouldSwipe) {
           const direction = gestureState.dx > 0 ? 1 : -1;
 
-          translateX.value = withTiming(width * 1.5 * direction, {
-            duration: 300,
-          });
-          translateY.value = withTiming(-100, { duration: 300 });
-          gestureRotation.value = withTiming(direction * 45, { duration: 300 });
-          opacity.value = withTiming(0, { duration: 300 }, () => {
-            'worklet';
+          Animated.parallel([
+            Animated.timing(translateX, {
+              toValue: width * 1.5 * direction,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(translateY, {
+              toValue: -100,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(gestureRotation, {
+              toValue: direction * 45,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+              toValue: 0,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
             // Call onSwipe after animation completes
+            onSwipe();
           });
 
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          setTimeout(() => {
-            onSwipe();
-          }, 300);
         } else {
           // Reset to proper positions based on index
           if (index === 0) {
-            translateX.value = withSpring(0);
-            translateY.value = withSpring(0);
-            gestureRotation.value = withSpring(0);
-            opacity.value = withSpring(1);
+            Animated.parallel([
+              Animated.spring(translateX, { toValue: 0, useNativeDriver: true }),
+              Animated.spring(translateY, { toValue: 0, useNativeDriver: true }),
+              Animated.spring(gestureRotation, { toValue: 0, useNativeDriver: true }),
+              Animated.spring(opacity, { toValue: 1, useNativeDriver: true }),
+            ]).start();
           } else if (index === 1) {
-            translateX.value = withSpring(8);
-            translateY.value = withSpring(8);
-            gestureRotation.value = withSpring(0);
-            opacity.value = withSpring(0.9);
+            Animated.parallel([
+              Animated.spring(translateX, { toValue: 8, useNativeDriver: true }),
+              Animated.spring(translateY, { toValue: 8, useNativeDriver: true }),
+              Animated.spring(gestureRotation, { toValue: 0, useNativeDriver: true }),
+              Animated.spring(opacity, { toValue: 0.9, useNativeDriver: true }),
+            ]).start();
           } else if (index === 2) {
-            translateX.value = withSpring(16);
-            translateY.value = withSpring(16);
-            gestureRotation.value = withSpring(0);
-            opacity.value = withSpring(0.8);
+            Animated.parallel([
+              Animated.spring(translateX, { toValue: 16, useNativeDriver: true }),
+              Animated.spring(translateY, { toValue: 16, useNativeDriver: true }),
+              Animated.spring(gestureRotation, { toValue: 0, useNativeDriver: true }),
+              Animated.spring(opacity, { toValue: 0.8, useNativeDriver: true }),
+            ]).start();
           }
         }
       },
@@ -154,17 +171,23 @@ export function PokemonCardSwipeable({
     [isActive, index, onSwipe]
   );
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  // Create animated styles using React Native Animated
+  const animatedStyle = {
     transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { rotate: `${gestureRotation.value}deg` },
-      { scale: scale.value },
+      { translateX },
+      { translateY },
+      { 
+        rotate: gestureRotation.interpolate({
+          inputRange: [-45, 45],
+          outputRange: ['-45deg', '45deg'],
+        })
+      },
+      { scale },
     ],
-    opacity: opacity.value,
+    opacity,
     zIndex: 100 - index * 10,
     elevation: 20 - index * 2,
-  }));
+  };
 
   const mainType = data?.types?.[0] || "normal";
   const gradientColors =
@@ -179,7 +202,7 @@ export function PokemonCardSwipeable({
 
   if (isLoading || !data) {
     return (
-      <AnimatedReanimatedView style={[styles.pokemonCard, animatedStyle]}>
+      <Animated.View style={[styles.pokemonCard, animatedStyle]}>
         <LinearGradient
           colors={PokemonTheme.gradients.dark}
           style={styles.cardGradient}
@@ -191,12 +214,12 @@ export function PokemonCardSwipeable({
             </View>
           </BlurView>
         </LinearGradient>
-      </AnimatedReanimatedView>
+      </Animated.View>
     );
   }
 
   return (
-    <AnimatedReanimatedView
+    <Animated.View
       style={[styles.pokemonCard, animatedStyle]}
       {...panResponder.panHandlers}
     >
@@ -228,7 +251,7 @@ export function PokemonCardSwipeable({
           </BlurView>
         </LinearGradient>
       </Animated.View>
-    </AnimatedReanimatedView>
+    </Animated.View>
   );
 }
 
