@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { PokemonTheme } from "@/constants/PokemonTheme";
-import { getTypeColor } from "../_utils/pokemonTypeColors";
+import { getTypeColor } from "../utils/pokemonTypeColors";
 
 const { width } = Dimensions.get("window");
 
@@ -62,6 +62,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
         }),
       ])
     ).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const mainType = pokemon.types[0];

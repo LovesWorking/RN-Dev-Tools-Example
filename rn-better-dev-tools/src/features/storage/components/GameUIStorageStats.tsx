@@ -11,30 +11,17 @@ import {
   Zap 
 } from "lucide-react-native";
 import { StorageKeyStats } from "../types";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
 interface GameUIStorageStatsProps {
   stats: StorageKeyStats;
 }
 
-// Game UI Color Palette - matching design system
+// Use shared game colors
 const gameColors = {
-  // Primary UI
-  background: '#0A0A0F',
-  panel: 'rgba(10, 10, 20, 0.98)',
-  border: 'rgba(0, 212, 255, 0.3)',
-  
-  // Status Colors (matching game design)
-  online: '#00FF88',
-  warning: '#FFD700',
-  error: '#FF4444',
-  info: '#00D4FF',
-  optional: '#9D4EDD',
-  storage: '#FFD700',
-  
-  // Text
-  primary: '#FFFFFF',
-  secondary: '#AAA',
-  muted: '#666',
+  ...gameUIColors,
+  // Add storage-specific colors if needed
+  online: gameUIColors.success,
 };
 
 // Storage type configurations with game UI colors

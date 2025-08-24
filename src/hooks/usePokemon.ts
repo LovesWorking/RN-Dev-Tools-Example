@@ -42,7 +42,7 @@ const fetchPokemon = async (pokemonName: string): Promise<PokemonData> => {
 
 export const usePokemon = (pokemonName: string) => {
   return useQuery({
-    queryKey: ['pokemon', pokemonName],
+    queryKey: ["pokemon", pokemonName],
     queryFn: () => fetchPokemon(pokemonName),
     enabled: pokemonName.length > 0,
     // Keep data in cache longer

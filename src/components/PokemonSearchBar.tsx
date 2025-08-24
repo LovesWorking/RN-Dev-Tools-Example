@@ -63,6 +63,7 @@ export function PokemonSearchBar({
         }),
       ])
     ).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearchPress = () => {

@@ -630,6 +630,7 @@ function NetworkModalInner({
                 initialNumToRender={10}
                 maxToRenderPerBatch={10}
                 windowSize={10}
+                scrollEnabled={false}
                 sentry-label="ignore network events list"
               />
             ) : (

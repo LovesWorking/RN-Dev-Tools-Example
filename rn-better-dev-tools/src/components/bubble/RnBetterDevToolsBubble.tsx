@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { View, Dimensions } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
@@ -15,11 +15,7 @@ import {
 import { NetworkModal } from "@/rn-better-dev-tools/src/features/network";
 // import { SentryLogsModal } from "@/rn-better-dev-tools/src/features/sentry/components/SentryLogsModal"; // Temporarily disabled - causing import errors
 
-import {
-  FloatingTools,
-  type UserRole,
-  UserStatus,
-} from "./floatingTools";
+import { FloatingTools, type UserRole, UserStatus } from "./floatingTools";
 import { ErrorBoundary } from "@/rn-better-dev-tools/src/shared/ui/components/ErrorBoundary";
 import {
   ReactQueryModal,
@@ -30,7 +26,6 @@ import { ClaudeGridMenu } from "./ClaudeGridMenu";
 import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./dial/DialDevTools";
 import Dial2 from "./dial/Dial2";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Re-export types that developers will need
 export type { UserRole } from "./floatingTools";
@@ -78,7 +73,7 @@ export function RnBetterDevToolsBubble({
 
   // Menu type selection
   type MenuType = "claude" | "dial" | "dial2";
-  const [menuType, setMenuType] = useState<MenuType>("dial");
+  const [menuType] = useState<MenuType>("dial");
 
   // Get screen dimensions
   const { height: screenHeight } = Dimensions.get("window");
@@ -123,28 +118,23 @@ export function RnBetterDevToolsBubble({
   // Modal management hook with persistence - extracted from main component logic
   const {
     isModalOpen,
-    isDebugModalOpen,
     isEnvModalOpen,
     isSentryModalOpen,
     isStorageModalOpen,
     selectedQueryKey,
-    selectedSection,
     activeFilter,
     activeTab,
     selectedMutationId,
     setActiveFilter,
     handleModalDismiss,
-    handleDebugModalDismiss,
     handleEnvModalDismiss,
     handleStorageModalDismiss,
     handleQuerySelect,
     handleQueryPress,
-    handleStatusPress,
     handleEnvPress,
     handleStoragePress,
     handleTabChange,
     handleMutationSelect,
-    setSelectedSection,
   } = useModalManager();
 
   // Removed auto-open - Dial2 is now the primary selector
@@ -310,41 +300,3 @@ export function RnBetterDevToolsBubble({
     </ErrorBoundary>
   );
 }
-const styles = StyleSheet.create({
-  queryButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-    backgroundColor: gameUIColors.panel,
-    borderWidth: 1,
-    borderColor: gameUIColors.border,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-    backgroundColor: gameUIColors.panel,
-    borderWidth: 1,
-    borderColor: gameUIColors.border,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: gameUIColors.panel,
-    borderWidth: 1,
-    borderColor: gameUIColors.border,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuButtonText: {
-    color: gameUIColors.primary,
-    fontSize: 12,
-    fontWeight: "bold",
-    fontFamily: "monospace",
-  },
-});

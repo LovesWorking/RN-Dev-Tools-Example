@@ -27,6 +27,7 @@ import {
   Animated,
   ScrollView,
   Text,
+  FlatList,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
@@ -1071,10 +1072,12 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
         </View>
 
         <View style={[styles.content, customStyles.content]}>
+          {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
             showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
           >
             {children}
           </ScrollView>
@@ -1153,10 +1156,12 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           </View>
 
           <View style={[styles.content, customStyles.content]}>
+            {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
             <ScrollView
               style={{ flex: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
               showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
             >
               {children}
             </ScrollView>

@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Animated, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { PokemonTheme } from "@/constants/PokemonTheme";
-import { getTypeColor } from "../app/_utils/pokemonTypeColors";
+import { getTypeColor } from "@/src/utils/pokemonTypeColors";
 
 const { width } = Dimensions.get("window");
 
@@ -140,6 +140,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
         ])
       ).start();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const mainType = pokemon.types[0];

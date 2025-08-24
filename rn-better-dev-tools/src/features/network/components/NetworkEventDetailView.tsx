@@ -24,7 +24,7 @@ import {
 import { DataViewer } from '../../react-query/components/shared/DataViewer';
 import type { NetworkEvent } from '../types';
 import { formatBytes, formatDuration, formatHttpStatus } from '../utils/formatting';
-import { formatRelativeTime } from '../../sentry/utils/formatRelativeTime';
+import { formatRelativeTime } from '@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime';
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;

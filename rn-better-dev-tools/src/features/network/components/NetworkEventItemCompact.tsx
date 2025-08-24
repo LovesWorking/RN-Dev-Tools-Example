@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import { ChevronRight, Upload, Download, Clock, AlertCircle } from "lucide-react-native";
 import type { NetworkEvent } from "../types";
 import { formatBytes, formatDuration } from "../utils/formatting";
-import { formatRelativeTime } from "../../sentry/utils/formatRelativeTime";
+import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { useTickEveryMinute } from "../../sentry/hooks/useTickEveryMinute";
 
 interface NetworkEventItemCompactProps {

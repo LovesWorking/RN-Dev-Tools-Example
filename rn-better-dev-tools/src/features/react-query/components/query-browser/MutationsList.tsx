@@ -137,6 +137,7 @@ export default function MutationsList({
             initialNumToRender={10}
             maxToRenderPerBatch={10}
             windowSize={10}
+            scrollEnabled={false}
           />
         </View>
       ) : (

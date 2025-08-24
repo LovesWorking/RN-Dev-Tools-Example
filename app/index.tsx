@@ -3,9 +3,9 @@ import React, {
   useEffect,
   useRef,
   useCallback,
-  useMemo,
+  // useMemo,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StyleSheet,
   ScrollView,
@@ -16,23 +16,21 @@ import {
   ActivityIndicator,
   TextInput,
   TouchableOpacity,
-  Platform,
+  PanResponder,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
-import { usePokemon } from "./_hooks/usePokemon";
+import { usePokemon } from "@/src/hooks/usePokemon";
 import { PokemonTheme } from "@/constants/PokemonTheme";
-import { getTypeColor } from "./_utils/pokemonTypeColors";
+import { getTypeColor } from "@/src/utils/pokemonTypeColors";
 import * as Haptics from "expo-haptics";
-import { pokemonNames, searchPokemon } from "./_data/pokemonNames";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { pokemonNames, searchPokemon } from "@/src/data/pokemonNames";
 import ReanimatedAnimated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-  runOnJS,
   interpolate,
 } from "react-native-reanimated";
 import { useQueryClient } from "@tanstack/react-query";
@@ -41,19 +39,19 @@ import {
   UserRole,
   Environment,
 } from "@/rn-better-dev-tools/src";
-import ClaudeModal60FPSClean from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+// import ClaudeModal60FPSClean from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 // Performance test modals removed - no longer needed
 import {
   createEnvVarConfig,
   envVar,
-  GameUIEnvContent,
+  // GameUIEnvContent,
 } from "@/rn-better-dev-tools/src/features/env";
-import QueryStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/QueryStatusCount";
-import MutationStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/MutationStatusCount";
+// import QueryStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/QueryStatusCount";
+// import MutationStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/MutationStatusCount";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 
 const { width, height } = Dimensions.get("window");
-const SCREEN = Dimensions.get("window");
+// const SCREEN = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;
 
 // Pokemon Card Component with Swipe
@@ -105,59 +103,64 @@ function PokemonCardSwipeable({
     } else {
       opacity.value = 0;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
-  const gesture = Gesture.Pan()
-    .enabled(isActive)
-    .onUpdate((e) => {
-      "worklet";
-      if (!isActive) return;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => isActive,
+      onPanResponderGrant: () => {
+        // Optional: Initial touch
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        if (!isActive) return;
 
-      translateX.value = e.translationX;
-      translateY.value = e.translationY / 4 + index * -10;
+        translateX.value = gestureState.dx;
+        translateY.value = gestureState.dy / 4 + index * -10;
 
-      gestureRotation.value = interpolate(
-        e.translationX,
-        [-width, 0, width],
-        [-30, 0, 30]
-      );
+        gestureRotation.value = interpolate(
+          gestureState.dx,
+          [-width, 0, width],
+          [-30, 0, 30]
+        );
 
-      opacity.value = interpolate(
-        Math.abs(e.translationX),
-        [0, width],
-        [1, 0.3]
-      );
+        opacity.value = interpolate(
+          Math.abs(gestureState.dx),
+          [0, width],
+          [1, 0.3]
+        );
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        if (!isActive) return;
+
+        const SWIPE_THRESHOLD = width * 0.3;
+        const VELOCITY_THRESHOLD = 0.5; // PanResponder uses different velocity scale
+
+        const shouldSwipe =
+          Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
+          Math.abs(gestureState.vx) > VELOCITY_THRESHOLD;
+
+        if (shouldSwipe) {
+          const direction = gestureState.dx > 0 ? 1 : -1;
+
+          translateX.value = withTiming(width * 1.5 * direction, {
+            duration: 300,
+          });
+          translateY.value = withTiming(-100, { duration: 300 });
+          gestureRotation.value = withTiming(direction * 45, { duration: 300 });
+          opacity.value = withTiming(0, { duration: 300 });
+
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          onSwipe();
+        } else {
+          translateX.value = withSpring(index === 1 ? 8 : index === 2 ? 16 : 0);
+          translateY.value = withSpring(index === 1 ? 8 : index === 2 ? 16 : 0);
+          gestureRotation.value = withSpring(0);
+          opacity.value = withSpring(index === 0 ? 1 : index === 1 ? 0.9 : 0.8);
+        }
+      },
     })
-    .onEnd((e) => {
-      "worklet";
-      if (!isActive) return;
-
-      const SWIPE_THRESHOLD = width * 0.3;
-      const VELOCITY_THRESHOLD = 500;
-
-      const shouldSwipe =
-        Math.abs(e.translationX) > SWIPE_THRESHOLD ||
-        Math.abs(e.velocityX) > VELOCITY_THRESHOLD;
-
-      if (shouldSwipe) {
-        const direction = e.translationX > 0 ? 1 : -1;
-
-        translateX.value = withTiming(width * 1.5 * direction, {
-          duration: 300,
-        });
-        translateY.value = withTiming(-100, { duration: 300 });
-        gestureRotation.value = withTiming(direction * 45, { duration: 300 });
-        opacity.value = withTiming(0, { duration: 300 });
-
-        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
-        runOnJS(onSwipe)();
-      } else {
-        translateX.value = withSpring(index === 1 ? 8 : index === 2 ? 16 : 0);
-        translateY.value = withSpring(index === 1 ? 8 : index === 2 ? 16 : 0);
-        gestureRotation.value = withSpring(0);
-        opacity.value = withSpring(index === 0 ? 1 : index === 1 ? 0.9 : 0.8);
-      }
-    });
+  ).current;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -202,293 +205,290 @@ function PokemonCardSwipeable({
   }
 
   return (
-    <GestureDetector gesture={gesture}>
-      <AnimatedReanimatedView style={[styles.pokemonCard, animatedStyle]}>
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: floatAnim }],
-          }}
+    <AnimatedReanimatedView
+      style={[styles.pokemonCard, animatedStyle]}
+      {...panResponder.panHandlers}
+    >
+      <Animated.View
+        style={{
+          flex: 1,
+          transform: [{ translateY: floatAnim }],
+        }}
+      >
+        <LinearGradient
+          colors={gradientColors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.cardGradient}
         >
-          <LinearGradient
-            colors={gradientColors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.cardGradient}
+          {/* Holographic shimmer effect */}
+          <Animated.View
+            style={[
+              styles.shimmer,
+              {
+                transform: [
+                  {
+                    translateX: shimmerAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-width * 1.5, width * 1.5],
+                    }),
+                  },
+                  { rotate: "25deg" },
+                  { scaleY: 3 },
+                ],
+              },
+            ]}
+            pointerEvents="none"
           >
-            {/* Holographic shimmer effect */}
-            <Animated.View
-              style={[
-                styles.shimmer,
-                {
-                  transform: [
-                    {
-                      translateX: shimmerAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-width * 1.5, width * 1.5],
-                      }),
-                    },
-                    { rotate: "25deg" },
-                    { scaleY: 3 },
-                  ],
-                },
+            <LinearGradient
+              colors={[
+                "transparent",
+                "transparent",
+                "rgba(255,182,193,0.15)",
+                "rgba(255,218,185,0.2)",
+                "rgba(255,255,224,0.25)",
+                "rgba(144,238,144,0.2)",
+                "rgba(173,216,230,0.25)",
+                "rgba(221,160,221,0.2)",
+                "rgba(255,182,193,0.15)",
+                "transparent",
+                "transparent",
               ]}
-              pointerEvents="none"
-            >
-              <LinearGradient
-                colors={[
-                  "transparent",
-                  "transparent",
-                  "rgba(255,182,193,0.15)",
-                  "rgba(255,218,185,0.2)",
-                  "rgba(255,255,224,0.25)",
-                  "rgba(144,238,144,0.2)",
-                  "rgba(173,216,230,0.25)",
-                  "rgba(221,160,221,0.2)",
-                  "rgba(255,182,193,0.15)",
-                  "transparent",
-                  "transparent",
-                ]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                locations={[
-                  0, 0.1, 0.25, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1,
-                ]}
-                style={styles.shimmerGradient}
-              />
-            </Animated.View>
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              locations={[0, 0.1, 0.25, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1]}
+              style={styles.shimmerGradient}
+            />
+          </Animated.View>
 
-            {/* Additional prismatic layer */}
-            <Animated.View
-              style={[
-                styles.shimmer,
-                {
-                  transform: [
-                    {
-                      translateX: shimmerAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-width * 1.2, width * 1.2],
-                      }),
-                    },
-                    { rotate: "-15deg" },
-                    { scaleY: 2.5 },
-                  ],
-                  opacity: shimmerAnim.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 0.3, 0],
-                  }),
-                },
+          {/* Additional prismatic layer */}
+          <Animated.View
+            style={[
+              styles.shimmer,
+              {
+                transform: [
+                  {
+                    translateX: shimmerAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-width * 1.2, width * 1.2],
+                    }),
+                  },
+                  { rotate: "-15deg" },
+                  { scaleY: 2.5 },
+                ],
+                opacity: shimmerAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0, 0.3, 0],
+                }),
+              },
+            ]}
+            pointerEvents="none"
+          >
+            <LinearGradient
+              colors={[
+                "transparent",
+                "rgba(255,0,255,0.1)",
+                "rgba(0,255,255,0.1)",
+                "rgba(255,255,0,0.1)",
+                "transparent",
               ]}
-              pointerEvents="none"
-            >
-              <LinearGradient
-                colors={[
-                  "transparent",
-                  "rgba(255,0,255,0.1)",
-                  "rgba(0,255,255,0.1)",
-                  "rgba(255,255,0,0.1)",
-                  "transparent",
-                ]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.shimmerGradient}
-              />
-            </Animated.View>
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.shimmerGradient}
+            />
+          </Animated.View>
 
-            <BlurView intensity={10} tint="light" style={styles.cardContent}>
-              {/* Card border frame - Pokemon card style */}
-              <View style={styles.cardFrame}>
-                <View style={styles.cardFrameInner} />
-              </View>
-              {/* Card Header with HP */}
-              <View style={styles.cardHeader}>
-                <Text style={styles.pokemonNameHeader}>
-                  {data.name.toUpperCase()}
+          <BlurView intensity={10} tint="light" style={styles.cardContent}>
+            {/* Card border frame - Pokemon card style */}
+            <View style={styles.cardFrame}>
+              <View style={styles.cardFrameInner} />
+            </View>
+            {/* Card Header with HP */}
+            <View style={styles.cardHeader}>
+              <Text style={styles.pokemonNameHeader}>
+                {data.name.toUpperCase()}
+              </Text>
+              <View style={styles.hpContainer}>
+                <Text style={styles.hpText}>HP</Text>
+                <Text style={styles.hpValue}>
+                  {data.stats.find((s: any) => s.name === "hp")?.value || 100}
                 </Text>
-                <View style={styles.hpContainer}>
-                  <Text style={styles.hpText}>HP</Text>
-                  <Text style={styles.hpValue}>
-                    {data.stats.find((s: any) => s.name === "hp")?.value || 100}
-                  </Text>
+              </View>
+            </View>
+
+            {/* Pokemon Image Container with art frame */}
+            <View style={styles.artFrame}>
+              <LinearGradient
+                colors={[
+                  `${getTypeColor(mainType)}22`,
+                  "transparent",
+                  `${getTypeColor(mainType)}11`,
+                ]}
+                style={styles.artBackground}
+              />
+              <View style={styles.imageContainer}>
+                {data.image && (
+                  <Animated.Image
+                    source={{ uri: data.image }}
+                    style={[
+                      styles.pokemonImage,
+                      {
+                        transform: [
+                          {
+                            scale: cardGlowAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [1, 1.08],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                    resizeMode="contain"
+                  />
+                )}
+                {/* Sparkle effects */}
+                <View style={styles.sparkleContainer}>
+                  <View style={[styles.sparkle, { top: 5, left: 5 }]} />
+                  <View style={[styles.sparkle, { top: 20, right: 15 }]} />
+                  <View style={[styles.sparkle, { bottom: 15, left: 20 }]} />
+                  <View style={[styles.sparkle, { bottom: 5, right: 5 }]} />
                 </View>
               </View>
+              <Text style={styles.stageName}>Basic Pokémon</Text>
+            </View>
 
-              {/* Pokemon Image Container with art frame */}
-              <View style={styles.artFrame}>
+            {/* Types */}
+            <View style={styles.typesContainer}>
+              {data.types.map((type: string) => (
                 <LinearGradient
-                  colors={[
-                    `${getTypeColor(mainType)}22`,
-                    "transparent",
-                    `${getTypeColor(mainType)}11`,
-                  ]}
-                  style={styles.artBackground}
-                />
-                <View style={styles.imageContainer}>
-                  {data.image && (
-                    <Animated.Image
-                      source={{ uri: data.image }}
-                      style={[
-                        styles.pokemonImage,
-                        {
-                          transform: [
-                            {
-                              scale: cardGlowAnim.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [1, 1.08],
-                              }),
-                            },
-                          ],
-                        },
-                      ]}
-                      resizeMode="contain"
-                    />
-                  )}
-                  {/* Sparkle effects */}
-                  <View style={styles.sparkleContainer}>
-                    <View style={[styles.sparkle, { top: 5, left: 5 }]} />
-                    <View style={[styles.sparkle, { top: 20, right: 15 }]} />
-                    <View style={[styles.sparkle, { bottom: 15, left: 20 }]} />
-                    <View style={[styles.sparkle, { bottom: 5, right: 5 }]} />
-                  </View>
-                </View>
-                <Text style={styles.stageName}>Basic Pokémon</Text>
-              </View>
+                  key={type}
+                  colors={[getTypeColor(type), `${getTypeColor(type)}CC`]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.typeBadge}
+                >
+                  <Text style={styles.typeText}>{type.toUpperCase()}</Text>
+                </LinearGradient>
+              ))}
+            </View>
 
-              {/* Types */}
-              <View style={styles.typesContainer}>
-                {data.types.map((type: string) => (
-                  <LinearGradient
-                    key={type}
-                    colors={[getTypeColor(type), `${getTypeColor(type)}CC`]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.typeBadge}
-                  >
-                    <Text style={styles.typeText}>{type.toUpperCase()}</Text>
-                  </LinearGradient>
-                ))}
-              </View>
-
-              {/* Attack Moves */}
-              <View style={styles.movesContainer}>
-                <View style={styles.moveRow}>
-                  <View style={styles.energyBadge}>
-                    <View
-                      style={[
-                        styles.energyIcon,
-                        { backgroundColor: getTypeColor(mainType) },
-                      ]}
-                    />
-                  </View>
-                  <Text style={styles.moveName}>Quick Attack</Text>
-                  <Text style={styles.moveDamage}>
-                    {data.stats.find((s: any) => s.name === "attack")?.value ||
-                      50}
-                  </Text>
-                </View>
-                <View style={styles.moveRow}>
-                  <View style={styles.energyBadge}>
-                    <View
-                      style={[
-                        styles.energyIcon,
-                        { backgroundColor: getTypeColor(mainType) },
-                      ]}
-                    />
-                    <View
-                      style={[
-                        styles.energyIcon,
-                        { backgroundColor: getTypeColor(mainType) },
-                      ]}
-                    />
-                  </View>
-                  <Text style={styles.moveName}>Special Attack</Text>
-                  <Text style={styles.moveDamage}>
-                    {(data.stats.find((s: any) => s.name === "attack")?.value ||
-                      50) * 2}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Bottom Stats Bar */}
-              <View style={styles.bottomStats}>
-                <View style={styles.weaknessResistance}>
-                  <Text style={styles.statMiniLabel}>Weakness</Text>
+            {/* Attack Moves */}
+            <View style={styles.movesContainer}>
+              <View style={styles.moveRow}>
+                <View style={styles.energyBadge}>
                   <View
                     style={[
-                      styles.typeMini,
-                      {
-                        backgroundColor: getTypeColor(
-                          data.types[1] || mainType
-                        ),
-                      },
+                      styles.energyIcon,
+                      { backgroundColor: getTypeColor(mainType) },
                     ]}
                   />
                 </View>
-                <View style={styles.weaknessResistance}>
-                  <Text style={styles.statMiniLabel}>Retreat</Text>
-                  <View style={styles.retreatCost}>
-                    <Text style={styles.retreatText}>⚪⚪</Text>
-                  </View>
+                <Text style={styles.moveName}>Quick Attack</Text>
+                <Text style={styles.moveDamage}>
+                  {data.stats.find((s: any) => s.name === "attack")?.value ||
+                    50}
+                </Text>
+              </View>
+              <View style={styles.moveRow}>
+                <View style={styles.energyBadge}>
+                  <View
+                    style={[
+                      styles.energyIcon,
+                      { backgroundColor: getTypeColor(mainType) },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.energyIcon,
+                      { backgroundColor: getTypeColor(mainType) },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.moveName}>Special Attack</Text>
+                <Text style={styles.moveDamage}>
+                  {(data.stats.find((s: any) => s.name === "attack")?.value ||
+                    50) * 2}
+                </Text>
+              </View>
+            </View>
+
+            {/* Bottom Stats Bar */}
+            <View style={styles.bottomStats}>
+              <View style={styles.weaknessResistance}>
+                <Text style={styles.statMiniLabel}>Weakness</Text>
+                <View
+                  style={[
+                    styles.typeMini,
+                    {
+                      backgroundColor: getTypeColor(data.types[1] || mainType),
+                    },
+                  ]}
+                />
+              </View>
+              <View style={styles.weaknessResistance}>
+                <Text style={styles.statMiniLabel}>Retreat</Text>
+                <View style={styles.retreatCost}>
+                  <Text style={styles.retreatText}>⚪⚪</Text>
                 </View>
               </View>
+            </View>
 
-              {/* Card Set Info and Rarity */}
-              <View style={styles.cardSetInfo}>
-                <Text style={styles.cardSetText}>1st Edition</Text>
-                <Text style={styles.raritySymbol}>★</Text>
-                <Text style={styles.cardNumber}>{data.id}/151</Text>
-              </View>
+            {/* Card Set Info and Rarity */}
+            <View style={styles.cardSetInfo}>
+              <Text style={styles.cardSetText}>1st Edition</Text>
+              <Text style={styles.raritySymbol}>★</Text>
+              <Text style={styles.cardNumber}>{data.id}/151</Text>
+            </View>
 
-              {/* Copyright */}
-              <Text style={styles.copyright}>©2024 Pokémon TCG</Text>
+            {/* Copyright */}
+            <Text style={styles.copyright}>©2024 Pokémon TCG</Text>
 
-              {/* Swipe hint indicators */}
-              {isActive && (
-                <>
-                  <Animated.View
-                    style={[
-                      styles.swipeHint,
-                      styles.swipeHintLeft,
-                      {
-                        opacity: shimmerAnim.interpolate({
-                          inputRange: [0, 0.5, 1],
-                          outputRange: [0, 0.4, 0],
-                        }),
-                      },
-                    ]}
-                  >
-                    <Ionicons
-                      name="chevron-back"
-                      size={20}
-                      color="rgba(255,255,255,0.5)"
-                    />
-                  </Animated.View>
+            {/* Swipe hint indicators */}
+            {isActive && (
+              <>
+                <Animated.View
+                  style={[
+                    styles.swipeHint,
+                    styles.swipeHintLeft,
+                    {
+                      opacity: shimmerAnim.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [0, 0.4, 0],
+                      }),
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={20}
+                    color="rgba(255,255,255,0.5)"
+                  />
+                </Animated.View>
 
-                  <Animated.View
-                    style={[
-                      styles.swipeHint,
-                      styles.swipeHintRight,
-                      {
-                        opacity: shimmerAnim.interpolate({
-                          inputRange: [0, 0.5, 1],
-                          outputRange: [0, 0.4, 0],
-                        }),
-                      },
-                    ]}
-                  >
-                    <Ionicons
-                      name="chevron-forward"
-                      size={20}
-                      color="rgba(255,255,255,0.5)"
-                    />
-                  </Animated.View>
-                </>
-              )}
-            </BlurView>
-          </LinearGradient>
-        </Animated.View>
-      </AnimatedReanimatedView>
-    </GestureDetector>
+                <Animated.View
+                  style={[
+                    styles.swipeHint,
+                    styles.swipeHintRight,
+                    {
+                      opacity: shimmerAnim.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [0, 0.4, 0],
+                      }),
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color="rgba(255,255,255,0.5)"
+                  />
+                </Animated.View>
+              </>
+            )}
+          </BlurView>
+        </LinearGradient>
+      </Animated.View>
+    </AnimatedReanimatedView>
   );
 }
 
@@ -499,21 +499,21 @@ function getRandomPokemonNames(count: number): string[] {
 }
 
 // Stable empty styles object to prevent re-renders
-const EMPTY_STYLES = {};
+// const EMPTY_STYLES = {};
 
 export default function PokemonScreen() {
   const queryClient = useQueryClient();
 
   const insets = useSafeAreaInsets();
   // Modal states for our modal versions
-  const [claudeModalUltra60FPSVisible, setClaudeModalUltra60FPSVisible] =
-    useState(false); // Auto-open for testing ENV UI
+  // const [claudeModalUltra60FPSVisible, setClaudeModalUltra60FPSVisible] =
+  //   useState(false); // Auto-open for testing ENV UI
   // Auto-open performance test modal for testing (set to false to disable)
-  const AUTO_OPEN_PERFORMANCE_TEST = false;
-  const [performanceTestVisible, setPerformanceTestVisible] = useState(
-    AUTO_OPEN_PERFORMANCE_TEST
-  );
-  
+  // const AUTO_OPEN_PERFORMANCE_TEST = false;
+  // const [performanceTestVisible, setPerformanceTestVisible] = useState(
+  //   AUTO_OPEN_PERFORMANCE_TEST
+  // );
+
   // Auto-open React Query modal for testing - removed due to Event not available in React Native
   const [pokemonStack, setPokemonStack] = useState(() => [
     "pikachu",
@@ -535,23 +535,23 @@ export default function PokemonScreen() {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Debug function to log cache keys
-  const logCacheKeys = useCallback(() => {
-    // Clear async storage keys and values
-    AsyncStorage.clear();
-    // const cache = queryClient.getQueryCache();
-    // const queries = cache.getAll();
-    // console.log("=== QUERY CACHE DEBUG ===");
-    // console.log("Total queries in cache:", queries.length);
-    // queries.forEach((query, index) => {
-    //   console.log(`Query ${index + 1}:`, {
-    //     queryKey: query.queryKey,
-    //     state: query.state.status,
-    //     dataUpdatedAt: query.state.dataUpdatedAt,
-    //     data: query.state.data ? "Has data" : "No data",
-    //   });
-    // });
-    // console.log("=========================");
-  }, [queryClient]);
+  // const _logCacheKeys = useCallback(() => {
+  // Clear async storage keys and values
+  // AsyncStorage.clear();
+  // const cache = queryClient.getQueryCache();
+  // const queries = cache.getAll();
+  // console.log("=== QUERY CACHE DEBUG ===");
+  // console.log("Total queries in cache:", queries.length);
+  // queries.forEach((query, index) => {
+  //   console.log(`Query ${index + 1}:`, {
+  //     queryKey: query.queryKey,
+  //     state: query.state.status,
+  //     dataUpdatedAt: query.state.dataUpdatedAt,
+  //     data: query.state.data ? "Has data" : "No data",
+  //   });
+  // });
+  // console.log("=========================");
+  // }, []);
 
   // Only keep essential animations for effects
   const floatAnim = useRef(new Animated.Value(0)).current;
@@ -700,6 +700,7 @@ export default function PokemonScreen() {
         ).start();
       }, startDelay);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle search with haptic feedback
@@ -824,14 +825,14 @@ export default function PokemonScreen() {
     envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
   ]);
   return (
-      <View style={styles.container}>
-        <RnBetterDevToolsBubble
-          queryClient={queryClient}
-          environment={environment}
-          userRole={userRole}
-          requiredEnvVars={requiredEnvVars}
-          onOpenPerformanceTest={() => setPerformanceTestVisible(true)}
-        />
+    <View style={styles.container}>
+      <RnBetterDevToolsBubble
+        queryClient={queryClient}
+        environment={environment}
+        userRole={userRole}
+        requiredEnvVars={requiredEnvVars}
+        // onOpenPerformanceTest={() => setPerformanceTestVisible(true)}
+      />
 
       {/* Premium Animated Background */}
       <LinearGradient
@@ -1235,7 +1236,9 @@ export default function PokemonScreen() {
 
         {/* Performance Test Button */}
         <TouchableOpacity
-          onPress={() => setPerformanceTestVisible(true)}
+          onPress={() => {
+            /* setPerformanceTestVisible(true) */
+          }}
           style={styles.debugButton}
           activeOpacity={0.7}
         >
@@ -1254,7 +1257,9 @@ export default function PokemonScreen() {
 
         {/* ClaudeModal60FPS Button */}
         <TouchableOpacity
-          onPress={() => setClaudeModalUltra60FPSVisible(true)}
+          onPress={() => {
+            /* setClaudeModalUltra60FPSVisible(true) */
+          }}
           style={styles.debugButton}
           activeOpacity={0.7}
         >
@@ -1352,7 +1357,7 @@ export default function PokemonScreen() {
         </View>
       </ScrollView>
 
-      {/* ClaudeModal60FPSClean - Clean Separated Version */}
+      {/* ClaudeModal60FPSClean - Clean Separated Version 
       <ClaudeModal60FPSClean
         visible={claudeModalUltra60FPSVisible}
         onClose={useCallback(() => setClaudeModalUltra60FPSVisible(false), [])}
@@ -1367,11 +1372,11 @@ export default function PokemonScreen() {
         styles={EMPTY_STYLES}
       >
         <GameUIEnvContent requiredEnvVars={requiredEnvVars} />
-      </ClaudeModal60FPSClean>
+      </ClaudeModal60FPSClean> */}
 
       {/* Modal60fpsTest removed - no longer needed */}
 
-      {/* Performance Test Modal */}
+      {/* Performance Test Modal 
       <ClaudeModal60FPSClean
         visible={performanceTestVisible}
         onClose={useCallback(() => setPerformanceTestVisible(false), [])}
@@ -1388,7 +1393,7 @@ export default function PokemonScreen() {
         <View style={{ padding: 20 }}>
           <Text style={{ color: "white" }}>Performance comparison component removed</Text>
         </View>
-      </ClaudeModal60FPSClean>
+      </ClaudeModal60FPSClean> */}
     </View>
   );
 }

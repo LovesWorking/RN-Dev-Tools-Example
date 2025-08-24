@@ -828,6 +828,7 @@ export const VirtualizedDataExplorer: React.FC<
             initialNumToRender={15}
             maxToRenderPerBatch={10}
             windowSize={10}
+            scrollEnabled={false}
           />
         )}
       </View>
@@ -904,6 +905,7 @@ export const VirtualizedDataExplorer: React.FC<
                 initialNumToRender={15}
                 maxToRenderPerBatch={10}
                 windowSize={10}
+                scrollEnabled={false}
               />
             </View>
           )}

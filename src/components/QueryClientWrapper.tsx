@@ -5,8 +5,7 @@ import { useSyncQueriesExternal } from "react-query-external-sync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import { asyncStoragePersister } from "@/app/_storage/queryPersister";
-import { storage } from "@/storage/mmkv";
+import { asyncStoragePersister } from "@/src/storage/queryPersister";
 
 interface QueryClientWrapperProps {
   children: React.ReactNode;
@@ -28,7 +27,7 @@ export function QueryClientWrapper({ children, queryClient }: QueryClientWrapper
     envVariables: {
       'test-env-var': 'test',
     },
-    mmkvStorage: storage, // MMKV storage for ['#storage', 'mmkv', 'key'] queries + monitoring
+    // mmkvStorage removed - using AsyncStorage instead for pure JS compatibility
     asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring
     secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
     secureStorageKeys: [

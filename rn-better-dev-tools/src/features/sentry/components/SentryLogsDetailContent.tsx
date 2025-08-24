@@ -214,6 +214,7 @@ function SentryLogsDetailContentInner({
                   initialNumToRender={15}
                   maxToRenderPerBatch={10}
                   windowSize={10}
+                  scrollEnabled={false}
                 />
               </View>
             </View>

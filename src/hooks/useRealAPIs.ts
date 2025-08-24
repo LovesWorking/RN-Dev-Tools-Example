@@ -391,7 +391,7 @@ export const useGitHubEvents = () => {
                 return { ...event, repoDetails: repoData };
               }
             }
-          } catch (e) {
+          } catch {
             // Ignore errors for individual repo fetches
           }
           return event;

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { getStatBarColor } from "../_utils/pokemonTypeColors";
+import { getStatBarColor } from "../utils/pokemonTypeColors";
 
 interface Stat {
   name: string;

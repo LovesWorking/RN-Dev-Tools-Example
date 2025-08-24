@@ -22,7 +22,7 @@ import {
   Edit3,
 } from "lucide-react-native";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
-import { formatRelativeTime } from "../utils/formatRelativeTime";
+import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { 
   gameUIColors, 

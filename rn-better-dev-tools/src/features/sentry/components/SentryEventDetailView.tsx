@@ -46,7 +46,7 @@ import {
   formatDuration,
   formatBytes,
   parseUrl,
-  formatHttpStatus,
+  formatHttpStatusDetail,
   truncateMiddle,
   formatRelativeTime as formatTime,
 } from "../utils/formatting";
@@ -185,7 +185,7 @@ const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({ fie
 
 // Enhanced HTTP request display
 const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({ request }) => {
-  const status = formatHttpStatus(request.statusCode);
+  const status = formatHttpStatusDetail(request.statusCode);
   
   return (
     <View style={styles.httpRequestCard}>

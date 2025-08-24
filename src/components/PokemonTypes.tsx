@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { getTypeColor } from "../_utils/pokemonTypeColors";
+import { getTypeColor } from "../utils/pokemonTypeColors";
 
 interface PokemonTypesProps {
   types: string[];

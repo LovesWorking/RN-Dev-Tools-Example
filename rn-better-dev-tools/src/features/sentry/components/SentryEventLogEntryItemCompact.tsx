@@ -8,7 +8,7 @@ import {
   getTypeIcon,
   getTypeColor,
 } from "@/rn-better-dev-tools/src/features/log-dump/utils";
-import { formatRelativeTime } from "../utils/formatRelativeTime";
+import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { useTickEveryMinute } from "../hooks/useTickEveryMinute";
 import { formatEventMessage } from "../utils/eventParsers";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";

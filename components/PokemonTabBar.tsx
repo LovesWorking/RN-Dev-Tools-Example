@@ -40,6 +40,7 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
       tension: 60,
       friction: 10,
     }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.index]);
 
   const handlePress = (route: any, index: number) => {

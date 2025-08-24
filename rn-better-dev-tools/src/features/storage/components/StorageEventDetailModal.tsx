@@ -23,7 +23,7 @@ import {
   Copy,
 } from "lucide-react-native";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
-import { formatRelativeTime } from "../utils/formatRelativeTime";
+import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 // import Clipboard from "@react-native-clipboard/clipboard"; // Removed due to missing dependency
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";

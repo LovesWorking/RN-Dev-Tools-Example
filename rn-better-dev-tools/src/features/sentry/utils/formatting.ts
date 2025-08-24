@@ -2,58 +2,15 @@
  * Utility functions for formatting Sentry event data
  */
 
-/**
- * Format duration from milliseconds to human-readable format
- * @param ms Duration in milliseconds
- * @returns Formatted duration string
- */
-export function formatDuration(ms: number | undefined): string {
-  if (ms === undefined || ms === null) return 'N/A';
-  
-  // For very small durations (< 1ms), show microseconds
-  if (ms < 1) {
-    return `${Math.round(ms * 1000)}μs`;
-  }
-  
-  // Less than 1 second: show milliseconds
-  if (ms < 1000) {
-    return `${Math.round(ms)}ms`;
-  }
-  
-  // 1-60 seconds: show seconds with 1 decimal
-  if (ms < 60000) {
-    return `${(ms / 1000).toFixed(1)}s`;
-  }
-  
-  // 1-60 minutes: show minutes and seconds
-  if (ms < 3600000) {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
-  }
-  
-  // Over 1 hour: show hours and minutes
-  const hours = Math.floor(ms / 3600000);
-  const minutes = Math.floor((ms % 3600000) / 60000);
-  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
-}
+// Re-export shared formatRelativeTime
+export { formatRelativeTime } from '@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime';
 
-/**
- * Format byte size to human-readable format
- * @param bytes Size in bytes
- * @returns Formatted size string
- */
-export function formatBytes(bytes: number | undefined): string {
-  if (bytes === undefined || bytes === null) return 'N/A';
-  
-  if (bytes === 0) return '0B';
-  
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const k = 1024;
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return `${(bytes / Math.pow(k, i)).toFixed(1)}${units[i]}`;
-}
+// Re-export shared formatting utilities
+export { 
+  formatBytes, 
+  formatDuration,
+  truncateMiddle,
+} from '@/rn-better-dev-tools/src/shared/utils/formatting';
 
 /**
  * URL components for structured display
@@ -137,7 +94,7 @@ export function parseUrl(urlString: string): UrlComponents | null {
  * @param status HTTP status code
  * @returns Status info with color and meaning
  */
-export function formatHttpStatus(status: number | undefined): {
+export function formatHttpStatusDetail(status: number | undefined): {
   text: string;
   color: string;
   meaning: string;
@@ -194,34 +151,4 @@ export function formatHttpStatus(status: number | undefined): {
   return { text: `${status}`, color: '#6B7280', meaning: 'Unknown' };
 }
 
-/**
- * Truncate string in the middle to preserve start and end
- * @param str String to truncate
- * @param maxLength Maximum length
- * @returns Truncated string
- */
-export function truncateMiddle(str: string, maxLength: number): string {
-  if (!str || str.length <= maxLength) return str;
-  
-  const start = Math.ceil(maxLength / 2) - 2;
-  const end = Math.floor(maxLength / 2) - 2;
-  
-  return `${str.slice(0, start)}...${str.slice(-end)}`;
-}
 
-/**
- * Format timestamp to relative time
- * @param timestamp Unix timestamp (ms)
- * @returns Relative time string
- */
-export function formatRelativeTime(timestamp: number): string {
-  const now = Date.now();
-  const diff = now - timestamp;
-  
-  if (diff < 1000) return 'just now';
-  if (diff < 60000) return `${Math.floor(diff / 1000)}s ago`;
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-  
-  return new Date(timestamp).toLocaleTimeString();
-}

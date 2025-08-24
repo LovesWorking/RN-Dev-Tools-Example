@@ -109,6 +109,7 @@ export default function QueryBrowser({
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={10}
+        scrollEnabled={false}
       />
     </View>
   );

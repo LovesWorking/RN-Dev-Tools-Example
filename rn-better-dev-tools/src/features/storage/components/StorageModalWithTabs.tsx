@@ -16,7 +16,7 @@ import {
   AsyncStorageEvent,
   isListening as checkIsListening,
 } from "../utils/AsyncStorageListener";
-import { formatRelativeTime } from "../utils/formatRelativeTime";
+import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { StorageEventDetailContent } from "./StorageEventDetailContent";
 import { StorageFilterView } from "./StorageFilterView";
 import { ValueTypeBadge } from "@/rn-better-dev-tools/src/shared/ui/components/ValueTypeBadge";
@@ -573,6 +573,7 @@ export function StorageModalWithTabs({
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={10}
+        scrollEnabled={false}
       />
     );
   };

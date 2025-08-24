@@ -259,6 +259,7 @@ export const LogDetailView = ({
           initialNumToRender={10}
           maxToRenderPerBatch={10}
           windowSize={10}
+          scrollEnabled={false}
           sentry-label="ignore log entries list"
           accessibilityLabel="Log entries list"
           accessibilityHint="Scroll through log entries sections"
