@@ -39,19 +39,13 @@ import {
   UserRole,
   Environment,
 } from "@/rn-better-dev-tools/src";
-// import ClaudeModal60FPSClean from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
-// Performance test modals removed - no longer needed
 import {
   createEnvVarConfig,
   envVar,
-  // GameUIEnvContent,
 } from "@/rn-better-dev-tools/src/features/env";
-// import QueryStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/QueryStatusCount";
-// import MutationStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/MutationStatusCount";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 
 const { width, height } = Dimensions.get("window");
-// const SCREEN = Dimensions.get("window");
 const AnimatedReanimatedView = ReanimatedAnimated.View;
 
 // Pokemon Card Component with Swipe
@@ -505,14 +499,6 @@ export default function PokemonScreen() {
   const queryClient = useQueryClient();
 
   const insets = useSafeAreaInsets();
-  // Modal states for our modal versions
-  // const [claudeModalUltra60FPSVisible, setClaudeModalUltra60FPSVisible] =
-  //   useState(false); // Auto-open for testing ENV UI
-  // Auto-open performance test modal for testing (set to false to disable)
-  // const AUTO_OPEN_PERFORMANCE_TEST = false;
-  // const [performanceTestVisible, setPerformanceTestVisible] = useState(
-  //   AUTO_OPEN_PERFORMANCE_TEST
-  // );
 
   // Auto-open React Query modal for testing - removed due to Event not available in React Native
   const [pokemonStack, setPokemonStack] = useState(() => [
@@ -533,25 +519,6 @@ export default function PokemonScreen() {
     useState<string>("electric");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  // Debug function to log cache keys
-  // const _logCacheKeys = useCallback(() => {
-  // Clear async storage keys and values
-  // AsyncStorage.clear();
-  // const cache = queryClient.getQueryCache();
-  // const queries = cache.getAll();
-  // console.log("=== QUERY CACHE DEBUG ===");
-  // console.log("Total queries in cache:", queries.length);
-  // queries.forEach((query, index) => {
-  //   console.log(`Query ${index + 1}:`, {
-  //     queryKey: query.queryKey,
-  //     state: query.state.status,
-  //     dataUpdatedAt: query.state.dataUpdatedAt,
-  //     data: query.state.data ? "Has data" : "No data",
-  //   });
-  // });
-  // console.log("=========================");
-  // }, []);
 
   // Only keep essential animations for effects
   const floatAnim = useRef(new Animated.Value(0)).current;
@@ -831,7 +798,6 @@ export default function PokemonScreen() {
         environment={environment}
         userRole={userRole}
         requiredEnvVars={requiredEnvVars}
-        // onOpenPerformanceTest={() => setPerformanceTestVisible(true)}
       />
 
       {/* Premium Animated Background */}
@@ -1234,50 +1200,6 @@ export default function PokemonScreen() {
           </Animated.View>
         </View>
 
-        {/* Performance Test Button */}
-        <TouchableOpacity
-          onPress={() => {
-            /* setPerformanceTestVisible(true) */
-          }}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(255,100,0,0.25)", "rgba(255,100,0,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons
-              name="speedometer"
-              size={16}
-              color="rgba(255,255,255,0.8)"
-            />
-            <Text style={styles.debugText}>Performance Test</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* ClaudeModal60FPS Button */}
-        <TouchableOpacity
-          onPress={() => {
-            /* setClaudeModalUltra60FPSVisible(true) */
-          }}
-          style={styles.debugButton}
-          activeOpacity={0.7}
-        >
-          <LinearGradient
-            colors={["rgba(0,255,255,0.25)", "rgba(0,200,255,0.1)"]}
-            style={styles.debugGradient}
-          >
-            <Ionicons
-              name="speedometer"
-              size={16}
-              color="rgba(255,255,255,0.8)"
-            />
-            <Text style={styles.debugText}>60FPS Native testing</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* Modal60fpsTest Button removed - no longer needed */}
-
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
           <View
@@ -1331,69 +1253,7 @@ export default function PokemonScreen() {
             />
           ))}
         </View>
-
-        {/* Premium Footer */}
-        <View style={styles.footer}>
-          <LinearGradient
-            colors={["transparent", "rgba(255,215,0,0.05)"]}
-            style={styles.footerGradient}
-          >
-            <Text style={styles.footerText}>Swipe to Explore</Text>
-            <Animated.View
-              style={{
-                opacity: shimmerAnim.interpolate({
-                  inputRange: [0, 0.5, 1],
-                  outputRange: [0.3, 1, 0.3],
-                }),
-              }}
-            >
-              <Ionicons
-                name="swap-horizontal"
-                size={20}
-                color="rgba(255,215,0,0.6)"
-              />
-            </Animated.View>
-          </LinearGradient>
-        </View>
       </ScrollView>
-
-      {/* ClaudeModal60FPSClean - Clean Separated Version 
-      <ClaudeModal60FPSClean
-        visible={claudeModalUltra60FPSVisible}
-        onClose={useCallback(() => setClaudeModalUltra60FPSVisible(false), [])}
-        header={useMemo(
-          () => ({
-            title: "ENV Configuration",
-            subtitle: "Environment Variables Status",
-            showToggleButton: true,
-          }),
-          []
-        )}
-        styles={EMPTY_STYLES}
-      >
-        <GameUIEnvContent requiredEnvVars={requiredEnvVars} />
-      </ClaudeModal60FPSClean> */}
-
-      {/* Modal60fpsTest removed - no longer needed */}
-
-      {/* Performance Test Modal 
-      <ClaudeModal60FPSClean
-        visible={performanceTestVisible}
-        onClose={useCallback(() => setPerformanceTestVisible(false), [])}
-        header={useMemo(
-          () => ({
-            title: "Performance Comparison",
-            subtitle: "Modal & List Tests",
-            showToggleButton: true,
-          }),
-          []
-        )}
-        styles={EMPTY_STYLES}
-      >
-        <View style={{ padding: 20 }}>
-          <Text style={{ color: "white" }}>Performance comparison component removed</Text>
-        </View>
-      </ClaudeModal60FPSClean> */}
     </View>
   );
 }
