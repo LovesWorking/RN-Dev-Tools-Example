@@ -1,6 +1,6 @@
-export { 
-  BubbleSettingsSection, 
+export {
+  BubbleSettingsSection,
   BubbleSettingsDetail,
   getBubbleVisibilitySettings,
-  type BubbleVisibilitySettings 
+  type BubbleVisibilitySettings,
 } from "./components/BubbleSettingsSection";

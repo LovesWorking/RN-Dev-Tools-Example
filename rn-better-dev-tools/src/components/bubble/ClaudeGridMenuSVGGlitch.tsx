@@ -21,7 +21,7 @@ import {
   Wifi,
   WifiOff,
   X,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
 interface MagneticGridMenuProps {
   onQueryPress: () => void;
@@ -79,7 +79,7 @@ export function ClaudeGridMenuSVGGlitch({
       scanlineY: new Animated.Value(-30),
       scanlineOpacity: new Animated.Value(0),
       shakeY: new Animated.Value(0), // For vertical split effect
-    }))
+    })),
   );
 
   const [backdropOpacity] = useState(() => new Animated.Value(0));
@@ -170,7 +170,7 @@ export function ClaudeGridMenuSVGGlitch({
       onWifiToggle,
       onClose,
       isWifiEnabled,
-    ]
+    ],
   );
 
   // Trigger glitch animation - only effects 11 and 17 from test lab
@@ -257,7 +257,7 @@ export function ClaudeGridMenuSVGGlitch({
         });
       }
     },
-    [items]
+    [items],
   );
 
   const handleOpen = useCallback(() => {
@@ -282,7 +282,7 @@ export function ClaudeGridMenuSVGGlitch({
           duration: 0,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Matrix-style falling animation - EXACT copy of CyberpunkGridMenu behavior
@@ -409,7 +409,7 @@ export function ClaudeGridMenuSVGGlitch({
               easing: Easing.inOut(Easing.sin),
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ).start();
       }
     });
@@ -462,13 +462,13 @@ export function ClaudeGridMenuSVGGlitch({
         }),
       ]).start();
     },
-    [items]
+    [items],
   );
 
   const handleClose = useCallback(() => {
     // Fast close animation - all buttons at once with slight stagger
     const animations: Animated.CompositeAnimation[] = [];
-    
+
     items.forEach((item, index) => {
       const delay = index * 30; // Much smaller stagger (30ms vs 50ms)
       const pos = HEX_POSITIONS[index];
@@ -497,7 +497,7 @@ export function ClaudeGridMenuSVGGlitch({
               useNativeDriver: true,
             }),
           ]),
-        ])
+        ]),
       );
     });
 
@@ -540,7 +540,7 @@ export function ClaudeGridMenuSVGGlitch({
         }, 50);
       }
     },
-    [items, handleClose, onClose]
+    [items, handleClose, onClose],
   );
 
   // Track which buttons are currently animating with SVG border effects
@@ -574,7 +574,7 @@ export function ClaudeGridMenuSVGGlitch({
         })
         .join("");
     },
-    [getRandomChar]
+    [getRandomChar],
   );
 
   // Scramble text animation using bitmap approach
@@ -594,12 +594,12 @@ export function ClaudeGridMenuSVGGlitch({
         const scrambledLabel = renderScrambledText(
           originalLabel,
           labelBitmap,
-          chars
+          chars,
         );
         const scrambledSublabel = renderScrambledText(
           originalSublabel,
           sublabelBitmap,
-          chars
+          chars,
         );
 
         setScrambledTexts((prev) => ({
@@ -616,7 +616,7 @@ export function ClaudeGridMenuSVGGlitch({
         let revealIndex = 0;
         const maxLength = Math.max(
           originalLabel.length,
-          originalSublabel.length
+          originalSublabel.length,
         );
 
         const revealInterval = setInterval(() => {
@@ -642,62 +642,66 @@ export function ClaudeGridMenuSVGGlitch({
         }, revealSpeed);
       }, scrambleDuration);
     },
-    [createTextBitmap, renderScrambledText]
+    [createTextBitmap, renderScrambledText],
   );
 
   // Single controller for all effects - only 1-2 buttons animate at once
   // Use useRef to avoid re-renders affecting the background
   const effectLoopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   useEffect(() => {
     const effectLoop = () => {
-      effectLoopRef.current = setTimeout(() => {
-        // Only animate occasionally to reduce performance impact
-        if (Math.random() > 0.3) { // 70% chance to show effect
-          // Animate 1-2 buttons instead of 2-3
-          const numButtons = Math.random() > 0.7 ? 2 : 1;
+      effectLoopRef.current = setTimeout(
+        () => {
+          // Only animate occasionally to reduce performance impact
+          if (Math.random() > 0.3) {
+            // 70% chance to show effect
+            // Animate 1-2 buttons instead of 2-3
+            const numButtons = Math.random() > 0.7 ? 2 : 1;
 
-          // Pick random buttons
-          const availableIndices = [0, 1, 2, 3, 4, 5];
-          const selectedButtons: { [key: number]: string } = {};
+            // Pick random buttons
+            const availableIndices = [0, 1, 2, 3, 4, 5];
+            const selectedButtons: { [key: number]: string } = {};
 
-          for (let i = 0; i < numButtons; i++) {
-            if (availableIndices.length > 0) {
-              const randomIndex = Math.floor(
-                Math.random() * availableIndices.length
-              );
-              const buttonIndex = availableIndices[randomIndex];
-              availableIndices.splice(randomIndex, 1);
+            for (let i = 0; i < numButtons; i++) {
+              if (availableIndices.length > 0) {
+                const randomIndex = Math.floor(
+                  Math.random() * availableIndices.length,
+                );
+                const buttonIndex = availableIndices[randomIndex];
+                availableIndices.splice(randomIndex, 1);
 
-              // Force scramble effect for testing
-              const effectType = "scramble";
-              selectedButtons[buttonIndex] = effectType;
+                // Force scramble effect for testing
+                const effectType = "scramble";
+                selectedButtons[buttonIndex] = effectType;
+              }
             }
+
+            // Apply effects with requestAnimationFrame to avoid blocking
+            requestAnimationFrame(() => {
+              setAnimatingButtons(selectedButtons);
+
+              // Trigger scramble animations for buttons with scramble effect
+              Object.entries(selectedButtons).forEach(([index, effect]) => {
+                if (effect === "scramble") {
+                  const buttonIdx = parseInt(index);
+                  const menuItem = menuItems[buttonIdx];
+                  scrambleText(buttonIdx, menuItem.label, menuItem.sublabel);
+                }
+              });
+
+              // Clear effects after brief duration (except scramble which handles itself)
+              setTimeout(() => {
+                setAnimatingButtons({});
+              }, 200);
+            });
           }
 
-          // Apply effects with requestAnimationFrame to avoid blocking
-          requestAnimationFrame(() => {
-            setAnimatingButtons(selectedButtons);
-
-            // Trigger scramble animations for buttons with scramble effect
-            Object.entries(selectedButtons).forEach(([index, effect]) => {
-              if (effect === "scramble") {
-                const buttonIdx = parseInt(index);
-                const menuItem = menuItems[buttonIdx];
-                scrambleText(buttonIdx, menuItem.label, menuItem.sublabel);
-              }
-            });
-
-            // Clear effects after brief duration (except scramble which handles itself)
-            setTimeout(() => {
-              setAnimatingButtons({});
-            }, 200);
-          });
-        }
-
-        // Schedule next check with longer delay
-        effectLoop();
-      }, 5000 + Math.random() * 7000); // 5-12 seconds between effects
+          // Schedule next check with longer delay
+          effectLoop();
+        },
+        5000 + Math.random() * 7000,
+      ); // 5-12 seconds between effects
     };
 
     // Start the loop with initial delay
@@ -825,10 +829,10 @@ export function ClaudeGridMenuSVGGlitch({
                 }),
               },
               {
-                scale: hasPulse 
+                scale: hasPulse
                   ? Animated.multiply(
                       Animated.multiply(item.scale, item.pressScale),
-                      pulseInterpolation(item.pulse)
+                      pulseInterpolation(item.pulse),
                     )
                   : Animated.multiply(item.scale, item.pressScale),
               },

@@ -16,9 +16,9 @@ import {
   getTypeColor,
   getTypeIcon,
 } from "@/rn-better-dev-tools/src/features/log-dump/utils";
-import { 
-  Clock, 
-  AlertCircle, 
+import {
+  Clock,
+  AlertCircle,
   CheckCircle,
   Copy,
   Edit3,
@@ -34,13 +34,13 @@ import {
   Navigation,
   Touchpad,
   Zap,
-} from 'rn-better-dev-tools/icons';
-import { 
-  extractHttpDataFromSentryEvent, 
+} from "rn-better-dev-tools/icons";
+import {
+  extractHttpDataFromSentryEvent,
   HttpRequestInfo,
   SentryEvent,
   HttpSpanAttributes,
-  SentryEventInsight 
+  SentryEventInsight,
 } from "../types";
 import {
   formatDuration,
@@ -89,16 +89,16 @@ interface SentryEventDetailViewProps {
 // Component for displaying URL breakdown
 const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
   const urlParts = parseUrl(url);
-  
+
   if (!urlParts) {
     return <Text style={styles.urlText}>{url}</Text>;
   }
-  
+
   const handleCopy = (text: string) => {
     // Clipboard functionality not implemented
     // This function is reserved for future clipboard integration
   };
-  
+
   return (
     <View style={styles.urlBreakdown}>
       <View style={styles.urlRow}>
@@ -108,7 +108,9 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
           <Unlock size={12} color={gameUIColors.warning} />
         )}
         <Text style={styles.urlDomain}>{urlParts.host}</Text>
-        <Text style={styles.urlProtocol}>({urlParts.protocol.toUpperCase()})</Text>
+        <Text style={styles.urlProtocol}>
+          ({urlParts.protocol.toUpperCase()})
+        </Text>
         <TouchableOpacity
           sentry-label="ignore url copy button"
           onPress={() => handleCopy(url)}
@@ -142,7 +144,7 @@ const CollapsibleSection: React.FC<{
   defaultOpen?: boolean;
 }> = ({ title, icon, children, defaultOpen = true }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  
+
   return (
     <View style={styles.collapsibleSection}>
       <TouchableOpacity
@@ -166,7 +168,10 @@ const CollapsibleSection: React.FC<{
 };
 
 // Component for editable field indicator
-const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({ field, editable }) => (
+const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({
+  field,
+  editable,
+}) => (
   <View style={styles.fieldIndicator}>
     <Text style={styles.fieldName}>{field}</Text>
     {editable ? (
@@ -184,9 +189,11 @@ const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({ fie
 );
 
 // Enhanced HTTP request display
-const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({ request }) => {
+const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({
+  request,
+}) => {
   const status = formatHttpStatusDetail(request.statusCode);
-  
+
   return (
     <View style={styles.httpRequestCard}>
       <View style={styles.httpHeader}>
@@ -194,7 +201,12 @@ const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({ request })
           <Text style={styles.httpMethod}>{request.method}</Text>
         </View>
         {request.statusCode && (
-          <View style={[styles.httpStatusBadge, { backgroundColor: `${status.color}20` }]}>
+          <View
+            style={[
+              styles.httpStatusBadge,
+              { backgroundColor: `${status.color}20` },
+            ]}
+          >
             <Text style={[styles.httpStatusText, { color: status.color }]}>
               {status.text} {status.meaning}
             </Text>
@@ -203,30 +215,36 @@ const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({ request })
         {request.duration && (
           <View style={styles.httpDuration}>
             <Clock size={10} color={gameUIColors.muted} />
-            <Text style={styles.httpDurationText}>{formatDuration(request.duration)}</Text>
+            <Text style={styles.httpDurationText}>
+              {formatDuration(request.duration)}
+            </Text>
           </View>
         )}
       </View>
-      
+
       <UrlBreakdown url={request.url} />
-      
+
       {(request.requestSize || request.responseSize) && (
         <View style={styles.httpSizes}>
           {request.requestSize !== undefined && (
             <View style={styles.sizeItem}>
               <Text style={styles.sizeLabel}>Request:</Text>
-              <Text style={styles.sizeValue}>↑ {formatBytes(request.requestSize)}</Text>
+              <Text style={styles.sizeValue}>
+                ↑ {formatBytes(request.requestSize)}
+              </Text>
             </View>
           )}
           {request.responseSize !== undefined && (
             <View style={styles.sizeItem}>
               <Text style={styles.sizeLabel}>Response:</Text>
-              <Text style={styles.sizeValue}>↓ {formatBytes(request.responseSize)}</Text>
+              <Text style={styles.sizeValue}>
+                ↓ {formatBytes(request.responseSize)}
+              </Text>
             </View>
           )}
         </View>
       )}
-      
+
       <View style={styles.customizableNote}>
         <EditableIndicator field="beforeBreadcrumb" editable={true} />
         <Text style={styles.customizableText}>
@@ -238,233 +256,290 @@ const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({ request })
 };
 
 // Extract all HTTP requests from the event
-const extractAllHttpRequests = (entry: ConsoleTransportEntry): HttpRequestInfo[] => {
+const extractAllHttpRequests = (
+  entry: ConsoleTransportEntry,
+): HttpRequestInfo[] => {
   const requests: HttpRequestInfo[] = [];
   const { metadata } = entry;
-  
+
   // First try the main extraction
   const mainRequest = extractHttpDataFromSentryEvent(entry);
   if (mainRequest) {
     requests.push(mainRequest);
   }
-  
+
   // Check raw data for additional HTTP info
   const rawData = metadata._sentryRawData as SentryEvent | undefined;
-  
+
   // Extract from breadcrumbs
   if (rawData?.breadcrumbs) {
     for (const breadcrumb of rawData.breadcrumbs) {
-      if (breadcrumb.category === 'xhr' || breadcrumb.category === 'fetch' || breadcrumb.category === 'http') {
+      if (
+        breadcrumb.category === "xhr" ||
+        breadcrumb.category === "fetch" ||
+        breadcrumb.category === "http"
+      ) {
         const data = breadcrumb.data || {};
         const httpInfo: HttpRequestInfo = {
-          method: data.method || 'GET',
-          url: data.url || '',
+          method: data.method || "GET",
+          url: data.url || "",
           statusCode: data.status_code,
           duration: data.duration,
           requestSize: data.request_body_size,
           responseSize: data.response_body_size,
           error: (data.status_code || 0) >= 400,
-          errorMessage: (data.status_code || 0) >= 400 ? breadcrumb.message : undefined,
-          timestamp: breadcrumb.timestamp ? breadcrumb.timestamp * 1000 : entry.timestamp
+          errorMessage:
+            (data.status_code || 0) >= 400 ? breadcrumb.message : undefined,
+          timestamp: breadcrumb.timestamp
+            ? breadcrumb.timestamp * 1000
+            : entry.timestamp,
         };
-        
+
         // Avoid duplicates
-        if (!requests.some(r => r.url === httpInfo.url && r.method === httpInfo.method && Math.abs(r.timestamp - httpInfo.timestamp) < 100)) {
+        if (
+          !requests.some(
+            (r) =>
+              r.url === httpInfo.url &&
+              r.method === httpInfo.method &&
+              Math.abs(r.timestamp - httpInfo.timestamp) < 100,
+          )
+        ) {
           requests.push(httpInfo);
         }
       }
     }
   }
-  
+
   // Extract from spans
   if (rawData?.spans) {
     for (const span of rawData.spans) {
-      if (span.op === 'http.client' || span.op === 'http' || span.op?.startsWith('http.')) {
+      if (
+        span.op === "http.client" ||
+        span.op === "http" ||
+        span.op?.startsWith("http.")
+      ) {
         const attrs = span.data as HttpSpanAttributes;
-        const statusCode = attrs['http.response.status_code'] || attrs['http.status_code'];
-        const method = attrs['http.request.method'] || attrs['http.method'] || 'GET';
-        const url = attrs['url.full'] || attrs['http.url'] || span.description || '';
-        
+        const statusCode =
+          attrs["http.response.status_code"] || attrs["http.status_code"];
+        const method =
+          attrs["http.request.method"] || attrs["http.method"] || "GET";
+        const url =
+          attrs["url.full"] || attrs["http.url"] || span.description || "";
+
         if (url) {
           const httpInfo: HttpRequestInfo = {
             method,
             url,
             statusCode,
-            duration: span.timestamp && span.start_timestamp ? (span.timestamp - span.start_timestamp) * 1000 : undefined,
-            requestSize: attrs['http.request_content_length'],
-            responseSize: attrs['http.response_content_length'],
+            duration:
+              span.timestamp && span.start_timestamp
+                ? (span.timestamp - span.start_timestamp) * 1000
+                : undefined,
+            requestSize: attrs["http.request_content_length"],
+            responseSize: attrs["http.response_content_length"],
             error: statusCode ? statusCode >= 400 : false,
-            errorMessage: statusCode && statusCode >= 400 ? `HTTP ${statusCode}` : undefined,
-            timestamp: span.start_timestamp ? span.start_timestamp * 1000 : entry.timestamp,
-            query: attrs['http.query'],
-            fragment: attrs['http.fragment']
+            errorMessage:
+              statusCode && statusCode >= 400
+                ? `HTTP ${statusCode}`
+                : undefined,
+            timestamp: span.start_timestamp
+              ? span.start_timestamp * 1000
+              : entry.timestamp,
+            query: attrs["http.query"],
+            fragment: attrs["http.fragment"],
           };
-          
+
           // Avoid duplicates
-          if (!requests.some(r => r.url === httpInfo.url && r.method === httpInfo.method && Math.abs(r.timestamp - httpInfo.timestamp) < 100)) {
+          if (
+            !requests.some(
+              (r) =>
+                r.url === httpInfo.url &&
+                r.method === httpInfo.method &&
+                Math.abs(r.timestamp - httpInfo.timestamp) < 100,
+            )
+          ) {
             requests.push(httpInfo);
           }
         }
       }
     }
   }
-  
+
   return requests;
 };
 
 // Enhanced insights generator
-const generateInsights = (entry: ConsoleTransportEntry): SentryEventInsight[] => {
+const generateInsights = (
+  entry: ConsoleTransportEntry,
+): SentryEventInsight[] => {
   const insights: SentryEventInsight[] = [];
   const { metadata } = entry;
   const httpRequests = extractAllHttpRequests(entry);
   const rawData = metadata._sentryRawData as SentryEvent | undefined;
-  
+
   // Error insights
   if (entry.level === "error") {
     const errorDetails = extractErrorEventDetails(entry);
-    
+
     if (errorDetails?.stackTrace?.includes("AsyncStorage")) {
       insights.push({
-        type: 'error',
-        severity: 'medium',
+        type: "error",
+        severity: "medium",
         message: "Storage-related error detected",
         details: "Error occurred in AsyncStorage operations",
-        suggestion: "Check if storage is available and has sufficient space. Consider implementing error boundaries for storage operations."
+        suggestion:
+          "Check if storage is available and has sufficient space. Consider implementing error boundaries for storage operations.",
       });
     }
-    
+
     if (errorDetails?.message?.includes("Network")) {
       insights.push({
-        type: 'error',
-        severity: 'high',
+        type: "error",
+        severity: "high",
         message: "Network error detected",
         details: "Network request failed or timed out",
-        suggestion: "Implement retry logic with exponential backoff. Consider offline support."
+        suggestion:
+          "Implement retry logic with exponential backoff. Consider offline support.",
       });
     }
-    
+
     if (!errorDetails?.handled) {
       insights.push({
-        type: 'error',
-        severity: 'high',
+        type: "error",
+        severity: "high",
         message: "Unhandled error",
         details: "This error was not caught by any error boundary",
-        suggestion: "Add error boundaries to catch and handle errors gracefully"
+        suggestion:
+          "Add error boundaries to catch and handle errors gracefully",
       });
     }
   }
-  
+
   // HTTP insights
   for (const request of httpRequests) {
     // Performance insights
     if (request.duration && request.duration > 3000) {
       insights.push({
-        type: 'performance',
-        severity: 'high',
+        type: "performance",
+        severity: "high",
         message: `Slow HTTP request (${formatDuration(request.duration)})`,
         details: `${request.method} ${request.url}`,
-        suggestion: "Consider implementing request caching, pagination, or optimizing the endpoint"
+        suggestion:
+          "Consider implementing request caching, pagination, or optimizing the endpoint",
       });
     } else if (request.duration && request.duration > 1000) {
       insights.push({
-        type: 'performance',
-        severity: 'medium',
+        type: "performance",
+        severity: "medium",
         message: `Moderately slow request (${formatDuration(request.duration)})`,
         details: `${request.method} ${request.url}`,
-        suggestion: "Monitor this endpoint for performance degradation"
+        suggestion: "Monitor this endpoint for performance degradation",
       });
     }
-    
+
     // Status code insights
     if (request.statusCode) {
       if (request.statusCode >= 500) {
         insights.push({
-          type: 'error',
-          severity: 'high',
+          type: "error",
+          severity: "high",
           message: `Server error: HTTP ${request.statusCode}`,
           details: `${request.method} ${request.url}`,
-          suggestion: "Check server logs. Implement circuit breaker pattern for repeated failures."
+          suggestion:
+            "Check server logs. Implement circuit breaker pattern for repeated failures.",
         });
       } else if (request.statusCode === 401) {
         insights.push({
-          type: 'security',
-          severity: 'high',
+          type: "security",
+          severity: "high",
           message: "Authentication failed",
           details: `${request.method} ${request.url}`,
-          suggestion: "Implement token refresh logic. Check if auth tokens are properly stored and sent."
+          suggestion:
+            "Implement token refresh logic. Check if auth tokens are properly stored and sent.",
         });
       } else if (request.statusCode === 429) {
         insights.push({
-          type: 'quality',
-          severity: 'high',
+          type: "quality",
+          severity: "high",
           message: "Rate limit exceeded",
           details: `${request.method} ${request.url}`,
-          suggestion: "Implement request throttling and queueing. Consider caching responses."
+          suggestion:
+            "Implement request throttling and queueing. Consider caching responses.",
         });
       }
     }
-    
+
     // Response size insights
-    if (request.responseSize && request.responseSize > 1024 * 1024) { // > 1MB
+    if (request.responseSize && request.responseSize > 1024 * 1024) {
+      // > 1MB
       insights.push({
-        type: 'performance',
-        severity: 'medium',
+        type: "performance",
+        severity: "medium",
         message: `Large response (${formatBytes(request.responseSize)})`,
         details: `${request.method} ${request.url}`,
-        suggestion: "Implement pagination, lazy loading, or request data compression"
+        suggestion:
+          "Implement pagination, lazy loading, or request data compression",
       });
     }
   }
-  
+
   // Missing data insights
   if (httpRequests.length > 0) {
-    const hasHeaders = httpRequests.some(r => r.headers);
+    const hasHeaders = httpRequests.some((r) => r.headers);
     if (!hasHeaders) {
       insights.push({
-        type: 'quality',
-        severity: 'low',
+        type: "quality",
+        severity: "low",
         message: "HTTP headers not captured",
-        details: "Request/response headers could provide valuable debugging info",
-        suggestion: "Enable header capture in Sentry SDK configuration for better debugging"
+        details:
+          "Request/response headers could provide valuable debugging info",
+        suggestion:
+          "Enable header capture in Sentry SDK configuration for better debugging",
       });
     }
   }
-  
+
   // User context insight
   if (!rawData?.user) {
     insights.push({
-      type: 'quality',
-      severity: 'medium',
+      type: "quality",
+      severity: "medium",
       message: "No user context",
       details: "User information not attached to event",
-      suggestion: "Call Sentry.setUser() to correlate errors with users"
+      suggestion: "Call Sentry.setUser() to correlate errors with users",
     });
   }
-  
+
   // Touch event insights
   const touchDetails = extractTouchEventDetails(entry);
-  if (touchDetails && (!touchDetails.componentPath[0]?.label && !touchDetails.componentPath[0]?.file)) {
+  if (
+    touchDetails &&
+    !touchDetails.componentPath[0]?.label &&
+    !touchDetails.componentPath[0]?.file
+  ) {
     insights.push({
-      type: 'quality',
-      severity: 'low',
+      type: "quality",
+      severity: "low",
       message: "Touch events lack component labels",
       details: "Components don't have sentry-label attributes",
-      suggestion: "Add sentry-label props to key interactive components for better tracking"
+      suggestion:
+        "Add sentry-label props to key interactive components for better tracking",
     });
   }
-  
+
   // Performance insights
   const perfDetails = extractPerformanceEventDetails(entry);
   if (perfDetails?.appStart && perfDetails.appStart.duration > 3000) {
     insights.push({
-      type: 'performance',
-      severity: 'high',
+      type: "performance",
+      severity: "high",
       message: `Slow app start (${formatDuration(perfDetails.appStart.duration)})`,
       details: `${perfDetails.appStart.type} start took longer than 3 seconds`,
-      suggestion: "Optimize app initialization, lazy load modules, reduce bundle size"
+      suggestion:
+        "Optimize app initialization, lazy load modules, reduce bundle size",
     });
   }
-  
+
   return insights;
 };
 
@@ -484,7 +559,7 @@ export function SentryEventDetailView({
   const httpRequests = extractAllHttpRequests(entry);
   const insights = generateInsights(entry);
   const deviceContext = extractDeviceContext(entry);
-  
+
   // Extract event-specific details
   const touchDetails = extractTouchEventDetails(entry);
   const navDetails = extractNavigationEventDetails(entry);
@@ -515,7 +590,7 @@ export function SentryEventDetailView({
                 ))}
               </CollapsibleSection>
             )}
-            
+
             {/* Touch Event Details */}
             {touchDetails && (
               <CollapsibleSection
@@ -526,15 +601,21 @@ export function SentryEventDetailView({
                 <View style={styles.touchDetails}>
                   {/* Display the touch event message (e.g., "Sign In") */}
                   <Text style={styles.detailLabel}>Action:</Text>
-                  <Text style={styles.touchActionText}>{formatEventMessage(entry)}</Text>
-                  
+                  <Text style={styles.touchActionText}>
+                    {formatEventMessage(entry)}
+                  </Text>
+
                   <Text style={styles.detailLabel}>Component Path:</Text>
                   {(() => {
-                    const componentFile = extractComponentFileFromPath(touchDetails.componentPath);
+                    const componentFile = extractComponentFileFromPath(
+                      touchDetails.componentPath,
+                    );
                     if (componentFile) {
                       return (
                         <View style={styles.componentPathItem}>
-                          <Text style={styles.componentName}>{componentFile}</Text>
+                          <Text style={styles.componentName}>
+                            {componentFile}
+                          </Text>
                         </View>
                       );
                     }
@@ -542,9 +623,16 @@ export function SentryEventDetailView({
                     return touchDetails.componentPath.map((comp, idx) => (
                       <View key={idx} style={styles.componentPathItem}>
                         <Text style={styles.componentName}>{comp.name}</Text>
-                        {comp.label && <Text style={styles.componentLabel}> ({comp.label})</Text>}
+                        {comp.label && (
+                          <Text style={styles.componentLabel}>
+                            {" "}
+                            ({comp.label})
+                          </Text>
+                        )}
                         {comp.file && (
-                          <Text style={styles.componentFile}>{truncateMiddle(comp.file, 40)}</Text>
+                          <Text style={styles.componentFile}>
+                            {truncateMiddle(comp.file, 40)}
+                          </Text>
                         )}
                       </View>
                     ));
@@ -552,17 +640,22 @@ export function SentryEventDetailView({
                   {touchDetails.route && (
                     <>
                       <Text style={styles.detailLabel}>Route:</Text>
-                      <Text style={styles.detailValue}>{touchDetails.route}</Text>
+                      <Text style={styles.detailValue}>
+                        {touchDetails.route}
+                      </Text>
                     </>
                   )}
                   <View style={styles.customizableNote}>
                     <EditableIndicator field="labelName prop" editable={true} />
-                    <EditableIndicator field="ignoreNames filter" editable={true} />
+                    <EditableIndicator
+                      field="ignoreNames filter"
+                      editable={true}
+                    />
                   </View>
                 </View>
               </CollapsibleSection>
             )}
-            
+
             {/* Navigation Details */}
             {navDetails && (
               <CollapsibleSection
@@ -582,13 +675,19 @@ export function SentryEventDetailView({
                   {navDetails.duration && (
                     <>
                       <Text style={styles.detailLabel}>Duration:</Text>
-                      <Text style={styles.detailValue}>{formatDuration(navDetails.duration)}</Text>
+                      <Text style={styles.detailValue}>
+                        {formatDuration(navDetails.duration)}
+                      </Text>
                     </>
                   )}
                   {navDetails.ttid && (
                     <>
-                      <Text style={styles.detailLabel}>Time to Initial Display:</Text>
-                      <Text style={styles.detailValue}>{formatDuration(navDetails.ttid)}</Text>
+                      <Text style={styles.detailLabel}>
+                        Time to Initial Display:
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {formatDuration(navDetails.ttid)}
+                      </Text>
                     </>
                   )}
                   <View style={styles.customizableNote}>
@@ -600,7 +699,7 @@ export function SentryEventDetailView({
                 </View>
               </CollapsibleSection>
             )}
-            
+
             {/* Error Details */}
             {errorDetails && (
               <CollapsibleSection
@@ -611,34 +710,44 @@ export function SentryEventDetailView({
                 <View style={styles.errorDetails}>
                   <Text style={styles.detailLabel}>Type:</Text>
                   <Text style={styles.errorType}>{errorDetails.type}</Text>
-                  
+
                   <Text style={styles.detailLabel}>Message:</Text>
-                  <Text style={styles.errorMessage}>{errorDetails.message}</Text>
-                  
+                  <Text style={styles.errorMessage}>
+                    {errorDetails.message}
+                  </Text>
+
                   {errorDetails.fileName && (
                     <>
                       <Text style={styles.detailLabel}>Location:</Text>
                       <Text style={styles.errorLocation}>
-                        {errorDetails.fileName}:{errorDetails.lineNumber}:{errorDetails.columnNumber}
+                        {errorDetails.fileName}:{errorDetails.lineNumber}:
+                        {errorDetails.columnNumber}
                       </Text>
                     </>
                   )}
-                  
+
                   <View style={styles.errorMeta}>
                     <View style={styles.errorMetaItem}>
                       <Text style={styles.errorMetaLabel}>Handled:</Text>
-                      <Text style={[styles.errorMetaValue, errorDetails.handled ? styles.success : styles.error]}>
-                        {errorDetails.handled ? 'Yes' : 'No'}
+                      <Text
+                        style={[
+                          styles.errorMetaValue,
+                          errorDetails.handled ? styles.success : styles.error,
+                        ]}
+                      >
+                        {errorDetails.handled ? "Yes" : "No"}
                       </Text>
                     </View>
                     {errorDetails.mechanism && (
                       <View style={styles.errorMetaItem}>
                         <Text style={styles.errorMetaLabel}>Mechanism:</Text>
-                        <Text style={styles.errorMetaValue}>{errorDetails.mechanism}</Text>
+                        <Text style={styles.errorMetaValue}>
+                          {errorDetails.mechanism}
+                        </Text>
                       </View>
                     )}
                   </View>
-                  
+
                   {errorDetails.stackTrace && (
                     <View style={styles.stackTraceContainer}>
                       <Text style={styles.detailLabel}>Stack Trace:</Text>
@@ -653,7 +762,7 @@ export function SentryEventDetailView({
                       </ScrollView>
                     </View>
                   )}
-                  
+
                   <View style={styles.customizableNote}>
                     <EditableIndicator field="beforeSend" editable={true} />
                     <Text style={styles.customizableText}>
@@ -663,7 +772,7 @@ export function SentryEventDetailView({
                 </View>
               </CollapsibleSection>
             )}
-            
+
             {/* Performance Details */}
             {perfDetails && (
               <CollapsibleSection
@@ -674,57 +783,74 @@ export function SentryEventDetailView({
                 <View style={styles.perfDetails}>
                   <Text style={styles.detailLabel}>Transaction:</Text>
                   <Text style={styles.detailValue}>{perfDetails.name}</Text>
-                  
+
                   <Text style={styles.detailLabel}>Operation:</Text>
-                  <Text style={styles.detailValue}>{perfDetails.operation}</Text>
-                  
+                  <Text style={styles.detailValue}>
+                    {perfDetails.operation}
+                  </Text>
+
                   {perfDetails.duration && (
                     <>
                       <Text style={styles.detailLabel}>Duration:</Text>
-                      <Text style={styles.detailValue}>{formatDuration(perfDetails.duration)}</Text>
+                      <Text style={styles.detailValue}>
+                        {formatDuration(perfDetails.duration)}
+                      </Text>
                     </>
                   )}
-                  
+
                   {perfDetails.appStart && (
                     <View style={styles.appStartInfo}>
                       <Text style={styles.detailLabel}>App Start:</Text>
                       <Text style={styles.detailValue}>
-                        {perfDetails.appStart.type} • {formatDuration(perfDetails.appStart.duration)}
+                        {perfDetails.appStart.type} •{" "}
+                        {formatDuration(perfDetails.appStart.duration)}
                       </Text>
                     </View>
                   )}
-                  
+
                   {perfDetails.spans && perfDetails.spans.length > 0 && (
                     <>
-                      <Text style={styles.detailLabel}>Spans ({perfDetails.spans.length}):</Text>
+                      <Text style={styles.detailLabel}>
+                        Spans ({perfDetails.spans.length}):
+                      </Text>
                       {perfDetails.spans.slice(0, 5).map((span, idx) => (
                         <Text key={idx} style={styles.spanItem}>
-                          {span.op}: {span.description} 
-                          {span.duration && ` • ${formatDuration(span.duration)}`}
+                          {span.op}: {span.description}
+                          {span.duration &&
+                            ` • ${formatDuration(span.duration)}`}
                         </Text>
                       ))}
                     </>
                   )}
-                  
+
                   <View style={styles.customizableNote}>
-                    <EditableIndicator field="Transaction name" editable={true} />
+                    <EditableIndicator
+                      field="Transaction name"
+                      editable={true}
+                    />
                     <EditableIndicator field="Sampling rate" editable={true} />
                   </View>
                 </View>
               </CollapsibleSection>
             )}
-            
+
             {/* Original message if no specific details */}
-            {!httpRequests.length && !touchDetails && !navDetails && !errorDetails && !perfDetails && (
-              <View style={styles.messageContainer}>
-                <Text style={styles.messageText} selectable>
-                  {typeof entry.message === 'string' ? entry.message : entry.message?.message || 'Error'}
-                </Text>
-              </View>
-            )}
+            {!httpRequests.length &&
+              !touchDetails &&
+              !navDetails &&
+              !errorDetails &&
+              !perfDetails && (
+                <View style={styles.messageContainer}>
+                  <Text style={styles.messageText} selectable>
+                    {typeof entry.message === "string"
+                      ? entry.message
+                      : entry.message?.message || "Error"}
+                  </Text>
+                </View>
+              )}
           </ScrollView>
         );
-        
+
       case "insights":
         return (
           <ScrollView
@@ -733,15 +859,22 @@ export function SentryEventDetailView({
           >
             {insights.length > 0 ? (
               insights.map((insight, index) => (
-                <View key={index} style={[
-                  styles.insightItem,
-                  insight.severity === 'high' && styles.insightHigh,
-                  insight.severity === 'medium' && styles.insightMedium,
-                  insight.severity === 'low' && styles.insightLow
-                ]}>
+                <View
+                  key={index}
+                  style={[
+                    styles.insightItem,
+                    insight.severity === "high" && styles.insightHigh,
+                    insight.severity === "medium" && styles.insightMedium,
+                    insight.severity === "low" && styles.insightLow,
+                  ]}
+                >
                   <View style={styles.insightHeader}>
-                    <Text style={styles.insightType}>{insight.type.toUpperCase()}</Text>
-                    <Text style={styles.insightSeverity}>{insight.severity}</Text>
+                    <Text style={styles.insightType}>
+                      {insight.type.toUpperCase()}
+                    </Text>
+                    <Text style={styles.insightSeverity}>
+                      {insight.severity}
+                    </Text>
                   </View>
                   <Text style={styles.insightMessage}>{insight.message}</Text>
                   {insight.details && (
@@ -749,8 +882,12 @@ export function SentryEventDetailView({
                   )}
                   {insight.suggestion && (
                     <View style={styles.insightSuggestion}>
-                      <Text style={styles.insightSuggestionLabel}>Suggestion:</Text>
-                      <Text style={styles.insightSuggestionText}>{insight.suggestion}</Text>
+                      <Text style={styles.insightSuggestionLabel}>
+                        Suggestion:
+                      </Text>
+                      <Text style={styles.insightSuggestionText}>
+                        {insight.suggestion}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -763,7 +900,7 @@ export function SentryEventDetailView({
             )}
           </ScrollView>
         );
-        
+
       case "rawData":
         return (
           <DataViewer
@@ -774,7 +911,7 @@ export function SentryEventDetailView({
             showTypeFilter={true}
           />
         );
-        
+
       case "deviceContext":
         return (
           <ScrollView
@@ -783,70 +920,93 @@ export function SentryEventDetailView({
           >
             {deviceContext ? (
               <>
-                <CollapsibleSection title="App Context" icon={<Smartphone size={14} color={gameUIColors.optional} />}>
+                <CollapsibleSection
+                  title="App Context"
+                  icon={<Smartphone size={14} color={gameUIColors.optional} />}
+                >
                   <View style={styles.contextSection}>
                     {deviceContext.app.name && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Name:</Text>
-                        <Text style={styles.contextValue}>{deviceContext.app.name}</Text>
+                        <Text style={styles.contextValue}>
+                          {deviceContext.app.name}
+                        </Text>
                       </View>
                     )}
                     {deviceContext.app.version && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Version:</Text>
-                        <Text style={styles.contextValue}>{deviceContext.app.version}</Text>
+                        <Text style={styles.contextValue}>
+                          {deviceContext.app.version}
+                        </Text>
                       </View>
                     )}
                     {deviceContext.app.build && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Build:</Text>
-                        <Text style={styles.contextValue}>{deviceContext.app.build}</Text>
+                        <Text style={styles.contextValue}>
+                          {deviceContext.app.build}
+                        </Text>
                       </View>
                     )}
                     <EditableIndicator field="App context" editable={false} />
                   </View>
                 </CollapsibleSection>
-                
-                <CollapsibleSection title="Device Info" icon={<Server size={14} color={gameUIColors.optional} />}>
+
+                <CollapsibleSection
+                  title="Device Info"
+                  icon={<Server size={14} color={gameUIColors.optional} />}
+                >
                   <View style={styles.contextSection}>
                     {deviceContext.device.model && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Model:</Text>
-                        <Text style={styles.contextValue}>{deviceContext.device.model}</Text>
+                        <Text style={styles.contextValue}>
+                          {deviceContext.device.model}
+                        </Text>
                       </View>
                     )}
                     {deviceContext.device.os && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>OS:</Text>
                         <Text style={styles.contextValue}>
-                          {deviceContext.device.os} {deviceContext.device.osVersion}
+                          {deviceContext.device.os}{" "}
+                          {deviceContext.device.osVersion}
                         </Text>
                       </View>
                     )}
                     {deviceContext.device.memory && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Memory:</Text>
-                        <Text style={styles.contextValue}>{formatBytes(deviceContext.device.memory)}</Text>
+                        <Text style={styles.contextValue}>
+                          {formatBytes(deviceContext.device.memory)}
+                        </Text>
                       </View>
                     )}
                     <EditableIndicator field="Device info" editable={false} />
                   </View>
                 </CollapsibleSection>
-                
-                <CollapsibleSection title="Runtime" icon={<Layers size={14} color={gameUIColors.optional} />}>
+
+                <CollapsibleSection
+                  title="Runtime"
+                  icon={<Layers size={14} color={gameUIColors.optional} />}
+                >
                   <View style={styles.contextSection}>
                     {deviceContext.runtime.name && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Runtime:</Text>
                         <Text style={styles.contextValue}>
-                          {deviceContext.runtime.name} {deviceContext.runtime.version}
+                          {deviceContext.runtime.name}{" "}
+                          {deviceContext.runtime.version}
                         </Text>
                       </View>
                     )}
                     {deviceContext.runtime.engine && (
                       <View style={styles.contextItem}>
                         <Text style={styles.contextLabel}>Engine:</Text>
-                        <Text style={styles.contextValue}>{deviceContext.runtime.engine}</Text>
+                        <Text style={styles.contextValue}>
+                          {deviceContext.runtime.engine}
+                        </Text>
                       </View>
                     )}
                     <EditableIndicator field="Runtime info" editable={false} />
@@ -856,12 +1016,14 @@ export function SentryEventDetailView({
             ) : (
               <View style={styles.noContext}>
                 <Info size={20} color={gameUIColors.muted} />
-                <Text style={styles.noContextText}>No device context available</Text>
+                <Text style={styles.noContextText}>
+                  No device context available
+                </Text>
               </View>
             )}
           </ScrollView>
         );
-        
+
       default:
         return null;
     }
@@ -902,20 +1064,19 @@ export function SentryEventDetailView({
             {(entry.metadata.sentryEventType || entry.metadata.category) && (
               <View style={styles.sentryTypeContainer}>
                 <Text style={styles.sentryTypeText}>
-                  {(entry.metadata.sentryEventType || entry.metadata.category) as string || ''}
+                  {((entry.metadata.sentryEventType ||
+                    entry.metadata.category) as string) || ""}
                 </Text>
               </View>
             )}
           </View>
 
           {/* Timestamp */}
-          <Text style={styles.timestamp}>
-            {formatTime(entry.timestamp)}
-          </Text>
+          <Text style={styles.timestamp}>{formatTime(entry.timestamp)}</Text>
         </View>
-        
+
         {/* Enhanced message display - hide for touch events as it will be shown in details */}
-        {entry.metadata.category !== 'touch' && (
+        {entry.metadata.category !== "touch" && (
           <Text style={styles.enhancedMessage} numberOfLines={2}>
             {formatEventMessage(entry)}
           </Text>
@@ -977,7 +1138,10 @@ export function SentryEventDetailView({
         <TouchableOpacity
           sentry-label="ignore device context tab"
           onPress={() => setActiveTab("deviceContext")}
-          style={[styles.tab, activeTab === "deviceContext" && styles.activeTab]}
+          style={[
+            styles.tab,
+            activeTab === "deviceContext" && styles.activeTab,
+          ]}
         >
           <Text
             style={[
@@ -991,9 +1155,7 @@ export function SentryEventDetailView({
       </View>
 
       {/* Tab content */}
-      <View style={styles.contentContainer}>
-        {renderTabContent()}
-      </View>
+      <View style={styles.contentContainer}>{renderTabContent()}</View>
     </View>
   );
 }
@@ -1135,7 +1297,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontFamily: "monospace",
   },
-  
+
   // Collapsible section styles
   collapsibleSection: {
     marginHorizontal: 16,
@@ -1164,7 +1326,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingBottom: 12,
   },
-  
+
   // HTTP request styles
   httpRequestCard: {
     backgroundColor: gameUIColors.background + "33",
@@ -1230,7 +1392,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "monospace",
   },
-  
+
   // URL breakdown styles
   urlBreakdown: {
     marginVertical: 8,
@@ -1285,7 +1447,7 @@ const styles = StyleSheet.create({
   copyButton: {
     padding: 4,
   },
-  
+
   // Field indicator styles
   fieldIndicator: {
     flexDirection: "row",
@@ -1336,7 +1498,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontStyle: "italic",
   },
-  
+
   // Event-specific detail styles
   detailLabel: {
     color: gameUIColors.secondary,
@@ -1452,7 +1614,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginBottom: 2,
   },
-  
+
   // Insights styles
   insightsContainer: {
     flex: 1,
@@ -1534,7 +1696,7 @@ const styles = StyleSheet.create({
     color: gameUIColors.success,
     fontSize: 14,
   },
-  
+
   // Device context styles
   deviceContextContainer: {
     flex: 1,

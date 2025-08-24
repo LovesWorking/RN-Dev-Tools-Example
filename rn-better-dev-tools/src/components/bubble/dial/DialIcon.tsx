@@ -142,12 +142,12 @@ const DialIcon: React.FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.cos(angle), Math.cos(angle + Math.PI * 2)],
-      })
+      }),
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalX - radius * Math.cos(angle + Math.PI * 2)],
-    })
+    }),
   );
 
   const translateY = Animated.add(
@@ -156,12 +156,12 @@ const DialIcon: React.FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.sin(angle), Math.sin(angle + Math.PI * 2)],
-      })
+      }),
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalY - radius * Math.sin(angle + Math.PI * 2)],
-    })
+    }),
   );
 
   // Opacity animation
@@ -213,7 +213,9 @@ const DialIcon: React.FC<Props> = ({
         style={[
           styles.pressable,
           {
-            backgroundColor: isSelected ? icon.color + "20" : gameUIColors.buttonBackground,
+            backgroundColor: isSelected
+              ? icon.color + "20"
+              : gameUIColors.buttonBackground,
 
             borderColor: isSelected ? icon.color : gameUIColors.border,
             borderWidth: isSelected ? 2 : 1,

@@ -1,11 +1,29 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
-import { Text, View, TouchableOpacity, StyleSheet, FlatList, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { HardDrive, Database, Pause, Play, Trash2, Filter, Activity, Clock } from 'rn-better-dev-tools/icons';
+import {
+  HardDrive,
+  Database,
+  Pause,
+  Play,
+  Trash2,
+  Filter,
+  Activity,
+  Clock,
+} from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
@@ -61,11 +79,14 @@ export function StorageModalWithTabs({
   // Event Listener state
   const [events, setEvents] = useState<AsyncStorageEvent[]>([]);
   const [isListening, setIsListening] = useState(false);
-  const [selectedConversation, setSelectedConversation] = useState<StorageKeyConversation | null>(null);
+  const [selectedConversation, setSelectedConversation] =
+    useState<StorageKeyConversation | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [detailTab, setDetailTab] = useState<"overview" | "changes">("overview");
+  const [detailTab, setDetailTab] = useState<"overview" | "changes">(
+    "overview",
+  );
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
-    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"])
+    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"]),
   );
   const lastEventRef = useRef<AsyncStorageEvent | null>(null);
   const hasLoadedFilters = useRef(false);
@@ -79,11 +100,15 @@ export function StorageModalWithTabs({
   // Load persisted filters on mount
   useEffect(() => {
     if (!visible || hasLoadedFilters.current) return;
-    
+
     const loadFilters = async () => {
       try {
-        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
-        const storedFilters = await AsyncStorage.getItem(devToolsStorageKeys.storage.eventFilters());
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+        const storedFilters = await AsyncStorage.getItem(
+          devToolsStorageKeys.storage.eventFilters(),
+        );
         if (storedFilters) {
           const filters = JSON.parse(storedFilters) as string[];
           setIgnoredPatterns(new Set(filters));
@@ -93,24 +118,29 @@ export function StorageModalWithTabs({
         console.warn("Failed to load storage event filters:", error);
       }
     };
-    
+
     loadFilters();
   }, [visible]);
 
   // Save filters when they change
   useEffect(() => {
     if (!hasLoadedFilters.current) return; // Don't save on initial load
-    
+
     const saveFilters = async () => {
       try {
-        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
         const filters = Array.from(ignoredPatterns);
-        await AsyncStorage.setItem(devToolsStorageKeys.storage.eventFilters(), JSON.stringify(filters));
+        await AsyncStorage.setItem(
+          devToolsStorageKeys.storage.eventFilters(),
+          JSON.stringify(filters),
+        );
       } catch (error) {
         console.warn("Failed to save storage event filters:", error);
       }
     };
-    
+
     saveFilters();
   }, [ignoredPatterns]);
 
@@ -130,7 +160,6 @@ export function StorageModalWithTabs({
         return updated.slice(0, 500);
       });
     });
-
 
     return () => {
       unsubscribe();
@@ -156,7 +185,7 @@ export function StorageModalWithTabs({
     (conversation: StorageKeyConversation) => {
       setSelectedConversation(conversation);
     },
-    []
+    [],
   );
 
   const handleTogglePattern = useCallback((pattern: string) => {
@@ -192,7 +221,7 @@ export function StorageModalWithTabs({
   };
 
   const getValueType = (
-    value: unknown
+    value: unknown,
   ): StorageKeyConversation["valueType"] => {
     const parsed = parseValue(value);
     if (parsed === null) return "null";
@@ -227,7 +256,7 @@ export function StorageModalWithTabs({
 
       // Filter out keys that match ignored patterns
       const shouldIgnore = Array.from(ignoredPatterns).some((pattern) =>
-        key.includes(pattern)
+        key.includes(pattern),
       );
 
       if (shouldIgnore) return;
@@ -259,7 +288,7 @@ export function StorageModalWithTabs({
     // Convert to array and sort by last updated
     return Array.from(keyMap.values()).sort(
       (a, b) =>
-        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
+        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime(),
     );
   }, [events, ignoredPatterns]);
 
@@ -321,7 +350,8 @@ export function StorageModalWithTabs({
           <View style={styles.conversationDetails}>
             <ValueTypeBadge type={item.valueType} />
             <Text style={styles.operationCount}>
-              {item.totalOperations} operation{item.totalOperations !== 1 ? "s" : ""}
+              {item.totalOperations} operation
+              {item.totalOperations !== 1 ? "s" : ""}
             </Text>
             <Text style={styles.timestamp}>
               {formatRelativeTime(item.lastEvent.timestamp)}
@@ -330,7 +360,7 @@ export function StorageModalWithTabs({
         </TouchableOpacity>
       );
     },
-    []
+    [],
   );
 
   if (!visible) return null;
@@ -359,8 +389,11 @@ export function StorageModalWithTabs({
     // Show detail view with tabs
     if (selectedConversation) {
       const keyStats = selectedConversation.events.length;
-      const valueChanges = selectedConversation.events.filter(e => 
-        e.action === "setItem" || e.action === "mergeItem" || e.action === "removeItem"
+      const valueChanges = selectedConversation.events.filter(
+        (e) =>
+          e.action === "setItem" ||
+          e.action === "mergeItem" ||
+          e.action === "removeItem",
       ).length;
 
       return (
@@ -373,7 +406,7 @@ export function StorageModalWithTabs({
             color={gameUIColors.primary}
             size={16}
           />
-          
+
           <View style={styles.tabNavigationContainer}>
             <TouchableOpacity
               onPress={() => setDetailTab("overview")}
@@ -382,15 +415,26 @@ export function StorageModalWithTabs({
                 detailTab === "overview" && styles.tabButtonActive,
               ]}
             >
-              <Database size={12} color={detailTab === "overview" ? gameUIColors.storage : gameUIColors.secondary} />
-              <Text style={[
-                styles.tabButtonText,
-                detailTab === "overview" ? styles.tabButtonTextActive : styles.tabButtonTextInactive,
-              ]}>
+              <Database
+                size={12}
+                color={
+                  detailTab === "overview"
+                    ? gameUIColors.storage
+                    : gameUIColors.secondary
+                }
+              />
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  detailTab === "overview"
+                    ? styles.tabButtonTextActive
+                    : styles.tabButtonTextInactive,
+                ]}
+              >
                 Overview
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               onPress={() => setDetailTab("changes")}
               style={[
@@ -398,15 +442,36 @@ export function StorageModalWithTabs({
                 detailTab === "changes" && styles.tabButtonActive,
               ]}
             >
-              <Activity size={12} color={detailTab === "changes" ? gameUIColors.warning : gameUIColors.secondary} />
-              <Text style={[
-                styles.tabButtonText,
-                detailTab === "changes" ? styles.tabButtonTextActive : styles.tabButtonTextInactive,
-              ]}>
+              <Activity
+                size={12}
+                color={
+                  detailTab === "changes"
+                    ? gameUIColors.warning
+                    : gameUIColors.secondary
+                }
+              />
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  detailTab === "changes"
+                    ? styles.tabButtonTextActive
+                    : styles.tabButtonTextInactive,
+                ]}
+              >
                 Changes
               </Text>
-              <View style={[styles.eventBadge, { backgroundColor: gameUIColors.warning + "20" }]}>
-                <Text style={[styles.eventBadgeText, { color: gameUIColors.warning }]}>
+              <View
+                style={[
+                  styles.eventBadge,
+                  { backgroundColor: gameUIColors.warning + "20" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.eventBadgeText,
+                    { color: gameUIColors.warning },
+                  ]}
+                >
                   {keyStats}
                 </Text>
               </View>
@@ -419,8 +484,10 @@ export function StorageModalWithTabs({
     // Main header with tabs
     return (
       <View style={styles.headerContainer}>
-        {onBack && <BackButton onPress={onBack} color={gameUIColors.primary} size={16} />}
-        
+        {onBack && (
+          <BackButton onPress={onBack} color={gameUIColors.primary} size={16} />
+        )}
+
         <View style={styles.tabNavigationContainer}>
           <TouchableOpacity
             onPress={() => setActiveTab("browser")}
@@ -431,7 +498,14 @@ export function StorageModalWithTabs({
                 : styles.tabButtonInactive,
             ]}
           >
-            <HardDrive size={14} color={activeTab === "browser" ? gameUIColors.storage : gameUIColors.secondary} />
+            <HardDrive
+              size={14}
+              color={
+                activeTab === "browser"
+                  ? gameUIColors.storage
+                  : gameUIColors.secondary
+              }
+            />
             <Text
               style={[
                 styles.tabButtonText,
@@ -443,7 +517,7 @@ export function StorageModalWithTabs({
               Storage
             </Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             onPress={() => setActiveTab("events")}
             style={[
@@ -453,7 +527,14 @@ export function StorageModalWithTabs({
                 : styles.tabButtonInactive,
             ]}
           >
-            <Activity size={14} color={activeTab === "events" ? gameUIColors.storage : gameUIColors.secondary} />
+            <Activity
+              size={14}
+              color={
+                activeTab === "events"
+                  ? gameUIColors.storage
+                  : gameUIColors.secondary
+              }
+            />
             <Text
               style={[
                 styles.tabButtonText,
@@ -516,10 +597,10 @@ export function StorageModalWithTabs({
   const renderContent = () => {
     if (activeTab === "browser") {
       return (
-        <StorageBrowserMode 
+        <StorageBrowserMode
           selectedQuery={undefined}
           onQuerySelect={() => {}}
-          requiredStorageKeys={requiredStorageKeys} 
+          requiredStorageKeys={requiredStorageKeys}
         />
       );
     }
@@ -585,13 +666,14 @@ export function StorageModalWithTabs({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: renderHeaderContent()
+        customContent: renderHeaderContent(),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       {renderContent()}
     </ClaudeModal60FPSClean>
   );

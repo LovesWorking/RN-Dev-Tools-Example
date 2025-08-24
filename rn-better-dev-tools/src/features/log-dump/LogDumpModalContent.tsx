@@ -13,7 +13,7 @@ import {
   RefreshCw,
   Trash,
   X,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
 import {
   clearEntries,
@@ -41,7 +41,7 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
   const [entries, setEntries] = useState<ConsoleTransportEntry[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(new Set());
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
-    new Set()
+    new Set(),
   );
   const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
 
@@ -52,19 +52,19 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
       (acc: ConsoleTransportEntry[], entry: ConsoleTransportEntry) => {
         if (
           !acc.some(
-            (existing: ConsoleTransportEntry) => existing.id === entry.id
+            (existing: ConsoleTransportEntry) => existing.id === entry.id,
           )
         ) {
           acc.push(entry);
         }
         return acc;
       },
-      [] as ConsoleTransportEntry[]
+      [] as ConsoleTransportEntry[],
     );
 
     return uniqueEntries.sort(
       (a: ConsoleTransportEntry, b: ConsoleTransportEntry) =>
-        b.timestamp - a.timestamp
+        b.timestamp - a.timestamp,
     );
   };
 

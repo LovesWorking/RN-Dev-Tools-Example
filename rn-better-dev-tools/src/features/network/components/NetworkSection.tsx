@@ -1,6 +1,6 @@
-import { Globe } from 'rn-better-dev-tools/icons';
-import { CyberpunkSectionButton } from '@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton';
-import { useNetworkEvents } from '../hooks/useNetworkEvents';
+import { Globe } from "rn-better-dev-tools/icons";
+import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
+import { useNetworkEvents } from "../hooks/useNetworkEvents";
 
 interface NetworkSectionProps {
   onPress: () => void;
@@ -13,13 +13,13 @@ export function NetworkSection({ onPress }: NetworkSectionProps) {
     if (stats.totalRequests === 0) {
       return isEnabled ? "Recording" : "Paused";
     }
-    
+
     // Shorter format: "Rec • 3 req" or "3R • 1F" for requests and failed
     const parts = [];
     if (isEnabled) parts.push("Rec");
     parts.push(`${stats.totalRequests}R`);
     if (stats.failedRequests > 0) parts.push(`${stats.failedRequests}F`);
-    
+
     return parts.join(" • ");
   };
 

@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
-import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { SentryLogsContent } from "./SentryLogsSection";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
@@ -8,7 +10,13 @@ import {
   LogType,
   LogLevel,
 } from "@/rn-better-dev-tools/src/shared/logger/types";
-import { Filter, Pause, Play, FlaskConical, Trash } from 'rn-better-dev-tools/icons';
+import {
+  Filter,
+  Pause,
+  Play,
+  FlaskConical,
+  Trash,
+} from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { useSentryEvents } from "../hooks/useSentryEvents";
 import {
@@ -42,7 +50,7 @@ export function SentryLogsModal({
   const [showFilterView, setShowFilterView] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(new Set());
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
-    new Set()
+    new Set(),
   );
   const [isLoggingEnabled, setIsLoggingEnabled] = useState(true);
   const theme = useTheme();
@@ -193,13 +201,14 @@ export function SentryLogsModal({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: renderHeaderContent()
+        customContent: renderHeaderContent(),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       <SentryLogsContent
         selectedEntry={selectedEntry}
         onSelectEntry={setSelectedEntry}

@@ -1,7 +1,10 @@
 import { RequiredEnvVar } from "@/rn-better-dev-tools/src/features/env/types";
 import { RequiredStorageKey } from "@/rn-better-dev-tools/src/features/storage/types";
 import { EnvVarsModal } from "@/rn-better-dev-tools/src/features/env/components/EnvVarsModal";
-import { StorageModalWithTabs, StorageEventsModal } from "@/rn-better-dev-tools/src/features/storage";
+import {
+  StorageModalWithTabs,
+  StorageEventsModal,
+} from "@/rn-better-dev-tools/src/features/storage";
 import { NetworkModal } from "@/rn-better-dev-tools/src/features/network";
 import { BubbleSettingsModal } from "./BubbleSettingsModal";
 

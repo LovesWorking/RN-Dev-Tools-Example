@@ -7,7 +7,7 @@ import {
   Clock,
   Loader2,
   XCircle,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
 // Import shared Game UI components
 import {
@@ -51,7 +51,8 @@ export function GameUIQueryStats({
           value: stats.fresh || 0,
           pulseDelay: 0,
           isActive: activeFilter === "fresh",
-          onPress: () => onFilterChange?.(activeFilter === "fresh" ? null : "fresh"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "fresh" ? null : "fresh"),
         },
         {
           key: "fetching",
@@ -62,7 +63,8 @@ export function GameUIQueryStats({
           value: stats.fetching || 0,
           pulseDelay: 200,
           isActive: activeFilter === "fetching",
-          onPress: () => onFilterChange?.(activeFilter === "fetching" ? null : "fetching"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "fetching" ? null : "fetching"),
         },
         {
           key: "paused",
@@ -73,7 +75,8 @@ export function GameUIQueryStats({
           value: stats.paused || 0,
           pulseDelay: 400,
           isActive: activeFilter === "paused",
-          onPress: () => onFilterChange?.(activeFilter === "paused" ? null : "paused"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "paused" ? null : "paused"),
         },
         {
           key: "stale",
@@ -84,7 +87,8 @@ export function GameUIQueryStats({
           value: stats.stale || 0,
           pulseDelay: 600,
           isActive: activeFilter === "stale",
-          onPress: () => onFilterChange?.(activeFilter === "stale" ? null : "stale"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "stale" ? null : "stale"),
         },
         {
           key: "inactive",
@@ -95,7 +99,8 @@ export function GameUIQueryStats({
           value: stats.inactive || 0,
           pulseDelay: 800,
           isActive: activeFilter === "inactive",
-          onPress: () => onFilterChange?.(activeFilter === "inactive" ? null : "inactive"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "inactive" ? null : "inactive"),
         },
       ];
     } else {
@@ -110,7 +115,8 @@ export function GameUIQueryStats({
           value: stats.pending || 0,
           pulseDelay: 0,
           isActive: activeFilter === "pending",
-          onPress: () => onFilterChange?.(activeFilter === "pending" ? null : "pending"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "pending" ? null : "pending"),
         },
         {
           key: "success",
@@ -121,7 +127,8 @@ export function GameUIQueryStats({
           value: stats.success || 0,
           pulseDelay: 200,
           isActive: activeFilter === "success",
-          onPress: () => onFilterChange?.(activeFilter === "success" ? null : "success"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "success" ? null : "success"),
         },
         {
           key: "error",
@@ -132,7 +139,8 @@ export function GameUIQueryStats({
           value: stats.error || 0,
           pulseDelay: 400,
           isActive: activeFilter === "error",
-          onPress: () => onFilterChange?.(activeFilter === "error" ? null : "error"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "error" ? null : "error"),
         },
         {
           key: "paused",
@@ -143,7 +151,8 @@ export function GameUIQueryStats({
           value: stats.paused || 0,
           pulseDelay: 600,
           isActive: activeFilter === "paused",
-          onPress: () => onFilterChange?.(activeFilter === "paused" ? null : "paused"),
+          onPress: () =>
+            onFilterChange?.(activeFilter === "paused" ? null : "paused"),
         },
       ];
     }
@@ -157,7 +166,7 @@ export function GameUIQueryStats({
   // Calculate health percentage based on query/mutation status
   const healthPercentage = useMemo(() => {
     if (totalCount === 0) return 0;
-    
+
     if (type === "queries") {
       const healthyCount = (stats.fresh || 0) + (stats.inactive || 0);
       return Math.round((healthyCount / totalCount) * 100);
@@ -170,14 +179,18 @@ export function GameUIQueryStats({
   }, [type, stats, totalCount]);
 
   const healthStatus =
-    healthPercentage >= 90 ? "OPTIMAL" : healthPercentage >= 70 ? "WARNING" : "CRITICAL";
+    healthPercentage >= 90
+      ? "OPTIMAL"
+      : healthPercentage >= 70
+        ? "WARNING"
+        : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
       ? gameUIColors.success
       : healthPercentage >= 70
-      ? gameUIColors.warning
-      : gameUIColors.error;
+        ? gameUIColors.warning
+        : gameUIColors.error;
 
   // Bottom stats
   const bottomStats = useMemo(() => {
@@ -186,7 +199,8 @@ export function GameUIQueryStats({
         { label: "TOTAL", value: totalCount },
         {
           label: "ACTIVE",
-          value: (stats.fresh || 0) + (stats.fetching || 0) + (stats.stale || 0),
+          value:
+            (stats.fresh || 0) + (stats.fetching || 0) + (stats.stale || 0),
           color: gameUIColors.success,
         },
         {
@@ -218,7 +232,8 @@ export function GameUIQueryStats({
       totalCount={totalCount}
       header={{
         title: type === "queries" ? "QUERY STATUS" : "MUTATION STATUS",
-        subtitle: type === "queries" ? "Data fetching state" : "Operation state",
+        subtitle:
+          type === "queries" ? "Data fetching state" : "Operation state",
         healthPercentage,
         healthStatus,
         healthColor,

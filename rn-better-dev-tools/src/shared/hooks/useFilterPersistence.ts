@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useRef, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
  * Hook for persisting filter state to AsyncStorage
@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export function useFilterPersistence<T>(
   storageKey: string,
   defaultValue: T,
-  visible: boolean = true
+  visible: boolean = true,
 ): [T, (value: T) => void, boolean] {
   const [value, setValue] = useState<T>(defaultValue);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -69,7 +69,7 @@ export function useFilterPersistence<T>(
 export function useSetFilterPersistence(
   storageKey: string,
   defaultValue: Set<string> = new Set(),
-  visible: boolean = true
+  visible: boolean = true,
 ): [Set<string>, (value: Set<string>) => void, boolean] {
   const [value, setValue] = useState<Set<string>>(defaultValue);
   const [isLoaded, setIsLoaded] = useState(false);

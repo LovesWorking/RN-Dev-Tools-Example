@@ -3,7 +3,11 @@ import {
   SentryEventLevel,
   SentryEventType,
 } from "./sentryEventListeners";
-import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  ConsoleTransportEntry,
+  LogLevel,
+  LogType,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 
 /**
  * Maps SentryEventType to LogType for UI consistency
@@ -65,7 +69,7 @@ const mapEventLevelToLogLevel = (eventLevel: SentryEventLevel): LogLevel => {
  */
 const refineLogTypeFromContext = (
   entry: SentryEventEntry,
-  baseType: LogType
+  baseType: LogType,
 ): LogType => {
   // Check category from data for more specific typing
   const category = entry.data?.category as string;
@@ -110,7 +114,7 @@ const refineLogTypeFromContext = (
  * Converts a SentryEventEntry to ConsoleTransportEntry format for UI compatibility
  */
 const adaptSentryEventToConsoleEntry = (
-  sentryEntry: SentryEventEntry
+  sentryEntry: SentryEventEntry,
 ): ConsoleTransportEntry => {
   const baseLogType = mapEventTypeToLogType(sentryEntry.eventType);
   const refinedLogType = refineLogTypeFromContext(sentryEntry, baseLogType);
@@ -139,7 +143,7 @@ const adaptSentryEventToConsoleEntry = (
  * Converts multiple SentryEventEntry to ConsoleTransportEntry format
  */
 export const adaptSentryEventsToConsoleEntries = (
-  sentryEntries: SentryEventEntry[]
+  sentryEntries: SentryEventEntry[],
 ): ConsoleTransportEntry[] => {
   return sentryEntries.map(adaptSentryEventToConsoleEntry);
 };

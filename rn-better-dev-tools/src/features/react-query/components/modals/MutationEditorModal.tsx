@@ -1,5 +1,7 @@
 import { Mutation } from "@tanstack/react-query";
-import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { MutationEditorMode } from "../MutationEditorMode";
@@ -61,7 +63,8 @@ export function MutationEditorModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       <MutationEditorMode
         selectedMutation={selectedMutation}
         isFloatingMode={modalMode === "floating"}

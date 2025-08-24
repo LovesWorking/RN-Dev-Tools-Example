@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import {
@@ -21,7 +23,7 @@ import {
   CheckCircle,
   XCircle,
   Copy,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 // import Clipboard from "@react-native-clipboard/clipboard"; // Removed due to missing dependency
@@ -189,8 +191,8 @@ export function StorageEventDetailModal({
       parsed === null
         ? "null"
         : parsed === undefined
-        ? "undefined"
-        : typeof parsed;
+          ? "undefined"
+          : typeof parsed;
 
     if (type === "boolean") {
       const isTrue = parsed === true;
@@ -353,13 +355,14 @@ export function StorageEventDetailModal({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: renderHeaderContent()
+        customContent: renderHeaderContent(),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}

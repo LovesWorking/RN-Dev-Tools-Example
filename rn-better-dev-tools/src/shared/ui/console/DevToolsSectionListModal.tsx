@@ -36,7 +36,9 @@ export function DevToolsSectionListModal({
   envVarsSubtitle,
   enableSharedModalDimensions = false,
 }: DevToolsSectionListModalProps) {
-  const [modalMode, setModalMode] = useState<"bottomSheet" | "floating">("bottomSheet");
+  const [modalMode, setModalMode] = useState<"bottomSheet" | "floating">(
+    "bottomSheet",
+  );
   const theme = useTheme();
 
   const handleModeChange = useCallback((mode: "bottomSheet" | "floating") => {
@@ -48,7 +50,6 @@ export function DevToolsSectionListModal({
   const storagePrefix = enableSharedModalDimensions
     ? "@dev_tools_console_modal"
     : "@devtools_section_list";
-
 
   return (
     <ClaudeModal60FPSClean

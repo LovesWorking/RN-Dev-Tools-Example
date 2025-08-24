@@ -1,4 +1,4 @@
-import type { ConsoleTransportEntry } from './types';
+import type { ConsoleTransportEntry } from "./types";
 
 let entries: ConsoleTransportEntry[] = [];
 

@@ -1,9 +1,24 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Database, Pause, Play, Trash2, Filter } from 'rn-better-dev-tools/icons';
+import {
+  Database,
+  Pause,
+  Play,
+  Trash2,
+  Filter,
+} from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import {
@@ -56,7 +71,7 @@ export function StorageEventsModal({
     useState<StorageKeyConversation | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
-    new Set([devToolsStorageKeys.base])
+    new Set([devToolsStorageKeys.base]),
   );
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -72,7 +87,7 @@ export function StorageEventsModal({
     const loadFilters = async () => {
       try {
         const saved = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.filters()
+          devToolsStorageKeys.storage.filters(),
         );
         if (saved) {
           const patterns = JSON.parse(saved);
@@ -94,7 +109,7 @@ export function StorageEventsModal({
       try {
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.filters(),
-          JSON.stringify(Array.from(ignoredPatterns))
+          JSON.stringify(Array.from(ignoredPatterns)),
         );
       } catch (error) {
         console.warn("Failed to save storage filters:", error);
@@ -128,7 +143,7 @@ export function StorageEventsModal({
       console.log(
         "[StorageEventsModal] Received event:",
         event.action,
-        event.data
+        event.data,
       );
       // Add unique ID to each event
       const eventWithId = {
@@ -166,7 +181,7 @@ export function StorageEventsModal({
     (conversation: StorageKeyConversation) => {
       setSelectedConversation(conversation);
     },
-    []
+    [],
   );
 
   const handleTogglePattern = useCallback((pattern: string) => {
@@ -202,7 +217,7 @@ export function StorageEventsModal({
   };
 
   const getValueType = (
-    value: unknown
+    value: unknown,
   ): StorageKeyConversation["valueType"] => {
     const parsed = parseValue(value);
     if (parsed === null) return "null";
@@ -226,7 +241,7 @@ export function StorageEventsModal({
 
       // Filter out keys that match ignored patterns
       const shouldIgnore = Array.from(ignoredPatterns).some((pattern) =>
-        key.includes(pattern)
+        key.includes(pattern),
       );
 
       if (shouldIgnore) return;
@@ -258,7 +273,7 @@ export function StorageEventsModal({
     // Convert to array and sort by last updated
     return Array.from(keyMap.values()).sort(
       (a, b) =>
-        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
+        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime(),
     );
   }, [events, tick, ignoredPatterns]); // Include ignoredPatterns in dependencies
 
@@ -338,7 +353,7 @@ export function StorageEventsModal({
                       styles.actionBadge,
                       {
                         backgroundColor: `${getActionColor(
-                          item.lastEvent.action
+                          item.lastEvent.action,
                         )}20`,
                       },
                     ]}
@@ -375,17 +390,34 @@ export function StorageEventsModal({
     <View style={styles.headerContainer}>
       {onBack && <BackButton onPress={onBack} color={theme.colors.text} />}
       <View style={styles.headerStats}>
-        <Text style={[styles.headerStatsText, { 
-          color: theme.colors.text,
-          fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
-          fontSize: theme.name === "cyberpunk" ? 12 : 14,
-          letterSpacing: theme.name === "cyberpunk" ? 0.5 : undefined,
-        }]}>
-          {theme.name === "cyberpunk" ? `[${conversations.length}] KEYS` : `${conversations.length} keys`}
+        <Text
+          style={[
+            styles.headerStatsText,
+            {
+              color: theme.colors.text,
+              fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
+              fontSize: theme.name === "cyberpunk" ? 12 : 14,
+              letterSpacing: theme.name === "cyberpunk" ? 0.5 : undefined,
+            },
+          ]}
+        >
+          {theme.name === "cyberpunk"
+            ? `[${conversations.length}] KEYS`
+            : `${conversations.length} keys`}
         </Text>
-        {isListening && <View style={[styles.listeningIndicator, {
-          backgroundColor: theme.name === "cyberpunk" ? theme.colors.success : gameUIColors.success
-        }]} />}
+        {isListening && (
+          <View
+            style={[
+              styles.listeningIndicator,
+              {
+                backgroundColor:
+                  theme.name === "cyberpunk"
+                    ? theme.colors.success
+                    : gameUIColors.success,
+              },
+            ]}
+          />
+        )}
       </View>
 
       {/* Action buttons in header */}
@@ -413,7 +445,10 @@ export function StorageEventsModal({
             showFilters && styles.filterButtonActive,
           ]}
         >
-          <Filter size={14} color={showFilters ? gameUIColors.info : gameUIColors.muted} />
+          <Filter
+            size={14}
+            color={showFilters ? gameUIColors.info : gameUIColors.muted}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -422,7 +457,12 @@ export function StorageEventsModal({
           style={styles.headerActionButton}
           disabled={events.length === 0}
         >
-          <Trash2 size={14} color={events.length > 0 ? gameUIColors.muted : gameUIColors.muted + "80"} />
+          <Trash2
+            size={14}
+            color={
+              events.length > 0 ? gameUIColors.muted : gameUIColors.muted + "80"
+            }
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -489,7 +529,8 @@ export function StorageEventsModal({
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
+      styles={{}}
+    >
       <View style={styles.container}>
         {conversations.length === 0 ? (
           <View style={styles.emptyState}>

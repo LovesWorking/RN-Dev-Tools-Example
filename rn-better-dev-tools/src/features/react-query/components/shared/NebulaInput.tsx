@@ -10,12 +10,16 @@ import {
 } from "react-native";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
-
-const runningBorderPath = (width: number, height: number, radius: number, padding: number = 0) => {
+const runningBorderPath = (
+  width: number,
+  height: number,
+  radius: number,
+  padding: number = 0,
+) => {
   const offset = 1 + padding;
   const w = width - padding * 2;
   const h = height - padding * 2;
-  
+
   return `
     M ${radius + offset}, ${offset}
     L ${w - radius - offset + padding * 2}, ${offset}
@@ -40,38 +44,45 @@ export function NebulaInput({
   ...props
 }: NebulaInputProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(!!props.value && props.value !== '');
+  const [hasValue, setHasValue] = useState(!!props.value && props.value !== "");
   const [dimensions, setDimensions] = useState({ width: 300, height: 56 });
 
   // Animated values for label
-  const labelAnimation = useRef(new Animated.Value(!!props.value && props.value !== '' ? 1 : 0)).current;
-  
+  const labelAnimation = useRef(
+    new Animated.Value(!!props.value && props.value !== "" ? 1 : 0),
+  ).current;
+
   // For animated border
   const radius = 10;
   const { width, height } = dimensions;
   const glowPadding = 30; // Extra padding for massive blur glow
   const runningBorderData = runningBorderPath(width, height, radius, 0);
-  const glowBorderData = runningBorderPath(width + glowPadding * 2, height + glowPadding * 2, radius, glowPadding);
+  const glowBorderData = runningBorderPath(
+    width + glowPadding * 2,
+    height + glowPadding * 2,
+    radius,
+    glowPadding,
+  );
   const perimeter = 2 * (width + height) - 8 * radius + 2 * Math.PI * radius;
-  
+
   // Create asymmetric segments like the original - one long, one short
   // First segment: 9% of circle (like purple in original)
   // Second segment: 4% of circle (like pink in original)
-  const segment1Length = perimeter * 0.09;  // Longer segment
-  const gap1Length = perimeter * 0.41;      // Gap to position second segment opposite
-  const segment2Length = perimeter * 0.04;  // Shorter segment
-  const gap2Length = perimeter * 0.46;      // Remaining gap
-  
+  const segment1Length = perimeter * 0.09; // Longer segment
+  const gap1Length = perimeter * 0.41; // Gap to position second segment opposite
+  const segment2Length = perimeter * 0.04; // Shorter segment
+  const gap2Length = perimeter * 0.46; // Remaining gap
+
   // Create dash pattern with asymmetric segments
   const dashPattern = `${segment1Length} ${gap1Length} ${segment2Length} ${gap2Length}`;
-  
+
   const offset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Check if input has value from props
-    const currentHasValue = !!props.value && props.value !== '';
+    const currentHasValue = !!props.value && props.value !== "";
     setHasValue(currentHasValue);
-    
+
     // Animate label when focused or has value
     Animated.timing(labelAnimation, {
       toValue: isFocused || currentHasValue ? 1 : 0,
@@ -91,7 +102,7 @@ export function NebulaInput({
           easing: Easing.linear,
           useNativeDriver: false,
         }),
-        { resetBeforeIteration: true }
+        { resetBeforeIteration: true },
       ).start();
     } else {
       offset.setValue(0);
@@ -100,7 +111,7 @@ export function NebulaInput({
 
   // For SVG animation, we'll use a simpler approach
   const [strokeDashoffset, setStrokeDashoffset] = useState(0);
-  
+
   useEffect(() => {
     const listener = offset.addListener(({ value }) => {
       setStrokeDashoffset(-value);
@@ -131,11 +142,10 @@ export function NebulaInput({
   };
 
   return (
-    <View 
-      style={[styles.container, containerStyle]} 
-      onLayout={handleLayout}
-    >
-      <View style={[styles.inputWrapper, { width, height, borderRadius: radius }]}>
+    <View style={[styles.container, containerStyle]} onLayout={handleLayout}>
+      <View
+        style={[styles.inputWrapper, { width, height, borderRadius: radius }]}
+      >
         <TextInput
           {...props}
           style={[styles.input, props.style]}
@@ -196,10 +206,13 @@ export function NebulaInput({
         {isFocused && (
           <>
             {/* Outer glow layers - positioned to extend outside */}
-            <Svg 
-              width={width + glowPadding * 2} 
-              height={height + glowPadding * 2} 
-              style={[styles.svgBorder, { left: -glowPadding, top: -glowPadding }]}
+            <Svg
+              width={width + glowPadding * 2}
+              height={height + glowPadding * 2}
+              style={[
+                styles.svgBorder,
+                { left: -glowPadding, top: -glowPadding },
+              ]}
             >
               <Defs>
                 <LinearGradient id="glowGradient" x1="0" y1="0" x2="1" y2="1">
@@ -212,7 +225,7 @@ export function NebulaInput({
                   <Stop offset="100%" stopColor="#000000" stopOpacity="0" />
                 </LinearGradient>
               </Defs>
-              
+
               {/* Task 3: Multiple blur layers with different intensities */}
               {/* Massive soft blur - creates the aura */}
               <Path
@@ -225,7 +238,7 @@ export function NebulaInput({
                 strokeDashoffset={strokeDashoffset}
                 opacity={0.15}
               />
-              
+
               {/* Medium blur - transition layer */}
               <Path
                 d={glowBorderData}
@@ -237,7 +250,7 @@ export function NebulaInput({
                 strokeDashoffset={strokeDashoffset}
                 opacity={0.25}
               />
-              
+
               {/* Tight blur - near the border */}
               <Path
                 d={glowBorderData}
@@ -249,7 +262,7 @@ export function NebulaInput({
                 strokeDashoffset={strokeDashoffset}
                 opacity={0.4}
               />
-              
+
               {/* Sharp core glow */}
               <Path
                 d={glowBorderData}
@@ -262,7 +275,7 @@ export function NebulaInput({
                 opacity={0.8}
               />
             </Svg>
-            
+
             {/* Main animated border - stays within bounds */}
             <Svg width={width} height={height} style={styles.svgBorder}>
               <Defs>
@@ -274,7 +287,7 @@ export function NebulaInput({
                   <Stop offset="100%" stopColor="#402fb5" />
                 </LinearGradient>
               </Defs>
-              
+
               {/* Main border with two segments */}
               <Path
                 d={runningBorderData}
@@ -315,7 +328,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 25,
     position: "relative",
   },
-  
+
   inputWrapper: {
     justifyContent: "center",
     alignItems: "center",
@@ -343,7 +356,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     zIndex: 2,
   },
-  
+
   labelText: {
     fontWeight: "500",
     fontSize: 14,
@@ -355,14 +368,14 @@ const styles = StyleSheet.create({
     left: 0,
     pointerEvents: "none",
   },
-  
+
   svgShadow: {
     opacity: 0.6,
     // Apply blur to create glow effect
     ...Platform.select({
       ios: {
         // iOS-specific blur
-        filter: 'blur(4px)',
+        filter: "blur(4px)",
       },
       android: {
         // Android doesn't support filter, we'll rely on opacity and stroke width

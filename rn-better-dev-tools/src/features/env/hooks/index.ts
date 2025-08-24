@@ -1,1 +1,1 @@
-export * from './useDynamicEnv';
+export * from "./useDynamicEnv";

@@ -27,7 +27,7 @@ export function getStorageQueryCounts(queries: Query[]): StorageTypeCounts {
 
   // Filter to storage queries only, then count by type
   const storageQueries = queries.filter((query) =>
-    isStorageQuery(query.queryKey)
+    isStorageQuery(query.queryKey),
   );
 
   storageQueries.forEach((query) => {

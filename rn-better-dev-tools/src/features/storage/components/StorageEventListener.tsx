@@ -1,6 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { Play, Pause, Trash2 } from 'rn-better-dev-tools/icons';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { Play, Pause, Trash2 } from "rn-better-dev-tools/icons";
 import {
   startListening,
   stopListening,
@@ -21,9 +27,9 @@ const loadAsyncStorage = async () => {
     try {
       const module = await import("@react-native-async-storage/async-storage");
       AsyncStorageModule = module.default;
-      console.log('[StorageEventListener] AsyncStorage module loaded');
+      console.log("[StorageEventListener] AsyncStorage module loaded");
     } catch (error) {
-      console.warn('[StorageEventListener] AsyncStorage not found', error);
+      console.warn("[StorageEventListener] AsyncStorage not found", error);
     }
   })();
 
@@ -40,24 +46,32 @@ export function StorageEventListener() {
   const [isAsyncStorageAvailable, setIsAsyncStorageAvailable] = useState(false);
 
   useEffect(() => {
-    console.log('[StorageEventListener] Component mounted, checking AsyncStorage availability');
-    
+    console.log(
+      "[StorageEventListener] Component mounted, checking AsyncStorage availability",
+    );
+
     // Load AsyncStorage module
     loadAsyncStorage().then(() => {
       if (AsyncStorageModule) {
         setIsAsyncStorageAvailable(true);
-        console.log('[StorageEventListener] AsyncStorage is available');
+        console.log("[StorageEventListener] AsyncStorage is available");
       } else {
-        console.warn('[StorageEventListener] AsyncStorage not available');
+        console.warn("[StorageEventListener] AsyncStorage not available");
       }
     });
-    
+
     // Add listener for AsyncStorage events
     const unsubscribe = addListener((event: AsyncStorageEvent) => {
-      console.log('[StorageEventListener] Received event:', event.action, event.data);
-      setEvents(prev => {
+      console.log(
+        "[StorageEventListener] Received event:",
+        event.action,
+        event.data,
+      );
+      setEvents((prev) => {
         const newEvents = [event, ...prev.slice(0, 99)]; // Keep last 100 events
-        console.log(`[StorageEventListener] Total events in state: ${newEvents.length}`);
+        console.log(
+          `[StorageEventListener] Total events in state: ${newEvents.length}`,
+        );
         return newEvents;
       });
     });
@@ -65,13 +79,15 @@ export function StorageEventListener() {
     // Check initial listening state
     const initialState = checkIsListening();
     setIsListening(initialState);
-    console.log(`[StorageEventListener] Initial listening state: ${initialState}`);
+    console.log(
+      `[StorageEventListener] Initial listening state: ${initialState}`,
+    );
 
     return () => {
-      console.log('[StorageEventListener] Component unmounting, cleaning up');
+      console.log("[StorageEventListener] Component unmounting, cleaning up");
       // Make sure to stop listening when component unmounts
       if (checkIsListening()) {
-        console.log('[StorageEventListener] Stopping listener on unmount');
+        console.log("[StorageEventListener] Stopping listener on unmount");
         stopListening();
       }
       unsubscribe();
@@ -80,65 +96,68 @@ export function StorageEventListener() {
 
   const handleToggleListening = useCallback(async () => {
     if (!isAsyncStorageAvailable) {
-      console.warn('[StorageEventListener] AsyncStorage not available');
+      console.warn("[StorageEventListener] AsyncStorage not available");
       return;
     }
 
     if (isListening) {
-      console.log('[StorageEventListener] Stopping listener');
+      console.log("[StorageEventListener] Stopping listener");
       stopListening();
       setIsListening(false);
     } else {
-      console.log('[StorageEventListener] Starting listener');
+      console.log("[StorageEventListener] Starting listener");
       await startListening();
       setIsListening(true);
     }
   }, [isListening, isAsyncStorageAvailable]);
 
   const handleClearEvents = useCallback(() => {
-    console.log('[StorageEventListener] Clearing all events');
+    console.log("[StorageEventListener] Clearing all events");
     setEvents([]);
   }, []);
 
   const formatEventData = (event: AsyncStorageEvent) => {
-    if (!event.data) return '';
-    
-    if (event.action === 'setItem' || event.action === 'removeItem' || event.action === 'mergeItem') {
-      return event.data.key || '';
+    if (!event.data) return "";
+
+    if (
+      event.action === "setItem" ||
+      event.action === "removeItem" ||
+      event.action === "mergeItem"
+    ) {
+      return event.data.key || "";
     }
-    
-    if (event.action === 'multiSet' || event.action === 'multiMerge') {
+
+    if (event.action === "multiSet" || event.action === "multiMerge") {
       return `${event.data.pairs?.length || 0} pairs`;
     }
-    
-    if (event.action === 'multiRemove') {
+
+    if (event.action === "multiRemove") {
       return `${event.data.keys?.length || 0} keys`;
     }
-    
-    if (event.action === 'clear') {
-      return 'All storage';
+
+    if (event.action === "clear") {
+      return "All storage";
     }
-    
-    return '';
+
+    return "";
   };
 
   const getActionColor = (action: string) => {
     switch (action) {
-      case 'setItem':
-      case 'multiSet':
-        return '#10B981'; // Green for write
-      case 'removeItem':
-      case 'multiRemove':
-      case 'clear':
-        return '#EF4444'; // Red for delete
-      case 'mergeItem':
-      case 'multiMerge':
-        return '#3B82F6'; // Blue for merge
+      case "setItem":
+      case "multiSet":
+        return "#10B981"; // Green for write
+      case "removeItem":
+      case "multiRemove":
+      case "clear":
+        return "#EF4444"; // Red for delete
+      case "mergeItem":
+      case "multiMerge":
+        return "#3B82F6"; // Blue for merge
       default:
-        return '#6B7280';
+        return "#6B7280";
     }
   };
-
 
   if (!isAsyncStorageAvailable) {
     return null; // Don't show component if AsyncStorage isn't available
@@ -152,21 +171,21 @@ export function StorageEventListener() {
           <Text style={styles.title}>Storage Events</Text>
           <View style={styles.statsContainer}>
             <Text style={styles.statsText}>{events.length}</Text>
-            {isListening && (
-              <View style={styles.listeningIndicator} />
-            )}
+            {isListening && <View style={styles.listeningIndicator} />}
           </View>
         </View>
-        
+
         <View style={styles.headerActions}>
           <TouchableOpacity
             sentry-label="ignore toggle listening"
             onPress={handleToggleListening}
             style={[
               styles.actionButton,
-              isListening ? styles.stopButton : styles.startButton
+              isListening ? styles.stopButton : styles.startButton,
             ]}
-            accessibilityLabel={isListening ? "Stop listening" : "Start listening"}
+            accessibilityLabel={
+              isListening ? "Stop listening" : "Start listening"
+            }
           >
             {isListening ? (
               <Pause size={14} color="#EF4444" />
@@ -174,7 +193,7 @@ export function StorageEventListener() {
               <Play size={14} color="#10B981" />
             )}
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             sentry-label="ignore clear events"
             onPress={handleClearEvents}
@@ -182,14 +201,17 @@ export function StorageEventListener() {
             accessibilityLabel="Clear events"
             disabled={events.length === 0}
           >
-            <Trash2 size={14} color={events.length > 0 ? "#6B7280" : "#374151"} />
+            <Trash2
+              size={14}
+              color={events.length > 0 ? "#6B7280" : "#374151"}
+            />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Events list */}
-      <ScrollView 
-        style={styles.eventsList} 
+      <ScrollView
+        style={styles.eventsList}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
         sentry-label="ignore event list scroll"
@@ -197,17 +219,24 @@ export function StorageEventListener() {
         {events.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>
-              {isListening 
-                ? 'Waiting for storage operations...' 
-                : 'Start listening to capture events'
-              }
+              {isListening
+                ? "Waiting for storage operations..."
+                : "Start listening to capture events"}
             </Text>
           </View>
         ) : (
           events.map((event, index) => (
-            <View key={`${event.timestamp.getTime()}-${index}`} style={styles.eventItem}>
+            <View
+              key={`${event.timestamp.getTime()}-${index}`}
+              style={styles.eventItem}
+            >
               <View style={styles.eventLeft}>
-                <Text style={[styles.eventAction, { color: getActionColor(event.action) }]}>
+                <Text
+                  style={[
+                    styles.eventAction,
+                    { color: getActionColor(event.action) },
+                  ]}
+                >
                   {event.action}
                 </Text>
                 <Text style={styles.eventData} numberOfLines={1}>
@@ -215,10 +244,10 @@ export function StorageEventListener() {
                 </Text>
               </View>
               <Text style={styles.eventTime}>
-                {event.timestamp.toLocaleTimeString([], { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  second: '2-digit'
+                {event.timestamp.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
                 })}
               </Text>
             </View>

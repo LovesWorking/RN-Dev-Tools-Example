@@ -40,7 +40,7 @@ const StorageStatusCount: React.FC<StorageStatusCountProps> = ({
 
   const handleStorageTypeToggle = (
     storageType: StorageType,
-    event?: GestureResponderEvent
+    event?: GestureResponderEvent,
   ) => {
     if (event) {
       // Calculate distance moved during touch (like QueryStatusCount)

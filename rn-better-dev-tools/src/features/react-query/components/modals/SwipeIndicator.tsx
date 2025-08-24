@@ -1,6 +1,6 @@
 import { View, StyleSheet, Animated } from "react-native";
 import { useMemo } from "react";
-import { ChevronLeft, ChevronRight } from 'rn-better-dev-tools/icons';
+import { ChevronLeft, ChevronRight } from "rn-better-dev-tools/icons";
 
 /**
  * Morphing swipe indicator – thin line ➜ pill ➜ circle with a pop-out cue at
@@ -35,7 +35,7 @@ export function SwipeIndicator({
     const width = MIN_WIDTH + (MAX_WIDTH - MIN_WIDTH) * progress;
     const popOutProgress = Math.max(
       0,
-      (progress - POP_OUT_START) / (1 - POP_OUT_START)
+      (progress - POP_OUT_START) / (1 - POP_OUT_START),
     );
     const scale = 1 + (POP_OUT_SCALE - 1) * popOutProgress; // 1 → POP_OUT_SCALE
 
@@ -55,28 +55,28 @@ export function SwipeIndicator({
     return translationX.interpolate({
       inputRange: [0, maxTranslation],
       outputRange: [0, 1],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
   }, [translationX, maxTranslation]);
 
   const leftIndicatorWidth = useMemo(() => {
     return leftProgress.interpolate({
       inputRange: [0, 1],
-      outputRange: [MIN_WIDTH, MAX_WIDTH]
+      outputRange: [MIN_WIDTH, MAX_WIDTH],
     });
   }, [leftProgress]);
 
   const leftIndicatorScale = useMemo(() => {
     return leftProgress.interpolate({
       inputRange: [0, POP_OUT_START, 1],
-      outputRange: [1, 1, POP_OUT_SCALE]
+      outputRange: [1, 1, POP_OUT_SCALE],
     });
   }, [leftProgress]);
 
   const leftIndicatorTranslateX = useMemo(() => {
     return leftProgress.interpolate({
       inputRange: [0, 0.99, 1],
-      outputRange: [0, 0, 16]
+      outputRange: [0, 0, 16],
     });
   }, [leftProgress]);
 
@@ -84,7 +84,7 @@ export function SwipeIndicator({
     return leftProgress.interpolate({
       inputRange: [0, 0.01],
       outputRange: [0, 1],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
   }, [leftProgress]);
 
@@ -92,14 +92,14 @@ export function SwipeIndicator({
     return leftProgress.interpolate({
       inputRange: [0, 0.5, 1],
       outputRange: [0, 0, 1],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
   }, [leftProgress]);
 
   const leftArrowScale = useMemo(() => {
     return leftProgress.interpolate({
       inputRange: [0, 0.5, POP_OUT_START, 1],
-      outputRange: [0.8, 0.8, 1, 1.2]
+      outputRange: [0.8, 0.8, 1, 1.2],
     });
   }, [leftProgress]);
 
@@ -108,28 +108,28 @@ export function SwipeIndicator({
     return translationX.interpolate({
       inputRange: [-maxTranslation, 0],
       outputRange: [1, 0],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
   }, [translationX, maxTranslation]);
 
   const rightIndicatorWidth = useMemo(() => {
     return rightProgress.interpolate({
       inputRange: [0, 1],
-      outputRange: [MIN_WIDTH, MAX_WIDTH]
+      outputRange: [MIN_WIDTH, MAX_WIDTH],
     });
   }, [rightProgress]);
 
   const rightIndicatorScale = useMemo(() => {
     return rightProgress.interpolate({
       inputRange: [0, POP_OUT_START, 1],
-      outputRange: [1, 1, POP_OUT_SCALE]
+      outputRange: [1, 1, POP_OUT_SCALE],
     });
   }, [rightProgress]);
 
   const rightIndicatorTranslateX = useMemo(() => {
     return rightProgress.interpolate({
       inputRange: [0, 0.99, 1],
-      outputRange: [0, 0, -16]
+      outputRange: [0, 0, -16],
     });
   }, [rightProgress]);
 
@@ -137,7 +137,7 @@ export function SwipeIndicator({
     return rightProgress.interpolate({
       inputRange: [0, 0.01],
       outputRange: [0, 1],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
   }, [rightProgress]);
 
@@ -145,14 +145,14 @@ export function SwipeIndicator({
     return rightProgress.interpolate({
       inputRange: [0, 0.5, 1],
       outputRange: [0, 0, 1],
-      extrapolate: 'clamp'
+      extrapolate: "clamp",
     });
   }, [rightProgress]);
 
   const rightArrowScale = useMemo(() => {
     return rightProgress.interpolate({
       inputRange: [0, 0.5, POP_OUT_START, 1],
-      outputRange: [0.8, 0.8, 1, 1.2]
+      outputRange: [0.8, 0.8, 1, 1.2],
     });
   }, [rightProgress]);
 
@@ -174,7 +174,7 @@ export function SwipeIndicator({
               opacity: leftIndicatorOpacity,
               transform: [
                 { scale: leftIndicatorScale },
-                { translateX: leftIndicatorTranslateX }
+                { translateX: leftIndicatorTranslateX },
               ],
             },
           ]}
@@ -209,7 +209,7 @@ export function SwipeIndicator({
               opacity: rightIndicatorOpacity,
               transform: [
                 { scale: rightIndicatorScale },
-                { translateX: rightIndicatorTranslateX }
+                { translateX: rightIndicatorTranslateX },
               ],
             },
           ]}

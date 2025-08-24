@@ -1,4 +1,4 @@
-import { HardDrive } from 'rn-better-dev-tools/icons';
+import { HardDrive } from "rn-better-dev-tools/icons";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 import { useStorageQueryCounts } from "../../react-query/hooks/useStorageQueryCounts";
 
@@ -17,12 +17,12 @@ export function StorageSection({ onPress }: StorageSectionProps) {
     if (total === 0) {
       return "Empty";
     }
-    
+
     // Shorter format: just show the most used type
     if (async > 0) return `${async} Async`;
     if (mmkv > 0) return `${mmkv} MMKV`;
     if (secure > 0) return `${secure} Secure`;
-    
+
     return `${total} items`;
   };
 

@@ -59,7 +59,7 @@ export function isStorageQuery(queryKey: readonly unknown[]): boolean {
  * Get the storage type from a query key
  */
 export function getStorageType(
-  queryKey: readonly unknown[]
+  queryKey: readonly unknown[],
 ): StorageType | null {
   if (!isStorageQuery(queryKey) || queryKey.length < 2) {
     return null;
@@ -97,7 +97,7 @@ export function getStorageTypeLabel(storageType: StorageType): string {
  * Get storage type color class for styling
  */
 export function getStorageTypeColor(
-  storageType: StorageType
+  storageType: StorageType,
 ): "blue" | "green" | "gray" | "yellow" | "purple" | "red" {
   switch (storageType) {
     case "mmkv":

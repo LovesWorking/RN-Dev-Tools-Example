@@ -1,12 +1,21 @@
 import { useMemo, useRef, useState } from "react";
-import { StyleSheet, View, ScrollView, PanResponder, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  PanResponder,
+  FlatList,
+} from "react-native";
 
 import {
   ConsoleTransportEntry,
   LogLevel,
   LogType,
 } from "@/rn-better-dev-tools/src/shared/logger/types";
-import { EmptyFilterState, EmptyState } from "@/rn-better-dev-tools/src/features/log-dump/EmptyStates";
+import {
+  EmptyFilterState,
+  EmptyState,
+} from "@/rn-better-dev-tools/src/features/log-dump/EmptyStates";
 import { SentryEventLogEntryItem } from "./SentryEventLogEntryItemCompact";
 import { useSentryEvents } from "../hooks/useSentryEvents";
 import { TickProvider } from "../hooks/useTickEveryMinute";
@@ -33,7 +42,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
 const createRenderSentryEventItem = (
   selectEntryRef: React.MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
-  >
+  >,
 ) => {
   return ({ item }: { item: ConsoleTransportEntry }) => (
     <SentryEventLogEntryItem
@@ -77,15 +86,15 @@ function SentryLogsDetailContentInner({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: () => false,
       // Let FlatList handle all touch events
-    })
+    }),
   ).current;
 
   // Use props if provided, otherwise use local state
   const [localSelectedTypes, setLocalSelectedTypes] = useState<Set<LogType>>(
-    new Set()
+    new Set(),
   );
   const [localSelectedLevels, setLocalSelectedLevels] = useState<Set<LogLevel>>(
-    new Set()
+    new Set(),
   );
   const [_localIsLoggingEnabled, _setLocalIsLoggingEnabled] = useState(true);
 
@@ -108,7 +117,7 @@ function SentryLogsDetailContentInner({
   const selectEntryRef = useRef<(entry: ConsoleTransportEntry) => void>(
     (entry: ConsoleTransportEntry) => {
       onSelectEntry(entry);
-    }
+    },
   );
   selectEntryRef.current = (entry: ConsoleTransportEntry) => {
     onSelectEntry(entry);
@@ -117,7 +126,7 @@ function SentryLogsDetailContentInner({
   // Create stable renderItem once [[memory:4875251]]
   const renderSentryEventItem = useMemo(
     () => createRenderSentryEventItem(selectEntryRef),
-    []
+    [],
   );
 
   const goBackToList = () => {

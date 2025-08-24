@@ -6,9 +6,10 @@
  */
 export function formatRelativeTime(
   timestamp: Date | number,
-  currentTime: number = Date.now()
+  currentTime: number = Date.now(),
 ): string {
-  const timestampMs = timestamp instanceof Date ? timestamp.getTime() : timestamp;
+  const timestampMs =
+    timestamp instanceof Date ? timestamp.getTime() : timestamp;
   const seconds = Math.floor((currentTime - timestampMs) / 1000);
 
   // Handle edge cases

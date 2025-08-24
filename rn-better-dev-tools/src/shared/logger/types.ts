@@ -25,7 +25,7 @@ export type Transport = (
   level: LogLevel,
   message: string | Error,
   metadata: Metadata,
-  timestamp: number
+  timestamp: number,
 ) => void;
 
 /**

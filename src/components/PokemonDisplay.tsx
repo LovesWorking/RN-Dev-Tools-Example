@@ -44,7 +44,7 @@ export function PokemonDisplay({
     <ThemedView style={styles.container}>
       <ThemedText style={styles.pokemonId}>#{data.id}</ThemedText>
       <ThemedText style={styles.pokemonName}>{data.name}</ThemedText>
-      
+
       <PokemonTypes types={data.types} />
       <PokemonInfo height={data.height} weight={data.weight} />
       <PokemonStats stats={data.stats} />

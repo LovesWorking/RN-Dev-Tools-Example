@@ -2,13 +2,13 @@ import { RequiredEnvVar, EnvVarType } from "../types";
 
 /**
  * Helper to create a required env var configuration with type checking
- * 
+ *
  * @example
  * const config = envVar("EXPO_PUBLIC_API_URL")
  *   .withType("string")
  *   .withDescription("Backend API endpoint")
  *   .build();
- * 
+ *
  * @example
  * const config = envVar("EXPO_PUBLIC_DEBUG_MODE")
  *   .withDescription("Enable debug logging")
@@ -17,7 +17,7 @@ import { RequiredEnvVar, EnvVarType } from "../types";
  */
 class EnvVarBuilder {
   constructor(private key: string) {}
-  
+
   private expectedType?: EnvVarType;
   private expectedValue?: string;
   private description?: string;
@@ -51,16 +51,24 @@ class EnvVarBuilder {
   build(): RequiredEnvVar {
     if (this.expectedValue !== undefined) {
       return this.description
-        ? { key: this.key, expectedValue: this.expectedValue, description: this.description }
+        ? {
+            key: this.key,
+            expectedValue: this.expectedValue,
+            description: this.description,
+          }
         : { key: this.key, expectedValue: this.expectedValue };
     }
-    
+
     if (this.expectedType !== undefined) {
       return this.description
-        ? { key: this.key, expectedType: this.expectedType, description: this.description }
+        ? {
+            key: this.key,
+            expectedType: this.expectedType,
+            description: this.description,
+          }
         : { key: this.key, expectedType: this.expectedType };
     }
-    
+
     // If neither type nor value is specified, just check existence
     return this.key;
   }
@@ -74,34 +82,44 @@ export function envVar(key: string) {
  * Type guard to check if a RequiredEnvVar has an expected value
  */
 export function hasExpectedValue(
-  requiredEnvVar: RequiredEnvVar
-): requiredEnvVar is { key: string; expectedValue: string; description?: string } {
-  return typeof requiredEnvVar === "object" && "expectedValue" in requiredEnvVar;
+  requiredEnvVar: RequiredEnvVar,
+): requiredEnvVar is {
+  key: string;
+  expectedValue: string;
+  description?: string;
+} {
+  return (
+    typeof requiredEnvVar === "object" && "expectedValue" in requiredEnvVar
+  );
 }
 
 /**
  * Type guard to check if a RequiredEnvVar has an expected type
  */
 export function hasExpectedType(
-  requiredEnvVar: RequiredEnvVar
-): requiredEnvVar is { key: string; expectedType: EnvVarType; description?: string } {
+  requiredEnvVar: RequiredEnvVar,
+): requiredEnvVar is {
+  key: string;
+  expectedType: EnvVarType;
+  description?: string;
+} {
   return typeof requiredEnvVar === "object" && "expectedType" in requiredEnvVar;
 }
 
 /**
  * Helper to create a set of required environment variables with better readability
- * 
+ *
  * @example
  * const requiredEnvVars = createEnvVarConfig([
  *   // Simple existence check
  *   "EXPO_PUBLIC_API_URL",
- *   
+ *
  *   // Type checking
  *   { key: "EXPO_PUBLIC_DEBUG_MODE", expectedType: "boolean" },
- *   
+ *
  *   // Value checking
  *   { key: "EXPO_PUBLIC_ENVIRONMENT", expectedValue: "development" },
- *   
+ *
  *   // With descriptions
  *   {
  *     key: "EXPO_PUBLIC_MAX_RETRIES",
@@ -120,7 +138,7 @@ export function createEnvVarConfig(vars: RequiredEnvVar[]): RequiredEnvVar[] {
  */
 export function validateEnvVars(
   envVars: Record<string, unknown>,
-  requiredVars: RequiredEnvVar[]
+  requiredVars: RequiredEnvVar[],
 ): {
   isValid: boolean;
   errors: Array<{
@@ -156,12 +174,13 @@ export function validateEnvVars(
     }
 
     if (hasExpectedType(requiredVar)) {
-      const actualType = typeof value === "string" 
-        ? "string"
-        : Array.isArray(value)
-        ? "array"
-        : typeof value;
-        
+      const actualType =
+        typeof value === "string"
+          ? "string"
+          : Array.isArray(value)
+            ? "array"
+            : typeof value;
+
       if (actualType !== requiredVar.expectedType) {
         errors.push({
           key,

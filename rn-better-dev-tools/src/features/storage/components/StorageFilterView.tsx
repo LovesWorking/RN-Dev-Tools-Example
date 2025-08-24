@@ -6,7 +6,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { Filter, X, Plus, Check } from 'rn-better-dev-tools/icons';
+import { Filter, X, Plus, Check } from "rn-better-dev-tools/icons";
 import { useState, useEffect } from "react";
 import {
   GameUIStatusHeader,
@@ -80,7 +80,7 @@ export function StorageFilterView({
   // Count system vs custom filters
   const systemFilters = ["@devtools", "@rnasyncstorage"];
   const systemCount = Array.from(ignoredPatterns).filter((p) =>
-    systemFilters.some((sys) => p.toLowerCase().includes(sys))
+    systemFilters.some((sys) => p.toLowerCase().includes(sys)),
   ).length;
   const customCount = ignoredPatterns.size - systemCount;
 
@@ -88,7 +88,7 @@ export function StorageFilterView({
   const suggestedKeys = availableKeys.filter((key) => {
     // Don't suggest keys that are already filtered
     return !Array.from(ignoredPatterns).some((pattern) =>
-      key.includes(pattern)
+      key.includes(pattern),
     );
   });
 

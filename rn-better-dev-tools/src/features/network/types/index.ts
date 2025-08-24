@@ -4,7 +4,15 @@
 
 export interface NetworkEvent {
   id: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS' | string;
+  method:
+    | "GET"
+    | "POST"
+    | "PUT"
+    | "DELETE"
+    | "PATCH"
+    | "HEAD"
+    | "OPTIONS"
+    | string;
   url: string;
   status?: number;
   statusText?: string;
@@ -37,17 +45,17 @@ export interface NetworkStats {
 
 export interface NetworkFilter {
   method?: string[];
-  status?: 'success' | 'error' | 'pending' | 'all';
+  status?: "success" | "error" | "pending" | "all";
   contentType?: string[];
   searchText?: string;
   host?: string;
 }
 
-export type NetworkEventStatus = 'pending' | 'success' | 'error' | 'timeout';
+export type NetworkEventStatus = "pending" | "success" | "error" | "timeout";
 
 export interface NetworkInsight {
-  type: 'performance' | 'error' | 'security' | 'optimization';
-  severity: 'low' | 'medium' | 'high';
+  type: "performance" | "error" | "security" | "optimization";
+  severity: "low" | "medium" | "high";
   message: string;
   details?: string;
   eventId: string;

@@ -118,7 +118,7 @@ export class SentryLogger {
     if (breadcrumb.message?.includes("Touch event within element:")) {
       breadcrumb.message = breadcrumb.message.replace(
         "Touch event within element:",
-        ""
+        "",
       );
     }
 
@@ -163,7 +163,7 @@ export class SentryLogger {
    */
   private logSentryEvent(
     type: "transaction" | "span" | "event" | "breadcrumb" | "console",
-    data: SentryEventData
+    data: SentryEventData,
   ) {
     // Determine log type based on Sentry category
     let logType = LogType.Generic;

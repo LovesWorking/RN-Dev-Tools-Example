@@ -6,7 +6,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { Filter, X, Plus, Check, Globe } from 'rn-better-dev-tools/icons';
+import { Filter, X, Plus, Check, Globe } from "rn-better-dev-tools/icons";
 import { useState } from "react";
 import {
   GameUIStatusHeader,
@@ -74,9 +74,15 @@ export function NetworkIgnoreFilterView({
   const alertAnimatedStyle = {};
 
   // Count common vs custom filters
-  const commonDomains = ["localhost", "127.0.0.1", "analytics", "sentry", "crashlytics"];
+  const commonDomains = [
+    "localhost",
+    "127.0.0.1",
+    "analytics",
+    "sentry",
+    "crashlytics",
+  ];
   const commonCount = Array.from(ignoredPatterns).filter((p) =>
-    commonDomains.some((common) => p.toLowerCase().includes(common))
+    commonDomains.some((common) => p.toLowerCase().includes(common)),
   ).length;
   const customCount = ignoredPatterns.size - commonCount;
 
@@ -84,7 +90,7 @@ export function NetworkIgnoreFilterView({
   const suggestedDomains = availableDomains.filter((domain) => {
     // Don't suggest domains that are already filtered
     return !Array.from(ignoredPatterns).some((pattern) =>
-      domain.includes(pattern)
+      domain.includes(pattern),
     );
   });
 
@@ -190,7 +196,10 @@ export function NetworkIgnoreFilterView({
                         sentry-label="ignore-touchable-opacity"
                       >
                         <Globe size={12} color={gameUIColors.secondary} />
-                        <Text style={styles.availableDomainText} numberOfLines={1}>
+                        <Text
+                          style={styles.availableDomainText}
+                          numberOfLines={1}
+                        >
                           {domain}
                         </Text>
                         <Plus size={12} color={gameUIColors.network} />

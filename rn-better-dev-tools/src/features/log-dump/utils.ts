@@ -11,9 +11,13 @@ import {
   Settings,
   TriangleAlert,
   User,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
-import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  ConsoleTransportEntry,
+  LogLevel,
+  LogType,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 
 // Helper functions - moved outside component to be stable
 export const formatTimestamp = (timestamp: number) => {
@@ -97,14 +101,14 @@ const formatCount = (count: number) => {
 
 export const getTypeCount = (
   entries: ConsoleTransportEntry[],
-  type: LogType
+  type: LogType,
 ) => {
   return formatCount(entries.filter((entry) => entry.type === type).length);
 };
 
 export const getLevelCount = (
   entries: ConsoleTransportEntry[],
-  level: LogLevel
+  level: LogLevel,
 ) => {
   return formatCount(entries.filter((entry) => entry.level === level).length);
 };

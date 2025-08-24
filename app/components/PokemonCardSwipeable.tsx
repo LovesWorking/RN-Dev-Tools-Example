@@ -44,9 +44,13 @@ export function PokemonCardSwipeable({
   // Use React Native Animated Values
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(index === 0 ? 1 : 1 - index * 0.05)).current;
+  const scale = useRef(
+    new Animated.Value(index === 0 ? 1 : 1 - index * 0.05),
+  ).current;
   const gestureRotation = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0)).current;
+  const opacity = useRef(
+    new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0),
+  ).current;
 
   useEffect(() => {
     if (index === 0) {
@@ -76,99 +80,133 @@ export function PokemonCardSwipeable({
   }, [index]);
 
   const panResponder = useMemo(
-    () => PanResponder.create({
-      onMoveShouldSetPanResponder: () => isActive,
-      onPanResponderGrant: () => {
-        // Stop any ongoing animations when starting a gesture
-        if (isActive) {
-          translateX.stopAnimation();
-          translateY.stopAnimation();
-          gestureRotation.stopAnimation();
-          opacity.stopAnimation();
-        }
-      },
-      onPanResponderMove: (_evt, gestureState) => {
-        if (!isActive) return;
-
-        translateX.setValue(gestureState.dx);
-        translateY.setValue(gestureState.dy / 4 + index * -10);
-
-        // Manual interpolation for rotation
-        const rotationValue = (gestureState.dx / width) * 30;
-        gestureRotation.setValue(Math.max(-30, Math.min(30, rotationValue)));
-
-        // Manual interpolation for opacity
-        const opacityValue = 1 - (Math.abs(gestureState.dx) / width) * 0.7;
-        opacity.setValue(Math.max(0.3, Math.min(1, opacityValue)));
-      },
-      onPanResponderRelease: (_evt, gestureState) => {
-        if (!isActive) return;
-
-        const SWIPE_THRESHOLD = width * 0.3;
-        const VELOCITY_THRESHOLD = 0.5;
-
-        const shouldSwipe =
-          Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
-          Math.abs(gestureState.vx) > VELOCITY_THRESHOLD;
-
-        if (shouldSwipe) {
-          const direction = gestureState.dx > 0 ? 1 : -1;
-
-          Animated.parallel([
-            Animated.timing(translateX, {
-              toValue: width * 1.5 * direction,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.timing(translateY, {
-              toValue: -100,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.timing(gestureRotation, {
-              toValue: direction * 45,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.timing(opacity, {
-              toValue: 0,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-          ]).start(() => {
-            // Call onSwipe after animation completes
-            onSwipe();
-          });
-
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        } else {
-          // Reset to proper positions based on index
-          if (index === 0) {
-            Animated.parallel([
-              Animated.spring(translateX, { toValue: 0, useNativeDriver: true }),
-              Animated.spring(translateY, { toValue: 0, useNativeDriver: true }),
-              Animated.spring(gestureRotation, { toValue: 0, useNativeDriver: true }),
-              Animated.spring(opacity, { toValue: 1, useNativeDriver: true }),
-            ]).start();
-          } else if (index === 1) {
-            Animated.parallel([
-              Animated.spring(translateX, { toValue: 8, useNativeDriver: true }),
-              Animated.spring(translateY, { toValue: 8, useNativeDriver: true }),
-              Animated.spring(gestureRotation, { toValue: 0, useNativeDriver: true }),
-              Animated.spring(opacity, { toValue: 0.9, useNativeDriver: true }),
-            ]).start();
-          } else if (index === 2) {
-            Animated.parallel([
-              Animated.spring(translateX, { toValue: 16, useNativeDriver: true }),
-              Animated.spring(translateY, { toValue: 16, useNativeDriver: true }),
-              Animated.spring(gestureRotation, { toValue: 0, useNativeDriver: true }),
-              Animated.spring(opacity, { toValue: 0.8, useNativeDriver: true }),
-            ]).start();
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: () => isActive,
+        onPanResponderGrant: () => {
+          // Stop any ongoing animations when starting a gesture
+          if (isActive) {
+            translateX.stopAnimation();
+            translateY.stopAnimation();
+            gestureRotation.stopAnimation();
+            opacity.stopAnimation();
           }
-        }
-      },
-    }),
-    [isActive, index, onSwipe]
+        },
+        onPanResponderMove: (_evt, gestureState) => {
+          if (!isActive) return;
+
+          translateX.setValue(gestureState.dx);
+          translateY.setValue(gestureState.dy / 4 + index * -10);
+
+          // Manual interpolation for rotation
+          const rotationValue = (gestureState.dx / width) * 30;
+          gestureRotation.setValue(Math.max(-30, Math.min(30, rotationValue)));
+
+          // Manual interpolation for opacity
+          const opacityValue = 1 - (Math.abs(gestureState.dx) / width) * 0.7;
+          opacity.setValue(Math.max(0.3, Math.min(1, opacityValue)));
+        },
+        onPanResponderRelease: (_evt, gestureState) => {
+          if (!isActive) return;
+
+          const SWIPE_THRESHOLD = width * 0.3;
+          const VELOCITY_THRESHOLD = 0.5;
+
+          const shouldSwipe =
+            Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
+            Math.abs(gestureState.vx) > VELOCITY_THRESHOLD;
+
+          if (shouldSwipe) {
+            const direction = gestureState.dx > 0 ? 1 : -1;
+
+            Animated.parallel([
+              Animated.timing(translateX, {
+                toValue: width * 1.5 * direction,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.timing(translateY, {
+                toValue: -100,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.timing(gestureRotation, {
+                toValue: direction * 45,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.timing(opacity, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+            ]).start(() => {
+              // Call onSwipe after animation completes
+              onSwipe();
+            });
+
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          } else {
+            // Reset to proper positions based on index
+            if (index === 0) {
+              Animated.parallel([
+                Animated.spring(translateX, {
+                  toValue: 0,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(translateY, {
+                  toValue: 0,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(gestureRotation, {
+                  toValue: 0,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(opacity, { toValue: 1, useNativeDriver: true }),
+              ]).start();
+            } else if (index === 1) {
+              Animated.parallel([
+                Animated.spring(translateX, {
+                  toValue: 8,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(translateY, {
+                  toValue: 8,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(gestureRotation, {
+                  toValue: 0,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(opacity, {
+                  toValue: 0.9,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+            } else if (index === 2) {
+              Animated.parallel([
+                Animated.spring(translateX, {
+                  toValue: 16,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(translateY, {
+                  toValue: 16,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(gestureRotation, {
+                  toValue: 0,
+                  useNativeDriver: true,
+                }),
+                Animated.spring(opacity, {
+                  toValue: 0.8,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+            }
+          }
+        },
+      }),
+    [isActive, index, onSwipe],
   );
 
   // Create animated styles using React Native Animated
@@ -176,11 +214,11 @@ export function PokemonCardSwipeable({
     transform: [
       { translateX },
       { translateY },
-      { 
+      {
         rotate: gestureRotation.interpolate({
           inputRange: [-45, 45],
-          outputRange: ['-45deg', '45deg'],
-        })
+          outputRange: ["-45deg", "45deg"],
+        }),
       },
       { scale },
     ],
@@ -241,7 +279,11 @@ export function PokemonCardSwipeable({
           <BlurView intensity={10} tint="light" style={styles.cardContent}>
             <CardFrame />
             <CardHeader data={data} />
-            <ArtFrame mainType={mainType} data={data} cardGlowAnim={cardGlowAnim} />
+            <ArtFrame
+              mainType={mainType}
+              data={data}
+              cardGlowAnim={cardGlowAnim}
+            />
             <TypeBadges types={data.types} />
             <AttackMoves mainType={mainType} data={data} />
             <BottomStats data={data} mainType={mainType} />
@@ -349,9 +391,7 @@ function CardFrame() {
 function CardHeader({ data }: { data: any }) {
   return (
     <View style={styles.cardHeader}>
-      <Text style={styles.pokemonNameHeader}>
-        {data.name.toUpperCase()}
-      </Text>
+      <Text style={styles.pokemonNameHeader}>{data.name.toUpperCase()}</Text>
       <View style={styles.hpContainer}>
         <Text style={styles.hpText}>HP</Text>
         <Text style={styles.hpValue}>
@@ -528,7 +568,11 @@ function SwipeHints({ shimmerAnim }: { shimmerAnim: any }) {
           },
         ]}
       >
-        <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color="rgba(255,255,255,0.5)"
+        />
       </Animated.View>
     </>
   );

@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Animated } from "react-native";
-import { AlertCircle, CheckCircle2, Eye, XCircle, Zap, Server } from 'rn-better-dev-tools/icons';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Eye,
+  XCircle,
+  Zap,
+  Server,
+} from "rn-better-dev-tools/icons";
 import { EnvVarStats } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
@@ -81,8 +88,8 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
             toValue: 0.6,
             duration: 1500,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
     } else {
       Animated.timing(statusPulse, {
@@ -98,17 +105,24 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
   };
 
   // Calculate system health
-  const healthPercentage = totalCount > 0 
-    ? Math.round((presentRequiredCount / (totalCount - optionalCount)) * 100)
-    : 0;
-  
-  const healthStatus = healthPercentage >= 90 ? "OPTIMAL" : 
-                      healthPercentage >= 70 ? "WARNING" : 
-                      "CRITICAL";
-  
-  const healthColor = healthPercentage >= 90 ? gameColors.online : 
-                     healthPercentage >= 70 ? gameColors.warning : 
-                     gameColors.error;
+  const healthPercentage =
+    totalCount > 0
+      ? Math.round((presentRequiredCount / (totalCount - optionalCount)) * 100)
+      : 0;
+
+  const healthStatus =
+    healthPercentage >= 90
+      ? "OPTIMAL"
+      : healthPercentage >= 70
+        ? "WARNING"
+        : "CRITICAL";
+
+  const healthColor =
+    healthPercentage >= 90
+      ? gameColors.online
+      : healthPercentage >= 70
+        ? gameColors.warning
+        : gameColors.error;
 
   // If no variables at all, show minimal UI
   if (totalCount === 0) {
@@ -120,15 +134,19 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
             <Text style={styles.headerSubtitle}>Loaded at startup</Text>
           </View>
           <View style={styles.statusIndicator}>
-            <View style={[styles.statusDot, { backgroundColor: gameColors.muted }]} />
+            <View
+              style={[styles.statusDot, { backgroundColor: gameColors.muted }]}
+            />
             <Text style={styles.statusText}>OFFLINE</Text>
           </View>
         </View>
-        
+
         <View style={styles.emptyState}>
           <Text style={styles.emptyIcon}>⚠</Text>
           <Text style={styles.emptyTitle}>NO VARIABLES DETECTED</Text>
-          <Text style={styles.emptySubtitle}>Initialize environment config</Text>
+          <Text style={styles.emptySubtitle}>
+            Initialize environment config
+          </Text>
         </View>
       </View>
     );
@@ -144,8 +162,12 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
         </View>
         <View style={styles.headerRight}>
           <Animated.View style={[styles.statusIndicator, statusPulseStyle]}>
-            <View style={[styles.statusDot, { backgroundColor: healthColor }]} />
-            <Text style={[styles.statusText, { color: healthColor }]}>{healthStatus}</Text>
+            <View
+              style={[styles.statusDot, { backgroundColor: healthColor }]}
+            />
+            <Text style={[styles.statusText, { color: healthColor }]}>
+              {healthStatus}
+            </Text>
           </Animated.View>
         </View>
       </View>
@@ -155,14 +177,14 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
         <Text style={styles.healthLabel}>SYSTEM HEALTH</Text>
         <View style={styles.healthBarWrapper}>
           <View style={styles.healthBarBg}>
-            <Animated.View 
+            <Animated.View
               style={[
-                styles.healthBarFill, 
-                { 
+                styles.healthBarFill,
+                {
                   width: `${healthPercentage}%`,
                   backgroundColor: healthColor,
-                }
-              ]} 
+                },
+              ]}
             />
           </View>
         </View>
@@ -203,7 +225,10 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
           if (!isActive) return null;
 
           const IconComponent = item.icon;
-          const isError = item.key === "missing" || item.key === "wrongValue" || item.key === "wrongType";
+          const isError =
+            item.key === "missing" ||
+            item.key === "wrongValue" ||
+            item.key === "wrongType";
 
           return (
             <Animated.View
@@ -216,23 +241,32 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
               <View style={styles.compactCardContent}>
                 <IconComponent size={12} color={item.color} />
                 <View style={styles.compactCardInfo}>
-                  <Text style={[styles.compactCardLabel, { color: item.color }]}>
+                  <Text
+                    style={[styles.compactCardLabel, { color: item.color }]}
+                  >
                     {item.label}
                   </Text>
-                  <Text style={styles.compactCardSubtitle}>{item.subtitle}</Text>
+                  <Text style={styles.compactCardSubtitle}>
+                    {item.subtitle}
+                  </Text>
                 </View>
                 <Text style={[styles.compactStatNumber, { color: item.color }]}>
-                  {count.toString().padStart(2, '0')}
+                  {count.toString().padStart(2, "0")}
                 </Text>
               </View>
-              <View style={[styles.compactStatBar, { backgroundColor: item.color + "10" }]}>
-                <View 
+              <View
+                style={[
+                  styles.compactStatBar,
+                  { backgroundColor: item.color + "10" },
+                ]}
+              >
+                <View
                   style={[
                     styles.compactStatBarFill,
-                    { 
+                    {
                       width: `${(count / totalCount) * 100}%`,
-                      backgroundColor: item.color 
-                    }
+                      backgroundColor: item.color,
+                    },
                   ]}
                 />
               </View>
@@ -265,7 +299,7 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
 
       {/* Tech decoration */}
       <View style={styles.techPattern}>
-        <Text style={styles.techText}>{'<ENV>'}</Text>
+        <Text style={styles.techText}>{"<ENV>"}</Text>
       </View>
     </View>
   );

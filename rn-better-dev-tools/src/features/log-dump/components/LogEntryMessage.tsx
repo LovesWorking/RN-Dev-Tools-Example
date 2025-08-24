@@ -13,7 +13,7 @@ export const LogEntryMessage = React.memo<LogEntryMessageProps>(
         {String(message)}
       </Text>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

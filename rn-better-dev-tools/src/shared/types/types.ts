@@ -20,7 +20,7 @@ export type JsonValue =
 
 // Type guard to check if a value is a plain object (not Date, Array, etc.)
 export function isPlainObject(
-  value: unknown
+  value: unknown,
 ): value is { [key: string]: JsonValue } {
   return (
     value !== null &&

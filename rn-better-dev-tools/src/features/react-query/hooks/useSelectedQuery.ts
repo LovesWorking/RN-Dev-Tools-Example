@@ -8,7 +8,7 @@ import { Query, QueryKey, useQueryClient } from "@tanstack/react-query";
 export function useGetQueryByQueryKey(queryKey?: QueryKey) {
   const queryClient = useQueryClient();
   const [selectedQuery, setSelectedQuery] = useState<Query | undefined>(
-    undefined
+    undefined,
   );
   const queryHashRef = useRef<string | undefined>(undefined);
 

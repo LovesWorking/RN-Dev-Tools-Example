@@ -200,7 +200,7 @@ function useFloatingToolsPosition({
         console.warn("[FloatingTools] Failed to save position:", error);
       }
     },
-    [enabled]
+    [enabled],
   );
 
   const debouncedSavePosition = useCallback(
@@ -208,7 +208,7 @@ function useFloatingToolsPosition({
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(() => savePosition(x, y), 500) as any;
     },
-    [savePosition]
+    [savePosition],
   );
 
   const loadPosition = useCallback(async (): Promise<{
@@ -249,7 +249,7 @@ function useFloatingToolsPosition({
       } as const;
       return clamped;
     },
-    [visibleHandleWidth, bubbleHeight]
+    [visibleHandleWidth, bubbleHeight],
   );
 
   useEffect(() => {
@@ -390,7 +390,7 @@ export function UserStatus({
 // Helpers
 // =============================
 function interleaveWithDividers(
-  childrenArray: React.ReactNode[]
+  childrenArray: React.ReactNode[],
 ): React.ReactNode[] {
   const result: React.ReactNode[] = [];
   childrenArray.forEach((child, index) => {
@@ -478,7 +478,7 @@ export function FloatingTools({
         },
         onPanResponderMove: Animated.event(
           [null, { dx: animatedPosition.x, dy: animatedPosition.y }],
-          { useNativeDriver: false }
+          { useNativeDriver: false },
         ),
         onPanResponderRelease: () => {
           setIsDragging(false);
@@ -549,7 +549,7 @@ export function FloatingTools({
       bubbleSize.height,
       isHidden,
       safeAreaInsets,
-    ]
+    ],
   );
 
   // Stable styles
@@ -559,7 +559,7 @@ export function FloatingTools({
       zIndex: 1001,
       transform: animatedPosition.getTranslateTransform(),
     }),
-    [animatedPosition]
+    [animatedPosition],
   );
 
   const containerStyle: ViewStyle = {
@@ -598,7 +598,7 @@ export function FloatingTools({
   // Compose actions row with automatic dividers
   const actions = useMemo(
     () => interleaveWithDividers(Children.toArray(children)),
-    [children]
+    [children],
   );
 
   return (

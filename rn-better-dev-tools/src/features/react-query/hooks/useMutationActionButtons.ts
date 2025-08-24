@@ -11,7 +11,7 @@ interface ActionButtonConfig {
 }
 
 export function useMutationActionButtons(
-  selectedMutation: Mutation
+  selectedMutation: Mutation,
 ): ActionButtonConfig[] {
   const queryClient = useQueryClient();
   return useMemo(
@@ -24,6 +24,6 @@ export function useMutationActionButtons(
         onPress: () => queryClient.getMutationCache().remove(selectedMutation),
       },
     ],
-    [selectedMutation, queryClient]
+    [selectedMutation, queryClient],
   );
 }

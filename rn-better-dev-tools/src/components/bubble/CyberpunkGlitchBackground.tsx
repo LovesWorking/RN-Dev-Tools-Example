@@ -110,7 +110,7 @@ const Scanline: React.FC<ScanlineProps> = ({ delay }) => {
           duration: 0,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, []);
 
@@ -264,7 +264,7 @@ const DataStream: React.FC<DataStreamProps> = ({ side, delay }) => {
               duration: 0,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ),
         Animated.loop(
           Animated.sequence([
@@ -288,7 +288,7 @@ const DataStream: React.FC<DataStreamProps> = ({ side, delay }) => {
               duration: 2000,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ),
       ]).start();
     }, delay);
@@ -346,7 +346,7 @@ const GridLine: React.FC<GridLineProps> = ({ horizontal, position }) => {
           duration: 2000 + Math.random() * 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, []);
 

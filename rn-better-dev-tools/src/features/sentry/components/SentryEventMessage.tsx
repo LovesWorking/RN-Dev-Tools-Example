@@ -11,13 +11,13 @@ interface SentryEventMessageProps {
 export const SentryEventMessage = React.memo<SentryEventMessageProps>(
   ({ entry }) => {
     const message = formatEventMessage(entry);
-    
+
     return (
       <Text style={styles.message} numberOfLines={3}>
         {message}
       </Text>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

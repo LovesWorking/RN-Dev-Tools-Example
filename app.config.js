@@ -16,7 +16,7 @@ module.exports = {
         NSAppTransportSecurity: {
           NSAllowsArbitraryLoads: true,
           NSExceptionDomains: {
-            'exp.direct': {
+            "exp.direct": {
               NSIncludesSubdomains: true,
               NSExceptionAllowsInsecureHTTPLoads: true,
             },
@@ -27,14 +27,14 @@ module.exports = {
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
-        backgroundColor: "#ffffff"
+        backgroundColor: "#ffffff",
       },
-      package: "com.lovesworking.rndevtoolsexmaple"
+      package: "com.lovesworking.rndevtoolsexmaple",
     },
     web: {
       bundler: "metro",
       output: "static",
-      favicon: "./assets/images/favicon.png"
+      favicon: "./assets/images/favicon.png",
     },
     plugins: [
       "expo-router",
@@ -44,21 +44,21 @@ module.exports = {
           image: "./assets/images/splash-icon.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff"
-        }
+          backgroundColor: "#ffffff",
+        },
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
     ],
     experiments: {
-      typedRoutes: true
+      typedRoutes: true,
     },
     extra: {
       router: {},
       eas: {
-        projectId: "81a01d0d-b181-4026-a672-79ec142391eb"
-      }
+        projectId: "81a01d0d-b181-4026-a672-79ec142391eb",
+      },
     },
-    owner: "lovesworking"
-  }
+    owner: "lovesworking",
+  },
 };

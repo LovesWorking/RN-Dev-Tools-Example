@@ -12,7 +12,7 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronUp,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../constants/gameUIColors";
 
 export interface IssueItem {
@@ -63,18 +63,21 @@ export function GameUIIssuesList({
 }: GameUIIssuesListProps) {
   const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
 
-  const toggleIssue = useCallback((key: string) => {
-    if (!expandable) return;
-    setExpandedIssues((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(key)) {
-        newSet.delete(key);
-      } else {
-        newSet.add(key);
-      }
-      return newSet;
-    });
-  }, [expandable]);
+  const toggleIssue = useCallback(
+    (key: string) => {
+      if (!expandable) return;
+      setExpandedIssues((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(key)) {
+          newSet.delete(key);
+        } else {
+          newSet.add(key);
+        }
+        return newSet;
+      });
+    },
+    [expandable],
+  );
 
   const getStatusColor = (status: IssueItem["status"]) => {
     return status === "missing" ? gameUIColors.warning : gameUIColors.info;
@@ -125,7 +128,9 @@ export function GameUIIssuesList({
             >
               <StatusIcon size={14} color={statusColor} />
               <View style={styles.issueContent}>
-                <Text style={[styles.issueKey, { color: gameUIColors.primary }]}>
+                <Text
+                  style={[styles.issueKey, { color: gameUIColors.primary }]}
+                >
                   {issue.key}
                 </Text>
                 <Text style={styles.issueDesc}>{getStatusLabel(issue)}</Text>
@@ -136,9 +141,7 @@ export function GameUIIssuesList({
             </TouchableOpacity>
 
             {expandable && isExpanded && (
-              <Animated.View
-                style={styles.issueDetails}
-              >
+              <Animated.View style={styles.issueDetails}>
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Status:</Text>
                   <Text
@@ -157,7 +160,10 @@ export function GameUIIssuesList({
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Current:</Text>
                     <Text
-                      style={[styles.detailValue, { color: gameUIColors.warning }]}
+                      style={[
+                        styles.detailValue,
+                        { color: gameUIColors.warning },
+                      ]}
                     >
                       "{String(issue.value)}"
                     </Text>
@@ -168,7 +174,10 @@ export function GameUIIssuesList({
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Expected:</Text>
                     <Text
-                      style={[styles.detailValue, { color: gameUIColors.success }]}
+                      style={[
+                        styles.detailValue,
+                        { color: gameUIColors.success },
+                      ]}
                     >
                       {issue.expectedType}
                     </Text>
@@ -179,7 +188,10 @@ export function GameUIIssuesList({
                   <View style={styles.detailRow}>
                     <Text style={styles.detailLabel}>Expected:</Text>
                     <Text
-                      style={[styles.detailValue, { color: gameUIColors.success }]}
+                      style={[
+                        styles.detailValue,
+                        { color: gameUIColors.success },
+                      ]}
                     >
                       "{issue.expectedValue}"
                     </Text>

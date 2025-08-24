@@ -3,7 +3,10 @@
 // =============================================================================
 
 import { SentryEventEntry } from "./sentryEventListeners";
-import { LogType, LogLevel } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  LogType,
+  LogLevel,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 import { adaptSentryEventsToConsoleEntries } from "./SentryEventAdapter";
 
 type Listener = () => void;

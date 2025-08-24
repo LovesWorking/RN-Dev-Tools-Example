@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,14 +6,14 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
-import { PokemonTheme } from '../constants/PokemonTheme';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
+import { PokemonTheme } from "../constants/PokemonTheme";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface TabBarProps {
   state: any;
@@ -22,15 +22,15 @@ interface TabBarProps {
 }
 
 const tabIcons: Record<string, any> = {
-  index: { name: 'flash', gradient: PokemonTheme.gradients.electric },
-  explore: { name: 'compass', gradient: PokemonTheme.gradients.water },
-  storage: { name: 'cube', gradient: PokemonTheme.gradients.psychic },
+  index: { name: "flash", gradient: PokemonTheme.gradients.electric },
+  explore: { name: "compass", gradient: PokemonTheme.gradients.water },
+  storage: { name: "cube", gradient: PokemonTheme.gradients.psychic },
 };
 
 export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
   const translateX = useRef(new Animated.Value(0)).current;
   const scaleAnims = useRef(
-    state.routes.map(() => new Animated.Value(1))
+    state.routes.map(() => new Animated.Value(1)),
   ).current;
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
 
   const handlePress = (route: any, index: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     // Bounce animation
     Animated.sequence([
       Animated.spring(scaleAnims[index], {
@@ -63,7 +63,7 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
     ]).start();
 
     const event = navigation.emit({
-      type: 'tabPress',
+      type: "tabPress",
       target: route.key,
       canPreventDefault: true,
     });
@@ -77,10 +77,10 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
     <View style={styles.container}>
       <BlurView intensity={80} tint="dark" style={styles.blurContainer}>
         <LinearGradient
-          colors={['rgba(10, 14, 39, 0.7)', 'rgba(10, 14, 39, 0.9)']}
+          colors={["rgba(10, 14, 39, 0.7)", "rgba(10, 14, 39, 0.9)"]}
           style={styles.gradientBg}
         />
-        
+
         {/* Animated Pokeball indicator */}
         <Animated.View
           style={[
@@ -103,7 +103,10 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
           {state.routes.map((route: any, index: number) => {
             const { options } = descriptors[route.key];
             const isFocused = state.index === index;
-            const icon = tabIcons[route.name] || { name: 'help', gradient: PokemonTheme.gradients.dark };
+            const icon = tabIcons[route.name] || {
+              name: "help",
+              gradient: PokemonTheme.gradients.dark,
+            };
 
             return (
               <TouchableOpacity
@@ -123,11 +126,7 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
                       colors={icon.gradient}
                       style={styles.iconGradient}
                     >
-                      <Ionicons
-                        name={icon.name}
-                        size={28}
-                        color="#FFFFFF"
-                      />
+                      <Ionicons name={icon.name} size={28} color="#FFFFFF" />
                     </LinearGradient>
                   ) : (
                     <Ionicons
@@ -137,14 +136,12 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
                     />
                   )}
                 </Animated.View>
-                
+
                 <Text style={[styles.label, isFocused && styles.labelActive]}>
                   {options.title || route.name}
                 </Text>
-                
-                {isFocused && (
-                  <View style={styles.glowDot} />
-                )}
+
+                {isFocused && <View style={styles.glowDot} />}
               </TouchableOpacity>
             );
           })}
@@ -156,16 +153,16 @@ export function PokemonTabBar({ state, descriptors, navigation }: TabBarProps) {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     height: 90,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   blurContainer: {
     flex: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
@@ -173,14 +170,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   tabContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
     paddingBottom: 10,
   },
   tab: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingTop: 10,
   },
   iconContainer: {
@@ -190,23 +187,23 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...PokemonTheme.shadows.neon('#FFD700'),
+    alignItems: "center",
+    justifyContent: "center",
+    ...PokemonTheme.shadows.neon("#FFD700"),
   },
   label: {
     fontSize: 11,
-    color: 'rgba(255, 255, 255, 0.5)',
-    fontWeight: '600',
-    textTransform: 'capitalize',
+    color: "rgba(255, 255, 255, 0.5)",
+    fontWeight: "600",
+    textTransform: "capitalize",
   },
   labelActive: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   pokeball: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     height: 4,
     zIndex: -1,
@@ -216,12 +213,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   glowDot: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 5,
     width: 5,
     height: 5,
     borderRadius: 2.5,
-    backgroundColor: '#FFD700',
-    ...PokemonTheme.shadows.neon('#FFD700'),
+    backgroundColor: "#FFD700",
+    ...PokemonTheme.shadows.neon("#FFD700"),
   },
 });

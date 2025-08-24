@@ -21,7 +21,7 @@ export function useModalManager() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [isStateRestored, setIsStateRestored] = useState(false); // Default to false to prevent clearing state before restoration
   const [activeTab, setActiveTab] = useState<"queries" | "mutations">(
-    "queries"
+    "queries",
   );
   const [selectedMutationId, setSelectedMutationId] = useState<
     number | undefined

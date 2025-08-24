@@ -6,7 +6,15 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { Filter, X, Plus, Check, Globe, Link, Activity } from 'rn-better-dev-tools/icons';
+import {
+  Filter,
+  X,
+  Plus,
+  Check,
+  Globe,
+  Link,
+  Activity,
+} from "rn-better-dev-tools/icons";
 import { useState } from "react";
 import {
   GameUIStatusHeader,
@@ -91,21 +99,30 @@ export function NetworkCombinedFilterView({
   const alertAnimatedStyle = {};
 
   // Get current patterns and available options based on tab
-  const currentPatterns = activeTab === "domains" ? ignoredDomains : ignoredUrls;
-  const availablePatterns = activeTab === "domains" ? availableDomains : availableUrls;
-  const onTogglePattern = activeTab === "domains" ? onToggleDomain : onToggleUrl;
+  const currentPatterns =
+    activeTab === "domains" ? ignoredDomains : ignoredUrls;
+  const availablePatterns =
+    activeTab === "domains" ? availableDomains : availableUrls;
+  const onTogglePattern =
+    activeTab === "domains" ? onToggleDomain : onToggleUrl;
 
   // Filter out already filtered patterns from suggestions
   const suggestedPatterns = availablePatterns.filter((pattern) => {
     return !Array.from(currentPatterns).some((ignored) =>
-      pattern.includes(ignored)
+      pattern.includes(ignored),
     );
   });
 
   // Count common vs custom filters for domains
-  const commonDomains = ["localhost", "127.0.0.1", "analytics", "sentry", "crashlytics"];
+  const commonDomains = [
+    "localhost",
+    "127.0.0.1",
+    "analytics",
+    "sentry",
+    "crashlytics",
+  ];
   const commonDomainCount = Array.from(ignoredDomains).filter((p) =>
-    commonDomains.some((common) => p.toLowerCase().includes(common))
+    commonDomains.some((common) => p.toLowerCase().includes(common)),
   ).length;
   const customDomainCount = ignoredDomains.size - commonDomainCount;
 
@@ -123,7 +140,14 @@ export function NetworkCombinedFilterView({
                 : styles.tabButtonInactive,
             ]}
           >
-            <Globe size={14} color={activeTab === "domains" ? gameUIColors.network : gameUIColors.secondary} />
+            <Globe
+              size={14}
+              color={
+                activeTab === "domains"
+                  ? gameUIColors.network
+                  : gameUIColors.secondary
+              }
+            />
             <Text
               style={[
                 styles.tabButtonText,
@@ -140,7 +164,7 @@ export function NetworkCombinedFilterView({
               </View>
             )}
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             onPress={() => setActiveTab("urls")}
             style={[
@@ -150,7 +174,14 @@ export function NetworkCombinedFilterView({
                 : styles.tabButtonInactive,
             ]}
           >
-            <Link size={14} color={activeTab === "urls" ? gameUIColors.network : gameUIColors.secondary} />
+            <Link
+              size={14}
+              color={
+                activeTab === "urls"
+                  ? gameUIColors.network
+                  : gameUIColors.secondary
+              }
+            />
             <Text
               style={[
                 styles.tabButtonText,
@@ -175,7 +206,7 @@ export function NetworkCombinedFilterView({
   return (
     <View style={styles.container}>
       {renderHeaderContent()}
-      
+
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.scrollContent}
@@ -195,13 +226,25 @@ export function NetworkCombinedFilterView({
             activeTab === "domains"
               ? [
                   { label: "TOTAL", value: ignoredDomains.size },
-                  { label: "COMMON", value: commonDomainCount, color: gameUIColors.warning },
-                  { label: "CUSTOM", value: customDomainCount, color: gameUIColors.info },
+                  {
+                    label: "COMMON",
+                    value: commonDomainCount,
+                    color: gameUIColors.warning,
+                  },
+                  {
+                    label: "CUSTOM",
+                    value: customDomainCount,
+                    color: gameUIColors.info,
+                  },
                 ]
               : [
                   { label: "DOMAINS", value: ignoredDomains.size },
                   { label: "URLS", value: ignoredUrls.size },
-                  { label: "TOTAL", value: totalFilters, color: gameUIColors.network },
+                  {
+                    label: "TOTAL",
+                    value: totalFilters,
+                    color: gameUIColors.network,
+                  },
                 ]
           }
         />
@@ -210,10 +253,12 @@ export function NetworkCombinedFilterView({
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              {activeTab === "domains" ? "Ignored Domains" : "Ignored URL Patterns"}
+              {activeTab === "domains"
+                ? "Ignored Domains"
+                : "Ignored URL Patterns"}
             </Text>
             <Text style={styles.sectionSubtitle}>
-              {activeTab === "domains" 
+              {activeTab === "domains"
                 ? "Filter requests by domain hostname"
                 : "Filter requests by URL patterns"}
             </Text>
@@ -238,7 +283,7 @@ export function NetworkCombinedFilterView({
                   value={newPattern}
                   onChangeText={setNewPattern}
                   placeholder={
-                    activeTab === "domains" 
+                    activeTab === "domains"
                       ? "Enter domain (e.g., api.example.com)"
                       : "Enter URL pattern (e.g., /analytics)"
                   }
@@ -267,7 +312,7 @@ export function NetworkCombinedFilterView({
               {suggestedPatterns.length > 0 && (
                 <View style={styles.availableContainer}>
                   <Text style={styles.availableTitle}>
-                    {activeTab === "domains" 
+                    {activeTab === "domains"
                       ? "DOMAINS FROM RECENT REQUESTS"
                       : "URLS FROM RECENT REQUESTS"}
                   </Text>
@@ -319,7 +364,8 @@ export function NetworkCombinedFilterView({
             ))}
             {currentPatterns.size === 0 && (
               <Text style={styles.emptyText}>
-                No {activeTab === "domains" ? "domains" : "URL patterns"} filtered
+                No {activeTab === "domains" ? "domains" : "URL patterns"}{" "}
+                filtered
               </Text>
             )}
           </View>

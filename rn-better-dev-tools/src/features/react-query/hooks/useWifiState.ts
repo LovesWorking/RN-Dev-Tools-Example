@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { onlineManager } from '@tanstack/react-query';
+import { useEffect, useState } from "react";
+import { onlineManager } from "@tanstack/react-query";
 
 export function useWifiState() {
   const [isOnline, setIsOnline] = useState(() => onlineManager.isOnline());

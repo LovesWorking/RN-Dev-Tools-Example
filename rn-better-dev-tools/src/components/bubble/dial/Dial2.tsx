@@ -18,7 +18,7 @@ import {
   ChevronRight,
   Layers,
   Globe,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import {
   getSafeAreaInsets,
   hasNotch as getHasNotch,
@@ -105,7 +105,7 @@ const Dial2: React.FC<Dial2Props> = ({
       scale: new Animated.Value(0),
       slide: new Animated.Value(-50),
       glow: new Animated.Value(0),
-    }))
+    })),
   ).current;
 
   const menuItems = [
@@ -279,22 +279,25 @@ const Dial2: React.FC<Dial2Props> = ({
 
     // Stagger button animations
     buttonAnimations.forEach((anim, index) => {
-      setTimeout(() => {
-        Animated.parallel([
-          Animated.spring(anim.scale, {
-            toValue: 1,
-            damping: 10,
-            stiffness: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(anim.slide, {
-            toValue: 0,
-            duration: 400,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }, 600 + index * 80);
+      setTimeout(
+        () => {
+          Animated.parallel([
+            Animated.spring(anim.scale, {
+              toValue: 1,
+              damping: 10,
+              stiffness: 100,
+              useNativeDriver: true,
+            }),
+            Animated.timing(anim.slide, {
+              toValue: 0,
+              duration: 400,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true,
+            }),
+          ]).start();
+        },
+        600 + index * 80,
+      );
     });
 
     // Continuous scanline
@@ -304,7 +307,7 @@ const Dial2: React.FC<Dial2Props> = ({
         duration: 4000,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     ).start();
 
     // Data stream animation
@@ -314,7 +317,7 @@ const Dial2: React.FC<Dial2Props> = ({
         duration: 2000,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     ).start();
 
     // Warning pulse
@@ -330,7 +333,7 @@ const Dial2: React.FC<Dial2Props> = ({
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Environment badge pulse (slower for prod, faster for dev)
@@ -348,7 +351,7 @@ const Dial2: React.FC<Dial2Props> = ({
           duration: pulseDuration,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Random glitch effect
@@ -392,7 +395,7 @@ const Dial2: React.FC<Dial2Props> = ({
                 useNativeDriver: true,
               }),
             ]),
-          ])
+          ]),
         )
         .flat(),
 
@@ -609,18 +612,18 @@ const Dial2: React.FC<Dial2Props> = ({
                     environment === "prod"
                       ? gameUIColors.error + "26"
                       : environment === "staging"
-                      ? gameUIColors.warning + "26"
-                      : environment === "qa"
-                      ? gameUIColors.info + "26"
-                      : gameUIColors.success + "26",
+                        ? gameUIColors.warning + "26"
+                        : environment === "qa"
+                          ? gameUIColors.info + "26"
+                          : gameUIColors.success + "26",
                   borderColor:
                     environment === "prod"
                       ? gameUIColors.error
                       : environment === "staging"
-                      ? gameUIColors.warning
-                      : environment === "qa"
-                      ? gameUIColors.info
-                      : gameUIColors.success,
+                        ? gameUIColors.warning
+                        : environment === "qa"
+                          ? gameUIColors.info
+                          : gameUIColors.success,
                 },
               ]}
             >
@@ -632,18 +635,18 @@ const Dial2: React.FC<Dial2Props> = ({
                       environment === "prod"
                         ? gameUIColors.error
                         : environment === "staging"
-                        ? gameUIColors.warning
-                        : environment === "qa"
-                        ? gameUIColors.info
-                        : gameUIColors.success,
+                          ? gameUIColors.warning
+                          : environment === "qa"
+                            ? gameUIColors.info
+                            : gameUIColors.success,
                     shadowColor:
                       environment === "prod"
                         ? gameUIColors.error
                         : environment === "staging"
-                        ? gameUIColors.warning
-                        : environment === "qa"
-                        ? gameUIColors.info
-                        : gameUIColors.success,
+                          ? gameUIColors.warning
+                          : environment === "qa"
+                            ? gameUIColors.info
+                            : gameUIColors.success,
                     opacity: envPulse,
                   },
                 ]}
@@ -657,18 +660,18 @@ const Dial2: React.FC<Dial2Props> = ({
                       environment === "prod"
                         ? gameUIColors.error
                         : environment === "staging"
-                        ? gameUIColors.warning
-                        : environment === "qa"
-                        ? gameUIColors.info
-                        : gameUIColors.success,
+                          ? gameUIColors.warning
+                          : environment === "qa"
+                            ? gameUIColors.info
+                            : gameUIColors.success,
                     textShadowColor:
                       environment === "prod"
                         ? gameUIColors.error
                         : environment === "staging"
-                        ? gameUIColors.warning
-                        : environment === "qa"
-                        ? gameUIColors.info
-                        : gameUIColors.success,
+                          ? gameUIColors.warning
+                          : environment === "qa"
+                            ? gameUIColors.info
+                            : gameUIColors.success,
                   },
                 ]}
               >

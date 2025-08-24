@@ -13,7 +13,7 @@ export default function MutationDetails({ selectedMutation }: Props) {
   }
 
   const submittedAt = new Date(
-    selectedMutation.state.submittedAt
+    selectedMutation.state.submittedAt,
   ).toLocaleTimeString();
 
   return (

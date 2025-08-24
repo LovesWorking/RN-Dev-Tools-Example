@@ -1,11 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { PersistedClient } from '@tanstack/react-query-persist-client';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { PersistedClient } from "@tanstack/react-query-persist-client";
 
 // Create a persister that uses AsyncStorage
 export const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
-  key: 'REACT_QUERY_OFFLINE_CACHE',
+  key: "REACT_QUERY_OFFLINE_CACHE",
   serialize: (data: PersistedClient) => {
     // Filter out local queries before serializing
     const filteredData: PersistedClient = {
@@ -17,7 +17,7 @@ export const asyncStoragePersister = createAsyncStoragePersister({
           const queryKey = query.queryKey;
           if (Array.isArray(queryKey)) {
             // Skip local queries and storage queries
-            if (queryKey[0] === 'local' || queryKey[0] === '#storage') {
+            if (queryKey[0] === "local" || queryKey[0] === "#storage") {
               return false;
             }
           }
@@ -27,5 +27,6 @@ export const asyncStoragePersister = createAsyncStoragePersister({
     };
     return JSON.stringify(filteredData);
   },
-  deserialize: (stringifiedData: string) => JSON.parse(stringifiedData) as PersistedClient,
+  deserialize: (stringifiedData: string) =>
+    JSON.parse(stringifiedData) as PersistedClient,
 });

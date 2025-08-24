@@ -61,7 +61,7 @@ export function ClaudeGridMenu({
       glitchY: new Animated.Value(0),
       glitchOpacity: new Animated.Value(0),
       glitchScale: new Animated.Value(1),
-    }))
+    })),
   ).current;
 
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -100,7 +100,7 @@ export function ClaudeGridMenu({
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: false,
         }),
-      ])
+      ]),
     ).start();
 
     // Periodic glitch effect
@@ -127,7 +127,7 @@ export function ClaudeGridMenu({
           duration: 30,
           useNativeDriver: false,
         }),
-      ])
+      ]),
     ).start();
 
     // Staggered cyber appearance with Matrix-style entry
@@ -258,7 +258,7 @@ export function ClaudeGridMenu({
                 easing: Easing.inOut(Easing.sin),
                 useNativeDriver: false,
               }),
-            ])
+            ]),
           ),
         ]).start();
       }
@@ -280,7 +280,7 @@ export function ClaudeGridMenu({
                 duration: 300,
                 useNativeDriver: false,
               }),
-            ])
+            ]),
           ),
         ]).start();
       }
@@ -321,7 +321,7 @@ export function ClaudeGridMenu({
               duration: 50,
               useNativeDriver: false,
             }),
-          ])
+          ]),
         ),
       ]).start();
 
@@ -349,7 +349,7 @@ export function ClaudeGridMenu({
             duration: 20,
             useNativeDriver: false,
           }),
-        ])
+        ]),
       ).start();
 
       Animated.loop(
@@ -370,7 +370,7 @@ export function ClaudeGridMenu({
             duration: 30,
             useNativeDriver: false,
           }),
-        ])
+        ]),
       ).start();
 
       // Glitch scale effect
@@ -392,7 +392,7 @@ export function ClaudeGridMenu({
             duration: 20,
             useNativeDriver: false,
           }),
-        ])
+        ]),
       ).start();
     });
   };
@@ -734,7 +734,7 @@ export function ClaudeGridMenu({
                       item.matrixGlow.interpolate({
                         inputRange: [0, 1],
                         outputRange: [0, 20],
-                      })
+                      }),
                     ),
                     shadowOpacity: glowOpacity,
                   },

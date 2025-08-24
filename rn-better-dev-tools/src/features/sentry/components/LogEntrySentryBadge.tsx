@@ -18,13 +18,19 @@ export const LogEntrySentryBadge = React.memo<LogEntrySentryBadgeProps>(
     }
 
     return (
-      <View style={styles.sentryBadge} sentry-label="ignore devtools sentry badge">
-        <Text style={styles.sentryBadgeText} sentry-label="ignore devtools sentry badge text">
+      <View
+        style={styles.sentryBadge}
+        sentry-label="ignore devtools sentry badge"
+      >
+        <Text
+          style={styles.sentryBadgeText}
+          sentry-label="ignore devtools sentry badge text"
+        >
           {String(metadata.sentryEventType)}
         </Text>
       </View>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

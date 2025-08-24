@@ -4,7 +4,7 @@ import { EnvVarType } from "../types";
  * Detects the type of an environment variable value
  * First checks if useDynamicEnv already parsed it to the correct type,
  * then analyzes string content to detect what type it represents
- * 
+ *
  * @returns One of: "string", "number", "boolean", "array", "object"
  */
 export function getEnvVarType(value: unknown): EnvVarType | "unknown" {
@@ -50,7 +50,7 @@ export function getEnvVarType(value: unknown): EnvVarType | "unknown" {
     if (strValue.startsWith("http://") || strValue.startsWith("https://")) {
       return "url" as EnvVarType;
     }
-    
+
     // Check if it's a comma-separated array
     if (strValue.includes(",")) {
       return "array";

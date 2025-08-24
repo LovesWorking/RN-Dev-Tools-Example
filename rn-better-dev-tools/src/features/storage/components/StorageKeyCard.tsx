@@ -7,7 +7,7 @@ import {
   HardDrive,
   Database,
   Shield,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { StorageKeyInfo } from "../types";
 import {
   getStorageTypeLabel,

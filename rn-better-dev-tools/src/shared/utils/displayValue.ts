@@ -1,4 +1,4 @@
-import { serialize, deserialize } from 'superjson';
+import { serialize, deserialize } from "superjson";
 
 /**
  * Displays a string regardless the type of the data
@@ -14,7 +14,7 @@ export const displayValue = (value: unknown, beautify: boolean = false) => {
 /**
  * Parses a string that was serialized with displayValue/SuperJSON.
  * Properly deserializes complex types like Date, RegExp, Map, Set, etc.
- * 
+ *
  * @param value - The string to parse
  * @returns The deserialized value
  */

@@ -1,10 +1,17 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+} from "react-native";
 import { useState } from "react";
-import { 
-  X, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import {
+  X,
+  CheckCircle,
+  XCircle,
+  Clock,
   Globe,
   Upload,
   Download,
@@ -16,8 +23,8 @@ import {
   Filter,
   Link,
   Plus,
-  Check
-} from 'rn-better-dev-tools/icons';
+  Check,
+} from "rn-better-dev-tools/icons";
 import type { NetworkEvent } from "../types";
 
 interface NetworkFilterViewProps {
@@ -43,8 +50,9 @@ type TabType = "filters" | "domains" | "urls";
 // Get content type from headers with color
 function getContentType(event: NetworkEvent): { type: string; color: string } {
   const headers = event.responseHeaders || event.requestHeaders;
-  const contentType = headers?.["content-type"] || headers?.["Content-Type"] || "";
-  
+  const contentType =
+    headers?.["content-type"] || headers?.["Content-Type"] || "";
+
   if (contentType.includes("json")) return { type: "JSON", color: "#3B82F6" };
   if (contentType.includes("xml")) return { type: "XML", color: "#8B5CF6" };
   if (contentType.includes("html")) return { type: "HTML", color: "#F59E0B" };
@@ -56,76 +64,93 @@ function getContentType(event: NetworkEvent): { type: string; color: string } {
   return { type: "OTHER", color: "#6B7280" };
 }
 
-export function NetworkFilterView({ 
-  events, 
-  filter, 
-  onFilterChange, 
+export function NetworkFilterView({
+  events,
+  filter,
+  onFilterChange,
   onClose,
   ignoredDomains = new Set(),
   ignoredUrls = new Set(),
   onToggleDomain = () => {},
   onAddDomain = () => {},
   onToggleUrl = () => {},
-  onAddUrl = () => {}
+  onAddUrl = () => {},
 }: NetworkFilterViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>("filters");
   const [showAddInput, setShowAddInput] = useState(false);
   const [newPattern, setNewPattern] = useState("");
-  
 
   // Calculate counts for each filter option
   const statusCounts = {
     all: events.length,
-    success: events.filter(e => e.status && e.status >= 200 && e.status < 300).length,
-    error: events.filter(e => e.error || (e.status && e.status >= 400)).length,
-    pending: events.filter(e => !e.status && !e.error).length,
+    success: events.filter((e) => e.status && e.status >= 200 && e.status < 300)
+      .length,
+    error: events.filter((e) => e.error || (e.status && e.status >= 400))
+      .length,
+    pending: events.filter((e) => !e.status && !e.error).length,
   };
 
-  const methodCounts = events.reduce((acc, event) => {
-    acc[event.method] = (acc[event.method] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const methodCounts = events.reduce(
+    (acc, event) => {
+      acc[event.method] = (acc[event.method] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-  const contentTypeCounts = events.reduce((acc, event) => {
-    const { type } = getContentType(event);
-    acc[type] = (acc[type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const contentTypeCounts = events.reduce(
+    (acc, event) => {
+      const { type } = getContentType(event);
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   // Extract domains and URLs from ALL events (not just filtered)
   // This ensures we show all available options for filtering
   const allEvents = events || []; // Using the events passed from parent which should be all events
-  
-  const availableDomains = [...new Set(
-    allEvents.map(e => {
-      try {
-        const url = new URL(e.url);
-        return url.hostname;
-      } catch {
-        return null;
-      }
-    }).filter(Boolean) as string[]
-  )];
 
-  const availableUrls = [...new Set(
-    allEvents.map(e => {
-      try {
-        const url = new URL(e.url);
-        return url.pathname;
-      } catch {
-        const match = e.url.match(/\/[^?#]*/);
-        return match ? match[0] : null;
-      }
-    }).filter(Boolean) as string[]
-  )];
+  const availableDomains = [
+    ...new Set(
+      allEvents
+        .map((e) => {
+          try {
+            const url = new URL(e.url);
+            return url.hostname;
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean) as string[],
+    ),
+  ];
+
+  const availableUrls = [
+    ...new Set(
+      allEvents
+        .map((e) => {
+          try {
+            const url = new URL(e.url);
+            return url.pathname;
+          } catch {
+            const match = e.url.match(/\/[^?#]*/);
+            return match ? match[0] : null;
+          }
+        })
+        .filter(Boolean) as string[],
+    ),
+  ];
 
   // Get color for content type
   const getContentTypeColor = (type: string) => {
-    const testEvent = events.find(e => getContentType(e).type === type);
+    const testEvent = events.find((e) => getContentType(e).type === type);
     return testEvent ? getContentType(testEvent).color : "#6B7280";
   };
 
-  const handleStatusFilter = (status: "all" | "success" | "error" | "pending") => {
+  const handleStatusFilter = (
+    status: "all" | "success" | "error" | "pending",
+  ) => {
     if (status === "all") {
       onFilterChange({ ...filter, status: undefined });
     } else {
@@ -136,8 +161,11 @@ export function NetworkFilterView({
   const handleMethodFilter = (method: string) => {
     const currentMethods = filter.method || [];
     if (currentMethods.includes(method)) {
-      const newMethods = currentMethods.filter(m => m !== method);
-      onFilterChange({ ...filter, method: newMethods.length > 0 ? newMethods : undefined });
+      const newMethods = currentMethods.filter((m) => m !== method);
+      onFilterChange({
+        ...filter,
+        method: newMethods.length > 0 ? newMethods : undefined,
+      });
     } else {
       onFilterChange({ ...filter, method: [method] });
     }
@@ -146,8 +174,11 @@ export function NetworkFilterView({
   const handleContentTypeFilter = (type: string) => {
     const currentTypes = filter.contentType || [];
     if (currentTypes.includes(type)) {
-      const newTypes = currentTypes.filter(t => t !== type);
-      onFilterChange({ ...filter, contentType: newTypes.length > 0 ? newTypes : undefined });
+      const newTypes = currentTypes.filter((t) => t !== type);
+      onFilterChange({
+        ...filter,
+        contentType: newTypes.length > 0 ? newTypes : undefined,
+      });
     } else {
       onFilterChange({ ...filter, contentType: [type] });
     }
@@ -167,34 +198,50 @@ export function NetworkFilterView({
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "success": return CheckCircle;
-      case "error": return XCircle;
-      case "pending": return Clock;
-      default: return Globe;
+      case "success":
+        return CheckCircle;
+      case "error":
+        return XCircle;
+      case "pending":
+        return Clock;
+      default:
+        return Globe;
     }
   };
 
   const getContentTypeIcon = (type: string) => {
     switch (type) {
-      case "JSON": return FileJson;
+      case "JSON":
+        return FileJson;
       case "HTML":
       case "XML":
-      case "TEXT": return FileText;
-      case "IMAGE": return Image;
-      case "VIDEO": return Film;
-      case "AUDIO": return Music;
-      default: return Globe;
+      case "TEXT":
+        return FileText;
+      case "IMAGE":
+        return Image;
+      case "VIDEO":
+        return Film;
+      case "AUDIO":
+        return Music;
+      default:
+        return Globe;
     }
   };
 
   const getMethodColor = (method: string) => {
     switch (method) {
-      case "GET": return "#10B981";
-      case "POST": return "#3B82F6";
-      case "PUT": return "#F59E0B";
-      case "DELETE": return "#EF4444";
-      case "PATCH": return "#8B5CF6";
-      default: return "#6B7280";
+      case "GET":
+        return "#10B981";
+      case "POST":
+        return "#3B82F6";
+      case "PUT":
+        return "#F59E0B";
+      case "DELETE":
+        return "#EF4444";
+      case "PATCH":
+        return "#8B5CF6";
+      default:
+        return "#6B7280";
     }
   };
 
@@ -204,14 +251,23 @@ export function NetworkFilterView({
         onPress={() => setActiveTab("filters")}
         style={[
           styles.tabButton,
-          activeTab === "filters" ? styles.tabButtonActive : styles.tabButtonInactive
+          activeTab === "filters"
+            ? styles.tabButtonActive
+            : styles.tabButtonInactive,
         ]}
       >
-        <Filter size={14} color={activeTab === "filters" ? "#8B5CF6" : "#6B7280"} />
-        <Text style={[
-          styles.tabButtonText,
-          activeTab === "filters" ? styles.tabButtonTextActive : styles.tabButtonTextInactive
-        ]}>
+        <Filter
+          size={14}
+          color={activeTab === "filters" ? "#8B5CF6" : "#6B7280"}
+        />
+        <Text
+          style={[
+            styles.tabButtonText,
+            activeTab === "filters"
+              ? styles.tabButtonTextActive
+              : styles.tabButtonTextInactive,
+          ]}
+        >
           Filters
         </Text>
       </TouchableOpacity>
@@ -220,14 +276,23 @@ export function NetworkFilterView({
         onPress={() => setActiveTab("domains")}
         style={[
           styles.tabButton,
-          activeTab === "domains" ? styles.tabButtonActive : styles.tabButtonInactive
+          activeTab === "domains"
+            ? styles.tabButtonActive
+            : styles.tabButtonInactive,
         ]}
       >
-        <Globe size={14} color={activeTab === "domains" ? "#8B5CF6" : "#6B7280"} />
-        <Text style={[
-          styles.tabButtonText,
-          activeTab === "domains" ? styles.tabButtonTextActive : styles.tabButtonTextInactive
-        ]}>
+        <Globe
+          size={14}
+          color={activeTab === "domains" ? "#8B5CF6" : "#6B7280"}
+        />
+        <Text
+          style={[
+            styles.tabButtonText,
+            activeTab === "domains"
+              ? styles.tabButtonTextActive
+              : styles.tabButtonTextInactive,
+          ]}
+        >
           Domains
         </Text>
         {ignoredDomains.size > 0 && (
@@ -241,14 +306,20 @@ export function NetworkFilterView({
         onPress={() => setActiveTab("urls")}
         style={[
           styles.tabButton,
-          activeTab === "urls" ? styles.tabButtonActive : styles.tabButtonInactive
+          activeTab === "urls"
+            ? styles.tabButtonActive
+            : styles.tabButtonInactive,
         ]}
       >
         <Link size={14} color={activeTab === "urls" ? "#8B5CF6" : "#6B7280"} />
-        <Text style={[
-          styles.tabButtonText,
-          activeTab === "urls" ? styles.tabButtonTextActive : styles.tabButtonTextInactive
-        ]}>
+        <Text
+          style={[
+            styles.tabButtonText,
+            activeTab === "urls"
+              ? styles.tabButtonTextActive
+              : styles.tabButtonTextInactive,
+          ]}
+        >
           URLs
         </Text>
         {ignoredUrls.size > 0 && (
@@ -270,43 +341,74 @@ export function NetworkFilterView({
           <View style={styles.sectionLine} />
         </View>
         <View style={styles.filterGrid}>
-          {(["all", "success", "error", "pending"] as const).map(status => {
+          {(["all", "success", "error", "pending"] as const).map((status) => {
             const Icon = getStatusIcon(status);
-            const isActive = filter.status === status || (!filter.status && status === "all");
+            const isActive =
+              filter.status === status || (!filter.status && status === "all");
             const count = statusCounts[status];
-            
+
             return (
               <TouchableOpacity
                 key={status}
                 style={[styles.filterCard, isActive && styles.activeFilterCard]}
                 onPress={() => handleStatusFilter(status)}
               >
-                <View style={[styles.filterIconContainer, { 
-                  backgroundColor: status === "success" ? "rgba(16, 185, 129, 0.12)" :
-                                 status === "error" ? "rgba(239, 68, 68, 0.12)" :
-                                 status === "pending" ? "rgba(245, 158, 11, 0.12)" :
-                                 "rgba(139, 92, 246, 0.12)",
-                  borderColor: status === "success" ? "rgba(16, 185, 129, 0.2)" :
-                              status === "error" ? "rgba(239, 68, 68, 0.2)" :
-                              status === "pending" ? "rgba(245, 158, 11, 0.2)" :
-                              "rgba(139, 92, 246, 0.2)"
-                }]}>
-                  <Icon size={22} color={
-                    status === "success" ? "#10B981" :
-                    status === "error" ? "#EF4444" :
-                    status === "pending" ? "#F59E0B" :
-                    "#8B5CF6"
-                  } />
+                <View
+                  style={[
+                    styles.filterIconContainer,
+                    {
+                      backgroundColor:
+                        status === "success"
+                          ? "rgba(16, 185, 129, 0.12)"
+                          : status === "error"
+                            ? "rgba(239, 68, 68, 0.12)"
+                            : status === "pending"
+                              ? "rgba(245, 158, 11, 0.12)"
+                              : "rgba(139, 92, 246, 0.12)",
+                      borderColor:
+                        status === "success"
+                          ? "rgba(16, 185, 129, 0.2)"
+                          : status === "error"
+                            ? "rgba(239, 68, 68, 0.2)"
+                            : status === "pending"
+                              ? "rgba(245, 158, 11, 0.2)"
+                              : "rgba(139, 92, 246, 0.2)",
+                    },
+                  ]}
+                >
+                  <Icon
+                    size={22}
+                    color={
+                      status === "success"
+                        ? "#10B981"
+                        : status === "error"
+                          ? "#EF4444"
+                          : status === "pending"
+                            ? "#F59E0B"
+                            : "#8B5CF6"
+                    }
+                  />
                 </View>
                 <Text style={styles.filterLabel}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </Text>
-                <Text style={[styles.filterCount, {
-                  color: status === "success" ? "#10B981" :
-                         status === "error" ? "#EF4444" :
-                         status === "pending" ? "#F59E0B" :
-                         "#8B5CF6"
-                }]}>{count}</Text>
+                <Text
+                  style={[
+                    styles.filterCount,
+                    {
+                      color:
+                        status === "success"
+                          ? "#10B981"
+                          : status === "error"
+                            ? "#EF4444"
+                            : status === "pending"
+                              ? "#F59E0B"
+                              : "#8B5CF6",
+                    },
+                  ]}
+                >
+                  {count}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -325,17 +427,25 @@ export function NetworkFilterView({
             {Object.entries(methodCounts).map(([method, count]) => {
               const isActive = filter.method?.includes(method);
               const color = getMethodColor(method);
-              
+
               return (
                 <TouchableOpacity
                   key={method}
-                  style={[styles.filterCard, isActive && styles.activeFilterCard]}
+                  style={[
+                    styles.filterCard,
+                    isActive && styles.activeFilterCard,
+                  ]}
                   onPress={() => handleMethodFilter(method)}
                 >
-                  <View style={[styles.methodBadge, { 
-                    backgroundColor: `${color}15`,
-                    borderColor: `${color}30`
-                  }]}>
+                  <View
+                    style={[
+                      styles.methodBadge,
+                      {
+                        backgroundColor: `${color}15`,
+                        borderColor: `${color}30`,
+                      },
+                    ]}
+                  >
                     <Text style={[styles.methodText, { color }]}>{method}</Text>
                   </View>
                   <Text style={[styles.filterCount, { color }]}>{count}</Text>
@@ -358,21 +468,34 @@ export function NetworkFilterView({
             {Object.entries(contentTypeCounts).map(([type, count]) => {
               const Icon = getContentTypeIcon(type);
               const isActive = filter.contentType?.includes(type);
-              
+
               return (
                 <TouchableOpacity
                   key={type}
-                  style={[styles.filterCard, isActive && styles.activeFilterCard]}
+                  style={[
+                    styles.filterCard,
+                    isActive && styles.activeFilterCard,
+                  ]}
                   onPress={() => handleContentTypeFilter(type)}
                 >
-                  <View style={[styles.filterIconContainer, {
-                    backgroundColor: `${getContentTypeColor(type)}12`,
-                    borderColor: `${getContentTypeColor(type)}20`
-                  }]}>
+                  <View
+                    style={[
+                      styles.filterIconContainer,
+                      {
+                        backgroundColor: `${getContentTypeColor(type)}12`,
+                        borderColor: `${getContentTypeColor(type)}20`,
+                      },
+                    ]}
+                  >
                     <Icon size={18} color={getContentTypeColor(type)} />
                   </View>
                   <Text style={styles.filterLabel}>{type}</Text>
-                  <Text style={[styles.filterCount, { color: getContentTypeColor(type) }]}>
+                  <Text
+                    style={[
+                      styles.filterCount,
+                      { color: getContentTypeColor(type) },
+                    ]}
+                  >
                     {count}
                   </Text>
                 </TouchableOpacity>
@@ -388,14 +511,13 @@ export function NetworkFilterView({
     patterns: Set<string>,
     available: string[],
     onToggle: (pattern: string) => void,
-    type: "domains" | "urls"
+    type: "domains" | "urls",
   ) => {
     const currentPatterns = patterns;
     // Filter out patterns that are already in the ignore list
-    const suggestedPatterns = available.filter(pattern => 
-      !currentPatterns.has(pattern)
+    const suggestedPatterns = available.filter(
+      (pattern) => !currentPatterns.has(pattern),
     );
-    
 
     return (
       <View style={styles.ignoreSection}>
@@ -417,7 +539,7 @@ export function NetworkFilterView({
               value={newPattern}
               onChangeText={setNewPattern}
               placeholder={
-                type === "domains" 
+                type === "domains"
                   ? "Enter domain (e.g., api.example.com)"
                   : "Enter URL pattern (e.g., /analytics)"
               }
@@ -445,17 +567,24 @@ export function NetworkFilterView({
 
         {/* Suggested patterns - Always show if we have suggestions */}
         {suggestedPatterns.length > 0 ? (
-          <View style={[styles.suggestedContainer, !showAddInput && { marginTop: 12 }]}>
+          <View
+            style={[
+              styles.suggestedContainer,
+              !showAddInput && { marginTop: 12 },
+            ]}
+          >
             <Text style={styles.suggestedTitle}>
-              {type === "domains" ? "DOMAINS FROM REQUESTS" : "URLS FROM REQUESTS"}
+              {type === "domains"
+                ? "DOMAINS FROM REQUESTS"
+                : "URLS FROM REQUESTS"}
             </Text>
-            <ScrollView 
-              style={styles.suggestedScroll} 
+            <ScrollView
+              style={styles.suggestedScroll}
               showsVerticalScrollIndicator={true}
               nestedScrollEnabled={true}
             >
               {suggestedPatterns.length > 0 ? (
-                suggestedPatterns.map(pattern => (
+                suggestedPatterns.map((pattern) => (
                   <TouchableOpacity
                     key={pattern}
                     onPress={() => {
@@ -499,10 +628,13 @@ export function NetworkFilterView({
           available.length === 0 && (
             <View style={[styles.suggestedContainer, { marginTop: 12 }]}>
               <Text style={styles.suggestedTitle}>
-                {type === "domains" ? "NO DOMAINS AVAILABLE" : "NO URLS AVAILABLE"}
+                {type === "domains"
+                  ? "NO DOMAINS AVAILABLE"
+                  : "NO URLS AVAILABLE"}
               </Text>
               <Text style={styles.emptyText}>
-                Make some network requests to see {type === "domains" ? "domains" : "URLs"} here
+                Make some network requests to see{" "}
+                {type === "domains" ? "domains" : "URLs"} here
               </Text>
             </View>
           )
@@ -510,7 +642,7 @@ export function NetworkFilterView({
 
         {/* Active patterns */}
         <View style={styles.patternsContainer}>
-          {Array.from(currentPatterns).map(pattern => (
+          {Array.from(currentPatterns).map((pattern) => (
             <TouchableOpacity
               key={pattern}
               onPress={() => onToggle(pattern)}
@@ -533,21 +665,18 @@ export function NetworkFilterView({
   return (
     <View style={styles.container}>
       {renderTabs()}
-      
+
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {activeTab === "filters" && renderFiltersContent()}
-        {activeTab === "domains" && renderIgnorePatterns(
-          ignoredDomains,
-          availableDomains,
-          onToggleDomain,
-          "domains"
-        )}
-        {activeTab === "urls" && renderIgnorePatterns(
-          ignoredUrls,
-          availableUrls,
-          onToggleUrl,
-          "urls"
-        )}
+        {activeTab === "domains" &&
+          renderIgnorePatterns(
+            ignoredDomains,
+            availableDomains,
+            onToggleDomain,
+            "domains",
+          )}
+        {activeTab === "urls" &&
+          renderIgnorePatterns(ignoredUrls, availableUrls, onToggleUrl, "urls")}
       </ScrollView>
     </View>
   );

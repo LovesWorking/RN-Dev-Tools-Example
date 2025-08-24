@@ -8,7 +8,7 @@ import {
   TextStyle,
   Animated,
 } from "react-native";
-import { ChevronDown, ChevronUp } from 'rn-better-dev-tools/icons';
+import { ChevronDown, ChevronUp } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../constants/gameUIColors";
 
 export interface GameUICollapsibleSectionProps {
@@ -62,12 +62,7 @@ export function GameUICollapsibleSection({
           <View style={styles.headerLeft}>
             <Icon size={14} color={iconColor} />
             <Text style={[styles.title, titleStyle]}>{title}</Text>
-            <View
-              style={[
-                styles.badge,
-                { backgroundColor: iconColor + "20" },
-              ]}
-            >
+            <View style={[styles.badge, { backgroundColor: iconColor + "20" }]}>
               <Text style={[styles.badgeText, { color: iconColor }]}>
                 {count}
               </Text>
@@ -83,9 +78,7 @@ export function GameUICollapsibleSection({
       </TouchableOpacity>
 
       {expanded && (
-        <Animated.View style={{ opacity: 1 }}>
-          {children}
-        </Animated.View>
+        <Animated.View style={{ opacity: 1 }}>{children}</Animated.View>
       )}
     </View>
   );

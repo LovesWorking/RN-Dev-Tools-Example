@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { RefreshCw, Copy, Trash2 } from 'rn-better-dev-tools/icons';
+import { RefreshCw, Copy, Trash2 } from "rn-better-dev-tools/icons";
 import { useState, useCallback } from "react";
 import superjson from "superjson";
 import { StorageKeyInfo } from "../types";
@@ -13,16 +13,16 @@ interface StorageActionsProps {
   totalCount: number;
 }
 
-type CopyStatus = 'idle' | 'success' | 'error';
+type CopyStatus = "idle" | "success" | "error";
 
-export function StorageActions({ 
-  storageKeys, 
-  onClearAll, 
+export function StorageActions({
+  storageKeys,
+  onClearAll,
   onRefresh,
-  totalCount
+  totalCount,
 }: StorageActionsProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
+  const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -34,107 +34,105 @@ export function StorageActions({
   }, [onRefresh]);
 
   const handleExport = () => {
-    Alert.alert(
-      'Export Storage Data',
-      'Choose export format:',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Simple (Key-Value)',
-          onPress: handleCopySimple,
-        },
-        {
-          text: 'Full (With Metadata)',
-          onPress: handleCopyFull,
-        },
-      ],
-    );
+    Alert.alert("Export Storage Data", "Choose export format:", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Simple (Key-Value)",
+        onPress: handleCopySimple,
+      },
+      {
+        text: "Full (With Metadata)",
+        onPress: handleCopyFull,
+      },
+    ]);
   };
 
   const handleCopyFull = async () => {
     try {
-      const storageData = storageKeys.reduce((acc, keyInfo) => {
-        acc[keyInfo.key] = {
-          value: keyInfo.value,
-          type: keyInfo.storageType,
-          status: keyInfo.status,
-          category: keyInfo.category,
-        };
-        return acc;
-      }, {} as Record<string, unknown>);
+      const storageData = storageKeys.reduce(
+        (acc, keyInfo) => {
+          acc[keyInfo.key] = {
+            value: keyInfo.value,
+            type: keyInfo.storageType,
+            status: keyInfo.status,
+            category: keyInfo.category,
+          };
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      );
 
       const serialized = superjson.stringify(storageData);
       const success = await copyToClipboard(serialized);
-      
+
       if (success) {
-        setCopyStatus('success');
-        setTimeout(() => setCopyStatus('idle'), 2000);
-        console.log('[Storage] Full export copied to clipboard');
+        setCopyStatus("success");
+        setTimeout(() => setCopyStatus("idle"), 2000);
+        console.log("[Storage] Full export copied to clipboard");
       } else {
-        throw new Error('Failed to copy to clipboard');
+        throw new Error("Failed to copy to clipboard");
       }
     } catch (error) {
-      console.error('Failed to copy storage data:', error);
-      Alert.alert('Error', 'Failed to copy storage data');
+      console.error("Failed to copy storage data:", error);
+      Alert.alert("Error", "Failed to copy storage data");
     }
   };
 
   const handleCopySimple = async () => {
     try {
-      const simpleData = storageKeys.reduce((acc, keyInfo) => {
-        acc[keyInfo.key] = keyInfo.value;
-        return acc;
-      }, {} as Record<string, unknown>);
+      const simpleData = storageKeys.reduce(
+        (acc, keyInfo) => {
+          acc[keyInfo.key] = keyInfo.value;
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      );
 
       const serialized = superjson.stringify(simpleData);
       const success = await copyToClipboard(serialized);
-      
+
       if (success) {
-        setCopyStatus('success');
-        setTimeout(() => setCopyStatus('idle'), 2000);
-        console.log('[Storage] Simple export copied to clipboard');
+        setCopyStatus("success");
+        setTimeout(() => setCopyStatus("idle"), 2000);
+        console.log("[Storage] Simple export copied to clipboard");
       } else {
-        throw new Error('Failed to copy to clipboard');
+        throw new Error("Failed to copy to clipboard");
       }
     } catch (error) {
-      console.error('Failed to copy storage data:', error);
-      Alert.alert('Error', 'Failed to copy storage data');
+      console.error("Failed to copy storage data:", error);
+      Alert.alert("Error", "Failed to copy storage data");
     }
   };
 
   const handleClear = () => {
-    Alert.alert(
-      'Clear Storage',
-      'Choose what to clear:',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Clear App Data',
-          onPress: handleClearAppData,
-        },
-        {
-          text: 'Clear Everything',
-          style: 'destructive',
-          onPress: handleClearEverything,
-        },
-      ],
-    );
+    Alert.alert("Clear Storage", "Choose what to clear:", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Clear App Data",
+        onPress: handleClearAppData,
+      },
+      {
+        text: "Clear Everything",
+        style: "destructive",
+        onPress: handleClearEverything,
+      },
+    ]);
   };
 
   const handleClearAppData = async () => {
     try {
       await onClearAll();
       await onRefresh(); // Auto-refresh after clearing
-      console.log('[Storage] App data cleared successfully');
+      console.log("[Storage] App data cleared successfully");
     } catch (error) {
-      console.error('Failed to clear storage:', error);
-      Alert.alert('Error', `Failed to clear storage: ${error}`);
+      console.error("Failed to clear storage:", error);
+      Alert.alert("Error", `Failed to clear storage: ${error}`);
     }
   };
 
@@ -143,18 +141,18 @@ export function StorageActions({
     try {
       await clearAllStorageIncludingDevTools();
       await onRefresh(); // Auto-refresh after clearing
-      console.log('[Storage] All storage cleared including dev tools');
-      
+      console.log("[Storage] All storage cleared including dev tools");
+
       // Show success message briefly
       Alert.alert(
-        'Success', 
-        'All storage cleared including dev tools settings.',
-        [{ text: 'OK' }],
-        { cancelable: true }
+        "Success",
+        "All storage cleared including dev tools settings.",
+        [{ text: "OK" }],
+        { cancelable: true },
       );
     } catch (error) {
-      console.error('Failed to clear all storage:', error);
-      Alert.alert('Error', `Failed to clear all storage: ${error}`);
+      console.error("Failed to clear all storage:", error);
+      Alert.alert("Error", `Failed to clear all storage: ${error}`);
     }
   };
 
@@ -162,15 +160,15 @@ export function StorageActions({
     <View style={styles.headerContainer}>
       <View style={styles.leftSection}>
         <Text style={styles.keyCount}>
-          {totalCount} {totalCount === 1 ? 'key' : 'keys'} found
+          {totalCount} {totalCount === 1 ? "key" : "keys"} found
         </Text>
-        {copyStatus === 'success' && (
+        {copyStatus === "success" && (
           <View style={styles.copiedBadge}>
             <Text style={styles.copiedText}>Copied!</Text>
           </View>
         )}
       </View>
-      
+
       <View style={styles.headerActions}>
         <TouchableOpacity
           sentry-label="ignore storage refresh button"
@@ -178,12 +176,9 @@ export function StorageActions({
           style={[styles.iconButton, isRefreshing && styles.activeButton]}
           accessibilityLabel="Refresh storage"
         >
-          <RefreshCw 
-            size={16} 
-            color={isRefreshing ? "#10B981" : "#9CA3AF"} 
-          />
+          <RefreshCw size={16} color={isRefreshing ? "#10B981" : "#9CA3AF"} />
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           sentry-label="ignore storage export button"
           onPress={handleExport}
@@ -192,7 +187,7 @@ export function StorageActions({
         >
           <Copy size={16} color="#3B82F6" />
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           sentry-label="ignore storage clear button"
           onPress={handleClear}
@@ -209,55 +204,55 @@ export function StorageActions({
 const styles = StyleSheet.create({
   // Header styles matching Sentry pattern
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 8,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: "rgba(255, 255, 255, 0.08)",
   },
   leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   keyCount: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   copiedBadge: {
-    backgroundColor: '#10B981',
+    backgroundColor: "#10B981",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
   },
   copiedText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   iconButton: {
     width: 32,
     height: 32,
     borderRadius: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   activeButton: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    borderColor: 'rgba(16, 185, 129, 0.2)',
+    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    borderColor: "rgba(16, 185, 129, 0.2)",
   },
 });

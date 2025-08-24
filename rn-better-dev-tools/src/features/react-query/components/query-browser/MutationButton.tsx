@@ -32,15 +32,31 @@ export default function MutationButton({
 
   const getStatusInfo = () => {
     if (mutation.state.isPaused) {
-      return { status: "Paused", color: gameUIColors.storage, icon: <PauseCircle /> };
+      return {
+        status: "Paused",
+        color: gameUIColors.storage,
+        icon: <PauseCircle />,
+      };
     }
     switch (mutation.state.status) {
       case "success":
-        return { status: "Success", color: gameUIColors.success, icon: <CheckCircle /> };
+        return {
+          status: "Success",
+          color: gameUIColors.success,
+          icon: <CheckCircle />,
+        };
       case "error":
-        return { status: "Error", color: gameUIColors.error, icon: <XCircle /> };
+        return {
+          status: "Error",
+          color: gameUIColors.error,
+          icon: <XCircle />,
+        };
       case "pending":
-        return { status: "Loading", color: gameUIColors.info, icon: <LoadingCircle /> };
+        return {
+          status: "Loading",
+          color: gameUIColors.info,
+          icon: <LoadingCircle />,
+        };
       default:
         return { status: "Idle", color: gameUIColors.muted, icon: null };
     }

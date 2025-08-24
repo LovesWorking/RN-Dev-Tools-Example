@@ -70,7 +70,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({
       obj: JsonValue,
       targetType: string,
       path = "",
-      depth = 0
+      depth = 0,
     ) => {
       if (depth > 10 || itemCount > 100) return;
 

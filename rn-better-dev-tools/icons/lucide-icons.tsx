@@ -4,8 +4,15 @@
  * Icons: Activity, AlertCircle, AlertTriangle, Bug, Check, CheckCircle, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Clock, Copy, Database, Download, Eye, EyeOff, FileCode, FileText, Filter, FlaskConical, Globe, HardDrive, Link, Palette, Pause, Play, Plus, RefreshCw, Server, Settings, TestTube2, Trash, Trash2, Upload, Wifi, WifiOff, X, XCircle, Zap
  */
 
-import React from 'react';
-import Svg, { Path, Circle, Rect, Line, Polyline, Polygon } from 'react-native-svg';
+import React from "react";
+import Svg, {
+  Path,
+  Circle,
+  Rect,
+  Line,
+  Polyline,
+  Polygon,
+} from "react-native-svg";
 
 interface IconProps {
   size?: number;
@@ -14,8 +21,12 @@ interface IconProps {
   [key: string]: any;
 }
 
-
-export const ActivityIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ActivityIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -31,7 +42,12 @@ export const ActivityIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const AlertCircleIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const AlertCircleIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -49,7 +65,12 @@ export const AlertCircleIcon = ({ size = 24, color = "currentColor", strokeWidth
   </Svg>
 );
 
-export const AlertTriangleIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const AlertTriangleIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -67,7 +88,12 @@ export const AlertTriangleIcon = ({ size = 24, color = "currentColor", strokeWid
   </Svg>
 );
 
-export const BugIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const BugIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -93,7 +119,12 @@ export const BugIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ..
   </Svg>
 );
 
-export const CheckIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const CheckIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -109,7 +140,12 @@ export const CheckIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const CheckCircleIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const CheckCircleIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -126,7 +162,12 @@ export const CheckCircleIcon = ({ size = 24, color = "currentColor", strokeWidth
   </Svg>
 );
 
-export const CheckCircle2Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const CheckCircle2Icon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -143,7 +184,12 @@ export const CheckCircle2Icon = ({ size = 24, color = "currentColor", strokeWidt
   </Svg>
 );
 
-export const ChevronDownIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronDownIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -159,7 +205,12 @@ export const ChevronDownIcon = ({ size = 24, color = "currentColor", strokeWidth
   </Svg>
 );
 
-export const ChevronLeftIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronLeftIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -175,7 +226,12 @@ export const ChevronLeftIcon = ({ size = 24, color = "currentColor", strokeWidth
   </Svg>
 );
 
-export const ChevronRightIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronRightIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -191,7 +247,12 @@ export const ChevronRightIcon = ({ size = 24, color = "currentColor", strokeWidt
   </Svg>
 );
 
-export const ChevronUpIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronUpIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -207,7 +268,12 @@ export const ChevronUpIcon = ({ size = 24, color = "currentColor", strokeWidth =
   </Svg>
 );
 
-export const ClockIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ClockIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -224,7 +290,12 @@ export const ClockIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const CopyIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const CopyIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -241,7 +312,12 @@ export const CopyIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const DatabaseIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const DatabaseIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -258,7 +334,12 @@ export const DatabaseIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const DownloadIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const DownloadIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -276,7 +357,12 @@ export const DownloadIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const EyeIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const EyeIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -293,7 +379,12 @@ export const EyeIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ..
   </Svg>
 );
 
-export const EyeOffIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const EyeOffIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -312,7 +403,12 @@ export const EyeOffIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const FileCodeIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FileCodeIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -331,7 +427,12 @@ export const FileCodeIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const FileTextIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FileTextIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -351,7 +452,12 @@ export const FileTextIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const FilterIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FilterIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -369,7 +475,12 @@ export const FilterIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const FlaskConicalIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FlaskConicalIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -387,7 +498,12 @@ export const FlaskConicalIcon = ({ size = 24, color = "currentColor", strokeWidt
   </Svg>
 );
 
-export const GlobeIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const GlobeIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -405,7 +521,12 @@ export const GlobeIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const HardDriveIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const HardDriveIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -424,7 +545,12 @@ export const HardDriveIcon = ({ size = 24, color = "currentColor", strokeWidth =
   </Svg>
 );
 
-export const LinkIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const LinkIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -441,7 +567,12 @@ export const LinkIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const PaletteIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const PaletteIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -461,7 +592,12 @@ export const PaletteIcon = ({ size = 24, color = "currentColor", strokeWidth = 2
   </Svg>
 );
 
-export const PauseIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const PauseIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -478,7 +614,12 @@ export const PauseIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const PlayIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const PlayIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -494,7 +635,12 @@ export const PlayIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const PlusIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const PlusIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -511,7 +657,12 @@ export const PlusIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const RefreshCwIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const RefreshCwIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -530,7 +681,12 @@ export const RefreshCwIcon = ({ size = 24, color = "currentColor", strokeWidth =
   </Svg>
 );
 
-export const ServerIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ServerIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -549,7 +705,12 @@ export const ServerIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const SettingsIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const SettingsIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -566,7 +727,12 @@ export const SettingsIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const TestTube2Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const TestTube2Icon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -584,7 +750,12 @@ export const TestTube2Icon = ({ size = 24, color = "currentColor", strokeWidth =
   </Svg>
 );
 
-export const TrashIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const TrashIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -602,7 +773,12 @@ export const TrashIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const Trash2Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Trash2Icon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -622,7 +798,12 @@ export const Trash2Icon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const UploadIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const UploadIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -640,7 +821,12 @@ export const UploadIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const WifiIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const WifiIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -659,7 +845,12 @@ export const WifiIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const WifiOffIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const WifiOffIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -681,7 +872,12 @@ export const WifiOffIcon = ({ size = 24, color = "currentColor", strokeWidth = 2
   </Svg>
 );
 
-export const XIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const XIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -698,7 +894,12 @@ export const XIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...p
   </Svg>
 );
 
-export const XCircleIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const XCircleIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -716,7 +917,12 @@ export const XCircleIcon = ({ size = 24, color = "currentColor", strokeWidth = 2
   </Svg>
 );
 
-export const ZapIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ZapIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -732,7 +938,12 @@ export const ZapIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ..
   </Svg>
 );
 
-export const HashIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const HashIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -751,7 +962,12 @@ export const HashIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const UsersIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const UsersIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -770,7 +986,12 @@ export const UsersIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const BoxIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const BoxIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -788,7 +1009,12 @@ export const BoxIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ..
   </Svg>
 );
 
-export const HandIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const HandIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -807,7 +1033,12 @@ export const HandIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const KeyIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const KeyIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -825,7 +1056,12 @@ export const KeyIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ..
   </Svg>
 );
 
-export const RouteIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const RouteIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -843,7 +1079,12 @@ export const RouteIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const UserIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const UserIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -860,7 +1101,12 @@ export const UserIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const TriangleAlertIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const TriangleAlertIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -878,7 +1124,12 @@ export const TriangleAlertIcon = ({ size = 24, color = "currentColor", strokeWid
   </Svg>
 );
 
-export const LockIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const LockIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -895,7 +1146,12 @@ export const LockIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const UnlockIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const UnlockIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -912,7 +1168,12 @@ export const UnlockIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const FileJsonIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FileJsonIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -931,7 +1192,12 @@ export const FileJsonIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const ImageIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ImageIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -949,7 +1215,12 @@ export const ImageIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const FilmIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FilmIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -972,7 +1243,12 @@ export const FilmIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const MusicIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const MusicIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -990,7 +1266,12 @@ export const MusicIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const PowerIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const PowerIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1007,7 +1288,12 @@ export const PowerIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const SearchIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const SearchIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1024,7 +1310,12 @@ export const SearchIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const TimerIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const TimerIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1042,7 +1333,12 @@ export const TimerIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, 
   </Svg>
 );
 
-export const InfoIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const InfoIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1060,7 +1356,12 @@ export const InfoIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, .
   </Svg>
 );
 
-export const SmartphoneIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const SmartphoneIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1077,7 +1378,12 @@ export const SmartphoneIcon = ({ size = 24, color = "currentColor", strokeWidth 
   </Svg>
 );
 
-export const LayersIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const LayersIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1095,7 +1401,12 @@ export const LayersIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const NavigationIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const NavigationIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1111,7 +1422,12 @@ export const NavigationIcon = ({ size = 24, color = "currentColor", strokeWidth 
   </Svg>
 );
 
-export const ShieldIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ShieldIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1127,7 +1443,12 @@ export const ShieldIcon = ({ size = 24, color = "currentColor", strokeWidth = 2,
   </Svg>
 );
 
-export const TouchpadIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const TouchpadIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1145,7 +1466,12 @@ export const TouchpadIcon = ({ size = 24, color = "currentColor", strokeWidth = 
   </Svg>
 );
 
-export const BarChart3Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const BarChart3Icon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1164,7 +1490,12 @@ export const BarChart3Icon = ({ size = 24, color = "currentColor", strokeWidth =
   </Svg>
 );
 
-export const GitBranchIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const GitBranchIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}
@@ -1183,7 +1514,12 @@ export const GitBranchIcon = ({ size = 24, color = "currentColor", strokeWidth =
   </Svg>
 );
 
-export const MinusIcon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const MinusIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg
     width={size}
     height={size}

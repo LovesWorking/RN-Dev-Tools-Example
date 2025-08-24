@@ -1,8 +1,4 @@
-import {
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
@@ -49,7 +45,12 @@ export function SearchControls({
         onPress={onRandom}
         disabled={isDisabled}
       >
-        <Ionicons name="shuffle" size={22} color="#fff" style={styles.buttonIcon} />
+        <Ionicons
+          name="shuffle"
+          size={22}
+          color="#fff"
+          style={styles.buttonIcon}
+        />
         <ThemedText style={styles.buttonText}>
           {isSearching ? "Searching..." : "Random Pokémon"}
         </ThemedText>

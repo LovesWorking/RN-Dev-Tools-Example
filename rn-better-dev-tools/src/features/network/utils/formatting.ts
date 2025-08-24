@@ -4,9 +4,9 @@
  */
 
 // Re-export shared formatting utilities
-export { 
-  formatBytes, 
+export {
+  formatBytes,
   formatDuration,
   formatHttpStatus,
   getMethodColor,
-} from '@/rn-better-dev-tools/src/shared/utils/formatting';
+} from "@/rn-better-dev-tools/src/shared/utils/formatting";

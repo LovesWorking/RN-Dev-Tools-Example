@@ -1,5 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Pressable, Animated, Easing } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Animated,
+  Easing,
+} from "react-native";
 import {
   AlertCircle,
   CheckCircle2,
@@ -7,7 +14,7 @@ import {
   XCircle,
   ChevronDown,
   ChevronUp,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
@@ -149,7 +156,7 @@ export function CyberpunkEnvVarCard({
             toValue: 0,
             duration: d * 0.5,
             useNativeDriver: true,
-          })
+          }),
         ]).start();
 
         // Glitch displacement
@@ -173,7 +180,7 @@ export function CyberpunkEnvVarCard({
             toValue: 0,
             duration: d * 0.3,
             useNativeDriver: true,
-          })
+          }),
         ]).start();
 
         Animated.sequence([
@@ -191,7 +198,7 @@ export function CyberpunkEnvVarCard({
             toValue: 0,
             duration: d * 0.3,
             useNativeDriver: true,
-          })
+          }),
         ]).start();
 
         // Glow intensity during glitch
@@ -205,7 +212,7 @@ export function CyberpunkEnvVarCard({
             toValue: 0.3,
             duration: d * 0.7,
             useNativeDriver: true,
-          })
+          }),
         ]).start();
 
         startRandomGlitch();
@@ -225,7 +232,7 @@ export function CyberpunkEnvVarCard({
       stiffness: 400,
       useNativeDriver: true,
     }).start();
-    
+
     Animated.timing(glowIntensity, {
       toValue: 0.8,
       duration: 100,
@@ -243,7 +250,7 @@ export function CyberpunkEnvVarCard({
         toValue: 0,
         duration: 30,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   };
 
@@ -254,7 +261,7 @@ export function CyberpunkEnvVarCard({
       stiffness: 400,
       useNativeDriver: true,
     }).start();
-    
+
     Animated.timing(glowIntensity, {
       toValue: 0.3,
       duration: 200,

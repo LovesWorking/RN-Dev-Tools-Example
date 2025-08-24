@@ -5,81 +5,81 @@
  * This fetches the SVG data for each icon and converts it to React Native SVG format
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // List of all icons used in the codebase
 const iconNames = [
-  'Activity',
-  'AlertCircle', 
-  'AlertTriangle',
-  'BarChart3',
-  'Box',
-  'Bug',
-  'Check',
-  'CheckCircle',
-  'CheckCircle2',
-  'ChevronDown',
-  'ChevronLeft',
-  'ChevronRight',
-  'ChevronUp',
-  'Clock',
-  'Copy',
-  'Database',
-  'Download',
-  'Eye',
-  'EyeOff',
-  'FileJson',
-  'FileText',
-  'Film',
-  'Filter',
-  'FlaskConical',
-  'Globe',
-  'GripVertical',
-  'Hand',
-  'HardDrive',
-  'Hash',
-  'Image',
-  'Key',
-  'Layers',
-  'Lock',
-  'Maximize2',
-  'Minimize2',
-  'Music',
-  'Navigation',
-  'Palette',
-  'Pause',
-  'Play',
-  'Plus',
-  'Power',
-  'RefreshCw',
-  'Route',
-  'Search',
-  'Server',
-  'Settings',
-  'Shield',
-  'Smartphone',
-  'TestTube2',
-  'Timer',
-  'TouchpadIcon',
-  'Trash',
-  'Trash2',
-  'TriangleAlert',
-  'Unlock',
-  'Upload',
-  'User',
-  'Wifi',
-  'WifiOff',
-  'X',
-  'XCircle',
-  'Zap'
+  "Activity",
+  "AlertCircle",
+  "AlertTriangle",
+  "BarChart3",
+  "Box",
+  "Bug",
+  "Check",
+  "CheckCircle",
+  "CheckCircle2",
+  "ChevronDown",
+  "ChevronLeft",
+  "ChevronRight",
+  "ChevronUp",
+  "Clock",
+  "Copy",
+  "Database",
+  "Download",
+  "Eye",
+  "EyeOff",
+  "FileJson",
+  "FileText",
+  "Film",
+  "Filter",
+  "FlaskConical",
+  "Globe",
+  "GripVertical",
+  "Hand",
+  "HardDrive",
+  "Hash",
+  "Image",
+  "Key",
+  "Layers",
+  "Lock",
+  "Maximize2",
+  "Minimize2",
+  "Music",
+  "Navigation",
+  "Palette",
+  "Pause",
+  "Play",
+  "Plus",
+  "Power",
+  "RefreshCw",
+  "Route",
+  "Search",
+  "Server",
+  "Settings",
+  "Shield",
+  "Smartphone",
+  "TestTube2",
+  "Timer",
+  "TouchpadIcon",
+  "Trash",
+  "Trash2",
+  "TriangleAlert",
+  "Unlock",
+  "Upload",
+  "User",
+  "Wifi",
+  "WifiOff",
+  "X",
+  "XCircle",
+  "Zap",
 ];
 
 // Convert icon name to kebab-case for lucide
 function toKebabCase(str) {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
     .toLowerCase();
 }
 
@@ -87,8 +87,8 @@ function toKebabCase(str) {
 function convertSvgToReactNative(svgString, iconName) {
   // Extract viewBox
   const viewBoxMatch = svgString.match(/viewBox="([^"]+)"/);
-  const viewBox = viewBoxMatch ? viewBoxMatch[1] : '0 0 24 24';
-  
+  const viewBox = viewBoxMatch ? viewBoxMatch[1] : "0 0 24 24";
+
   // Extract all path data
   const paths = [];
   const pathRegex = /<path\s+d="([^"]+)"[^>]*>/g;
@@ -96,7 +96,7 @@ function convertSvgToReactNative(svgString, iconName) {
   while ((match = pathRegex.exec(svgString)) !== null) {
     paths.push(match[1]);
   }
-  
+
   // Extract circles
   const circles = [];
   const circleRegex = /<circle\s+([^>]+)>/g;
@@ -109,7 +109,7 @@ function convertSvgToReactNative(svgString, iconName) {
       circles.push({ cx, cy, r });
     }
   }
-  
+
   // Extract rectangles
   const rects = [];
   const rectRegex = /<rect\s+([^>]+)>/g;
@@ -124,7 +124,7 @@ function convertSvgToReactNative(svgString, iconName) {
       rects.push({ x, y, width, height, rx });
     }
   }
-  
+
   // Extract lines
   const lines = [];
   const lineRegex = /<line\s+([^>]+)>/g;
@@ -138,21 +138,21 @@ function convertSvgToReactNative(svgString, iconName) {
       lines.push({ x1, y1, x2, y2 });
     }
   }
-  
+
   // Extract polylines
   const polylines = [];
   const polylineRegex = /<polyline\s+points="([^"]+)"[^>]*>/g;
   while ((match = polylineRegex.exec(svgString)) !== null) {
     polylines.push(match[1]);
   }
-  
+
   // Extract polygons
   const polygons = [];
   const polygonRegex = /<polygon\s+points="([^"]+)"[^>]*>/g;
   while ((match = polygonRegex.exec(svgString)) !== null) {
     polygons.push(match[1]);
   }
-  
+
   // Build component
   let component = `export const ${iconName}Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }) => (
   <Svg
@@ -166,17 +166,17 @@ function convertSvgToReactNative(svgString, iconName) {
     strokeLinejoin="round"
     {...props}
   >`;
-  
+
   // Add paths
-  paths.forEach(d => {
+  paths.forEach((d) => {
     component += `\n    <Path d="${d}" />`;
   });
-  
+
   // Add circles
   circles.forEach(({ cx, cy, r }) => {
     component += `\n    <Circle cx="${cx}" cy="${cy}" r="${r}" />`;
   });
-  
+
   // Add rectangles
   rects.forEach(({ x, y, width, height, rx }) => {
     if (rx) {
@@ -185,34 +185,34 @@ function convertSvgToReactNative(svgString, iconName) {
       component += `\n    <Rect x="${x}" y="${y}" width="${width}" height="${height}" />`;
     }
   });
-  
+
   // Add lines
   lines.forEach(({ x1, y1, x2, y2 }) => {
     component += `\n    <Line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`;
   });
-  
+
   // Add polylines
-  polylines.forEach(points => {
+  polylines.forEach((points) => {
     component += `\n    <Polyline points="${points}" />`;
   });
-  
+
   // Add polygons
-  polygons.forEach(points => {
+  polygons.forEach((points) => {
     component += `\n    <Polygon points="${points}" />`;
   });
-  
-  component += '\n  </Svg>\n);\n';
-  
+
+  component += "\n  </Svg>\n);\n";
+
   return component;
 }
 
 async function extractIcons() {
-  console.log('Extracting Lucide icons...\n');
-  
+  console.log("Extracting Lucide icons...\n");
+
   try {
     // Try to import lucide-react to get SVG data
-    const lucide = require('lucide-react-native');
-    
+    const lucide = require("lucide-react-native");
+
     let output = `/**
  * Auto-generated Lucide icons as React Native SVG components
  * Generated on ${new Date().toISOString()}
@@ -222,9 +222,9 @@ import React from 'react';
 import Svg, { Path, Circle, Rect, Line, Polyline, Polygon } from 'react-native-svg';
 
 `;
-    
+
     const failedIcons = [];
-    
+
     for (const iconName of iconNames) {
       try {
         const Icon = lucide[iconName];
@@ -233,51 +233,59 @@ import Svg, { Path, Circle, Rect, Line, Polyline, Polygon } from 'react-native-s
           failedIcons.push(iconName);
           continue;
         }
-        
+
         // Try to get the SVG string from the icon
         // This is a bit hacky but lucide icons have consistent structure
         const kebabName = toKebabCase(iconName);
-        
+
         // Since we can't easily extract SVG from lucide-react-native,
         // we'll use the known SVG structure
         // For now, create a placeholder that can be manually filled
-        
+
         output += `// ${iconName}\n`;
         output += `export const ${iconName}Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }) => {
   const Icon = require('lucide-react-native').${iconName};
   return <Icon size={size} color={color} strokeWidth={strokeWidth} {...props} />;
 };\n\n`;
-        
+
         console.log(`✓ Processed ${iconName}`);
       } catch (error) {
         console.log(`✗ Failed to process ${iconName}:`, error.message);
         failedIcons.push(iconName);
       }
     }
-    
+
     // Write output file
-    const outputPath = path.join(__dirname, '..', 'src', '_shared', 'icons', 'lucide-icons.tsx');
+    const outputPath = path.join(
+      __dirname,
+      "..",
+      "src",
+      "_shared",
+      "icons",
+      "lucide-icons.tsx",
+    );
     const outputDir = path.dirname(outputPath);
-    
+
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(outputPath, output);
-    
-    console.log(`\n✅ Generated ${iconNames.length - failedIcons.length} icons`);
+
+    console.log(
+      `\n✅ Generated ${iconNames.length - failedIcons.length} icons`,
+    );
     console.log(`📁 Output saved to: ${outputPath}`);
-    
+
     if (failedIcons.length > 0) {
       console.log(`\n⚠️  Failed icons (${failedIcons.length}):`);
-      failedIcons.forEach(icon => console.log(`  - ${icon}`));
+      failedIcons.forEach((icon) => console.log(`  - ${icon}`));
     }
-    
   } catch (error) {
-    console.error('Error:', error);
-    
+    console.error("Error:", error);
+
     // Fallback: generate template file for manual conversion
-    console.log('\nGenerating template file for manual conversion...');
+    console.log("\nGenerating template file for manual conversion...");
     generateTemplate();
   }
 }
@@ -297,7 +305,9 @@ function generateTemplate() {
 import React from 'react';
 import Svg, { Path, Circle, Rect, Line, Polyline, Polygon } from 'react-native-svg';
 
-${iconNames.map(iconName => `
+${iconNames
+  .map(
+    (iconName) => `
 // ${iconName}
 // Get SVG from: https://lucide.dev/icons/${toKebabCase(iconName)}
 export const ${iconName}Icon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }) => (
@@ -315,16 +325,25 @@ export const ${iconName}Icon = ({ size = 24, color = "currentColor", strokeWidth
     {/* TODO: Add path data here */}
     <Path d="" />
   </Svg>
-);`).join('\n')}
+);`,
+  )
+  .join("\n")}
 `;
-  
-  const outputPath = path.join(__dirname, '..', 'src', '_shared', 'icons', 'lucide-icons-template.tsx');
+
+  const outputPath = path.join(
+    __dirname,
+    "..",
+    "src",
+    "_shared",
+    "icons",
+    "lucide-icons-template.tsx",
+  );
   const outputDir = path.dirname(outputPath);
-  
+
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  
+
   fs.writeFileSync(outputPath, output);
   console.log(`📁 Template saved to: ${outputPath}`);
 }

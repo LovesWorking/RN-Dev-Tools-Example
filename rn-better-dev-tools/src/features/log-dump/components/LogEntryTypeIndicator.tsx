@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
 
-import { LogType } from '@/rn-better-dev-tools/src/shared/logger/types';
-import { getTypeColor, getTypeIcon } from '../utils';
+import { LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import { getTypeColor, getTypeIcon } from "../utils";
 
 interface LogEntryTypeIndicatorProps {
   type: LogType;
@@ -21,9 +21,9 @@ export const LogEntryTypeIndicator = ({ type }: LogEntryTypeIndicatorProps) => {
 
 const styles = StyleSheet.create({
   typeIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   typeText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
     marginLeft: 6,
   },
 });

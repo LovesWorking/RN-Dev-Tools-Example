@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
-import { ChevronRight } from 'rn-better-dev-tools/icons';
+import { ChevronRight } from "rn-better-dev-tools/icons";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import {
@@ -36,7 +36,10 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
         style={[styles.container, { borderLeftColor: levelColor }]}
       >
         {/* Left section: Type icon only */}
-        <View style={styles.leftSection} sentry-label="ignore devtools sentry entry left section">
+        <View
+          style={styles.leftSection}
+          sentry-label="ignore devtools sentry entry left section"
+        >
           <View
             style={[styles.typeIcon, { backgroundColor: `${typeColor}15` }]}
             sentry-label="ignore devtools sentry entry type icon"
@@ -46,21 +49,37 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
         </View>
 
         {/* Middle section: Message only */}
-        <View style={styles.middleSection} sentry-label="ignore devtools sentry entry middle section">
-          <Text style={styles.message} numberOfLines={2} sentry-label="ignore devtools sentry entry message">
+        <View
+          style={styles.middleSection}
+          sentry-label="ignore devtools sentry entry middle section"
+        >
+          <Text
+            style={styles.message}
+            numberOfLines={2}
+            sentry-label="ignore devtools sentry entry message"
+          >
             {formatEventMessage(entry)}
           </Text>
         </View>
 
         {/* Right section: Badge, timestamp and chevron */}
-        <View style={styles.rightSection} sentry-label="ignore devtools sentry entry right section">
+        <View
+          style={styles.rightSection}
+          sentry-label="ignore devtools sentry entry right section"
+        >
           <View style={styles.rightContent}>
             {entry.metadata.sentryEventType ? (
-              <Text style={styles.badge} sentry-label="ignore devtools sentry entry badge">
+              <Text
+                style={styles.badge}
+                sentry-label="ignore devtools sentry entry badge"
+              >
                 {String(entry.metadata.sentryEventType)}
               </Text>
             ) : null}
-            <Text style={styles.timestamp} sentry-label="ignore devtools sentry entry timestamp">
+            <Text
+              style={styles.timestamp}
+              sentry-label="ignore devtools sentry entry timestamp"
+            >
               {formatRelativeTime(entry.timestamp, tick)}
             </Text>
           </View>
@@ -68,7 +87,7 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
         </View>
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

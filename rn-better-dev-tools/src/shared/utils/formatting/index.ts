@@ -2,5 +2,5 @@
  * Shared formatting utilities
  */
 
-export * from './dataFormatting';
-export * from './httpFormatting';
+export * from "./dataFormatting";
+export * from "./httpFormatting";

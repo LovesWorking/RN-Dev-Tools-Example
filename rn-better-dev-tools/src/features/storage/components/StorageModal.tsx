@@ -1,10 +1,12 @@
 import { useState, useCallback } from "react";
-import ClaudeModal60FPSClean, { type ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import ClaudeModal60FPSClean, {
+  type ModalMode,
+} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import { Text, View } from "react-native";
-import { HardDrive } from 'rn-better-dev-tools/icons';
+import { HardDrive } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
@@ -52,12 +54,16 @@ export function StorageModal({
         style={{
           width: 32,
           height: 32,
-          backgroundColor: theme.name === "cyberpunk" 
-            ? `${theme.colors.storageColor}15`
-            : "rgba(16, 185, 129, 0.1)",
+          backgroundColor:
+            theme.name === "cyberpunk"
+              ? `${theme.colors.storageColor}15`
+              : "rgba(16, 185, 129, 0.1)",
           borderRadius: theme.name === "cyberpunk" ? 8 : 16,
           borderWidth: theme.name === "cyberpunk" ? 1 : 0,
-          borderColor: theme.name === "cyberpunk" ? `${theme.colors.storageColor}40` : undefined,
+          borderColor:
+            theme.name === "cyberpunk"
+              ? `${theme.colors.storageColor}40`
+              : undefined,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -76,11 +82,16 @@ export function StorageModal({
           }}
           numberOfLines={1}
         >
-          {theme.name === "cyberpunk" ? "PERSISTENT STORAGE" : "Storage Browser"}
+          {theme.name === "cyberpunk"
+            ? "PERSISTENT STORAGE"
+            : "Storage Browser"}
         </Text>
         <Text
           style={{
-            color: theme.name === "cyberpunk" ? theme.colors.textSecondary : "#9CA3AF",
+            color:
+              theme.name === "cyberpunk"
+                ? theme.colors.textSecondary
+                : "#9CA3AF",
             fontSize: 10,
             fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
             marginTop: 2,
@@ -88,36 +99,46 @@ export function StorageModal({
           }}
           numberOfLines={1}
         >
-          {theme.name === "cyberpunk" ? "APP DATA • ASYNCSTORAGE • MMKV" : "View and manage stored data"}
+          {theme.name === "cyberpunk"
+            ? "APP DATA • ASYNCSTORAGE • MMKV"
+            : "View and manage stored data"}
         </Text>
       </View>
       {theme.name === "cyberpunk" && (
-        <View style={{
-          flexDirection: "row",
-          gap: 3,
-          marginRight: 8,
-        }}>
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.storageColor,
-            opacity: 0.8,
-          }} />
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.storageColor,
-            opacity: 0.5,
-          }} />
-          <View style={{
-            width: 3,
-            height: 3,
-            borderRadius: 1.5,
-            backgroundColor: theme.colors.storageColor,
-            opacity: 0.3,
-          }} />
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 3,
+            marginRight: 8,
+          }}
+        >
+          <View
+            style={{
+              width: 3,
+              height: 3,
+              borderRadius: 1.5,
+              backgroundColor: theme.colors.storageColor,
+              opacity: 0.8,
+            }}
+          />
+          <View
+            style={{
+              width: 3,
+              height: 3,
+              borderRadius: 1.5,
+              backgroundColor: theme.colors.storageColor,
+              opacity: 0.5,
+            }}
+          />
+          <View
+            style={{
+              width: 3,
+              height: 3,
+              borderRadius: 1.5,
+              backgroundColor: theme.colors.storageColor,
+              opacity: 0.3,
+            }}
+          />
         </View>
       )}
     </View>
@@ -130,17 +151,18 @@ export function StorageModal({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: renderHeaderContent()
+        customContent: renderHeaderContent(),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
-     styles={{}}>
-      <StorageBrowserMode 
+      styles={{}}
+    >
+      <StorageBrowserMode
         selectedQuery={undefined}
         onQuerySelect={() => {}}
-        requiredStorageKeys={requiredStorageKeys} 
+        requiredStorageKeys={requiredStorageKeys}
       />
     </ClaudeModal60FPSClean>
   );

@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Animated } from "react-native";
-import { 
-  Database, 
-  HardDrive, 
-  Shield, 
-  AlertCircle, 
-  CheckCircle2, 
-  XCircle, 
-  Eye, 
-  Zap 
-} from 'rn-better-dev-tools/icons';
+import {
+  Database,
+  HardDrive,
+  Shield,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Eye,
+  Zap,
+} from "rn-better-dev-tools/icons";
 import { StorageKeyStats } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
@@ -118,8 +118,8 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
             toValue: 0.6,
             duration: 1500,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
     } else {
       Animated.timing(statusPulse, {
@@ -135,18 +135,26 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
   };
 
   // Calculate storage health
-  const requiredTotal = presentRequiredCount + missingCount + wrongValueCount + wrongTypeCount;
-  const healthPercentage = requiredTotal > 0 
-    ? Math.round((presentRequiredCount / requiredTotal) * 100)
-    : 100;
-  
-  const healthStatus = healthPercentage >= 90 ? "OPTIMAL" : 
-                      healthPercentage >= 70 ? "WARNING" : 
-                      "CRITICAL";
-  
-  const healthColor = healthPercentage >= 90 ? gameColors.online : 
-                     healthPercentage >= 70 ? gameColors.warning : 
-                     gameColors.error;
+  const requiredTotal =
+    presentRequiredCount + missingCount + wrongValueCount + wrongTypeCount;
+  const healthPercentage =
+    requiredTotal > 0
+      ? Math.round((presentRequiredCount / requiredTotal) * 100)
+      : 100;
+
+  const healthStatus =
+    healthPercentage >= 90
+      ? "OPTIMAL"
+      : healthPercentage >= 70
+        ? "WARNING"
+        : "CRITICAL";
+
+  const healthColor =
+    healthPercentage >= 90
+      ? gameColors.online
+      : healthPercentage >= 70
+        ? gameColors.warning
+        : gameColors.error;
 
   // If no storage keys at all, show minimal UI
   if (totalCount === 0) {
@@ -155,18 +163,24 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
         <View style={styles.headerBar}>
           <View style={styles.headerLeft}>
             <Text style={styles.headerTitle}>STORAGE OVERVIEW</Text>
-            <Text style={styles.headerSubtitle}>Persistent app data on device</Text>
+            <Text style={styles.headerSubtitle}>
+              Persistent app data on device
+            </Text>
           </View>
           <View style={styles.statusIndicator}>
-            <View style={[styles.statusDot, { backgroundColor: gameColors.muted }]} />
+            <View
+              style={[styles.statusDot, { backgroundColor: gameColors.muted }]}
+            />
             <Text style={styles.statusText}>EMPTY</Text>
           </View>
         </View>
-        
+
         <View style={styles.emptyState}>
           <Text style={styles.emptyIcon}>📦</Text>
           <Text style={styles.emptyTitle}>NO DATA STORED</Text>
-          <Text style={styles.emptySubtitle}>Your app hasn't saved any data yet</Text>
+          <Text style={styles.emptySubtitle}>
+            Your app hasn't saved any data yet
+          </Text>
         </View>
       </View>
     );
@@ -178,11 +192,15 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
       <View style={styles.headerBar}>
         <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>STORAGE OVERVIEW</Text>
-          <Text style={styles.headerSubtitle}>Persistent app data on device</Text>
+          <Text style={styles.headerSubtitle}>
+            Persistent app data on device
+          </Text>
         </View>
         <Animated.View style={[styles.statusIndicator, statusPulseStyle]}>
           <View style={[styles.statusDot, { backgroundColor: healthColor }]} />
-          <Text style={[styles.statusText, { color: healthColor }]}>{healthStatus}</Text>
+          <Text style={[styles.statusText, { color: healthColor }]}>
+            {healthStatus}
+          </Text>
         </Animated.View>
       </View>
 
@@ -196,15 +214,15 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
         </View>
         <View style={styles.healthBarContainer}>
           <View style={styles.healthBarBg}>
-            <Animated.View 
+            <Animated.View
               style={[
-                styles.healthBarFill, 
-                { 
+                styles.healthBarFill,
+                {
                   width: `${healthPercentage}%`,
                   backgroundColor: healthColor,
                   shadowColor: healthColor,
-                }
-              ]} 
+                },
+              ]}
             />
           </View>
           <View style={styles.healthGridOverlay} />
@@ -243,7 +261,10 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
           if (!isActive) return null;
 
           const IconComponent = item.icon;
-          const isError = item.key === "missing" || item.key === "wrongValue" || item.key === "wrongType";
+          const isError =
+            item.key === "missing" ||
+            item.key === "wrongValue" ||
+            item.key === "wrongType";
 
           return (
             <Animated.View
@@ -251,15 +272,25 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
               style={[
                 styles.statCard,
                 { borderColor: item.color + "40" },
-                isError && styles.statCardError
+                isError && styles.statCardError,
               ]}
             >
               {/* Glow effect for active cards */}
-              <View style={[styles.cardGlow, { backgroundColor: item.color + "10" }]} />
-              
+              <View
+                style={[
+                  styles.cardGlow,
+                  { backgroundColor: item.color + "10" },
+                ]}
+              />
+
               {/* Card content */}
               <View style={styles.cardHeader}>
-                <View style={[styles.iconWrapper, { backgroundColor: item.color + "15" }]}>
+                <View
+                  style={[
+                    styles.iconWrapper,
+                    { backgroundColor: item.color + "15" },
+                  ]}
+                >
                   <IconComponent size={14} color={item.color} />
                 </View>
                 <View style={styles.cardInfo}>
@@ -269,28 +300,45 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
                   <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
                 </View>
               </View>
-              
+
               {/* Count display */}
               <View style={styles.cardStats}>
                 <Text style={[styles.statNumber, { color: item.color }]}>
-                  {count.toString().padStart(2, '0')}
+                  {count.toString().padStart(2, "0")}
                 </Text>
-                <View style={[styles.statBar, { backgroundColor: item.color + "20" }]}>
-                  <View 
+                <View
+                  style={[
+                    styles.statBar,
+                    { backgroundColor: item.color + "20" },
+                  ]}
+                >
+                  <View
                     style={[
                       styles.statBarFill,
-                      { 
+                      {
                         width: `${(count / totalCount) * 100}%`,
-                        backgroundColor: item.color 
-                      }
+                        backgroundColor: item.color,
+                      },
                     ]}
                   />
                 </View>
               </View>
 
               {/* Corner indicators */}
-              <View style={[styles.cornerIndicator, styles.cornerTL, { backgroundColor: item.color }]} />
-              <View style={[styles.cornerIndicator, styles.cornerBR, { backgroundColor: item.color }]} />
+              <View
+                style={[
+                  styles.cornerIndicator,
+                  styles.cornerTL,
+                  { backgroundColor: item.color },
+                ]}
+              />
+              <View
+                style={[
+                  styles.cornerIndicator,
+                  styles.cornerBR,
+                  { backgroundColor: item.color },
+                ]}
+              />
             </Animated.View>
           );
         })}
@@ -318,21 +366,33 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
               if (count === 0) return null;
 
               const IconComponent = backend.icon;
-              const percentage = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+              const percentage =
+                totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
 
               return (
                 <View key={backend.key} style={styles.backendItem}>
-                  <View style={[styles.backendIcon, { backgroundColor: backend.color + "15" }]}>
+                  <View
+                    style={[
+                      styles.backendIcon,
+                      { backgroundColor: backend.color + "15" },
+                    ]}
+                  >
                     <IconComponent size={12} color={backend.color} />
                   </View>
                   <View style={styles.backendInfo}>
-                    <Text style={[styles.backendLabel, { color: backend.color }]}>
+                    <Text
+                      style={[styles.backendLabel, { color: backend.color }]}
+                    >
                       {backend.label}
                     </Text>
-                    <Text style={styles.backendSubtitle}>{backend.subtitle}</Text>
+                    <Text style={styles.backendSubtitle}>
+                      {backend.subtitle}
+                    </Text>
                   </View>
                   <View style={styles.backendStats}>
-                    <Text style={[styles.backendCount, { color: backend.color }]}>
+                    <Text
+                      style={[styles.backendCount, { color: backend.color }]}
+                    >
                       {count}
                     </Text>
                     <Text style={styles.backendPercent}>{percentage}%</Text>
@@ -368,7 +428,7 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
 
       {/* Tech decoration */}
       <View style={styles.techPattern}>
-        <Text style={styles.techText}>{'<DATA>'}</Text>
+        <Text style={styles.techText}>{"<DATA>"}</Text>
       </View>
     </View>
   );

@@ -1,17 +1,21 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
 
-import { LogLevel } from '@/rn-better-dev-tools/src/shared/logger/types';
-import { getLevelDotStyle, getLevelTextColor } from '../utils';
+import { LogLevel } from "@/rn-better-dev-tools/src/shared/logger/types";
+import { getLevelDotStyle, getLevelTextColor } from "../utils";
 
 interface LogEntryLevelIndicatorProps {
   level: LogLevel;
 }
 
-export const LogEntryLevelIndicator = ({ level }: LogEntryLevelIndicatorProps) => {
+export const LogEntryLevelIndicator = ({
+  level,
+}: LogEntryLevelIndicatorProps) => {
   return (
     <>
       <View style={[styles.levelDot, getLevelDotStyle(level)]} />
-      <Text style={[styles.levelText, { color: getLevelTextColor(level) }]}>{level.toUpperCase()}</Text>
+      <Text style={[styles.levelText, { color: getLevelTextColor(level) }]}>
+        {level.toUpperCase()}
+      </Text>
     </>
   );
 };
@@ -24,7 +28,7 @@ const styles = StyleSheet.create({
   },
   levelText: {
     fontSize: 12,
-    fontFamily: 'monospace',
-    fontWeight: '500',
+    fontFamily: "monospace",
+    fontWeight: "500",
   },
 });

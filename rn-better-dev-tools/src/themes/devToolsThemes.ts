@@ -1,7 +1,7 @@
 /**
  * Developer Tools Theme System
  * Provides comprehensive theming for all developer tools components
- * 
+ *
  * Features:
  * - Cyberpunk theme with neon colors and glitch effects
  * - Dark theme for a clean, professional look
@@ -21,64 +21,64 @@ export interface ThemeColors {
   primaryLight: string;
   primaryDark: string;
   primaryGlow: string;
-  
+
   // Accent colors
   accent: string;
   accentLight: string;
   accentDark: string;
   accentGlow: string;
-  
+
   // Background colors
   background: string;
   backgroundSecondary: string;
   backgroundTertiary: string;
   backgroundModal: string;
   backgroundOverlay: string;
-  
+
   // Surface colors
   surface: string;
   surfaceLight: string;
   surfaceDark: string;
   surfaceBorder: string;
-  
+
   // Text colors
   text: string;
   textSecondary: string;
   textTertiary: string;
   textInverse: string;
-  
+
   // Status colors
   success: string;
   successLight: string;
   successDark: string;
-  
+
   warning: string;
   warningLight: string;
   warningDark: string;
-  
+
   error: string;
   errorLight: string;
   errorDark: string;
-  
+
   info: string;
   infoLight: string;
   infoDark: string;
-  
+
   // Special colors
   border: string;
   borderLight: string;
   borderFocused: string;
   borderActive: string;
-  
+
   shadow: string;
   shadowLight: string;
   shadowGlow: string;
-  
+
   // Glitch effect colors
   glitchPrimary: string;
   glitchSecondary: string;
   glitchTertiary: string;
-  
+
   // Section-specific colors
   queryColor: string;
   envColor: string;
@@ -86,7 +86,7 @@ export interface ThemeColors {
   storageColor: string;
   networkColor: string;
   settingsColor: string;
-  
+
   // Modal specific
   modalHeader: string;
   modalHeaderBorder: string;
@@ -135,64 +135,64 @@ const cyberpunkColors: ThemeColors = {
   primaryLight: "#84FFFF",
   primaryDark: "#00E5FF",
   primaryGlow: "rgba(0, 255, 255, 0.6)",
-  
+
   // Accent colors - Hot pink
   accent: "#FF006E",
   accentLight: "#FF80AB",
   accentDark: "#FF4081",
   accentGlow: "rgba(255, 0, 110, 0.6)",
-  
+
   // Background colors - Deep dark with purple tint
   background: "#0A0A0F",
   backgroundSecondary: "#0F0F1A",
   backgroundTertiary: "#141424",
   backgroundModal: "rgba(10, 10, 15, 0.95)",
   backgroundOverlay: "rgba(0, 0, 0, 0.95)",
-  
+
   // Surface colors - Glass effect
   surface: "rgba(20, 20, 35, 0.8)",
   surfaceLight: "rgba(30, 30, 50, 0.6)",
   surfaceDark: "rgba(10, 10, 20, 0.9)",
   surfaceBorder: "rgba(0, 255, 255, 0.3)",
-  
+
   // Text colors
   text: "#FFFFFF",
   textSecondary: "#B4B4B4",
   textTertiary: "#808080",
   textInverse: "#0A0A0F",
-  
+
   // Status colors - Neon variants
   success: "#00FF88",
   successLight: "#69F0AE",
   successDark: "#00E676",
-  
+
   warning: "#FFFF00",
   warningLight: "#FFFF8D",
   warningDark: "#FFD600",
-  
+
   error: "#FF1744",
   errorLight: "#FF8A80",
   errorDark: "#FF5252",
-  
+
   info: "#00E5FF",
   infoLight: "#84FFFF",
   infoDark: "#00B8D4",
-  
+
   // Special colors
   border: "rgba(0, 255, 255, 0.3)",
   borderLight: "rgba(0, 255, 255, 0.2)",
   borderFocused: "rgba(0, 255, 255, 0.8)",
   borderActive: "#00FFFF",
-  
+
   shadow: "rgba(0, 255, 255, 0.4)",
   shadowLight: "rgba(0, 255, 255, 0.2)",
   shadowGlow: "rgba(0, 255, 255, 0.8)",
-  
+
   // Glitch effect colors
   glitchPrimary: "#00FFFF",
   glitchSecondary: "#FF00FF",
   glitchTertiary: "#FFFF00",
-  
+
   // Section-specific colors
   queryColor: "#FF006E",
   envColor: "#00FFFF",
@@ -200,7 +200,7 @@ const cyberpunkColors: ThemeColors = {
   storageColor: "#00FF88",
   networkColor: "#E040FB",
   settingsColor: "#FFB800",
-  
+
   // Modal specific
   modalHeader: "rgba(10, 10, 20, 0.95)",
   modalHeaderBorder: "rgba(0, 255, 255, 0.2)",
@@ -319,64 +319,64 @@ const darkColors: ThemeColors = {
   primaryLight: "#60A5FA",
   primaryDark: "#2563EB",
   primaryGlow: "rgba(59, 130, 246, 0.5)",
-  
+
   // Accent colors - Green
   accent: "#10B981",
   accentLight: "#34D399",
   accentDark: "#059669",
   accentGlow: "rgba(16, 185, 129, 0.5)",
-  
+
   // Background colors - Neutral grays
   background: "#1A1A1A",
   backgroundSecondary: "#2A2A2A",
   backgroundTertiary: "#3A3A3A",
   backgroundModal: "#2A2A2A",
   backgroundOverlay: "rgba(0, 0, 0, 0.8)",
-  
+
   // Surface colors
   surface: "#2D2D2D",
   surfaceLight: "#3D3D3D",
   surfaceDark: "#1D1D1D",
   surfaceBorder: "rgba(255, 255, 255, 0.1)",
-  
+
   // Text colors
   text: "#FFFFFF",
   textSecondary: "#9CA3AF",
   textTertiary: "#6B7280",
   textInverse: "#1A1A1A",
-  
+
   // Status colors
   success: "#10B981",
   successLight: "#34D399",
   successDark: "#059669",
-  
+
   warning: "#F59E0B",
   warningLight: "#FCD34D",
   warningDark: "#D97706",
-  
+
   error: "#EF4444",
   errorLight: "#F87171",
   errorDark: "#DC2626",
-  
+
   info: "#3B82F6",
   infoLight: "#60A5FA",
   infoDark: "#2563EB",
-  
+
   // Special colors
   border: "rgba(255, 255, 255, 0.1)",
   borderLight: "rgba(255, 255, 255, 0.06)",
   borderFocused: "rgba(59, 130, 246, 0.5)",
   borderActive: "#3B82F6",
-  
+
   shadow: "#000000",
   shadowLight: "rgba(0, 0, 0, 0.5)",
   shadowGlow: "rgba(59, 130, 246, 0.3)",
-  
+
   // Glitch effect colors (disabled in dark theme)
   glitchPrimary: "transparent",
   glitchSecondary: "transparent",
   glitchTertiary: "transparent",
-  
+
   // Section-specific colors
   queryColor: "#FF006E",
   envColor: "#10B981",
@@ -384,7 +384,7 @@ const darkColors: ThemeColors = {
   storageColor: "#3B82F6",
   networkColor: "#8B5CF6",
   settingsColor: "#F59E0B",
-  
+
   // Modal specific
   modalHeader: "#171717",
   modalHeaderBorder: "rgba(255, 255, 255, 0.06)",
@@ -502,7 +502,7 @@ export const getTheme = (themeName: ThemeName): Theme => {
 // Helper function to get section color based on theme
 export const getSectionColor = (
   theme: Theme,
-  section: "query" | "env" | "sentry" | "storage" | "network" | "settings"
+  section: "query" | "env" | "sentry" | "storage" | "network" | "settings",
 ): string => {
   const colorMap = {
     query: theme.colors.queryColor,

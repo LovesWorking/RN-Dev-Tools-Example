@@ -1,6 +1,10 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import isEqual from "fast-deep-equal";
-import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  ConsoleTransportEntry,
+  LogLevel,
+  LogType,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 
 import { reactiveSentryEventStore } from "../utils/sentryEventStore";
 import { adaptSentryEventsToConsoleEntries } from "../utils/SentryEventAdapter";
@@ -21,21 +25,25 @@ export function useSentryEvents(options: UseSentryEventsOptions = {}) {
   const [entries, setEntries] = useState<ConsoleTransportEntry[]>(() => {
     const rawSentryEvents = reactiveSentryEventStore.getEvents();
     const adaptedEntries = adaptSentryEventsToConsoleEntries(rawSentryEvents);
-    
+
     // Remove duplicates based on ID
     const uniqueEntries = adaptedEntries.reduce(
       (acc: ConsoleTransportEntry[], entry: ConsoleTransportEntry) => {
-        if (!acc.some((existing: ConsoleTransportEntry) => existing.id === entry.id)) {
+        if (
+          !acc.some(
+            (existing: ConsoleTransportEntry) => existing.id === entry.id,
+          )
+        ) {
           acc.push(entry);
         }
         return acc;
       },
-      [] as ConsoleTransportEntry[]
+      [] as ConsoleTransportEntry[],
     );
 
     return uniqueEntries.sort(
       (a: ConsoleTransportEntry, b: ConsoleTransportEntry) =>
-        b.timestamp - a.timestamp
+        b.timestamp - a.timestamp,
     );
   });
 
@@ -57,17 +65,21 @@ export function useSentryEvents(options: UseSentryEventsOptions = {}) {
       // Remove duplicates based on ID
       const uniqueEntries = adaptedEntries.reduce(
         (acc: ConsoleTransportEntry[], entry: ConsoleTransportEntry) => {
-          if (!acc.some((existing: ConsoleTransportEntry) => existing.id === entry.id)) {
+          if (
+            !acc.some(
+              (existing: ConsoleTransportEntry) => existing.id === entry.id,
+            )
+          ) {
             acc.push(entry);
           }
           return acc;
         },
-        [] as ConsoleTransportEntry[]
+        [] as ConsoleTransportEntry[],
       );
 
       const newEntries = uniqueEntries.sort(
         (a: ConsoleTransportEntry, b: ConsoleTransportEntry) =>
-          b.timestamp - a.timestamp
+          b.timestamp - a.timestamp,
       );
 
       const newStates = newEntries.map((e) => ({
@@ -99,7 +111,9 @@ export function useSentryEvents(options: UseSentryEventsOptions = {}) {
       if (entry.metadata?._isSpan) {
         // Only show spans if Navigation is the ONLY selected type
         // This prevents spans from showing when using default filters
-        return selectedTypes.size === 1 && selectedTypes.has(LogType.Navigation);
+        return (
+          selectedTypes.size === 1 && selectedTypes.has(LogType.Navigation)
+        );
       }
 
       // Regular filtering logic for non-span events
@@ -135,7 +149,7 @@ export function useSentryEventCounts() {
         acc[entry.type] = (acc[entry.type] || 0) + 1;
         return acc;
       },
-      {} as Record<LogType, number>
+      {} as Record<LogType, number>,
     );
 
     // Count by level
@@ -144,7 +158,7 @@ export function useSentryEventCounts() {
         acc[entry.level] = (acc[entry.level] || 0) + 1;
         return acc;
       },
-      {} as Record<LogLevel, number>
+      {} as Record<LogLevel, number>,
     );
 
     return { byType, byLevel };
@@ -168,7 +182,7 @@ export function useSentryEventCounts() {
           acc[entry.type] = (acc[entry.type] || 0) + 1;
           return acc;
         },
-        {} as Record<LogType, number>
+        {} as Record<LogType, number>,
       );
 
       // Count by level
@@ -177,7 +191,7 @@ export function useSentryEventCounts() {
           acc[entry.level] = (acc[entry.level] || 0) + 1;
           return acc;
         },
-        {} as Record<LogLevel, number>
+        {} as Record<LogLevel, number>,
       );
 
       setCounts({ byType, byLevel });

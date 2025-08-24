@@ -8,7 +8,7 @@ import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackB
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useState, useCallback } from "react";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
-import { FileCode } from 'rn-better-dev-tools/icons';
+import { FileCode } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface EnvVarsModalProps {

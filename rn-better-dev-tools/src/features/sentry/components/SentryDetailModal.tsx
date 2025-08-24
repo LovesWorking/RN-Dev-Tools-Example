@@ -13,7 +13,11 @@ interface SentryDetailModalProps {
  * Stable modal wrapper for Sentry event detail view.
  * Returns null when not visible to maintain stable component tree.
  */
-export function SentryDetailModal({ visible, entry, onBack }: SentryDetailModalProps) {
+export function SentryDetailModal({
+  visible,
+  entry,
+  onBack,
+}: SentryDetailModalProps) {
   if (!visible || !entry) {
     return null;
   }
@@ -27,7 +31,7 @@ export function SentryDetailModal({ visible, entry, onBack }: SentryDetailModalP
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,

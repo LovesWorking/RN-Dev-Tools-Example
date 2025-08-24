@@ -31,7 +31,7 @@ function useQueryStatusCounts(): QueryStatusCounts {
             (acc[status as keyof QueryStatusCounts] || 0) + 1;
           return acc;
         },
-        { fresh: 0, stale: 0, fetching: 0, paused: 0, inactive: 0 }
+        { fresh: 0, stale: 0, fetching: 0, paused: 0, inactive: 0 },
       );
 
       setTimeout(() => setCounts(newCounts), 0);
@@ -100,7 +100,7 @@ export function useMutationStatusCounts(): MutationStatusCounts {
           }
           return acc;
         },
-        { pending: 0, success: 0, error: 0, paused: 0, idle: 0 }
+        { pending: 0, success: 0, error: 0, paused: 0, idle: 0 },
       );
 
       setTimeout(() => setCounts(newCounts), 0);

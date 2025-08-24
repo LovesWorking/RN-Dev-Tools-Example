@@ -94,7 +94,13 @@ export function useModalPersistence({
     }
 
     // Only save if a modal is actually open to avoid saving closed state
-    if (isModalOpen || isDebugModalOpen || isEnvModalOpen || isSentryModalOpen || isStorageModalOpen) {
+    if (
+      isModalOpen ||
+      isDebugModalOpen ||
+      isEnvModalOpen ||
+      isSentryModalOpen ||
+      isStorageModalOpen
+    ) {
       saveCurrentState();
     } else {
       // Clear saved state when all modals are closed

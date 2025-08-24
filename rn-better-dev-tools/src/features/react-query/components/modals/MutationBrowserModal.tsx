@@ -58,7 +58,7 @@ export function MutationBrowserModal({
         onTabChange("queries");
       }
     },
-    [onTabChange]
+    [onTabChange],
   );
 
   const handleModeChange = useCallback((mode: ModalMode) => {
@@ -73,12 +73,12 @@ export function MutationBrowserModal({
         // Only capture horizontal swipes
         return Math.abs(gestureState.dx) > 5 && Math.abs(gestureState.dy) < 10;
       },
-      
+
       onPanResponderMove: (evt, gestureState) => {
         // Update translation for visual feedback
         translationX.setValue(gestureState.dx);
       },
-      
+
       onPanResponderRelease: (evt, gestureState) => {
         const { dx, vx } = gestureState;
         const swipeThreshold = 80; // Match EDGE_THRESHOLD from SwipeIndicator
@@ -87,13 +87,10 @@ export function MutationBrowserModal({
         // Reset visual feedback with spring animation
         Animated.spring(translationX, {
           toValue: 0,
-          useNativeDriver: true
+          useNativeDriver: true,
         }).start();
 
-        if (
-          Math.abs(dx) > swipeThreshold ||
-          Math.abs(vx) > velocityThreshold
-        ) {
+        if (Math.abs(dx) > swipeThreshold || Math.abs(vx) > velocityThreshold) {
           if (dx > 0 || vx > 0) {
             handleSwipeNavigation("right");
           } else {
@@ -101,15 +98,15 @@ export function MutationBrowserModal({
           }
         }
       },
-      
+
       onPanResponderTerminate: () => {
         // Reset on termination
         Animated.spring(translationX, {
           toValue: 0,
-          useNativeDriver: true
+          useNativeDriver: true,
         }).start();
-      }
-    })
+      },
+    }),
   ).current;
 
   if (!visible) return null;
@@ -140,16 +137,16 @@ export function MutationBrowserModal({
     >
       <View style={{ flex: 1 }}>
         <View {...panResponder.panHandlers} style={{ flex: 1 }}>
-            <SwipeIndicator
-              translationX={translationX}
-              canSwipeLeft={false}
-              canSwipeRight={true}
-            />
-            <MutationBrowserMode
-              selectedMutation={selectedMutation}
-              onMutationSelect={onMutationSelect}
-              activeFilter={activeFilter}
-            />
+          <SwipeIndicator
+            translationX={translationX}
+            canSwipeLeft={false}
+            canSwipeRight={true}
+          />
+          <MutationBrowserMode
+            selectedMutation={selectedMutation}
+            onMutationSelect={onMutationSelect}
+            activeFilter={activeFilter}
+          />
         </View>
         <MutationBrowserFooter
           activeFilter={activeFilter}

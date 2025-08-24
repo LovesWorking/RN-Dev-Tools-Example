@@ -18,11 +18,18 @@ import {
   Route,
   Settings,
   User,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
-import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  ConsoleTransportEntry,
+  LogLevel,
+  LogType,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 
-import { getLevelCount, getTypeCount } from "@/rn-better-dev-tools/src/features/log-dump/utils";
+import {
+  getLevelCount,
+  getTypeCount,
+} from "@/rn-better-dev-tools/src/features/log-dump/utils";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface SentryEventLogFiltersProps {
@@ -36,14 +43,14 @@ interface SentryEventLogFiltersProps {
 // Helper functions to get actual counts
 const getActualTypeCount = (
   entries: ConsoleTransportEntry[],
-  type: LogType
+  type: LogType,
 ) => {
   return entries.filter((entry) => entry.type === type).length;
 };
 
 const getActualLevelCount = (
   entries: ConsoleTransportEntry[],
-  level: LogLevel
+  level: LogLevel,
 ) => {
   return entries.filter((entry) => entry.level === level).length;
 };
@@ -158,7 +165,7 @@ export const SentryEventLogFilters = ({
     .sort(
       (a, b) =>
         getActualTypeCount(entries, b.type) -
-        getActualTypeCount(entries, a.type)
+        getActualTypeCount(entries, a.type),
     );
 
   const levelFilters = [
@@ -195,7 +202,7 @@ export const SentryEventLogFilters = ({
     .sort(
       (a, b) =>
         getActualLevelCount(entries, b.level) -
-        getActualLevelCount(entries, a.level)
+        getActualLevelCount(entries, a.level),
     );
 
   return (
@@ -242,12 +249,12 @@ export const SentryEventLogFilters = ({
                     {type === LogType.HTTPRequest
                       ? "HTTP Request"
                       : type === LogType.UserAction
-                      ? "User Action"
-                      : type}
+                        ? "User Action"
+                        : type}
                     {getTypeCount(entries, type)}
                   </Text>
                 </TouchableOpacity>
-              )
+              ),
             )}
           </ScrollView>
         </View>
@@ -295,7 +302,7 @@ export const SentryEventLogFilters = ({
                     {getLevelCount(entries, level)}
                   </Text>
                 </TouchableOpacity>
-              )
+              ),
             )}
           </ScrollView>
         </View>

@@ -96,7 +96,7 @@ const StorageInputCard: React.FC = () => {
   ];
 
   const currentOption = storageOptions.find(
-    (opt) => opt.value === selectedStorage
+    (opt) => opt.value === selectedStorage,
   )!;
 
   // Get current value for selected storage
@@ -146,7 +146,7 @@ const StorageInputCard: React.FC = () => {
     onError: (error) => {
       Alert.alert(
         "Error",
-        `Failed to save to ${currentOption.label}: ${error.message}`
+        `Failed to save to ${currentOption.label}: ${error.message}`,
       );
     },
   });
@@ -175,7 +175,7 @@ const StorageInputCard: React.FC = () => {
     onError: (error) => {
       Alert.alert(
         "Error",
-        `Failed to delete from ${currentOption.label}: ${error.message}`
+        `Failed to delete from ${currentOption.label}: ${error.message}`,
       );
     },
   });
@@ -197,7 +197,7 @@ const StorageInputCard: React.FC = () => {
           style: "destructive",
           onPress: () => deleteMutation.mutate(),
         },
-      ]
+      ],
     );
   };
 

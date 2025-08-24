@@ -127,7 +127,7 @@ export interface TouchEventDetails {
 }
 
 export function extractTouchEventDetails(
-  entry: ConsoleTransportEntry
+  entry: ConsoleTransportEntry,
 ): TouchEventDetails | null {
   if (entry.metadata.category !== "touch") return null;
 
@@ -150,7 +150,7 @@ export function extractTouchEventDetails(
  * Looks for components with file extensions like .tsx, .jsx, .js, .ts
  */
 export function extractComponentFileFromPath(
-  path: Array<{ name: string; label?: string; file?: string }> | undefined
+  path: Array<{ name: string; label?: string; file?: string }> | undefined,
 ): string | null {
   if (!path || !Array.isArray(path)) return null;
 
@@ -161,7 +161,7 @@ export function extractComponentFileFromPath(
     if (component.file) {
       // Check if it has a valid file extension
       const hasValidExtension = fileExtensions.some((ext) =>
-        component.file?.endsWith(ext)
+        component.file?.endsWith(ext),
       );
       if (hasValidExtension) {
         // Format as ComponentName(file-path)
@@ -207,7 +207,7 @@ export interface NavigationEventDetails {
 }
 
 export function extractNavigationEventDetails(
-  entry: ConsoleTransportEntry
+  entry: ConsoleTransportEntry,
 ): NavigationEventDetails | null {
   if (
     entry.metadata.category !== "navigation" &&
@@ -258,7 +258,7 @@ export interface ErrorEventDetails {
 }
 
 export function extractErrorEventDetails(
-  entry: ConsoleTransportEntry
+  entry: ConsoleTransportEntry,
 ): ErrorEventDetails | null {
   if (entry.level !== "error" && entry.metadata.sentryEventType !== "error") {
     return null;
@@ -278,7 +278,7 @@ export function extractErrorEventDetails(
       exception?.stacktrace?.frames
         ?.map(
           (f: any) =>
-            `  at ${f.function || "anonymous"} (${f.filename}:${f.lineno}:${f.colno})`
+            `  at ${f.function || "anonymous"} (${f.filename}:${f.lineno}:${f.colno})`,
         )
         .join("\n"),
     fileName: (metadata.fileName || metadata.file) as string | undefined,
@@ -329,7 +329,7 @@ export interface PerformanceEventDetails {
 }
 
 export function extractPerformanceEventDetails(
-  entry: ConsoleTransportEntry
+  entry: ConsoleTransportEntry,
 ): PerformanceEventDetails | null {
   const metadata = entry.metadata;
 
@@ -410,7 +410,7 @@ export interface DeviceContextInfo {
 }
 
 export function extractDeviceContext(
-  entry: ConsoleTransportEntry
+  entry: ConsoleTransportEntry,
 ): DeviceContextInfo | null {
   const rawData = entry.metadata._sentryRawData as SentryEvent | undefined;
   if (!rawData?.contexts) return null;

@@ -25,7 +25,10 @@ export function createAutoDetectedClipboard(): ClipboardFunction | null {
           await ExpoClipboard.setStringAsync(text);
           return true;
         } catch (error) {
-          console.error("[RnBetterDevTools] Expo clipboard copy failed:", error);
+          console.error(
+            "[RnBetterDevTools] Expo clipboard copy failed:",
+            error,
+          );
           return false;
         }
       };
@@ -48,11 +51,16 @@ export function createAutoDetectedClipboard(): ClipboardFunction | null {
           await Clipboard.setString(text);
           return true;
         } catch (error) {
-          console.error("[RnBetterDevTools] RN CLI clipboard copy failed:", error);
+          console.error(
+            "[RnBetterDevTools] RN CLI clipboard copy failed:",
+            error,
+          );
           return false;
         }
       };
-      console.log("[RnBetterDevTools] Auto-detected React Native CLI Clipboard");
+      console.log(
+        "[RnBetterDevTools] Auto-detected React Native CLI Clipboard",
+      );
       return cachedClipboard;
     }
   } catch {
@@ -64,10 +72,10 @@ export function createAutoDetectedClipboard(): ClipboardFunction | null {
     hasWarned = true;
     console.warn(
       "[RnBetterDevTools] No clipboard library detected. Copy functionality will be disabled.\n" +
-      "To enable copy functionality, install one of the following:\n" +
-      "- For Expo: expo install expo-clipboard\n" +
-      "- For React Native CLI: npm install @react-native-clipboard/clipboard\n" +
-      "Or provide a custom onCopy function to RnBetterDevToolsBubble"
+        "To enable copy functionality, install one of the following:\n" +
+        "- For Expo: expo install expo-clipboard\n" +
+        "- For React Native CLI: npm install @react-native-clipboard/clipboard\n" +
+        "Or provide a custom onCopy function to RnBetterDevToolsBubble",
     );
   }
 
@@ -79,14 +87,14 @@ export function createAutoDetectedClipboard(): ClipboardFunction | null {
  */
 export function getAutoDetectedClipboard(): ClipboardFunction {
   const clipboard = createAutoDetectedClipboard();
-  
+
   if (!clipboard) {
     // Return a function that always fails with a helpful error message
     return async (text: string) => {
       console.error(
         "[RnBetterDevTools] Copy failed: No clipboard library found.\n" +
-        `Attempted to copy: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}\n` +
-        "Install expo-clipboard or @react-native-clipboard/clipboard, or provide a custom onCopy function."
+          `Attempted to copy: ${text.substring(0, 50)}${text.length > 50 ? "..." : ""}\n` +
+          "Install expo-clipboard or @react-native-clipboard/clipboard, or provide a custom onCopy function.",
       );
       return false;
     };

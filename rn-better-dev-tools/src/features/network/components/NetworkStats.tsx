@@ -1,15 +1,15 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { 
-  Activity, 
-  CheckCircle, 
-  XCircle, 
+import { View, Text, StyleSheet } from "react-native";
+import {
+  Activity,
+  CheckCircle,
+  XCircle,
   Clock,
   Upload,
   Download,
-  Timer
-} from 'rn-better-dev-tools/icons';
-import type { NetworkStats } from '../types';
-import { formatBytes, formatDuration } from '../utils/formatting';
+  Timer,
+} from "rn-better-dev-tools/icons";
+import type { NetworkStats } from "../types";
+import { formatBytes, formatDuration } from "../utils/formatting";
 
 interface NetworkStatsProps {
   stats: NetworkStats;
@@ -85,7 +85,9 @@ export function NetworkStatsSection({ stats }: NetworkStatsProps) {
             <Text style={styles.statLabel}>Avg Time</Text>
           </View>
           <Text style={styles.statValueSmall}>
-            {stats.averageDuration ? formatDuration(stats.averageDuration) : '-'}
+            {stats.averageDuration
+              ? formatDuration(stats.averageDuration)
+              : "-"}
           </Text>
         </View>
       </View>
@@ -99,47 +101,47 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   statCard: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 8,
     padding: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: "rgba(255, 255, 255, 0.05)",
   },
   statHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 10,
-    color: '#9CA3AF',
-    fontWeight: '600',
-    textTransform: 'uppercase',
+    color: "#9CA3AF",
+    fontWeight: "600",
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   statValue: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   statValueSmall: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#E5E7EB',
+    fontWeight: "600",
+    color: "#E5E7EB",
   },
   successText: {
-    color: '#10B981',
+    color: "#10B981",
   },
   errorText: {
-    color: '#EF4444',
+    color: "#EF4444",
   },
   pendingText: {
-    color: '#F59E0B',
+    color: "#F59E0B",
   },
 });

@@ -3,7 +3,7 @@ import { getEnvVarType } from "./envTypeDetector";
 
 export const processEnvVars = (
   autoCollectedEnvVars: Record<string, string>,
-  requiredEnvVars?: RequiredEnvVar[]
+  requiredEnvVars?: RequiredEnvVar[],
 ) => {
   const requiredVarInfos: EnvVarInfo[] = [];
   const optionalVarInfos: EnvVarInfo[] = [];
@@ -35,10 +35,11 @@ export const processEnvVars = (
     } else if (expectedValue) {
       // Handle different expectedValue patterns
       let valueMatches = false;
-      if (expectedValue === 'sk_*') {
-        valueMatches = actualValue.startsWith('sk_');
-      } else if (expectedValue === 'production or development') {
-        valueMatches = actualValue === 'production' || actualValue === 'development';
+      if (expectedValue === "sk_*") {
+        valueMatches = actualValue.startsWith("sk_");
+      } else if (expectedValue === "production or development") {
+        valueMatches =
+          actualValue === "production" || actualValue === "development";
       } else {
         valueMatches = actualValue === expectedValue;
       }
@@ -101,21 +102,21 @@ export const processEnvVars = (
 export const calculateStats = (
   requiredVars: EnvVarInfo[],
   optionalVars: EnvVarInfo[],
-  totalEnvVars: Record<string, string>
+  totalEnvVars: Record<string, string>,
 ): EnvVarStats => {
   const totalCount = Object.keys(totalEnvVars).length;
   const requiredCount = requiredVars.length;
   const missingCount = requiredVars.filter(
-    (v) => v.status === "required_missing"
+    (v) => v.status === "required_missing",
   ).length;
   const wrongValueCount = requiredVars.filter(
-    (v) => v.status === "required_wrong_value"
+    (v) => v.status === "required_wrong_value",
   ).length;
   const wrongTypeCount = requiredVars.filter(
-    (v) => v.status === "required_wrong_type"
+    (v) => v.status === "required_wrong_type",
   ).length;
   const presentRequiredCount = requiredVars.filter(
-    (v) => v.status === "required_present"
+    (v) => v.status === "required_present",
   ).length;
   const optionalCount = optionalVars.length;
 

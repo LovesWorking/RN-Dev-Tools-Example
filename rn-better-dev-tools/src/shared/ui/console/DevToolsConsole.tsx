@@ -21,7 +21,7 @@ interface DevToolsConsoleProps {
 /**
  * Simplified DevToolsConsole that works with Dial2 as the primary menu selector.
  * No longer includes a section list modal - Dial2 handles the menu selection.
- * 
+ *
  * Applied principles:
  * - Single Responsibility: Only handles routing to the selected modal
  * - Composition: Delegates all UI to specialized components
@@ -44,7 +44,7 @@ export function DevToolsConsole({
   // Use external state if provided (for persistence), otherwise use internal state
   const [internalSelectedSection, setInternalSelectedSection] =
     useState<SectionType | null>(null);
-  
+
   const selectedSection =
     (externalSelectedSection as SectionType | null) || internalSelectedSection;
   const setSelectedSection =

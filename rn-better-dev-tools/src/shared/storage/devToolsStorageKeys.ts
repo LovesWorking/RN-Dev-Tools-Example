@@ -2,7 +2,7 @@
  * Centralized storage keys for all dev tools
  * This ensures consistency across all dev tool storage operations
  * and allows easy filtering of dev tool keys from the Storage Browser
- * 
+ *
  * All dev tool keys start with "@devtools" prefix for easy identification
  */
 export const devToolsStorageKeys = {
@@ -17,7 +17,8 @@ export const devToolsStorageKeys = {
   bubble: {
     root: () => `${devToolsStorageKeys.base}_bubble` as const,
     settings: () => `${devToolsStorageKeys.bubble.root()}_settings` as const,
-    userPreferences: () => `${devToolsStorageKeys.bubble.root()}_user_preferences` as const,
+    userPreferences: () =>
+      `${devToolsStorageKeys.bubble.root()}_user_preferences` as const,
     position: () => `${devToolsStorageKeys.bubble.root()}_position` as const,
   },
 
@@ -37,7 +38,8 @@ export const devToolsStorageKeys = {
   settings: {
     root: () => `${devToolsStorageKeys.base}_settings` as const,
     theme: () => `${devToolsStorageKeys.settings.root()}_theme` as const,
-    preferences: () => `${devToolsStorageKeys.settings.root()}_preferences` as const,
+    preferences: () =>
+      `${devToolsStorageKeys.settings.root()}_preferences` as const,
   },
 
   /**
@@ -57,7 +59,8 @@ export const devToolsStorageKeys = {
     root: () => `${devToolsStorageKeys.base}_sentry` as const,
     modal: () => `${devToolsStorageKeys.sentry.root()}_modal` as const,
     filters: () => `${devToolsStorageKeys.sentry.root()}_filters` as const,
-    preferences: () => `${devToolsStorageKeys.sentry.root()}_preferences` as const,
+    preferences: () =>
+      `${devToolsStorageKeys.sentry.root()}_preferences` as const,
   },
 
   /**
@@ -66,10 +69,13 @@ export const devToolsStorageKeys = {
   storage: {
     root: () => `${devToolsStorageKeys.base}_storage` as const,
     modal: () => `${devToolsStorageKeys.storage.root()}_modal` as const,
-    eventsModal: () => `${devToolsStorageKeys.storage.root()}_events_modal` as const,
+    eventsModal: () =>
+      `${devToolsStorageKeys.storage.root()}_events_modal` as const,
     filters: () => `${devToolsStorageKeys.storage.root()}_filters` as const,
-    eventFilters: () => `${devToolsStorageKeys.storage.root()}_event_filters` as const,
-    preferences: () => `${devToolsStorageKeys.storage.root()}_preferences` as const,
+    eventFilters: () =>
+      `${devToolsStorageKeys.storage.root()}_event_filters` as const,
+    preferences: () =>
+      `${devToolsStorageKeys.storage.root()}_preferences` as const,
   },
 
   /**
@@ -78,10 +84,13 @@ export const devToolsStorageKeys = {
   reactQuery: {
     root: () => `${devToolsStorageKeys.base}_rq` as const,
     modal: () => `${devToolsStorageKeys.reactQuery.root()}_modal` as const,
-    browserModal: () => `${devToolsStorageKeys.reactQuery.root()}_browser_modal` as const,
-    mutationModal: () => `${devToolsStorageKeys.reactQuery.root()}_mutation_modal` as const,
+    browserModal: () =>
+      `${devToolsStorageKeys.reactQuery.root()}_browser_modal` as const,
+    mutationModal: () =>
+      `${devToolsStorageKeys.reactQuery.root()}_mutation_modal` as const,
     filters: () => `${devToolsStorageKeys.reactQuery.root()}_filters` as const,
-    preferences: () => `${devToolsStorageKeys.reactQuery.root()}_preferences` as const,
+    preferences: () =>
+      `${devToolsStorageKeys.reactQuery.root()}_preferences` as const,
   },
 
   /**
@@ -91,9 +100,12 @@ export const devToolsStorageKeys = {
     root: () => `${devToolsStorageKeys.base}_network` as const,
     modal: () => `${devToolsStorageKeys.network.root()}_modal` as const,
     filters: () => `${devToolsStorageKeys.network.root()}_filters` as const,
-    ignoredDomains: () => `${devToolsStorageKeys.network.root()}_ignored_domains` as const,
-    ignoredUrls: () => `${devToolsStorageKeys.network.root()}_ignored_urls` as const,
-    preferences: () => `${devToolsStorageKeys.network.root()}_preferences` as const,
+    ignoredDomains: () =>
+      `${devToolsStorageKeys.network.root()}_ignored_domains` as const,
+    ignoredUrls: () =>
+      `${devToolsStorageKeys.network.root()}_ignored_urls` as const,
+    preferences: () =>
+      `${devToolsStorageKeys.network.root()}_preferences` as const,
   },
 } as const;
 
@@ -102,17 +114,17 @@ export const devToolsStorageKeys = {
  * These are old keys from before we standardized on @devtools prefix
  */
 const LEGACY_DEV_TOOL_PATTERNS = [
-  '@dev_tools_',
-  '@react_query_browser_modal',
-  '@react_query_modal',
-  '@react_query_mutation_modal',
-  '@sentry_logs_modal',
-  '@floating_rn_better_dev_tools_',
-  '@bubble_settings_',
-  '@env_vars_modal',
-  '@storage_modal',
-  '@floating_@devtools_', // Double @ migration issue
-  'dev_last_route', // Old key without @ prefix
+  "@dev_tools_",
+  "@react_query_browser_modal",
+  "@react_query_modal",
+  "@react_query_mutation_modal",
+  "@sentry_logs_modal",
+  "@floating_rn_better_dev_tools_",
+  "@bubble_settings_",
+  "@env_vars_modal",
+  "@storage_modal",
+  "@floating_@devtools_", // Double @ migration issue
+  "dev_last_route", // Old key without @ prefix
 ];
 
 /**
@@ -122,19 +134,19 @@ const LEGACY_DEV_TOOL_PATTERNS = [
  */
 export function isDevToolsStorageKey(key: string): boolean {
   if (!key) return false;
-  
+
   // Check if it starts with our base prefix
   if (key.startsWith(devToolsStorageKeys.base)) {
     return true;
   }
-  
+
   // Check for legacy dev tool keys that need cleanup
   for (const pattern of LEGACY_DEV_TOOL_PATTERNS) {
     if (key.startsWith(pattern)) {
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -144,7 +156,7 @@ export function isDevToolsStorageKey(key: string): boolean {
  * @returns Array of keys that don't belong to dev tools
  */
 export function filterOutDevToolsKeys(keys: string[]): string[] {
-  return keys.filter(key => !isDevToolsStorageKey(key));
+  return keys.filter((key) => !isDevToolsStorageKey(key));
 }
 
 /**

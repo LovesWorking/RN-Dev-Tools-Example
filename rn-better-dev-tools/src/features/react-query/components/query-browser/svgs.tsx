@@ -1313,7 +1313,7 @@ export function AnimatedCyberpunkBorderBox({
               duration: 1500,
               useNativeDriver: false,
             }),
-          ])
+          ]),
         ).start();
         break;
 
@@ -1324,7 +1324,7 @@ export function AnimatedCyberpunkBorderBox({
             toValue: 1,
             duration: 2000,
             useNativeDriver: false,
-          })
+          }),
         ).start();
         break;
 
@@ -1380,7 +1380,7 @@ export function AnimatedCyberpunkBorderBox({
             toValue: 1,
             duration: 4000,
             useNativeDriver: false,
-          })
+          }),
         ).start();
         break;
     }

@@ -85,7 +85,7 @@ export default function MutationsList({
         const newHeight = currentInfoHeightRef.current - gestureState.dy;
         const clampedHeight = Math.max(
           minInfoHeight,
-          Math.min(maxInfoHeight, newHeight)
+          Math.min(maxInfoHeight, newHeight),
         );
         infoHeightAnim.setValue(clampedHeight);
       },
@@ -94,8 +94,8 @@ export default function MutationsList({
           minInfoHeight,
           Math.min(
             maxInfoHeight,
-            currentInfoHeightRef.current - gestureState.dy
-          )
+            currentInfoHeightRef.current - gestureState.dy,
+          ),
         );
         setCurrentInfoHeight(finalHeight);
         currentInfoHeightRef.current = finalHeight;
@@ -111,7 +111,7 @@ export default function MutationsList({
           currentInfoHeightRef.current = finalHeight;
         });
       },
-    })
+    }),
   ).current;
 
   const renderMutation = ({ item }: { item: Mutation }) => (

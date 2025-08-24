@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity 
-} from 'react-native';
-import { 
-  Clock, 
-  Upload, 
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import {
+  Clock,
+  Upload,
   Download,
   AlertCircle,
   ChevronDown,
@@ -19,12 +19,16 @@ import {
   FileJson,
   Filter,
   Globe,
-  Link
-} from 'rn-better-dev-tools/icons';
-import { DataViewer } from '../../react-query/components/shared/DataViewer';
-import type { NetworkEvent } from '../types';
-import { formatBytes, formatDuration, formatHttpStatus } from '../utils/formatting';
-import { formatRelativeTime } from '@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime';
+  Link,
+} from "rn-better-dev-tools/icons";
+import { DataViewer } from "../../react-query/components/shared/DataViewer";
+import type { NetworkEvent } from "../types";
+import {
+  formatBytes,
+  formatDuration,
+  formatHttpStatus,
+} from "../utils/formatting";
+import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
@@ -43,7 +47,7 @@ const CollapsibleSection: React.FC<{
   defaultOpen?: boolean;
 }> = ({ title, icon, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  
+
   return (
     <View style={styles.collapsibleSection}>
       <TouchableOpacity
@@ -61,7 +65,9 @@ const CollapsibleSection: React.FC<{
           <ChevronDown size={16} color="#9CA3AF" />
         )}
       </TouchableOpacity>
-      {isOpen ? <View style={styles.collapsibleContent}>{children}</View> : null}
+      {isOpen ? (
+        <View style={styles.collapsibleContent}>{children}</View>
+      ) : null}
     </View>
   );
 };
@@ -70,40 +76,40 @@ const CollapsibleSection: React.FC<{
 const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
   const handleCopy = (text: string) => {
     // Clipboard functionality temporarily disabled due to deprecated API
-    console.log('Copy to clipboard:', text);
+    console.log("Copy to clipboard:", text);
   };
-  
+
   const parseUrl = (urlString: string) => {
     try {
       const urlObj = new URL(urlString);
-      const isSecure = urlObj.protocol === 'https:';
-      
+      const isSecure = urlObj.protocol === "https:";
+
       // Parse query parameters
       const params: Record<string, string> = {};
       urlObj.searchParams.forEach((value, key) => {
         params[key] = value;
       });
-      
+
       return {
-        protocol: urlObj.protocol.replace(':', ''),
+        protocol: urlObj.protocol.replace(":", ""),
         host: urlObj.host,
         pathname: urlObj.pathname,
         params: Object.keys(params).length > 0 ? params : null,
-        isSecure
+        isSecure,
       };
     } catch {
       return {
-        protocol: '',
+        protocol: "",
         host: url,
-        pathname: '',
+        pathname: "",
         params: null,
-        isSecure: false
+        isSecure: false,
       };
     }
   };
-  
+
   const urlParts = parseUrl(url);
-  
+
   return (
     <View style={styles.urlBreakdown}>
       <View style={styles.urlRow}>
@@ -113,7 +119,9 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
           <Unlock size={12} color="#F59E0B" />
         )}
         <Text style={styles.urlDomain}>{urlParts.host}</Text>
-        <Text style={styles.urlProtocol}>({urlParts.protocol.toUpperCase()})</Text>
+        <Text style={styles.urlProtocol}>
+          ({urlParts.protocol.toUpperCase()})
+        </Text>
         <TouchableOpacity
           sentry-label="ignore url copy button"
           onPress={() => handleCopy(url)}
@@ -139,19 +147,22 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
   );
 };
 
-export function NetworkEventDetailView({ 
+export function NetworkEventDetailView({
   event,
   onBack,
   ignoredDomains = new Set(),
   ignoredUrls = new Set(),
   onToggleDomain = () => {},
-  onToggleUrl = () => {}
+  onToggleUrl = () => {},
 }: NetworkEventDetailViewProps) {
   const status = event.status ? formatHttpStatus(event.status) : null;
   const isPending = !event.status && !event.error;
 
   return (
-    <ScrollView style={styles.container} sentry-label="ignore network detail scroll">
+    <ScrollView
+      style={styles.container}
+      sentry-label="ignore network detail scroll"
+    >
       {/* Request Details - Always visible */}
       <View style={styles.requestDetailsSection}>
         <View style={styles.httpHeader}>
@@ -159,7 +170,12 @@ export function NetworkEventDetailView({
             <Text style={styles.httpMethod}>{event.method}</Text>
           </View>
           {event.status ? (
-            <View style={[styles.httpStatusBadge, { backgroundColor: `${status?.color}20` }]}>
+            <View
+              style={[
+                styles.httpStatusBadge,
+                { backgroundColor: `${status?.color}20` },
+              ]}
+            >
               <Text style={[styles.httpStatusText, { color: status?.color }]}>
                 {status?.text} {status?.meaning}
               </Text>
@@ -173,13 +189,15 @@ export function NetworkEventDetailView({
           {event.duration ? (
             <View style={styles.httpDuration}>
               <Clock size={10} color="#6B7280" />
-              <Text style={styles.httpDurationText}>{formatDuration(event.duration)}</Text>
+              <Text style={styles.httpDurationText}>
+                {formatDuration(event.duration)}
+              </Text>
             </View>
           ) : null}
         </View>
-        
+
         <UrlBreakdown url={event.url} />
-        
+
         {event.error ? (
           <View style={styles.errorBox}>
             <AlertCircle size={12} color="#EF4444" />
@@ -200,21 +218,25 @@ export function NetworkEventDetailView({
             ({new Date(event.timestamp).toLocaleTimeString()})
           </Text>
         </View>
-        
-        {(event.requestSize || event.responseSize) ? (
+
+        {event.requestSize || event.responseSize ? (
           <View style={styles.sizeRow}>
             {event.requestSize !== undefined ? (
               <View style={styles.sizeItem}>
                 <Upload size={10} color="#3B82F6" />
                 <Text style={styles.sizeLabel}>Sent:</Text>
-                <Text style={styles.sizeValue}>{formatBytes(event.requestSize)}</Text>
+                <Text style={styles.sizeValue}>
+                  {formatBytes(event.requestSize)}
+                </Text>
               </View>
             ) : null}
             {event.responseSize !== undefined ? (
               <View style={styles.sizeItem}>
                 <Download size={10} color="#10B981" />
                 <Text style={styles.sizeLabel}>Received:</Text>
-                <Text style={styles.sizeValue}>{formatBytes(event.responseSize)}</Text>
+                <Text style={styles.sizeValue}>
+                  {formatBytes(event.responseSize)}
+                </Text>
               </View>
             ) : null}
           </View>
@@ -328,25 +350,36 @@ export function NetworkEventDetailView({
                 <TouchableOpacity
                   style={[
                     styles.filterOption,
-                    isDomainIgnored && styles.filterOptionActive
+                    isDomainIgnored && styles.filterOptionActive,
                   ]}
                   onPress={() => domain && onToggleDomain(domain)}
                 >
                   <View style={styles.filterOptionLeft}>
-                    <Globe size={16} color={isDomainIgnored ? "#F59E0B" : "#6B7280"} />
+                    <Globe
+                      size={16}
+                      color={isDomainIgnored ? "#F59E0B" : "#6B7280"}
+                    />
                     <View style={styles.filterOptionContent}>
-                      <Text style={styles.filterOptionLabel}>Ignore Domain</Text>
-                      <Text style={styles.filterOptionValue}>{domain || "N/A"}</Text>
+                      <Text style={styles.filterOptionLabel}>
+                        Ignore Domain
+                      </Text>
+                      <Text style={styles.filterOptionValue}>
+                        {domain || "N/A"}
+                      </Text>
                     </View>
                   </View>
-                  <View style={[
-                    styles.filterToggle,
-                    isDomainIgnored && styles.filterToggleActive
-                  ]}>
-                    <Text style={[
-                      styles.filterToggleText,
-                      isDomainIgnored && styles.filterToggleTextActive
-                    ]}>
+                  <View
+                    style={[
+                      styles.filterToggle,
+                      isDomainIgnored && styles.filterToggleActive,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.filterToggleText,
+                        isDomainIgnored && styles.filterToggleTextActive,
+                      ]}
+                    >
                       {isDomainIgnored ? "IGNORED" : "IGNORE"}
                     </Text>
                   </View>
@@ -356,27 +389,36 @@ export function NetworkEventDetailView({
                 <TouchableOpacity
                   style={[
                     styles.filterOption,
-                    isUrlIgnored && styles.filterOptionActive
+                    isUrlIgnored && styles.filterOptionActive,
                   ]}
                   onPress={() => urlPath && onToggleUrl(urlPath)}
                 >
                   <View style={styles.filterOptionLeft}>
-                    <Link size={16} color={isUrlIgnored ? "#F59E0B" : "#6B7280"} />
+                    <Link
+                      size={16}
+                      color={isUrlIgnored ? "#F59E0B" : "#6B7280"}
+                    />
                     <View style={styles.filterOptionContent}>
-                      <Text style={styles.filterOptionLabel}>Ignore URL Pattern</Text>
+                      <Text style={styles.filterOptionLabel}>
+                        Ignore URL Pattern
+                      </Text>
                       <Text style={styles.filterOptionValue} numberOfLines={1}>
                         {urlPath || "N/A"}
                       </Text>
                     </View>
                   </View>
-                  <View style={[
-                    styles.filterToggle,
-                    isUrlIgnored && styles.filterToggleActive
-                  ]}>
-                    <Text style={[
-                      styles.filterToggleText,
-                      isUrlIgnored && styles.filterToggleTextActive
-                    ]}>
+                  <View
+                    style={[
+                      styles.filterToggle,
+                      isUrlIgnored && styles.filterToggleActive,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.filterToggleText,
+                        isUrlIgnored && styles.filterToggleTextActive,
+                      ]}
+                    >
                       {isUrlIgnored ? "IGNORED" : "IGNORE"}
                     </Text>
                   </View>
@@ -385,8 +427,8 @@ export function NetworkEventDetailView({
                 {/* Info Text */}
                 <View style={styles.filterInfoBox}>
                   <Text style={styles.filterInfoText}>
-                    Ignored requests will be hidden from the network list. 
-                    You can manage filters in the Filters tab.
+                    Ignored requests will be hidden from the network list. You
+                    can manage filters in the Filters tab.
                   </Text>
                 </View>
               </>
@@ -401,34 +443,34 @@ export function NetworkEventDetailView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#171717',
+    backgroundColor: "#171717",
   },
   // Request details section - always visible
   requestDetailsSection: {
     marginHorizontal: 12,
     marginTop: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: "rgba(255, 255, 255, 0.08)",
     padding: 12,
   },
   httpHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 12,
   },
   httpMethodBadge: {
-    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    backgroundColor: "rgba(139, 92, 246, 0.2)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   httpMethod: {
-    color: '#8B5CF6',
+    color: "#8B5CF6",
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   httpStatusBadge: {
@@ -438,52 +480,52 @@ const styles = StyleSheet.create({
   },
   httpStatusText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   pendingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
-    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    backgroundColor: "rgba(245, 158, 11, 0.2)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   pendingBadgeText: {
-    color: '#F59E0B',
+    color: "#F59E0B",
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   httpDuration: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
   httpDurationText: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 11,
   },
   // URL breakdown styles
   urlBreakdown: {
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     borderRadius: 4,
     padding: 8,
   },
   urlRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     marginBottom: 4,
   },
   urlDomain: {
-    color: '#E5E7EB',
+    color: "#E5E7EB",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     flex: 1,
   },
   urlProtocol: {
-    color: '#6B7280',
+    color: "#6B7280",
     fontSize: 10,
   },
   copyButton: {
@@ -493,28 +535,28 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
   },
   urlPath: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 11,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   urlParams: {
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.06)',
+    borderTopColor: "rgba(255, 255, 255, 0.06)",
   },
   urlParamsTitle: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   urlParam: {
-    color: '#3B82F6',
+    color: "#3B82F6",
     fontSize: 11,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     marginLeft: 8,
     marginTop: 2,
   },
@@ -522,80 +564,80 @@ const styles = StyleSheet.create({
   timingSection: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: "rgba(255, 255, 255, 0.08)",
     padding: 12,
   },
   timingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   timingLabel: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 11,
   },
   timingValue: {
-    color: '#E5E7EB',
+    color: "#E5E7EB",
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   timingExact: {
-    color: '#6B7280',
+    color: "#6B7280",
     fontSize: 10,
     marginLeft: 4,
   },
   sizeRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.06)',
+    borderTopColor: "rgba(255, 255, 255, 0.06)",
   },
   sizeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   sizeLabel: {
-    color: '#6B7280',
+    color: "#6B7280",
     fontSize: 10,
   },
   sizeValue: {
-    color: '#3B82F6',
+    color: "#3B82F6",
     fontSize: 10,
-    fontFamily: 'monospace',
-    fontWeight: '600',
+    fontFamily: "monospace",
+    fontWeight: "600",
   },
   // Collapsible section styles
   collapsibleSection: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    overflow: 'hidden',
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    overflow: "hidden",
   },
   collapsibleHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
   },
   collapsibleTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   collapsibleTitleText: {
-    color: '#E5E7EB',
+    color: "#E5E7EB",
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   collapsibleContent: {
     padding: 12,
@@ -608,47 +650,47 @@ const styles = StyleSheet.create({
   },
   // Error box
   errorBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
     padding: 8,
     borderRadius: 4,
     marginTop: 8,
   },
   errorText: {
-    color: '#EF4444',
+    color: "#EF4444",
     fontSize: 11,
     flex: 1,
   },
   // Empty state
   emptyText: {
-    color: '#6B7280',
+    color: "#6B7280",
     fontSize: 12,
-    fontStyle: 'italic',
-    textAlign: 'center',
+    fontStyle: "italic",
+    textAlign: "center",
   },
   // Filter options styles
   filterOptionsContainer: {
     gap: 12,
   },
   filterOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: "rgba(255, 255, 255, 0.08)",
   },
   filterOptionActive: {
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-    borderColor: 'rgba(245, 158, 11, 0.2)',
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: "rgba(245, 158, 11, 0.2)",
   },
   filterOptionLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     flex: 1,
   },
@@ -656,47 +698,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterOptionLabel: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 11,
     marginBottom: 2,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   filterOptionValue: {
-    color: '#E5E7EB',
+    color: "#E5E7EB",
     fontSize: 13,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   filterToggle: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   filterToggleActive: {
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-    borderColor: 'rgba(245, 158, 11, 0.3)',
+    backgroundColor: "rgba(245, 158, 11, 0.15)",
+    borderColor: "rgba(245, 158, 11, 0.3)",
   },
   filterToggleText: {
     fontSize: 10,
-    fontWeight: '600',
-    color: '#6B7280',
+    fontWeight: "600",
+    color: "#6B7280",
     letterSpacing: 0.5,
   },
   filterToggleTextActive: {
-    color: '#F59E0B',
+    color: "#F59E0B",
   },
   filterInfoBox: {
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    backgroundColor: "rgba(139, 92, 246, 0.1)",
     borderRadius: 6,
     padding: 10,
     borderWidth: 1,
-    borderColor: 'rgba(139, 92, 246, 0.2)',
+    borderColor: "rgba(139, 92, 246, 0.2)",
   },
   filterInfoText: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 11,
     lineHeight: 16,
   },

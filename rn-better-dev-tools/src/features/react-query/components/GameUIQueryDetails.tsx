@@ -12,7 +12,7 @@ import {
   XCircle,
   Loader2,
   PauseCircle,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
 // Import shared Game UI components
 import {
@@ -28,7 +28,11 @@ interface GameUIQueryDetailsProps {
   type: "query" | "mutation";
 }
 
-export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetailsProps) {
+export function GameUIQueryDetails({
+  query,
+  mutation,
+  type,
+}: GameUIQueryDetailsProps) {
   if (!query && !mutation) return null;
 
   const getStatusInfo = useMemo(() => {
@@ -36,25 +40,49 @@ export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetails
       const status = getQueryStatusLabel(query);
       switch (status) {
         case "fresh":
-          return { label: "FRESH", color: gameUIColors.success, icon: CheckCircle2 };
+          return {
+            label: "FRESH",
+            color: gameUIColors.success,
+            icon: CheckCircle2,
+          };
         case "stale":
           return { label: "STALE", color: gameUIColors.warning, icon: Clock };
         case "fetching":
           return { label: "FETCHING", color: gameUIColors.info, icon: Loader2 };
         case "paused":
-          return { label: "PAUSED", color: gameUIColors.storage, icon: PauseCircle };
+          return {
+            label: "PAUSED",
+            color: gameUIColors.storage,
+            icon: PauseCircle,
+          };
         case "inactive":
-          return { label: "INACTIVE", color: gameUIColors.muted, icon: Activity };
+          return {
+            label: "INACTIVE",
+            color: gameUIColors.muted,
+            icon: Activity,
+          };
         default:
-          return { label: "UNKNOWN", color: gameUIColors.secondary, icon: AlertCircle };
+          return {
+            label: "UNKNOWN",
+            color: gameUIColors.secondary,
+            icon: AlertCircle,
+          };
       }
     } else if (type === "mutation" && mutation) {
       if (mutation.state.isPaused) {
-        return { label: "PAUSED", color: gameUIColors.storage, icon: PauseCircle };
+        return {
+          label: "PAUSED",
+          color: gameUIColors.storage,
+          icon: PauseCircle,
+        };
       }
       switch (mutation.state.status) {
         case "success":
-          return { label: "SUCCESS", color: gameUIColors.success, icon: CheckCircle2 };
+          return {
+            label: "SUCCESS",
+            color: gameUIColors.success,
+            icon: CheckCircle2,
+          };
         case "error":
           return { label: "ERROR", color: gameUIColors.error, icon: XCircle };
         case "pending":
@@ -63,31 +91,34 @@ export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetails
           return { label: "IDLE", color: gameUIColors.muted, icon: Activity };
       }
     }
-    return { label: "UNKNOWN", color: gameUIColors.secondary, icon: AlertCircle };
+    return {
+      label: "UNKNOWN",
+      color: gameUIColors.secondary,
+      icon: AlertCircle,
+    };
   }, [query, mutation, type]);
 
   const lastUpdated = useMemo(() => {
-    const timestamp = type === "query" && query 
-      ? query.state.dataUpdatedAt 
-      : mutation?.state.submittedAt;
-    
+    const timestamp =
+      type === "query" && query
+        ? query.state.dataUpdatedAt
+        : mutation?.state.submittedAt;
+
     if (!timestamp) return "Never";
-    
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
+
+    return new Date(timestamp).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
     });
   }, [query, mutation, type]);
 
-  const key = type === "query" && query
-    ? query.queryKey
-    : mutation?.options.mutationKey;
+  const key =
+    type === "query" && query ? query.queryKey : mutation?.options.mutationKey;
 
-  const observerCount = type === "query" && query
-    ? query.getObserversCount()
-    : null;
+  const observerCount =
+    type === "query" && query ? query.getObserversCount() : null;
 
   const isDisabled = type === "query" && query?.isDisabled();
 
@@ -138,7 +169,7 @@ export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetails
             <Text style={styles.metadataValue}>{observerCount}</Text>
           </View>
         )}
-        
+
         <View style={styles.metadataItem}>
           <Clock size={12} color={gameUIColors.secondary} />
           <Text style={styles.metadataLabel}>
@@ -152,7 +183,7 @@ export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetails
             <Database size={12} color={gameUIColors.secondary} />
             <Text style={styles.metadataLabel}>DATA SIZE</Text>
             <Text style={styles.metadataValue}>
-              {query.state.data 
+              {query.state.data
                 ? `${JSON.stringify(query.state.data).length} bytes`
                 : "Empty"}
             </Text>
@@ -161,7 +192,7 @@ export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetails
       </View>
 
       {/* Error Information */}
-      {((type === "query" && query?.state.error) || 
+      {((type === "query" && query?.state.error) ||
         (type === "mutation" && mutation?.state.error)) && (
         <View style={styles.errorSection}>
           <View style={styles.errorHeader}>
@@ -171,7 +202,7 @@ export function GameUIQueryDetails({ query, mutation, type }: GameUIQueryDetails
           <Text style={styles.errorText}>
             {displayValue(
               type === "query" ? query?.state.error : mutation?.state.error,
-              true
+              true,
             )}
           </Text>
         </View>

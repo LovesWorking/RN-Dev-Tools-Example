@@ -19,7 +19,7 @@ const EXPANDER_SIZE = 12;
 // Optimized chunking function moved to module scope [[memory:4875251]]
 const chunkArray = <T extends { label: string; value: JsonValue }>(
   array: T[],
-  size: number = CHUNK_SIZE
+  size: number = CHUNK_SIZE,
 ): T[][] => {
   if (size < 1 || array.length === 0) return [];
   const result: T[][] = [];
@@ -59,8 +59,8 @@ const Expander = React.memo(
               isFocused
                 ? gameUIColors.info
                 : isMain
-                ? gameUIColors.primaryLight
-                : gameUIColors.secondary
+                  ? gameUIColors.primaryLight
+                  : gameUIColors.secondary
             }
             strokeWidth={2.5}
             strokeLinecap="round"
@@ -69,7 +69,7 @@ const Expander = React.memo(
         </Svg>
       </View>
     );
-  }
+  },
 );
 type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
 
@@ -106,8 +106,8 @@ const CopyButton = React.memo(
           copyState === "NoCopy"
             ? "Copy object to clipboard"
             : copyState === "SuccessCopy"
-            ? "Object copied to clipboard"
-            : "Error copying object to clipboard"
+              ? "Object copied to clipboard"
+              : "Error copying object to clipboard"
         }
         onPress={copyState === "NoCopy" ? handleCopy : undefined}
         hitSlop={HIT_SLOP_OPTIMIZED}
@@ -155,7 +155,7 @@ const CopyButton = React.memo(
         )}
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 // Memoized DeleteItemButton component [[memory:4875251]]
@@ -206,7 +206,7 @@ const DeleteItemButton = React.memo(
         </Svg>
       </TouchableOpacity>
     );
-  }
+  },
 );
 // Memoized ClearArrayButton component [[memory:4875251]]
 const ClearArrayButton = React.memo(
@@ -256,7 +256,7 @@ const ClearArrayButton = React.memo(
         </Svg>
       </TouchableOpacity>
     );
-  }
+  },
 );
 // Memoized ToggleValueButton with pre-computed styles [[memory:4875251]]
 const ToggleValueButton = React.memo(
@@ -285,7 +285,7 @@ const ToggleValueButton = React.memo(
       const newData = updateNestedDataByPath(
         oldData,
         dataPathRef.current,
-        !currentValue
+        !currentValue,
       );
       queryClient.setQueryData(activeQueryRef.current.queryKey, newData);
     }, [queryClient]);
@@ -318,7 +318,7 @@ const ToggleValueButton = React.memo(
         </View>
       </TouchableOpacity>
     );
-  }
+  },
 );
 type Props = {
   editable?: boolean;
@@ -358,7 +358,7 @@ export default function Explorer({
 
   // Explorer's section is expanded or collapsed
   const [isExpanded, setIsExpanded] = useState(
-    (defaultExpanded || []).includes(label)
+    (defaultExpanded || []).includes(label),
   );
   // Remove unnecessary useCallback - simple state setter [[memory:4875251]]
   const toggleExpanded = () => setIsExpanded((old) => !old);
@@ -380,7 +380,7 @@ export default function Explorer({
         (d: JsonValue, i): { label: string; value: JsonValue } => ({
           label: i.toString(),
           value: d,
-        })
+        }),
       );
     }
 
@@ -405,7 +405,7 @@ export default function Explorer({
     // Handle regular objects with key limiting
     const entries = Object.entries(value as Record<string, JsonValue>).slice(
       0,
-      1000
+      1000,
     );
     return entries.map(([key, val]): { label: string; value: JsonValue } => ({
       label: key,
@@ -446,11 +446,11 @@ export default function Explorer({
       const newData = updateNestedDataByPath(
         oldData,
         dataPathRef.current,
-        updatedValue
+        updatedValue,
       );
       queryClient.setQueryData(activeQueryRef.current.queryKey, newData);
     },
-    [queryClient]
+    [queryClient],
   );
 
   return (
@@ -551,7 +551,7 @@ export default function Explorer({
                               setExpandedPages((old) =>
                                 old.includes(index)
                                   ? old.filter((d) => d !== index)
-                                  : [...old, index]
+                                  : [...old, index],
                               )
                             }
                             style={styles.pageExpanderButton}
@@ -626,13 +626,13 @@ export default function Explorer({
                         onIncrement={() =>
                           handleChange(
                             true,
-                            String(typeof value === "number" ? value + 1 : 1)
+                            String(typeof value === "number" ? value + 1 : 1),
                           )
                         }
                         onDecrement={() =>
                           handleChange(
                             true,
-                            String(typeof value === "number" ? value - 1 : -1)
+                            String(typeof value === "number" ? value - 1 : -1),
                           )
                         }
                         showDeleteButton={itemsDeletable}

@@ -15,7 +15,7 @@ interface ActionButtonConfig {
 
 export function useActionButtons(
   selectedQuery: Query,
-  queryClient: QueryClient
+  queryClient: QueryClient,
 ): ActionButtonConfig[] {
   return useMemo(() => {
     const queryStatus = selectedQuery.state.status;

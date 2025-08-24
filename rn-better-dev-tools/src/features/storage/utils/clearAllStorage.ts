@@ -16,9 +16,7 @@ const loadAsyncStorage = async () => {
       const module = await import("@react-native-async-storage/async-storage");
       AsyncStorageModule = module.default;
     } catch {
-      console.warn(
-        "AsyncStorage not found. Cannot clear storage."
-      );
+      console.warn("AsyncStorage not found. Cannot clear storage.");
     }
   })();
 
@@ -32,32 +30,34 @@ const loadAsyncStorage = async () => {
 export async function clearAllAppStorage(): Promise<void> {
   try {
     await loadAsyncStorage();
-    
+
     if (!AsyncStorageModule) {
       throw new Error("AsyncStorage not available");
     }
 
     // Get all keys
     const allKeys = await AsyncStorageModule.getAllKeys();
-    
+
     if (!allKeys || allKeys.length === 0) {
       console.log("[Storage] No keys to clear");
       return;
     }
 
     // Filter out dev tool keys - we don't want to clear those
-    const keysToRemove = allKeys.filter((key: string) => !isDevToolsStorageKey(key));
-    
+    const keysToRemove = allKeys.filter(
+      (key: string) => !isDevToolsStorageKey(key),
+    );
+
     if (keysToRemove.length === 0) {
       console.log("[Storage] No app keys to clear (only dev tool keys found)");
       return;
     }
 
     console.log(`[Storage] Clearing ${keysToRemove.length} app storage keys`);
-    
+
     // Remove all non-dev-tool keys
     await AsyncStorageModule.multiRemove(keysToRemove);
-    
+
     console.log("[Storage] Successfully cleared app storage");
   } catch (error) {
     console.error("[Storage] Failed to clear storage:", error);
@@ -72,15 +72,17 @@ export async function clearAllAppStorage(): Promise<void> {
 export async function clearAllStorageIncludingDevTools(): Promise<void> {
   try {
     await loadAsyncStorage();
-    
+
     if (!AsyncStorageModule) {
       throw new Error("AsyncStorage not available");
     }
 
     // Clear everything
     await AsyncStorageModule.clear();
-    
-    console.log("[Storage] Successfully cleared all storage including dev tools");
+
+    console.log(
+      "[Storage] Successfully cleared all storage including dev tools",
+    );
   } catch (error) {
     console.error("[Storage] Failed to clear all storage:", error);
     throw error;

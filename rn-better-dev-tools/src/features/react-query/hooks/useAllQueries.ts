@@ -9,10 +9,10 @@ const getStatusRank = (q: Query) =>
   q.state.fetchStatus !== "idle"
     ? 0
     : !q.getObserversCount()
-    ? 3
-    : q.isStale()
-    ? 2
-    : 1;
+      ? 3
+      : q.isStale()
+        ? 2
+        : 1;
 
 const dateSort: SortFn = (a, b) =>
   a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1;
@@ -48,7 +48,7 @@ function useAllQueries() {
   // Track query states using a Map for O(1) lookups
   const queryStatesRef = useRef<Map<string, Query["state"]>>(new Map());
   const updateTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
+    undefined,
   );
 
   // Memoized callback to check if queries need update
@@ -86,7 +86,7 @@ function useAllQueries() {
 
     // Filter out storage queries
     const nonStorageQueries = allQueries.filter(
-      (query) => !isStorageQuery(query.queryKey)
+      (query) => !isStorageQuery(query.queryKey),
     );
 
     // Check if update is needed

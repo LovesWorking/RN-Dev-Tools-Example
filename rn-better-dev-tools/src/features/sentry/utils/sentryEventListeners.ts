@@ -19,7 +19,7 @@ try {
   import("@sentry/react-native").then(
     (sentry: { getClient: () => SentryClient }) => {
       getSentryClient = sentry.getClient;
-    }
+    },
   );
 } catch {
   // Sentry not installed - will gracefully degrade
@@ -32,7 +32,7 @@ try {
  * @param getClientFn - Function that returns the Sentry client instance
  */
 export function configureSentryClient(
-  getClientFn: () => SentryClient | null
+  getClientFn: () => SentryClient | null,
 ): void {
   userProvidedGetClient = getClientFn;
 }
@@ -178,14 +178,14 @@ const parseEnvelope = (envelope: SentryEnvelope): SentryEventEntry[] => {
   items.forEach(([itemHeader, payload]) => {
     const eventType = mapItemTypeToEventType(itemHeader.type);
     const level = mapLevelToEventLevel(
-      (payload as Record<string, unknown>)?.level as string
+      (payload as Record<string, unknown>)?.level as string,
     );
 
     let message = "Sentry Event";
     if (payload && typeof payload === "object") {
       const payloadObj = payload as Record<string, unknown>;
       message = String(
-        payloadObj.message || payloadObj.transaction || `${eventType} Event`
+        payloadObj.message || payloadObj.transaction || `${eventType} Event`,
       );
     }
 
@@ -285,7 +285,7 @@ export class SentryEventLogger {
 
       if (!clientGetter) {
         console.warn(
-          "Sentry SDK not available - event logging disabled. Either install @sentry/react-native or use configureSentryClient()"
+          "Sentry SDK not available - event logging disabled. Either install @sentry/react-native or use configureSentryClient()",
         );
         return false;
       }
@@ -447,7 +447,7 @@ export class SentryEventLogger {
             rawData: transactionData,
           };
           eventStore.add(event);
-        }
+        },
       );
 
       (client as SentryClient).on?.(
@@ -480,7 +480,7 @@ export class SentryEventLogger {
             rawData: transactionData,
           };
           eventStore.add(event);
-        }
+        },
       );
     } catch (error) {
       console.warn("Failed to setup transaction listeners:", error);
@@ -587,7 +587,7 @@ export class SentryEventLogger {
           eventStore.add(event);
 
           return breadcrumb;
-        }
+        },
       );
     } catch (error) {
       console.warn("Failed to setup breadcrumb listeners:", error);
@@ -948,6 +948,6 @@ export function generateTestSentryEvents(): void {
 
   testEvents.forEach((event) => eventStore.add(event));
   console.log(
-    `Generated ${testEvents.length} test Sentry events with enhanced HTTP data and insights`
+    `Generated ${testEvents.length} test Sentry events with enhanced HTTP data and insights`,
   );
 }

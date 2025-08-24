@@ -1,7 +1,7 @@
 /**
  * Developer Tools Theme Context
  * Provides theme management and switching capabilities for all dev tools
- * 
+ *
  * Features:
  * - Theme state management
  * - Persistent theme selection
@@ -9,7 +9,13 @@
  * - Type-safe theme access
  */
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { Theme, ThemeName, getTheme, cyberpunkTheme } from "./devToolsThemes";
 
 // ============================================================================
@@ -73,9 +79,9 @@ class SafeStorage {
 // Context Creation
 // ============================================================================
 
-const DevToolsThemeContext = createContext<DevToolsThemeContextType | undefined>(
-  undefined
-);
+const DevToolsThemeContext = createContext<
+  DevToolsThemeContextType | undefined
+>(undefined);
 
 // ============================================================================
 // Theme Provider Component
@@ -99,7 +105,10 @@ export function DevToolsThemeProvider({
     const loadThemePreference = async () => {
       try {
         const savedTheme = await SafeStorage.getItem(THEME_STORAGE_KEY);
-        if (savedTheme && (savedTheme === "cyberpunk" || savedTheme === "dark")) {
+        if (
+          savedTheme &&
+          (savedTheme === "cyberpunk" || savedTheme === "dark")
+        ) {
           setThemeName(savedTheme as ThemeName);
           setThemeState(getTheme(savedTheme as ThemeName));
         }
@@ -163,7 +172,7 @@ export function useDevToolsTheme(): DevToolsThemeContextType {
   const context = useContext(DevToolsThemeContext);
   if (!context) {
     throw new Error(
-      "useDevToolsTheme must be used within a DevToolsThemeProvider"
+      "useDevToolsTheme must be used within a DevToolsThemeProvider",
     );
   }
   return context;
@@ -210,7 +219,7 @@ export function useThemeAnimations() {
 // ============================================================================
 
 export function withDevToolsTheme<P extends object>(
-  Component: React.ComponentType<P & { theme: Theme }>
+  Component: React.ComponentType<P & { theme: Theme }>,
 ): React.ComponentType<P> {
   return function ThemedComponent(props: P) {
     const { theme } = useDevToolsTheme();

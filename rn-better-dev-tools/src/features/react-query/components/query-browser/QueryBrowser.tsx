@@ -1,5 +1,12 @@
 import React from "react";
-import { View, StyleSheet, Text, ScrollView, FlatList, ViewStyle } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  FlatList,
+  ViewStyle,
+} from "react-native";
 import { Query } from "@tanstack/react-query";
 import QueryRow from "./QueryRow";
 import useAllQueries from "../../hooks/useAllQueries";
@@ -75,7 +82,7 @@ export default function QueryBrowser({
       }
       onQuerySelect(query);
     },
-    [selectedQuery?.queryHash, onQuerySelect]
+    [selectedQuery?.queryHash, onQuerySelect],
   );
 
   if (filteredQueries.length === 0) {

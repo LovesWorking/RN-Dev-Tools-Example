@@ -40,10 +40,7 @@ export function GameUIStatusHeader({
       ]}
     >
       <View
-        style={[
-          styles.glow,
-          { backgroundColor: alertConfig.color + "10" },
-        ]}
+        style={[styles.glow, { backgroundColor: alertConfig.color + "10" }]}
       />
 
       <View style={styles.content}>
@@ -64,10 +61,7 @@ export function GameUIStatusHeader({
         </View>
 
         <View
-          style={[
-            styles.badge,
-            { backgroundColor: alertConfig.color + "20" },
-          ]}
+          style={[styles.badge, { backgroundColor: alertConfig.color + "20" }]}
         >
           <Text style={[styles.badgeText, { color: alertConfig.color }]}>
             {badgeText}

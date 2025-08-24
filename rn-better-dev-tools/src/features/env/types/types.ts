@@ -1,33 +1,39 @@
 /**
  * Supported environment variable types that can be automatically detected
  */
-export type EnvVarType = "string" | "number" | "boolean" | "array" | "object" | "url";
+export type EnvVarType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "array"
+  | "object"
+  | "url";
 
 /**
  * Configuration for a required environment variable
- * 
+ *
  * @example
  * // Simple string check (just check if it exists)
  * "EXPO_PUBLIC_API_URL"
- * 
+ *
  * @example
  * // Check for specific value
  * { key: "EXPO_PUBLIC_ENVIRONMENT", expectedValue: "development" }
- * 
+ *
  * @example
  * // Check for specific type
  * { key: "EXPO_PUBLIC_DEBUG_MODE", expectedType: "boolean" }
- * 
+ *
  * @example
  * // With description for documentation
- * { 
- *   key: "EXPO_PUBLIC_API_URL", 
+ * {
+ *   key: "EXPO_PUBLIC_API_URL",
  *   expectedType: "string",
  *   description: "Backend API endpoint URL"
  * }
  */
 export type RequiredEnvVar =
-  | string  // Just check if the env var exists
+  | string // Just check if the env var exists
   | {
       /** The environment variable key/name */
       key: string;

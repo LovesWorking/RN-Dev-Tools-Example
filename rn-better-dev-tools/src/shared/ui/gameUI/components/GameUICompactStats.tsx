@@ -51,7 +51,6 @@ export function GameUICompactStats({
   style,
   hideInactive = true,
 }: GameUICompactStatsProps) {
-  
   return (
     <View style={[styles.container, style]}>
       {/* Compact Header with Health */}
@@ -67,7 +66,10 @@ export function GameUICompactStats({
                 <View
                   style={[
                     styles.statusDot,
-                    { backgroundColor: header.healthColor || gameUIColors.success },
+                    {
+                      backgroundColor:
+                        header.healthColor || gameUIColors.success,
+                    },
                   ]}
                 />
                 <Text
@@ -124,10 +126,7 @@ export function GameUICompactStats({
           return (
             <Animated.View
               key={stat.key}
-              style={[
-                styles.statCard,
-                { borderColor: stat.color + "30" },
-              ]}
+              style={[styles.statCard, { borderColor: stat.color + "30" }]}
             >
               <View style={styles.cardContent}>
                 <IconComponent size={12} color={stat.color} />

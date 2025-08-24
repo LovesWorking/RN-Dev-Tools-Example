@@ -36,7 +36,7 @@ const INDENT_STYLES = Array.from(
       container: {
         marginLeft: depth * 10, // Reduced space for tighter tree lines
       },
-    }).container
+    }).container,
 );
 
 // Enhanced type color cache using centralized theme colors [[memory:4875251]]
@@ -342,7 +342,7 @@ const Expander = React.memo(
         </Svg>
       </View>
     </TouchableOpacity>
-  )
+  ),
 );
 
 // Type legend component to replace inline type indicators
@@ -374,31 +374,37 @@ const TypeLegend = React.memo(
         })}
       </View>
     );
-  }
+  },
 );
 
 // Optimized data flattening with chunked processing to prevent UI blocking [[memory:4875251]]
-const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel = false) => {
+const useDataFlattening = (
+  data: JsonValue,
+  maxDepth = 10,
+  autoExpandFirstLevel = false,
+) => {
   const [flatData, setFlatData] = useState<FlatDataItem[]>([]);
-  
+
   // Initialize with root expanded and optionally first level
   const getInitialExpanded = useCallback(() => {
     const initial = new Set(["root"]);
-    if (autoExpandFirstLevel && data && typeof data === 'object') {
+    if (autoExpandFirstLevel && data && typeof data === "object") {
       if (Array.isArray(data)) {
         data.forEach((_, index) => {
           initial.add(`root.${index}`);
         });
       } else {
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           initial.add(`root.${key}`);
         });
       }
     }
     return initial;
   }, [autoExpandFirstLevel, data]);
-  
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(() => getInitialExpanded());
+
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(() =>
+    getInitialExpanded(),
+  );
   const [isProcessing, setIsProcessing] = useState(false);
   const circularCache = useRef(new WeakSet());
 
@@ -408,7 +414,7 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
       key = "root",
       depth = 0,
       parentId?: string,
-      path: string[] = []
+      path: string[] = [],
     ): FlatDataItem[] => {
       // Early termination for performance [[memory:4875251]]
       if (depth > Math.min(maxDepth, MAX_DEPTH_LIMIT)) return [];
@@ -520,7 +526,13 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
             const chunk = limitedEntries.slice(i, i + CHUNK_SIZE);
             for (const [childKey, childValue] of chunk) {
               result.push(
-                ...flattenData(childValue, childKey, depth + 1, id, currentPath)
+                ...flattenData(
+                  childValue,
+                  childKey,
+                  depth + 1,
+                  id,
+                  currentPath,
+                ),
               );
             }
 
@@ -536,7 +548,7 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
 
       return result;
     },
-    [maxDepth, expandedItems]
+    [maxDepth, expandedItems],
   );
 
   // Progressive data processing
@@ -551,9 +563,9 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
         try {
           // Reset circular cache for fresh processing
           circularCache.current = new WeakSet();
-          
+
           // No need to reset here as initial state handles it
-          
+
           const newFlatData = flattenData(data);
 
           if (!isCancelled) {
@@ -716,7 +728,12 @@ const VirtualizedItem = React.memo(
               </Text>
 
               {item.isExpandable ? (
-                <Text style={[STABLE_STYLES.valueText, { color: gameUIColors.secondary }]}>
+                <Text
+                  style={[
+                    STABLE_STYLES.valueText,
+                    { color: gameUIColors.secondary },
+                  ]}
+                >
                   {item.valueType} ({item.childCount}{" "}
                   {item.childCount === 1 ? "item" : "items"})
                 </Text>
@@ -730,7 +747,7 @@ const VirtualizedItem = React.memo(
         </TouchableOpacity>
       </View>
     );
-  }
+  },
 );
 
 // Main virtualized data explorer component
@@ -745,12 +762,19 @@ interface VirtualizedDataExplorerProps {
 
 export const VirtualizedDataExplorer: React.FC<
   VirtualizedDataExplorerProps
-> = ({ title, description, data, maxDepth = 10, rawMode = false, initialExpanded = false }) => {
+> = ({
+  title,
+  description,
+  data,
+  maxDepth = 10,
+  rawMode = false,
+  initialExpanded = false,
+}) => {
   const [isExpanded, setIsExpanded] = useState(rawMode); // Auto-expand in raw mode
   const { flatData, isProcessing, toggleExpanded } = useDataFlattening(
     data,
     maxDepth,
-    initialExpanded
+    initialExpanded,
   );
 
   // Calculate visible types for the legend
@@ -771,7 +795,7 @@ export const VirtualizedDataExplorer: React.FC<
   // Calculate average item size for better FlatList performance [[memory:4875251]]
   const averageItemSize = useMemo(() => {
     const longKeyCount = flatData.filter(
-      (item) => item.key.length > LONG_KEY_THRESHOLD
+      (item) => item.key.length > LONG_KEY_THRESHOLD,
     ).length;
     const normalKeyCount = flatData.length - longKeyCount;
 

@@ -60,7 +60,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

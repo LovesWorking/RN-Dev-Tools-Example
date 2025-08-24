@@ -10,7 +10,7 @@ import { JsonValue } from "../types/types";
 export const updateNestedDataByPath = (
   oldData: JsonValue,
   updatePath: Array<string>,
-  value: JsonValue
+  value: JsonValue,
 ): JsonValue => {
   if (updatePath.length === 0) {
     return value;
@@ -28,7 +28,7 @@ export const updateNestedDataByPath = (
     const currentValue = newData.get(head);
     newData.set(
       head,
-      updateNestedDataByPath(currentValue ?? null, tail, value)
+      updateNestedDataByPath(currentValue ?? null, tail, value),
     );
     return newData;
   }
@@ -37,7 +37,7 @@ export const updateNestedDataByPath = (
     const setAsArray = updateNestedDataByPath(
       Array.from(oldData) as JsonValue[],
       updatePath,
-      value
+      value,
     );
 
     return new Set(Array.isArray(setAsArray) ? setAsArray : []);

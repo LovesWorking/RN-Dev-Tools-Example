@@ -27,7 +27,7 @@ export function GalaxyButton({ children, onPress, style }: GalaxyButtonProps) {
         toValue: -135,
         duration: 60000,
         useNativeDriver: true,
-      })
+      }),
     ).start();
 
     Animated.loop(
@@ -35,7 +35,7 @@ export function GalaxyButton({ children, onPress, style }: GalaxyButtonProps) {
         toValue: 1,
         duration: 90000,
         useNativeDriver: true,
-      })
+      }),
     ).start();
   }, [starsTranslateY, starsRotate]);
 

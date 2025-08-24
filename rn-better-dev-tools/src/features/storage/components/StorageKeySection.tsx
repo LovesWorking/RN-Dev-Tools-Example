@@ -44,8 +44,19 @@ export function StorageKeySection({
     return (
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, headerColor && { color: headerColor }]}>{title}</Text>
-          <Text style={[styles.sectionCount, headerColor && { color: headerColor, opacity: 0.8 }]}>0</Text>
+          <Text
+            style={[styles.sectionTitle, headerColor && { color: headerColor }]}
+          >
+            {title}
+          </Text>
+          <Text
+            style={[
+              styles.sectionCount,
+              headerColor && { color: headerColor, opacity: 0.8 },
+            ]}
+          >
+            0
+          </Text>
         </View>
         <View style={styles.emptySection}>
           <Text style={styles.emptySectionText}>{emptyMessage}</Text>
@@ -60,9 +71,20 @@ export function StorageKeySection({
     <View style={styles.sectionContainer}>
       {title && (
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, headerColor && { color: headerColor }]}>{title}</Text>
+          <Text
+            style={[styles.sectionTitle, headerColor && { color: headerColor }]}
+          >
+            {title}
+          </Text>
           {count >= 0 && (
-            <Text style={[styles.sectionCount, headerColor && { color: headerColor, opacity: 0.8 }]}>{count}</Text>
+            <Text
+              style={[
+                styles.sectionCount,
+                headerColor && { color: headerColor, opacity: 0.8 },
+              ]}
+            >
+              {count}
+            </Text>
           )}
         </View>
       )}

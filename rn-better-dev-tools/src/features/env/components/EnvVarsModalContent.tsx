@@ -14,7 +14,7 @@ import {
   RefreshCw,
   X,
   XCircle,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
 import { useDynamicEnv } from "../hooks";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
@@ -147,13 +147,13 @@ export function EnvVarsModalContent({
   };
 
   const missingCount = processedEnvVars.filter(
-    (env) => env.status === "missing"
+    (env) => env.status === "missing",
   ).length;
   const presentCount = processedEnvVars.filter(
-    (env) => env.status === "present"
+    (env) => env.status === "present",
   ).length;
   const uncheckedCount = processedEnvVars.filter(
-    (env) => env.status === "unchecked"
+    (env) => env.status === "unchecked",
   ).length;
 
   return (

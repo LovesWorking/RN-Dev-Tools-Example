@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { Query, Mutation } from "@tanstack/react-query";
-import { Database, Activity } from 'rn-better-dev-tools/icons';
+import { Database, Activity } from "rn-better-dev-tools/icons";
 
 // Import shared Game UI components
 import {
@@ -58,7 +58,9 @@ export function GameUIReactQueryBrowser({
 }: GameUIReactQueryBrowserProps) {
   // State
   const [selectedQuery, setSelectedQuery] = useState<Query | undefined>();
-  const [selectedMutation, setSelectedMutation] = useState<Mutation | undefined>();
+  const [selectedMutation, setSelectedMutation] = useState<
+    Mutation | undefined
+  >();
   const [queryFilter, setQueryFilter] = useState<string | null>(null);
   const [mutationFilter, setMutationFilter] = useState<string | null>(null);
   const [queriesExpanded, setQueriesExpanded] = useState(true);
@@ -75,10 +77,14 @@ export function GameUIReactQueryBrowser({
   const overallStats = useMemo(() => {
     const totalQueries = queries.length;
     const totalMutations = mutations.length;
-    const errorQueries = queries.filter(q => q.state.status === "error").length;
-    const errorMutations = mutations.filter(m => m.state.status === "error").length;
+    const errorQueries = queries.filter(
+      (q) => q.state.status === "error",
+    ).length;
+    const errorMutations = mutations.filter(
+      (m) => m.state.status === "error",
+    ).length;
     const staleQueries = queryStats.stale;
-    
+
     return {
       totalCount: totalQueries + totalMutations,
       requiredCount: totalQueries, // Consider queries as "required"
@@ -93,7 +99,7 @@ export function GameUIReactQueryBrowser({
   // Use alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
     overallStats,
-    REACT_QUERY_ALERT_STATES
+    REACT_QUERY_ALERT_STATES,
   );
 
   return (
@@ -178,7 +184,11 @@ export function GameUIReactQueryBrowser({
           iconColor={gameUIColors.storage}
           title={selectedQuery ? "QUERY DETAILS" : "MUTATION DETAILS"}
           count={0}
-          subtitle={selectedQuery ? "Selected query information" : "Selected mutation information"}
+          subtitle={
+            selectedQuery
+              ? "Selected query information"
+              : "Selected mutation information"
+          }
           expanded={detailsExpanded}
           onToggle={() => setDetailsExpanded(!detailsExpanded)}
         >
@@ -191,9 +201,7 @@ export function GameUIReactQueryBrowser({
       )}
 
       {/* Tech Footer */}
-      <Text style={styles.techFooter}>
-        // TANSTACK REACT QUERY DEVTOOLS
-      </Text>
+      <Text style={styles.techFooter}>// TANSTACK REACT QUERY DEVTOOLS</Text>
     </ScrollView>
   );
 }

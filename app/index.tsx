@@ -35,7 +35,6 @@ function getRandomPokemonNames(count: number): string[] {
   return shuffled.slice(0, count);
 }
 
-
 export default function PokemonScreen() {
   const queryClient = useQueryClient();
 
@@ -76,7 +75,7 @@ export default function PokemonScreen() {
         opacity: new Animated.Value(0),
         scale: new Animated.Value(Math.random() * 0.6 + 0.3),
         wobble: new Animated.Value(0),
-      }))
+      })),
   ).current;
 
   useEffect(() => {
@@ -93,7 +92,7 @@ export default function PokemonScreen() {
           duration: 2500,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Shimmer effect - continuous smooth animation with holographic feel
@@ -110,7 +109,7 @@ export default function PokemonScreen() {
           useNativeDriver: true,
         }),
         Animated.delay(2000),
-      ])
+      ]),
     ).start();
 
     // Card glow effect
@@ -126,14 +125,14 @@ export default function PokemonScreen() {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Animate bubbles with simpler logic
     bubbleAnims.forEach((bubble, index) => {
       const duration = 6000 + Math.random() * 2000;
       const delay = index * 300;
-      
+
       Animated.loop(
         Animated.sequence([
           Animated.delay(delay),
@@ -162,7 +161,7 @@ export default function PokemonScreen() {
             duration: 0,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       ).start();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -246,7 +245,7 @@ export default function PokemonScreen() {
       setShowSuggestions(false);
       setSuggestions([]);
     },
-    [pokemonStack]
+    [pokemonStack],
   );
   const userRole: UserRole = "admin";
   const environment: Environment = "local";
@@ -364,7 +363,8 @@ export default function PokemonScreen() {
             fairy: "244, 114, 182",
             normal: "203, 213, 225",
           };
-          const rgb = baseColors[type as keyof typeof baseColors] || baseColors.normal;
+          const rgb =
+            baseColors[type as keyof typeof baseColors] || baseColors.normal;
           const opacity = 0.3 + (idx % 3) * 0.05;
           return `rgba(${rgb}, ${opacity})`;
         };

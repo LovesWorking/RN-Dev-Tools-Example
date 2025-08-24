@@ -1,6 +1,20 @@
 import React, { ReactNode, useState } from "react";
 import { View, ViewStyle, Pressable, Animated } from "react-native";
-import Svg, { Defs, Filter, FeGaussianBlur, FeMerge, FeMergeNode, Path, G, Line, Rect, Circle, Polygon, LinearGradient, Stop } from "react-native-svg";
+import Svg, {
+  Defs,
+  Filter,
+  FeGaussianBlur,
+  FeMerge,
+  FeMergeNode,
+  Path,
+  G,
+  Line,
+  Rect,
+  Circle,
+  Polygon,
+  LinearGradient,
+  Stop,
+} from "react-native-svg";
 
 interface CyberpunkButtonOutlineProps {
   children: ReactNode;
@@ -42,7 +56,7 @@ export function CyberpunkButtonOutline({
         toValue: 1.2,
         duration: 100,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   };
 
@@ -59,38 +73,63 @@ export function CyberpunkButtonOutline({
         toValue: 1,
         duration: 100,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   };
 
   return (
-    <Pressable 
-      onPress={onPress} 
+    <Pressable
+      onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={style}>
-      <Animated.View style={{ 
-        position: "relative", 
-        height: 80, 
-        marginBottom: 12,
-        transform: [{ scale: animatedScale }],
-        opacity: animatedOpacity
-      }}>
+      style={style}
+    >
+      <Animated.View
+        style={{
+          position: "relative",
+          height: 80,
+          marginBottom: 12,
+          transform: [{ scale: animatedScale }],
+          opacity: animatedOpacity,
+        }}
+      >
         <View style={{ position: "absolute", width: "100%", height: "100%" }}>
           <Svg viewBox="0 0 280 80" style={{ width: "100%", height: "100%" }}>
             <Defs>
-              <LinearGradient id={`cyberGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <LinearGradient
+                id={`cyberGradient${index}`}
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <Stop offset="0%" stopColor={accentColor} stopOpacity="1" />
                 <Stop offset="50%" stopColor={accentColor} stopOpacity="0.8" />
                 <Stop offset="100%" stopColor={accentColor} stopOpacity="0.6" />
               </LinearGradient>
-              
-              <LinearGradient id={`secondaryGradient${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+
+              <LinearGradient
+                id={`secondaryGradient${index}`}
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <Stop offset="0%" stopColor={secondaryColor} stopOpacity="1" />
-                <Stop offset="100%" stopColor={secondaryColor} stopOpacity="0.6" />
+                <Stop
+                  offset="100%"
+                  stopColor={secondaryColor}
+                  stopOpacity="0.6"
+                />
               </LinearGradient>
-              
-              <Filter id={`strongGlow${index}`} x="-50%" y="-50%" width="200%" height="200%">
+
+              <Filter
+                id={`strongGlow${index}`}
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+              >
                 <FeGaussianBlur stdDeviation="4" result="coloredBlur" />
                 <FeMerge>
                   <FeMergeNode in="coloredBlur" />
@@ -98,8 +137,14 @@ export function CyberpunkButtonOutline({
                   <FeMergeNode in="SourceGraphic" />
                 </FeMerge>
               </Filter>
-              
-              <Filter id={`electricGlow${index}`} x="-50%" y="-50%" width="200%" height="200%">
+
+              <Filter
+                id={`electricGlow${index}`}
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+              >
                 <FeGaussianBlur stdDeviation="3" result="coloredBlur" />
                 <FeMerge>
                   <FeMergeNode in="coloredBlur" />
@@ -123,25 +168,49 @@ export function CyberpunkButtonOutline({
               opacity={0.8}
               filter={`url(#electricGlow${index})`}
             />
-            <G stroke={accentColor} strokeWidth={1} fill="none" opacity={0.6} filter={`url(#electricGlow${index})`}>
+            <G
+              stroke={accentColor}
+              strokeWidth={1}
+              fill="none"
+              opacity={0.6}
+              filter={`url(#electricGlow${index})`}
+            >
               <Line x1={250} y1={5} x2={245} y2={10} />
               <Line x1={250} y1={5} x2={255} y2={10} />
               <Line x1={270} y1={25} x2={265} y2={20} />
               <Line x1={270} y1={25} x2={265} y2={30} />
             </G>
-            <G stroke={accentColor} strokeWidth={1} fill="none" opacity={0.6} filter={`url(#electricGlow${index})`}>
+            <G
+              stroke={accentColor}
+              strokeWidth={1}
+              fill="none"
+              opacity={0.6}
+              filter={`url(#electricGlow${index})`}
+            >
               <Line x1={270} y1={55} x2={265} y2={50} />
               <Line x1={270} y1={55} x2={265} y2={60} />
               <Line x1={255} y1={70} x2={260} y2={65} />
               <Line x1={255} y1={70} x2={250} y2={65} />
             </G>
-            <G stroke={accentColor} strokeWidth={1} fill="none" opacity={0.6} filter={`url(#electricGlow${index})`}>
+            <G
+              stroke={accentColor}
+              strokeWidth={1}
+              fill="none"
+              opacity={0.6}
+              filter={`url(#electricGlow${index})`}
+            >
               <Line x1={25} y1={70} x2={30} y2={65} />
               <Line x1={25} y1={70} x2={20} y2={65} />
               <Line x1={10} y1={55} x2={15} y2={60} />
               <Line x1={10} y1={55} x2={15} y2={50} />
             </G>
-            <G stroke={accentColor} strokeWidth={1} fill="none" opacity={0.6} filter={`url(#electricGlow${index})`}>
+            <G
+              stroke={accentColor}
+              strokeWidth={1}
+              fill="none"
+              opacity={0.6}
+              filter={`url(#electricGlow${index})`}
+            >
               <Line x1={10} y1={25} x2={15} y2={30} />
               <Line x1={10} y1={25} x2={15} y2={20} />
               <Line x1={15} y1={5} x2={20} y2={10} />
@@ -149,7 +218,7 @@ export function CyberpunkButtonOutline({
             </G>
           </Svg>
         </View>
-        
+
         <View
           style={{
             position: "absolute",

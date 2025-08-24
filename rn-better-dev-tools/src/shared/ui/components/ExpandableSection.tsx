@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { StyleSheet, View, Animated } from "react-native";
-import type { LucideIcon } from 'rn-better-dev-tools/icons';
+import type { LucideIcon } from "rn-better-dev-tools/icons";
 
 import { ExpandableSectionHeader } from "./ExpandableSectionHeader";
 
@@ -51,9 +51,7 @@ export function ExpandableSection({
         <View style={styles.divider} />
 
         {isExpanded && (
-          <Animated.View style={{ opacity: 1 }}>
-            {children}
-          </Animated.View>
+          <Animated.View style={{ opacity: 1 }}>{children}</Animated.View>
         )}
       </View>
     </View>

@@ -8,14 +8,16 @@ const queryClient = new QueryClient();
 
 export default function TestFilters() {
   const [queryFilter, setQueryFilter] = React.useState<string | null>(null);
-  const [mutationFilter, setMutationFilter] = React.useState<string | null>(null);
+  const [mutationFilter, setMutationFilter] = React.useState<string | null>(
+    null,
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>Minimal Filter Buttons Design</Text>
-          
+
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Query Filters:</Text>
             <View style={styles.filterContainer}>

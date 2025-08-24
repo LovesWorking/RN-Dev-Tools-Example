@@ -2,7 +2,13 @@
 import type { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 
 // From @sentry/core/types-hoist/severity.ts
-export type SeverityLevel = 'fatal' | 'error' | 'warning' | 'log' | 'info' | 'debug';
+export type SeverityLevel =
+  | "fatal"
+  | "error"
+  | "warning"
+  | "log"
+  | "info"
+  | "debug";
 
 // From @sentry/core/types-hoist/breadcrumb.ts
 export interface Breadcrumb {
@@ -56,11 +62,12 @@ export type SpanAttributeValue =
   | Array<null | undefined | boolean>;
 
 export type SpanAttributes = Partial<{
-  'sentry.origin': string;
-  'sentry.op': string;
-  'sentry.source': string;
-  'sentry.sample_rate': number;
-}> & Record<string, SpanAttributeValue | undefined>;
+  "sentry.origin": string;
+  "sentry.op": string;
+  "sentry.source": string;
+  "sentry.sample_rate": number;
+}> &
+  Record<string, SpanAttributeValue | undefined>;
 
 export interface SpanJSON {
   data: SpanAttributes;
@@ -82,21 +89,21 @@ export interface SpanJSON {
 
 // HTTP-specific span attributes (from OpenTelemetry semantic conventions)
 export interface HttpSpanAttributes extends SpanAttributes {
-  'http.request.method'?: string;
-  'http.response.status_code'?: number;
-  'http.url'?: string;
-  'http.target'?: string;
-  'http.host'?: string;
-  'http.scheme'?: string;
-  'http.status_code'?: number; // deprecated, use http.response.status_code
-  'http.method'?: string; // deprecated, use http.request.method
-  'http.response_content_length'?: number;
-  'http.request_content_length'?: number;
-  'http.query'?: string;
-  'http.fragment'?: string;
-  'url.full'?: string;
-  'server.address'?: string;
-  'server.port'?: number;
+  "http.request.method"?: string;
+  "http.response.status_code"?: number;
+  "http.url"?: string;
+  "http.target"?: string;
+  "http.host"?: string;
+  "http.scheme"?: string;
+  "http.status_code"?: number; // deprecated, use http.response.status_code
+  "http.method"?: string; // deprecated, use http.request.method
+  "http.response_content_length"?: number;
+  "http.request_content_length"?: number;
+  "http.query"?: string;
+  "http.fragment"?: string;
+  "url.full"?: string;
+  "server.address"?: string;
+  "server.port"?: number;
 }
 
 // Sentry Event types
@@ -175,86 +182,121 @@ export interface ErrorDetails {
 }
 
 export interface SentryEventInsight {
-  type: 'error' | 'performance' | 'security' | 'quality';
-  severity: 'high' | 'medium' | 'low';
+  type: "error" | "performance" | "security" | "quality";
+  severity: "high" | "medium" | "low";
   message: string;
   details?: string;
   suggestion?: string;
 }
 
 // Helper function to extract HTTP data from various Sentry structures
-export function extractHttpDataFromSentryEvent(entry: ConsoleTransportEntry): HttpRequestInfo | null {
+export function extractHttpDataFromSentryEvent(
+  entry: ConsoleTransportEntry,
+): HttpRequestInfo | null {
   const { metadata, message, timestamp } = entry;
-  
+
   // Try to extract from breadcrumb data (most common for HTTP)
-  if (metadata.category === 'xhr' || metadata.category === 'fetch' || metadata.category === 'http') {
+  if (
+    metadata.category === "xhr" ||
+    metadata.category === "fetch" ||
+    metadata.category === "http"
+  ) {
     const data = (metadata.data || metadata) as Record<string, any>;
     const statusCode = data.status_code || data.status || data.statusCode;
     return {
-      method: data.method || 'GET',
-      url: data.url || '',
+      method: data.method || "GET",
+      url: data.url || "",
       statusCode: statusCode as number | undefined,
-      duration: data.duration || data.responseTime || (data.endTimestamp && data.startTimestamp ? (Number(data.endTimestamp) - Number(data.startTimestamp)) : undefined),
+      duration:
+        data.duration ||
+        data.responseTime ||
+        (data.endTimestamp && data.startTimestamp
+          ? Number(data.endTimestamp) - Number(data.startTimestamp)
+          : undefined),
       requestSize: data.request_body_size || data.requestSize,
       responseSize: data.response_body_size || data.responseSize || data.size,
       error: Number(statusCode || 0) >= 400,
-      errorMessage: Number(statusCode || 0) >= 400 ? (typeof message === 'string' ? message : message?.message || 'HTTP Error') : undefined,
-      timestamp
+      errorMessage:
+        Number(statusCode || 0) >= 400
+          ? typeof message === "string"
+            ? message
+            : message?.message || "HTTP Error"
+          : undefined,
+      timestamp,
     };
   }
-  
+
   // Try to extract from span data
   const rawData = metadata._sentryRawData as SentryEvent | undefined;
   if (rawData?.spans && Array.isArray(rawData.spans)) {
     for (const span of rawData.spans as SpanJSON[]) {
-      if (span.op === 'http.client' || span.op === 'http' || span.description?.startsWith('HTTP')) {
+      if (
+        span.op === "http.client" ||
+        span.op === "http" ||
+        span.description?.startsWith("HTTP")
+      ) {
         const attrs = span.data as HttpSpanAttributes;
-        const statusCode = attrs['http.response.status_code'] || attrs['http.status_code'];
-        const method = attrs['http.request.method'] || attrs['http.method'] || 'GET';
-        const url = attrs['url.full'] || attrs['http.url'] || span.description || '';
-        
+        const statusCode =
+          attrs["http.response.status_code"] || attrs["http.status_code"];
+        const method =
+          attrs["http.request.method"] || attrs["http.method"] || "GET";
+        const url =
+          attrs["url.full"] || attrs["http.url"] || span.description || "";
+
         return {
           method,
           url,
           statusCode,
-          duration: span.timestamp && span.start_timestamp ? (span.timestamp - span.start_timestamp) * 1000 : undefined,
-          requestSize: attrs['http.request_content_length'],
-          responseSize: attrs['http.response_content_length'],
+          duration:
+            span.timestamp && span.start_timestamp
+              ? (span.timestamp - span.start_timestamp) * 1000
+              : undefined,
+          requestSize: attrs["http.request_content_length"],
+          responseSize: attrs["http.response_content_length"],
           error: statusCode ? statusCode >= 400 : false,
-          errorMessage: statusCode && statusCode >= 400 ? `HTTP ${statusCode}` : undefined,
-          timestamp: span.start_timestamp ? span.start_timestamp * 1000 : timestamp
+          errorMessage:
+            statusCode && statusCode >= 400 ? `HTTP ${statusCode}` : undefined,
+          timestamp: span.start_timestamp
+            ? span.start_timestamp * 1000
+            : timestamp,
         };
       }
     }
   }
-  
+
   // Try to extract from event contexts
   const rawEventData = metadata._sentryRawData as SentryEvent | undefined;
   const trace = rawEventData?.contexts?.trace as any;
-  if (trace?.op === 'http.client') {
+  if (trace?.op === "http.client") {
     const traceData = trace.data || {};
     return {
-      method: traceData['http.request.method'] || traceData['http.method'] || 'GET',
-      url: traceData['url.full'] || traceData['http.url'] || '',
-      statusCode: traceData['http.response.status_code'] || traceData['http.status_code'],
+      method:
+        traceData["http.request.method"] || traceData["http.method"] || "GET",
+      url: traceData["url.full"] || traceData["http.url"] || "",
+      statusCode:
+        traceData["http.response.status_code"] || traceData["http.status_code"],
       duration: metadata.duration as number | undefined,
-      timestamp
+      timestamp,
     };
   }
-  
+
   // Fallback to old extraction logic
-  if (metadata.sentryEventType === 'http' || metadata.method) {
+  if (metadata.sentryEventType === "http" || metadata.method) {
     const statusCode = metadata.status || metadata.statusCode;
     return {
-      method: (metadata.method as string) || 'GET',
-      url: (metadata.url as string) || '',
+      method: (metadata.method as string) || "GET",
+      url: (metadata.url as string) || "",
       statusCode: statusCode as number | undefined,
-      duration: (metadata.duration || metadata.responseTime) as number | undefined,
-      responseSize: (metadata.responseSize || metadata.size) as number | undefined,
+      duration: (metadata.duration || metadata.responseTime) as
+        | number
+        | undefined,
+      responseSize: (metadata.responseSize || metadata.size) as
+        | number
+        | undefined,
       error: Number(statusCode || 0) >= 400,
-      timestamp
+      timestamp,
     };
   }
-  
+
   return null;
 }

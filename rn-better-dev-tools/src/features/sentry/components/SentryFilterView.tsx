@@ -19,7 +19,7 @@ import {
   Settings,
   User,
   Check,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import {
   LogLevel,
   LogType,
@@ -93,7 +93,7 @@ export function SentryFilterView({
     isSelected: boolean,
     onPress: () => void,
     Icon?: React.ComponentType<{ size?: number; color?: string }>,
-    color?: string
+    color?: string,
   ) => (
     <TouchableOpacity
       accessibilityLabel={`${label} filter ${count} items`}
@@ -106,15 +106,29 @@ export function SentryFilterView({
         isSelected && { backgroundColor: `${color}20`, borderColor: color },
       ]}
     >
-      <View style={styles.filterItemLeft} sentry-label="ignore devtools sentry filter item left">
-        {Icon && <Icon size={16} color={isSelected ? color : gameUIColors.secondary} />}
-        <Text style={[styles.filterItemText, isSelected && { color }]} sentry-label="ignore devtools sentry filter item text">
+      <View
+        style={styles.filterItemLeft}
+        sentry-label="ignore devtools sentry filter item left"
+      >
+        {Icon && (
+          <Icon size={16} color={isSelected ? color : gameUIColors.secondary} />
+        )}
+        <Text
+          style={[styles.filterItemText, isSelected && { color }]}
+          sentry-label="ignore devtools sentry filter item text"
+        >
           {label}
         </Text>
       </View>
-      <View style={styles.filterItemRight} sentry-label="ignore devtools sentry filter item right">
+      <View
+        style={styles.filterItemRight}
+        sentry-label="ignore devtools sentry filter item right"
+      >
         {count > 0 && (
-          <Text style={[styles.filterItemCount, isSelected && { color }]} sentry-label="ignore devtools sentry filter item count">
+          <Text
+            style={[styles.filterItemCount, isSelected && { color }]}
+            sentry-label="ignore devtools sentry filter item count"
+          >
             {count}
           </Text>
         )}
@@ -124,7 +138,10 @@ export function SentryFilterView({
   );
 
   return (
-    <View style={styles.container} sentry-label="ignore devtools sentry filter container">
+    <View
+      style={styles.container}
+      sentry-label="ignore devtools sentry filter container"
+    >
       <ScrollView
         accessibilityLabel="Sentry filter view"
         accessibilityHint="View sentry filter view"
@@ -134,9 +151,20 @@ export function SentryFilterView({
         showsVerticalScrollIndicator={false}
       >
         {/* Log Levels Section */}
-        <View style={styles.section} sentry-label="ignore devtools sentry filter section">
-          <Text style={styles.sectionTitle} sentry-label="ignore devtools sentry filter section title">Log Levels</Text>
-          <View style={styles.filterGrid} sentry-label="ignore devtools sentry filter grid">
+        <View
+          style={styles.section}
+          sentry-label="ignore devtools sentry filter section"
+        >
+          <Text
+            style={styles.sectionTitle}
+            sentry-label="ignore devtools sentry filter section title"
+          >
+            Log Levels
+          </Text>
+          <View
+            style={styles.filterGrid}
+            sentry-label="ignore devtools sentry filter grid"
+          >
             {sortedLogLevels.map(({ level, color }) => {
               const count = counts.byLevel[level] || 0;
               const label =
@@ -151,16 +179,27 @@ export function SentryFilterView({
                 selectedLevels.has(level),
                 () => onToggleLevelFilter(level),
                 undefined,
-                color
+                color,
               );
             })}
           </View>
         </View>
 
         {/* Event Types Section */}
-        <View style={styles.section} sentry-label="ignore devtools sentry filter section">
-          <Text style={styles.sectionTitle} sentry-label="ignore devtools sentry filter section title">Event Types</Text>
-          <View style={styles.filterGrid} sentry-label="ignore devtools sentry filter grid">
+        <View
+          style={styles.section}
+          sentry-label="ignore devtools sentry filter section"
+        >
+          <Text
+            style={styles.sectionTitle}
+            sentry-label="ignore devtools sentry filter section title"
+          >
+            Event Types
+          </Text>
+          <View
+            style={styles.filterGrid}
+            sentry-label="ignore devtools sentry filter grid"
+          >
             {sortedLogTypes.map(({ type, Icon, color }) => {
               const count = counts.byType[type] || 0;
               const label =
@@ -177,7 +216,7 @@ export function SentryFilterView({
                 selectedTypes.has(type),
                 () => onToggleTypeFilter(type),
                 Icon,
-                color
+                color,
               );
             })}
           </View>

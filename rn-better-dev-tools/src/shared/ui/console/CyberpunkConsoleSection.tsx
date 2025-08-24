@@ -1,7 +1,15 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Pressable, ViewStyle, Animated, Easing } from "react-native";
-import type { LucideIcon } from 'rn-better-dev-tools/icons';
-import { ChevronRight } from 'rn-better-dev-tools/icons';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ViewStyle,
+  Animated,
+  Easing,
+} from "react-native";
+import type { LucideIcon } from "rn-better-dev-tools/icons";
+import { ChevronRight } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // CONFIGURABLE: Change this value to adjust glitch duration (in milliseconds)
@@ -49,15 +57,15 @@ export function CyberpunkConsoleSection({
           toValue: 0.8,
           duration: 2000,
           easing: Easing.inOut(Easing.quad),
-          useNativeDriver: false
+          useNativeDriver: false,
         }),
         Animated.timing(borderGlow, {
           toValue: 0.2,
           duration: 2000,
           easing: Easing.inOut(Easing.quad),
-          useNativeDriver: false
-        })
-      ])
+          useNativeDriver: false,
+        }),
+      ]),
     ).start();
 
     // Random glitch effect with varying delays per item
@@ -71,57 +79,181 @@ export function CyberpunkConsoleSection({
 
         // Glitch opacity animation - uses proportional timing
         Animated.sequence([
-          Animated.timing(glitchOpacity, { toValue: 1, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0.3, duration: d * 0.1, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0.9, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0.2, duration: d * 0.1, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0.8, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0.4, duration: d * 0.1, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0.7, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchOpacity, { toValue: 0, duration: d * 0.05, useNativeDriver: true })
+          Animated.timing(glitchOpacity, {
+            toValue: 1,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.3,
+            duration: d * 0.1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.9,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.2,
+            duration: d * 0.1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.8,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.4,
+            duration: d * 0.1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0.7,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchOpacity, {
+            toValue: 0,
+            duration: d * 0.05,
+            useNativeDriver: true,
+          }),
         ]).start();
 
         // Glitch X displacement - proportional timing
         Animated.sequence([
-          Animated.timing(glitchX, { toValue: 10, duration: d * 0.1, useNativeDriver: true }),
-          Animated.timing(glitchX, { toValue: -10, duration: d * 0.1, useNativeDriver: true }),
-          Animated.timing(glitchX, { toValue: 8, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchX, { toValue: -6, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchX, { toValue: 5, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchX, { toValue: -3, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchX, { toValue: 0, duration: d * 0.15, useNativeDriver: true })
+          Animated.timing(glitchX, {
+            toValue: 10,
+            duration: d * 0.1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: -10,
+            duration: d * 0.1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 8,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: -6,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 5,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: -3,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchX, {
+            toValue: 0,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
         ]).start();
 
         // Glitch Y displacement - proportional timing
         Animated.sequence([
-          Animated.timing(glitchY, { toValue: -5, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchY, { toValue: 4, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchY, { toValue: -3, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchY, { toValue: 2, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchY, { toValue: 0, duration: d * 0.2, useNativeDriver: true })
+          Animated.timing(glitchY, {
+            toValue: -5,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 4,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: -3,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 2,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchY, {
+            toValue: 0,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
         ]).start();
 
         // Glitch scale - proportional timing
         Animated.sequence([
-          Animated.timing(glitchScale, { toValue: 1.05, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchScale, { toValue: 0.98, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchScale, { toValue: 1.03, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchScale, { toValue: 0.97, duration: d * 0.2, useNativeDriver: true }),
-          Animated.timing(glitchScale, { toValue: 1.02, duration: d * 0.15, useNativeDriver: true }),
-          Animated.timing(glitchScale, { toValue: 1, duration: d * 0.15, useNativeDriver: true })
+          Animated.timing(glitchScale, {
+            toValue: 1.05,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 0.98,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 1.03,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 0.97,
+            duration: d * 0.2,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 1.02,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glitchScale, {
+            toValue: 1,
+            duration: d * 0.15,
+            useNativeDriver: true,
+          }),
         ]).start();
 
         // Glow intensity glitch - proportional timing
         Animated.sequence([
-          Animated.timing(glowIntensity, { toValue: 1, duration: d * 0.3, useNativeDriver: false }),
-          Animated.timing(glowIntensity, { toValue: 0.5, duration: d * 0.4, useNativeDriver: false }),
-          Animated.timing(glowIntensity, { toValue: 0.3, duration: d * 0.3, useNativeDriver: false })
+          Animated.timing(glowIntensity, {
+            toValue: 1,
+            duration: d * 0.3,
+            useNativeDriver: false,
+          }),
+          Animated.timing(glowIntensity, {
+            toValue: 0.5,
+            duration: d * 0.4,
+            useNativeDriver: false,
+          }),
+          Animated.timing(glowIntensity, {
+            toValue: 0.3,
+            duration: d * 0.3,
+            useNativeDriver: false,
+          }),
         ]).start();
 
         // Border glow pulse during glitch - proportional timing
         Animated.sequence([
-          Animated.timing(borderGlow, { toValue: 1, duration: d * 0.5, useNativeDriver: false }),
-          Animated.timing(borderGlow, { toValue: 0.2, duration: d * 0.5, useNativeDriver: false })
+          Animated.timing(borderGlow, {
+            toValue: 1,
+            duration: d * 0.5,
+            useNativeDriver: false,
+          }),
+          Animated.timing(borderGlow, {
+            toValue: 0.2,
+            duration: d * 0.5,
+            useNativeDriver: false,
+          }),
         ]).start();
 
         // Schedule next glitch
@@ -142,23 +274,43 @@ export function CyberpunkConsoleSection({
       toValue: 0.98,
       damping: 15,
       stiffness: 400,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
     Animated.timing(glowIntensity, {
       toValue: 1,
       duration: 100,
-      useNativeDriver: false
+      useNativeDriver: false,
     }).start();
 
     // Trigger glitch on press
     Animated.sequence([
-      Animated.timing(glitchOpacity, { toValue: 1, duration: 20, useNativeDriver: true }),
-      Animated.timing(glitchOpacity, { toValue: 0, duration: 30, useNativeDriver: true })
+      Animated.timing(glitchOpacity, {
+        toValue: 1,
+        duration: 20,
+        useNativeDriver: true,
+      }),
+      Animated.timing(glitchOpacity, {
+        toValue: 0,
+        duration: 30,
+        useNativeDriver: true,
+      }),
     ]).start();
     Animated.sequence([
-      Animated.timing(glitchX, { toValue: 5, duration: 20, useNativeDriver: true }),
-      Animated.timing(glitchX, { toValue: -5, duration: 20, useNativeDriver: true }),
-      Animated.timing(glitchX, { toValue: 0, duration: 20, useNativeDriver: true })
+      Animated.timing(glitchX, {
+        toValue: 5,
+        duration: 20,
+        useNativeDriver: true,
+      }),
+      Animated.timing(glitchX, {
+        toValue: -5,
+        duration: 20,
+        useNativeDriver: true,
+      }),
+      Animated.timing(glitchX, {
+        toValue: 0,
+        duration: 20,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
@@ -168,12 +320,12 @@ export function CyberpunkConsoleSection({
       toValue: 1,
       damping: 15,
       stiffness: 400,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
     Animated.timing(glowIntensity, {
       toValue: 0.3,
       duration: 200,
-      useNativeDriver: false
+      useNativeDriver: false,
     }).start();
   };
 
@@ -196,13 +348,13 @@ export function CyberpunkConsoleSection({
     if (iconColor === "#00FF88") return "#00FF88"; // Storage green
     if (iconColor === "#00E5FF") return gameUIColors.info; // Storage Events cyan
     if (iconColor === "#E040FB") return "#E040FB"; // Network purple
-    
+
     // Fallback pattern matching for any other colors
     if (iconColor.includes("FF006E")) return "#FF006E";
     if (iconColor.includes("00FF88")) return "#00FF88";
     if (iconColor.includes("00E5FF")) return "#00E5FF";
     if (iconColor.includes("E040FB")) return "#E040FB";
-    
+
     return gameUIColors.info; // Default cyan
   };
 
@@ -211,11 +363,13 @@ export function CyberpunkConsoleSection({
   // Convert hex color to RGB values for interpolation
   const hexToRgb = (hex: string) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 255, b: 255 };
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : { r: 0, g: 255, b: 255 };
   };
 
   const rgb = hexToRgb(accentColor);
@@ -223,12 +377,15 @@ export function CyberpunkConsoleSection({
   // Create interpolated values for border animation
   const borderAlpha = borderGlow.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.2 + isPressedRef.current * 0.3, 0.6 + isPressedRef.current * 0.3]
+    outputRange: [
+      0.2 + isPressedRef.current * 0.3,
+      0.6 + isPressedRef.current * 0.3,
+    ],
   });
 
   const shadowOpacityValue = glowIntensity.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 0.8]
+    outputRange: [0, 0.8],
   });
 
   const borderAnimatedStyle = {
@@ -244,7 +401,6 @@ export function CyberpunkConsoleSection({
       { scale: glitchScale },
     ],
   };
-
 
   return (
     <Pressable
@@ -262,9 +418,24 @@ export function CyberpunkConsoleSection({
           ]}
         >
           {/* Glass effect layers with accent color tint */}
-          <View style={[styles.glassLayer1, { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.02)` }]} />
-          <View style={[styles.glassLayer2, { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.015)` }]} />
-          <View style={[styles.glassLayer3, { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.01)` }]} />
+          <View
+            style={[
+              styles.glassLayer1,
+              { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.02)` },
+            ]}
+          />
+          <View
+            style={[
+              styles.glassLayer2,
+              { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.015)` },
+            ]}
+          />
+          <View
+            style={[
+              styles.glassLayer3,
+              { backgroundColor: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.01)` },
+            ]}
+          />
 
           {/* Glass shimmer overlay */}
           <View style={[styles.glassShimmer]} />
@@ -403,7 +574,9 @@ export function CyberpunkConsoleSection({
 
           {/* Binary pattern decoration */}
           <View style={styles.binaryPattern}>
-            <Text style={[styles.binaryText, { color: `${accentColor}40` }]}>01101</Text>
+            <Text style={[styles.binaryText, { color: `${accentColor}40` }]}>
+              01101
+            </Text>
           </View>
         </Animated.View>
       </Animated.View>

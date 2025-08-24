@@ -1,5 +1,10 @@
 import { StyleSheet, View, Text } from "react-native";
-import { AlertCircle, CheckCircle2, Eye, XCircle } from 'rn-better-dev-tools/icons';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Eye,
+  XCircle,
+} from "rn-better-dev-tools/icons";
 import { EnvVarStats } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 

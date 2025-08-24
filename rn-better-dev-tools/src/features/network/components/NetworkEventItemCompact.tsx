@@ -1,6 +1,12 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
-import { ChevronRight, Upload, Download, Clock, AlertCircle } from 'rn-better-dev-tools/icons';
+import {
+  ChevronRight,
+  Upload,
+  Download,
+  Clock,
+  AlertCircle,
+} from "rn-better-dev-tools/icons";
 import type { NetworkEvent } from "../types";
 import { formatBytes, formatDuration } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
@@ -24,18 +30,25 @@ function getStatusColor(status?: number, error?: string) {
 // Get method color
 function getMethodColor(method: string) {
   switch (method) {
-    case "GET": return "#10B981";
-    case "POST": return "#3B82F6";
-    case "PUT": return "#F59E0B";
-    case "DELETE": return "#EF4444";
-    case "PATCH": return "#8B5CF6";
-    default: return "#6B7280";
+    case "GET":
+      return "#10B981";
+    case "POST":
+      return "#3B82F6";
+    case "PUT":
+      return "#F59E0B";
+    case "DELETE":
+      return "#EF4444";
+    case "PATCH":
+      return "#8B5CF6";
+    default:
+      return "#6B7280";
   }
 }
 
 // Get content type badge with color
 function getContentTypeBadge(headers: Record<string, string>) {
-  const contentType = headers?.["content-type"] || headers?.["Content-Type"] || "";
+  const contentType =
+    headers?.["content-type"] || headers?.["Content-Type"] || "";
   if (contentType.includes("json")) return { type: "JSON", color: "#3B82F6" };
   if (contentType.includes("xml")) return { type: "XML", color: "#8B5CF6" };
   if (contentType.includes("html")) return { type: "HTML", color: "#F59E0B" };
@@ -50,7 +63,11 @@ function getContentTypeBadge(headers: Record<string, string>) {
 // Decomposed components following rule3 - Component Composition
 
 // Status indicator component - single responsibility
-function StatusIndicator({ event, isPending, statusColor }: {
+function StatusIndicator({
+  event,
+  isPending,
+  statusColor,
+}: {
   event: NetworkEvent;
   isPending: boolean;
   statusColor: string;
@@ -63,7 +80,7 @@ function StatusIndicator({ event, isPending, statusColor }: {
       </View>
     );
   }
-  
+
   if (event.error) {
     return (
       <View style={styles.errorBadge}>
@@ -72,7 +89,7 @@ function StatusIndicator({ event, isPending, statusColor }: {
       </View>
     );
   }
-  
+
   return (
     <View style={styles.statusBadge}>
       <Text style={[styles.statusText, { color: statusColor }]}>
@@ -82,13 +99,16 @@ function StatusIndicator({ event, isPending, statusColor }: {
   );
 }
 
-// Size indicators component - single responsibility  
-function SizeIndicators({ requestSize, responseSize }: {
+// Size indicators component - single responsibility
+function SizeIndicators({
+  requestSize,
+  responseSize,
+}: {
   requestSize?: number;
   responseSize?: number;
 }) {
   if (!requestSize && !responseSize) return null;
-  
+
   return (
     <View style={styles.sizeRow}>
       {requestSize ? (
@@ -115,16 +135,16 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
     const methodColor = getMethodColor(event.method);
     const isPending = !event.status && !event.error;
     const contentType = getContentTypeBadge(event.responseHeaders);
-    
+
     // Format URL for display (max 2 lines)
     const displayUrl = event.path || event.url.replace(/^https?:\/\/[^/]+/, "");
-    
+
     // Format time with both absolute and relative
     const timeString = new Date(event.timestamp).toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       second: "2-digit",
-      hour12: true
+      hour12: true,
     });
     const relativeTime = formatRelativeTime(event.timestamp, tick);
 
@@ -136,14 +156,19 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
       >
         {/* Left section: Method badge and size indicators */}
         <View style={styles.leftSection}>
-          <View style={[styles.methodBadge, { backgroundColor: `${methodColor}15` }]}>
+          <View
+            style={[
+              styles.methodBadge,
+              { backgroundColor: `${methodColor}15` },
+            ]}
+          >
             <Text style={[styles.methodText, { color: methodColor }]}>
               {event.method}
             </Text>
           </View>
-          <SizeIndicators 
-            requestSize={event.requestSize} 
-            responseSize={event.responseSize} 
+          <SizeIndicators
+            requestSize={event.requestSize}
+            responseSize={event.responseSize}
           />
         </View>
 
@@ -157,27 +182,34 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
         {/* Right section: Status, time, size in column */}
         <View style={styles.rightSection}>
           <View style={styles.rightTopRow}>
-            <StatusIndicator 
-              event={event} 
-              isPending={isPending} 
-              statusColor={statusColor} 
+            <StatusIndicator
+              event={event}
+              isPending={isPending}
+              statusColor={statusColor}
             />
-            
+
             {/* Duration */}
             {event.duration ? (
               <Text style={styles.durationText}>
                 {formatDuration(event.duration)}
               </Text>
             ) : null}
-            
+
             {/* Content type badge with custom color */}
             {contentType ? (
-              <View style={[styles.typeBadge, { backgroundColor: `${contentType.color}15` }]}>
-                <Text style={[styles.typeText, { color: contentType.color }]}>{contentType.type}</Text>
+              <View
+                style={[
+                  styles.typeBadge,
+                  { backgroundColor: `${contentType.color}15` },
+                ]}
+              >
+                <Text style={[styles.typeText, { color: contentType.color }]}>
+                  {contentType.type}
+                </Text>
               </View>
             ) : null}
           </View>
-          
+
           {/* Bottom row: Time and size */}
           <View style={styles.rightBottomRow}>
             <Text style={styles.timestamp}>
@@ -185,12 +217,12 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
             </Text>
           </View>
         </View>
-        
+
         {/* Chevron */}
         <ChevronRight size={14} color="#6B7280" />
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({
@@ -210,7 +242,7 @@ const styles = StyleSheet.create({
   },
   leftSection: {
     marginRight: 8,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     paddingTop: 2,
   },
   methodBadge: {

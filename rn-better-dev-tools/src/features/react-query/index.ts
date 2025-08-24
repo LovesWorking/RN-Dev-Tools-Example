@@ -1,1 +1,1 @@
-export * from './ReactQueryDevTools';
+export * from "./ReactQueryDevTools";

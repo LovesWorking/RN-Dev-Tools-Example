@@ -16,10 +16,14 @@ import {
   WifiOff,
   X,
   Globe,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { TanstackLogo } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
-import { gameUIColors, getThemedDialColors, THEME_ACCENT } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import {
+  gameUIColors,
+  getThemedDialColors,
+  THEME_ACCENT,
+} from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
@@ -210,7 +214,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
-        ])
+        ]),
       );
       pulseAnimationRef.current.start();
     };
@@ -232,7 +236,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Gentle breathing effect for center button
@@ -250,7 +254,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Circuit traces fade in
@@ -355,9 +359,9 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
   const centerButtonAnimatedStyle = {
     transform: [
-      { 
-        scale: Animated.multiply(centerButtonScale, breathingScale)
-      }
+      {
+        scale: Animated.multiply(centerButtonScale, breathingScale),
+      },
     ],
   };
 
@@ -374,7 +378,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           onPress={handleClose}
         />
       </Animated.View>
-
 
       <Animated.View
         style={[
@@ -473,7 +476,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)', // Darker overlay for better contrast without games
+    backgroundColor: "rgba(0, 0, 0, 0.85)", // Darker overlay for better contrast without games
   },
   parent: {
     width: CIRCLE_SIZE,

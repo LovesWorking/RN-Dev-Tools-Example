@@ -20,13 +20,13 @@ import {
   Plus,
   Minus,
   Edit3,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
-import { 
-  gameUIColors, 
-  GameUICollapsibleSection 
+import {
+  gameUIColors,
+  GameUICollapsibleSection,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
 
@@ -94,7 +94,7 @@ export function StorageEventDetailContent({
 
     const key = conversation.key;
     const allKeyEvents = conversation.events.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
     );
 
     if (allKeyEvents.length === 0) return;
@@ -221,10 +221,8 @@ export function StorageEventDetailContent({
   };
 
   const toggleValueChange = (index: number) => {
-    setExpandedChangeItems(prev => 
-      prev.includes(index) 
-        ? prev.filter(i => i !== index)
-        : [...prev, index]
+    setExpandedChangeItems((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
 
@@ -244,11 +242,7 @@ export function StorageEventDetailContent({
     // Calculate the differences
     let differences: Difference[] = [];
     try {
-      differences = diff(
-        oldParsed || {},
-        newParsed || {},
-        { cyclesFix: true }
-      );
+      differences = diff(oldParsed || {}, newParsed || {}, { cyclesFix: true });
     } catch (error) {
       console.warn("Failed to calculate diff:", error);
       return null;
@@ -285,15 +279,17 @@ export function StorageEventDetailContent({
     };
 
     const formatPath = (path: (string | number)[]) => {
-      return path.map((p, i) => {
-        if (typeof p === "number") {
-          return `[${p}]`;
-        }
-        if (i === 0) {
-          return p;
-        }
-        return `.${p}`;
-      }).join("");
+      return path
+        .map((p, i) => {
+          if (typeof p === "number") {
+            return `[${p}]`;
+          }
+          if (i === 0) {
+            return p;
+          }
+          return `.${p}`;
+        })
+        .join("");
     };
 
     const formatValue = (value: any) => {
@@ -318,37 +314,42 @@ export function StorageEventDetailContent({
             <Text style={styles.diffCountText}>{differences.length}</Text>
           </View>
         </View>
-        
+
         <View style={styles.diffContent}>
           {differences.slice(0, 10).map((diff, index) => (
             <View key={index} style={styles.diffItem}>
               <View style={styles.diffItemHeader}>
                 {getDiffIcon(diff.type)}
-                <Text 
-                  style={[
-                    styles.diffType,
-                    { color: getDiffColor(diff.type) }
-                  ]}
+                <Text
+                  style={[styles.diffType, { color: getDiffColor(diff.type) }]}
                 >
                   {diff.type}
                 </Text>
-                <Text style={styles.diffPath}>
-                  {formatPath(diff.path)}
-                </Text>
+                <Text style={styles.diffPath}>{formatPath(diff.path)}</Text>
               </View>
-              
+
               <View style={styles.diffValues}>
                 {diff.type === "CHANGE" && (
                   <>
                     <View style={styles.diffValueRow}>
                       <Text style={styles.diffValueLabel}>OLD:</Text>
-                      <Text style={[styles.diffValue, { color: gameUIColors.optional }]}>
+                      <Text
+                        style={[
+                          styles.diffValue,
+                          { color: gameUIColors.optional },
+                        ]}
+                      >
                         {formatValue((diff as any).oldValue)}
                       </Text>
                     </View>
                     <View style={styles.diffValueRow}>
                       <Text style={styles.diffValueLabel}>NEW:</Text>
-                      <Text style={[styles.diffValue, { color: gameUIColors.success }]}>
+                      <Text
+                        style={[
+                          styles.diffValue,
+                          { color: gameUIColors.success },
+                        ]}
+                      >
                         {formatValue(diff.value)}
                       </Text>
                     </View>
@@ -357,7 +358,12 @@ export function StorageEventDetailContent({
                 {diff.type === "CREATE" && (
                   <View style={styles.diffValueRow}>
                     <Text style={styles.diffValueLabel}>VALUE:</Text>
-                    <Text style={[styles.diffValue, { color: gameUIColors.success }]}>
+                    <Text
+                      style={[
+                        styles.diffValue,
+                        { color: gameUIColors.success },
+                      ]}
+                    >
                       {formatValue(diff.value)}
                     </Text>
                   </View>
@@ -365,7 +371,9 @@ export function StorageEventDetailContent({
                 {diff.type === "REMOVE" && (
                   <View style={styles.diffValueRow}>
                     <Text style={styles.diffValueLabel}>REMOVED:</Text>
-                    <Text style={[styles.diffValue, { color: gameUIColors.error }]}>
+                    <Text
+                      style={[styles.diffValue, { color: gameUIColors.error }]}
+                    >
                       {formatValue((diff as any).oldValue)}
                     </Text>
                   </View>
@@ -373,7 +381,7 @@ export function StorageEventDetailContent({
               </View>
             </View>
           ))}
-          
+
           {differences.length > 10 && (
             <Text style={styles.moreText}>
               +{differences.length - 10} more changes
@@ -384,34 +392,47 @@ export function StorageEventDetailContent({
     );
   };
 
-  const renderValueContent = (value: unknown, label: string, labelColor?: string) => {
+  const renderValueContent = (
+    value: unknown,
+    label: string,
+    labelColor?: string,
+  ) => {
     const parsed = parseValue(value);
-    const type = parsed === null ? "null" 
-      : parsed === undefined ? "undefined"
-      : Array.isArray(parsed) ? "array"
-      : typeof parsed;
+    const type =
+      parsed === null
+        ? "null"
+        : parsed === undefined
+          ? "undefined"
+          : Array.isArray(parsed)
+            ? "array"
+            : typeof parsed;
 
     return (
       <View style={styles.valueContent}>
         <View style={styles.valueHeader}>
           {label && (
-            <Text style={[styles.valueLabel, labelColor && { color: labelColor }]}>
+            <Text
+              style={[styles.valueLabel, labelColor && { color: labelColor }]}
+            >
               {label}
             </Text>
           )}
-          <View style={[styles.typeBadge, { backgroundColor: gameUIColors.muted + "20" }]}>
+          <View
+            style={[
+              styles.typeBadge,
+              { backgroundColor: gameUIColors.muted + "20" },
+            ]}
+          >
             <Text style={styles.typeText}>{type.toUpperCase()}</Text>
           </View>
         </View>
         <View style={styles.valueBox}>
           {type === "object" || type === "array" ? (
-            parsed && ((Array.isArray(parsed) && parsed.length > 0) || 
-                      (typeof parsed === "object" && Object.keys(parsed).length > 0)) ? (
-              <DataViewer 
-                title="" 
-                data={parsed} 
-                showTypeFilter={false}
-              />
+            parsed &&
+            ((Array.isArray(parsed) && parsed.length > 0) ||
+              (typeof parsed === "object" &&
+                Object.keys(parsed).length > 0)) ? (
+              <DataViewer title="" data={parsed} showTypeFilter={false} />
             ) : (
               <Text style={styles.valueText}>
                 {type === "array" ? "[]" : "{}"}
@@ -419,10 +440,13 @@ export function StorageEventDetailContent({
             )
           ) : (
             <Text style={styles.valueText}>
-              {parsed === null ? "null"
-                : parsed === undefined ? "undefined"
-                : type === "string" ? `"${parsed}"`
-                : String(parsed)}
+              {parsed === null
+                ? "null"
+                : parsed === undefined
+                  ? "undefined"
+                  : type === "string"
+                    ? `"${parsed}"`
+                    : String(parsed)}
             </Text>
           )}
         </View>
@@ -484,7 +508,8 @@ export function StorageEventDetailContent({
           <View style={styles.row}>
             <Text style={styles.label}>Time</Text>
             <Text style={styles.timeValue}>
-              {formatTimestamp(latestEvent.timestamp)} ({formatRelativeTime(latestEvent.timestamp)})
+              {formatTimestamp(latestEvent.timestamp)} (
+              {formatRelativeTime(latestEvent.timestamp)})
             </Text>
           </View>
         </View>
@@ -538,13 +563,15 @@ export function StorageEventDetailContent({
           <View style={styles.row}>
             <Text style={styles.label}>First Seen</Text>
             <Text style={styles.timeValue}>
-              {formatTimestamp(keyStats.firstSeen)} ({formatRelativeTime(keyStats.firstSeen)})
+              {formatTimestamp(keyStats.firstSeen)} (
+              {formatRelativeTime(keyStats.firstSeen)})
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Last Updated</Text>
             <Text style={styles.timeValue}>
-              {formatTimestamp(keyStats.lastSeen)} ({formatRelativeTime(keyStats.lastSeen)})
+              {formatTimestamp(keyStats.lastSeen)} (
+              {formatRelativeTime(keyStats.lastSeen)})
             </Text>
           </View>
         </View>
@@ -553,64 +580,72 @@ export function StorageEventDetailContent({
   );
 
   const renderChanges = () => (
-
     <View style={styles.fullPageSection}>
       {keyStats.valueChanges.length > 0 ? (
         <>
           {keyStats.valueChanges.map((change, index) => (
-                <View key={index} style={styles.changeContainer}>
-                  <TouchableOpacity
-                    onPress={() => toggleValueChange(index)}
-                    style={styles.changeHeader}
-                    sentry-label="ignore value change toggle"
+            <View key={index} style={styles.changeContainer}>
+              <TouchableOpacity
+                onPress={() => toggleValueChange(index)}
+                style={styles.changeHeader}
+                sentry-label="ignore value change toggle"
+              >
+                <View style={styles.changeHeaderLeft}>
+                  <AlertCircle size={14} color={gameUIColors.warning} />
+                  <Text style={styles.changeTime}>
+                    {formatTimestamp(change.timestamp)} (
+                    {formatRelativeTime(change.timestamp)})
+                  </Text>
+                  <View
+                    style={[
+                      styles.changeActionBadge,
+                      { backgroundColor: `${getActionColor(change.action)}15` },
+                    ]}
                   >
-                    <View style={styles.changeHeaderLeft}>
-                      <AlertCircle size={14} color={gameUIColors.warning} />
-                      <Text style={styles.changeTime}>
-                        {formatTimestamp(change.timestamp)} ({formatRelativeTime(change.timestamp)})
-                      </Text>
-                      <View
-                        style={[
-                          styles.changeActionBadge,
-                          { backgroundColor: `${getActionColor(change.action)}15` }
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.changeActionText,
-                            { color: getActionColor(change.action) }
-                          ]}
-                        >
-                          {change.action.toUpperCase()}
-                        </Text>
-                      </View>
-                    </View>
-                    {expandedChangeItems.includes(index) ? (
-                      <ChevronUp size={14} color={gameUIColors.muted} />
-                    ) : (
-                      <ChevronDown size={14} color={gameUIColors.muted} />
-                    )}
-                  </TouchableOpacity>
-
-                  {expandedChangeItems.includes(index) && (
-                    <View style={styles.changeDetails}>
-                      <View style={styles.changeValueSection}>
-                        {renderValueContent(change.from, "PREVIOUS VALUE", gameUIColors.optional)}
-                      </View>
-                      
-                      <View style={styles.changeArrowContainer}>
-                        <Text style={styles.changeArrow}>↓</Text>
-                      </View>
-                      
-                      <View style={styles.changeValueSection}>
-                        {renderValueContent(change.to, "NEW VALUE", gameUIColors.success)}
-                      </View>
-                      
-                      {/* DIFF Section */}
-                      {renderDiff(change.from, change.to)}
-                    </View>
-                  )}
+                    <Text
+                      style={[
+                        styles.changeActionText,
+                        { color: getActionColor(change.action) },
+                      ]}
+                    >
+                      {change.action.toUpperCase()}
+                    </Text>
+                  </View>
                 </View>
+                {expandedChangeItems.includes(index) ? (
+                  <ChevronUp size={14} color={gameUIColors.muted} />
+                ) : (
+                  <ChevronDown size={14} color={gameUIColors.muted} />
+                )}
+              </TouchableOpacity>
+
+              {expandedChangeItems.includes(index) && (
+                <View style={styles.changeDetails}>
+                  <View style={styles.changeValueSection}>
+                    {renderValueContent(
+                      change.from,
+                      "PREVIOUS VALUE",
+                      gameUIColors.optional,
+                    )}
+                  </View>
+
+                  <View style={styles.changeArrowContainer}>
+                    <Text style={styles.changeArrow}>↓</Text>
+                  </View>
+
+                  <View style={styles.changeValueSection}>
+                    {renderValueContent(
+                      change.to,
+                      "NEW VALUE",
+                      gameUIColors.success,
+                    )}
+                  </View>
+
+                  {/* DIFF Section */}
+                  {renderDiff(change.from, change.to)}
+                </View>
+              )}
+            </View>
           ))}
         </>
       ) : (

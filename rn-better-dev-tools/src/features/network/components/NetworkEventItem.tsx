@@ -1,11 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { 
-  AlertCircle, 
-  CheckCircle, 
-  Clock
-} from 'rn-better-dev-tools/icons';
-import type { NetworkEvent } from '../types';
-import { formatBytes, formatDuration } from '../utils/formatting';
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { AlertCircle, CheckCircle, Clock } from "rn-better-dev-tools/icons";
+import type { NetworkEvent } from "../types";
+import { formatBytes, formatDuration } from "../utils/formatting";
 
 interface NetworkEventItemProps {
   event: NetworkEvent;
@@ -14,22 +10,28 @@ interface NetworkEventItemProps {
 
 // Helper function moved outside component for better performance
 function getStatusColor(status?: number, error?: string) {
-  if (error) return '#EF4444';
-  if (!status) return '#F59E0B';
-  if (status >= 200 && status < 300) return '#10B981';
-  if (status >= 300 && status < 400) return '#3B82F6';
-  if (status >= 400) return '#EF4444';
-  return '#6B7280';
+  if (error) return "#EF4444";
+  if (!status) return "#F59E0B";
+  if (status >= 200 && status < 300) return "#10B981";
+  if (status >= 300 && status < 400) return "#3B82F6";
+  if (status >= 400) return "#EF4444";
+  return "#6B7280";
 }
 
 function getMethodColor(method: string) {
   switch (method) {
-    case 'GET': return '#10B981';
-    case 'POST': return '#3B82F6';
-    case 'PUT': return '#F59E0B';
-    case 'DELETE': return '#EF4444';
-    case 'PATCH': return '#8B5CF6';
-    default: return '#6B7280';
+    case "GET":
+      return "#10B981";
+    case "POST":
+      return "#3B82F6";
+    case "PUT":
+      return "#F59E0B";
+    case "DELETE":
+      return "#EF4444";
+    case "PATCH":
+      return "#8B5CF6";
+    default:
+      return "#6B7280";
   }
 }
 
@@ -39,7 +41,7 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
   const isPending = !event.status && !event.error;
 
   // Extract just the path for compact display
-  const displayUrl = event.path || event.url.replace(/^https?:\/\/[^/]+/, '');
+  const displayUrl = event.path || event.url.replace(/^https?:\/\/[^/]+/, "");
 
   return (
     <TouchableOpacity
@@ -50,7 +52,9 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
       {/* Compact single row layout */}
       <View style={styles.row}>
         {/* Method badge */}
-        <View style={[styles.methodBadge, { backgroundColor: `${methodColor}15` }]}>
+        <View
+          style={[styles.methodBadge, { backgroundColor: `${methodColor}15` }]}
+        >
           <Text style={[styles.methodText, { color: methodColor }]}>
             {event.method}
           </Text>
@@ -79,7 +83,11 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
               <CheckCircle size={12} color={statusColor} />
             )}
             <Text style={[styles.statusText, { color: statusColor }]}>
-              {event.status ? String(event.status) : (event.error ? 'ERR' : '...')}
+              {event.status
+                ? String(event.status)
+                : event.error
+                  ? "ERR"
+                  : "..."}
             </Text>
           </View>
         </View>
@@ -93,17 +101,22 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
       ) : null}
 
       {/* Size info on second row for important requests */}
-      {(event.requestSize && event.requestSize > 1024) || (event.responseSize && event.responseSize > 1024) ? (
+      {(event.requestSize && event.requestSize > 1024) ||
+      (event.responseSize && event.responseSize > 1024) ? (
         <View style={styles.sizeRow}>
           <Text style={styles.timestampText}>
             {new Date(event.timestamp).toLocaleTimeString()}
           </Text>
           <View style={styles.sizeContainer}>
             {event.requestSize ? (
-              <Text style={styles.sizeText}>↑ {formatBytes(event.requestSize)}</Text>
+              <Text style={styles.sizeText}>
+                ↑ {formatBytes(event.requestSize)}
+              </Text>
             ) : null}
             {event.responseSize ? (
-              <Text style={styles.sizeText}>↓ {formatBytes(event.responseSize)}</Text>
+              <Text style={styles.sizeText}>
+                ↓ {formatBytes(event.responseSize)}
+              </Text>
             ) : null}
           </View>
         </View>
@@ -114,16 +127,16 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: "rgba(255, 255, 255, 0.02)",
     borderRadius: 6,
     padding: 8,
     marginBottom: 6,
     borderLeftWidth: 2,
-    borderLeftColor: 'rgba(139, 92, 246, 0.3)',
+    borderLeftColor: "rgba(139, 92, 246, 0.3)",
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   methodBadge: {
@@ -131,61 +144,61 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 3,
     minWidth: 40,
-    alignItems: 'center',
+    alignItems: "center",
   },
   methodText: {
     fontSize: 10,
-    fontWeight: '600',
-    fontFamily: 'monospace',
+    fontWeight: "600",
+    fontFamily: "monospace",
   },
   urlText: {
     fontSize: 12,
-    color: '#E5E7EB',
+    color: "#E5E7EB",
     flex: 1,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
   },
   statusText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   durationText: {
     fontSize: 10,
-    color: '#9CA3AF',
+    color: "#9CA3AF",
   },
   errorText: {
     fontSize: 10,
-    color: '#EF4444',
+    color: "#EF4444",
     marginTop: 4,
     marginLeft: 48,
   },
   sizeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 4,
     marginLeft: 48,
   },
   timestampText: {
     fontSize: 9,
-    color: '#6B7280',
+    color: "#6B7280",
   },
   sizeContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 6,
   },
   sizeText: {
     fontSize: 9,
-    color: '#9CA3AF',
-    fontFamily: 'monospace',
+    color: "#9CA3AF",
+    fontFamily: "monospace",
   },
 });

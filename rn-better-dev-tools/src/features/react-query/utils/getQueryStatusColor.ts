@@ -12,10 +12,10 @@ export function getQueryStatusColor({
   return queryState.fetchStatus === "fetching"
     ? "blue"
     : !observerCount
-    ? "gray"
-    : queryState.fetchStatus === "paused"
-    ? "purple"
-    : isStale
-    ? "yellow"
-    : "green";
+      ? "gray"
+      : queryState.fetchStatus === "paused"
+        ? "purple"
+        : isStale
+          ? "yellow"
+          : "green";
 }

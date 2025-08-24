@@ -28,7 +28,7 @@ const LIMIT_REPLACE_NODE = "[...]";
 export function safeStringify(
   obj: JsonValue,
   space?: number,
-  options: SafeStringifyOptions = {}
+  options: SafeStringifyOptions = {},
 ): string {
   const {
     depthLimit = Number.MAX_SAFE_INTEGER,
@@ -46,7 +46,7 @@ export function safeStringify(
     edgeIndex: number,
     stack: JsonValue[],
     parent: JsonObject | null,
-    depth: number
+    depth: number,
   ): void {
     depth += 1;
 
@@ -106,7 +106,7 @@ export function safeStringify(
     replace: JsonValue,
     val: JsonValue,
     k: string | number,
-    parent: JsonObject | null
+    parent: JsonObject | null,
   ): void {
     if (!parent) return;
 
@@ -219,7 +219,7 @@ export function safeStringify(
   } catch {
     // Fallback for complex circular references
     return JSON.stringify(
-      "[unable to serialize, circular reference is too complex to analyze]"
+      "[unable to serialize, circular reference is too complex to analyze]",
     );
   } finally {
     // Restore original object structure

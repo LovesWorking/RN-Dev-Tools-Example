@@ -1,2 +1,2 @@
-export { BackButton } from './BackButton';
-export { ValueTypeBadge } from './ValueTypeBadge';
+export { BackButton } from "./BackButton";
+export { ValueTypeBadge } from "./ValueTypeBadge";

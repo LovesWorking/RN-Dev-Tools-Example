@@ -1,4 +1,4 @@
-import { Database } from 'rn-better-dev-tools/icons';
+import { Database } from "rn-better-dev-tools/icons";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 
 interface StorageEventsSectionProps {
@@ -6,10 +6,11 @@ interface StorageEventsSectionProps {
   eventCount?: number;
 }
 
-export function StorageEventsSection({ onPress, eventCount = 0 }: StorageEventsSectionProps) {
-  const subtitle = eventCount > 0 
-    ? `${eventCount} events` 
-    : 'Monitoring';
+export function StorageEventsSection({
+  onPress,
+  eventCount = 0,
+}: StorageEventsSectionProps) {
+  const subtitle = eventCount > 0 ? `${eventCount} events` : "Monitoring";
 
   return (
     <CyberpunkSectionButton

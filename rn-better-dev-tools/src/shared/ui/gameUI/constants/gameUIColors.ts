@@ -19,30 +19,30 @@ const defaultTheme = {
   blackTint3: "rgba(24, 32, 48, 0.85)",
 
   // Status Colors - Mixed colors for different semantic meanings
-  success: "#4AFF9F",        // Green for success
-  warning: "#FFEB3B",        // Yellow for warning  
-  error: "#FF5252",          // Red for error
-  info: "#00B8E6",           // Cyan for info
-  critical: "#FF00FF",       // Magenta for critical
-  optional: "#9D4EDD",       // Purple for optional
+  success: "#4AFF9F", // Green for success
+  warning: "#FFEB3B", // Yellow for warning
+  error: "#FF5252", // Red for error
+  info: "#00B8E6", // Cyan for info
+  critical: "#FF00FF", // Magenta for critical
+  optional: "#9D4EDD", // Purple for optional
 
   // Tool Colors - Different colors for different tools
-  env: "#4AFF9F",            // Green for environment
-  storage: "#FFEB3B",        // Yellow for storage
-  query: "#00B8E6",          // Cyan for query
-  debug: "#FF5252",          // Red for debug
-  network: "#9D4EDD",        // Purple for network
+  env: "#4AFF9F", // Green for environment
+  storage: "#FFEB3B", // Yellow for storage
+  query: "#00B8E6", // Cyan for query
+  debug: "#FF5252", // Red for debug
+  network: "#9D4EDD", // Purple for network
 
   // Data Types - Varied colors for syntax highlighting
   dataTypes: {
-    object: "#00B8E6",       // Cyan
-    array: "#FFEB3B",        // Yellow
-    string: "#4AFF9F",       // Green
-    number: "#FF9F1C",       // Orange
-    boolean: "#FF00FF",      // Magenta
-    function: "#9D4EDD",     // Purple
-    undefined: "#7A8599",    // Gray
-    null: "#FF5252",         // Red
+    object: "#00B8E6", // Cyan
+    array: "#FFEB3B", // Yellow
+    string: "#4AFF9F", // Green
+    number: "#FF9F1C", // Orange
+    boolean: "#FF00FF", // Magenta
+    function: "#9D4EDD", // Purple
+    undefined: "#7A8599", // Gray
+    null: "#FF5252", // Red
   },
 
   // Text
@@ -245,7 +245,7 @@ const orangeTheme = {
 // THEME SELECTION - Just change this one line!
 // ============================================
 
-const activeTheme = defaultTheme;  // DEFAULT - Mixed colors (original)
+const activeTheme = defaultTheme; // DEFAULT - Mixed colors (original)
 // const activeTheme = cyanTheme;  // Monochromatic cyan/blue
 // const activeTheme = pinkTheme;  // Monochromatic pink
 // const activeTheme = greenTheme; // Monochromatic green

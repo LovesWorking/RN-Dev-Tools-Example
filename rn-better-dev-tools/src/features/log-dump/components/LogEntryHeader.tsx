@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { ChevronRight } from 'rn-better-dev-tools/icons';
+import { ChevronRight } from "rn-better-dev-tools/icons";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import { formatTimestamp } from "../utils";

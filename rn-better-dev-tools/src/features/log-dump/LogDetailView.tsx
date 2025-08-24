@@ -5,7 +5,7 @@ import {
   View,
   FlatList,
 } from "react-native";
-import { ChevronLeft } from 'rn-better-dev-tools/icons';
+import { ChevronLeft } from "rn-better-dev-tools/icons";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { useState } from "react";
 
@@ -217,7 +217,7 @@ export const LogDetailView = ({
 
   // Get the current modal data
   const currentModalData = sections.find(
-    (section) => section.id === activeModal
+    (section) => section.id === activeModal,
   );
 
   // If modal is active, show it instead of the main view

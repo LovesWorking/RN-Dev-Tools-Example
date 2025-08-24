@@ -20,7 +20,7 @@ import {
   Zap,
   X,
   Link,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
@@ -99,7 +99,7 @@ function NetworkModalInner({
 
         // Load ignored domains
         const storedDomains = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredDomains()
+          devToolsStorageKeys.network.ignoredDomains(),
         );
         if (storedDomains) {
           const domains = JSON.parse(storedDomains) as string[];
@@ -108,7 +108,7 @@ function NetworkModalInner({
 
         // Load ignored URLs
         const storedUrls = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredUrls()
+          devToolsStorageKeys.network.ignoredUrls(),
         );
         if (storedUrls) {
           const urls = JSON.parse(storedUrls) as string[];
@@ -138,14 +138,14 @@ function NetworkModalInner({
         const domains = Array.from(ignoredDomains);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredDomains(),
-          JSON.stringify(domains)
+          JSON.stringify(domains),
         );
 
         // Save ignored URLs
         const urls = Array.from(ignoredUrls);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredUrls(),
-          JSON.stringify(urls)
+          JSON.stringify(urls),
         );
       } catch (error) {
         // Silently fail - filters will remain in memory
@@ -183,7 +183,7 @@ function NetworkModalInner({
           const hostname = urlObj.hostname.toLowerCase();
           if (
             Array.from(ignoredDomains).some((domain) =>
-              hostname.includes(domain.toLowerCase())
+              hostname.includes(domain.toLowerCase()),
             )
           ) {
             return false;
@@ -197,7 +197,7 @@ function NetworkModalInner({
       if (ignoredUrls.size > 0) {
         if (
           Array.from(ignoredUrls).some((pattern) =>
-            url.includes(pattern.toLowerCase())
+            url.includes(pattern.toLowerCase()),
           )
         ) {
           return false;

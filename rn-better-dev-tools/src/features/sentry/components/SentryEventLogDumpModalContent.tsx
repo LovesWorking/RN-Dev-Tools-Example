@@ -15,12 +15,19 @@ import {
   RefreshCw,
   Trash,
   X,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 
-import { ConsoleTransportEntry, LogLevel, LogType } from "@/rn-better-dev-tools/src/shared/logger/types";
+import {
+  ConsoleTransportEntry,
+  LogLevel,
+  LogType,
+} from "@/rn-better-dev-tools/src/shared/logger/types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
-import { EmptyFilterState, EmptyState } from "@/rn-better-dev-tools/src/features/log-dump/EmptyStates";
+import {
+  EmptyFilterState,
+  EmptyState,
+} from "@/rn-better-dev-tools/src/features/log-dump/EmptyStates";
 import { adaptSentryEventsToConsoleEntries } from "../utils/SentryEventAdapter";
 import { SentryEventLogEntryItem } from "./SentryEventLogEntryItem";
 import { SentryEventLogFilters } from "./SentryEventLogFilters";
@@ -51,7 +58,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
 const createRenderSentryEventItem = (
   selectEntryRef: React.MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
-  >
+  >,
 ) => {
   return ({ item }: { item: ConsoleTransportEntry }) => (
     <SentryEventLogEntryItem
@@ -75,18 +82,16 @@ function SentryEventLogDumpModalContentInner({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: () => false,
       // Let FlatList handle all touch events
-    })
+    }),
   ).current;
 
   const [selectedEntry, setSelectedEntry] =
     useState<ConsoleTransportEntry | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [entries, setEntries] = useState<ConsoleTransportEntry[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(
-    new Set()
-  );
+  const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(new Set());
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
-    new Set()
+    new Set(),
   );
   const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
   // Function to calculate entries
@@ -99,19 +104,19 @@ function SentryEventLogDumpModalContentInner({
       (acc: ConsoleTransportEntry[], entry: ConsoleTransportEntry) => {
         if (
           !acc.some(
-            (existing: ConsoleTransportEntry) => existing.id === entry.id
+            (existing: ConsoleTransportEntry) => existing.id === entry.id,
           )
         ) {
           acc.push(entry);
         }
         return acc;
       },
-      [] as ConsoleTransportEntry[]
+      [] as ConsoleTransportEntry[],
     );
 
     return uniqueEntries.sort(
       (a: ConsoleTransportEntry, b: ConsoleTransportEntry) =>
-        b.timestamp - a.timestamp
+        b.timestamp - a.timestamp,
     );
   };
 
@@ -124,7 +129,7 @@ function SentryEventLogDumpModalContentInner({
   const selectEntryRef = useRef<(entry: ConsoleTransportEntry) => void>(
     (entry: ConsoleTransportEntry) => {
       setSelectedEntry(entry);
-    }
+    },
   );
   selectEntryRef.current = (entry: ConsoleTransportEntry) => {
     setSelectedEntry(entry);
@@ -133,7 +138,7 @@ function SentryEventLogDumpModalContentInner({
   // Create stable renderItem once per component lifecycle [[memory:4875251]]
   const renderSentryEventItem = useMemo(
     () => createRenderSentryEventItem(selectEntryRef),
-    []
+    [],
   );
 
   const goBackToList = () => {
@@ -235,7 +240,10 @@ function SentryEventLogDumpModalContentInner({
   };
 
   return (
-    <View style={styles.container} sentry-label="ignore devtools sentry dump container">
+    <View
+      style={styles.container}
+      sentry-label="ignore devtools sentry dump container"
+    >
       {/* Detail Modal - returns null when not visible */}
       <SentryDetailModal
         visible={!!selectedEntry}
@@ -246,112 +254,146 @@ function SentryEventLogDumpModalContentInner({
       {/* Main content - always visible when detail modal is not shown */}
       {!selectedEntry && (
         <>
-      {/* Enhanced Header */}
-      <View style={styles.headerContainer} sentry-label="ignore devtools sentry dump header container">
-        {/* Main header */}
-        <View style={styles.mainHeader} sentry-label="ignore devtools sentry dump main header">
-          <View style={styles.headerLeft} sentry-label="ignore devtools sentry dump header left">
-            <View style={styles.iconContainer} sentry-label="ignore devtools sentry dump icon container">
-              <FileText size={18} color={gameUIColors.optional} />
+          {/* Enhanced Header */}
+          <View
+            style={styles.headerContainer}
+            sentry-label="ignore devtools sentry dump header container"
+          >
+            {/* Main header */}
+            <View
+              style={styles.mainHeader}
+              sentry-label="ignore devtools sentry dump main header"
+            >
+              <View
+                style={styles.headerLeft}
+                sentry-label="ignore devtools sentry dump header left"
+              >
+                <View
+                  style={styles.iconContainer}
+                  sentry-label="ignore devtools sentry dump icon container"
+                >
+                  <FileText size={18} color={gameUIColors.optional} />
+                </View>
+                <View sentry-label="ignore devtools sentry dump header info">
+                  <Text
+                    style={styles.title}
+                    sentry-label="ignore devtools sentry dump title"
+                  >
+                    Sentry Events
+                  </Text>
+                  <Text
+                    style={styles.subtitle}
+                    sentry-label="ignore devtools sentry dump subtitle"
+                  >
+                    {filteredEntries.length} of {entries.length} events
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={styles.headerRight}
+                sentry-label="ignore devtools sentry dump header right"
+              >
+                {/* Test Events Button */}
+                <TouchableOpacity
+                  sentry-label="ignore generate test sentry events button"
+                  accessibilityRole="button"
+                  accessibilityLabel="Generate test Sentry events"
+                  accessibilityHint="Generates sample Sentry events for testing"
+                  onPress={generateTestLogs}
+                  style={styles.testButton}
+                >
+                  <FlaskConical size={16} color={gameUIColors.info} />
+                </TouchableOpacity>
+
+                {/* Clear Events Button */}
+                <TouchableOpacity
+                  sentry-label="ignore clear sentry events button"
+                  accessibilityRole="button"
+                  accessibilityLabel="Clear Sentry events"
+                  accessibilityHint="Removes all Sentry events from memory"
+                  onPress={clearLogs}
+                  style={styles.clearButton}
+                >
+                  <Trash size={16} color={gameUIColors.error} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  sentry-label="ignore refresh sentry events button"
+                  accessibilityRole="button"
+                  accessibilityLabel="Refresh Sentry events"
+                  accessibilityHint="Refreshes the Sentry events to show latest data"
+                  onPress={refreshEntries}
+                  disabled={isRefreshing}
+                  style={styles.refreshButton}
+                >
+                  {isRefreshing ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={gameUIColors.optional}
+                    />
+                  ) : (
+                    <RefreshCw size={16} color={gameUIColors.optional} />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  sentry-label="ignore close sentry events viewer button"
+                  accessibilityRole="button"
+                  accessibilityLabel="Close Sentry events viewer"
+                  accessibilityHint="Closes the Sentry events viewer and returns to the admin panel"
+                  onPress={onClose}
+                  style={styles.closeButton}
+                >
+                  <X size={16} color={gameUIColors.secondary} />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View sentry-label="ignore devtools sentry dump header info">
-              <Text style={styles.title} sentry-label="ignore devtools sentry dump title">Sentry Events</Text>
-              <Text style={styles.subtitle} sentry-label="ignore devtools sentry dump subtitle">
-                {filteredEntries.length} of {entries.length} events
-              </Text>
-            </View>
-          </View>
-          <View style={styles.headerRight} sentry-label="ignore devtools sentry dump header right">
-            {/* Test Events Button */}
-            <TouchableOpacity
-              sentry-label="ignore generate test sentry events button"
-              accessibilityRole="button"
-              accessibilityLabel="Generate test Sentry events"
-              accessibilityHint="Generates sample Sentry events for testing"
-              onPress={generateTestLogs}
-              style={styles.testButton}
-            >
-              <FlaskConical size={16} color={gameUIColors.info} />
-            </TouchableOpacity>
 
-            {/* Clear Events Button */}
-            <TouchableOpacity
-              sentry-label="ignore clear sentry events button"
-              accessibilityRole="button"
-              accessibilityLabel="Clear Sentry events"
-              accessibilityHint="Removes all Sentry events from memory"
-              onPress={clearLogs}
-              style={styles.clearButton}
-            >
-              <Trash size={16} color={gameUIColors.error} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              sentry-label="ignore refresh sentry events button"
-              accessibilityRole="button"
-              accessibilityLabel="Refresh Sentry events"
-              accessibilityHint="Refreshes the Sentry events to show latest data"
-              onPress={refreshEntries}
-              disabled={isRefreshing}
-              style={styles.refreshButton}
-            >
-              {isRefreshing ? (
-                <ActivityIndicator size="small" color={gameUIColors.optional} />
-              ) : (
-                <RefreshCw size={16} color={gameUIColors.optional} />
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              sentry-label="ignore close sentry events viewer button"
-              accessibilityRole="button"
-              accessibilityLabel="Close Sentry events viewer"
-              accessibilityHint="Closes the Sentry events viewer and returns to the admin panel"
-              onPress={onClose}
-              style={styles.closeButton}
-            >
-              <X size={16} color={gameUIColors.secondary} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Filter section */}
-        <SentryEventLogFilters
-          entries={entries}
-          selectedTypes={selectedTypes}
-          selectedLevels={selectedLevels}
-          onToggleTypeFilter={toggleTypeFilter}
-          onToggleLevelFilter={toggleLevelFilter}
-        />
-      </View>
-
-      {/* Event Entries */}
-      {filteredEntries.length === 0 ? (
-        <View style={styles.emptyContainer} sentry-label="ignore devtools sentry dump empty container">
-          {entries.length === 0 ? <EmptyState /> : <EmptyFilterState />}
-        </View>
-      ) : (
-        <View style={styles.listContainer} sentry-label="ignore devtools sentry dump list container">
-          <View {...panResponder.panHandlers}>
-            <FlatList
-              sentry-label="ignore sentry events list"
-              ref={flatListRef}
-              data={filteredEntries}
-              renderItem={renderSentryEventItem}
-              keyExtractor={keyExtractor}
-              inverted
-              contentContainerStyle={styles.listContent}
-              showsVerticalScrollIndicator
-              removeClippedSubviews
-              onEndReachedThreshold={END_REACHED_THRESHOLD}
-              maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              windowSize={10}
-              scrollEnabled={false}
+            {/* Filter section */}
+            <SentryEventLogFilters
+              entries={entries}
+              selectedTypes={selectedTypes}
+              selectedLevels={selectedLevels}
+              onToggleTypeFilter={toggleTypeFilter}
+              onToggleLevelFilter={toggleLevelFilter}
             />
           </View>
-        </View>
-      )}
+
+          {/* Event Entries */}
+          {filteredEntries.length === 0 ? (
+            <View
+              style={styles.emptyContainer}
+              sentry-label="ignore devtools sentry dump empty container"
+            >
+              {entries.length === 0 ? <EmptyState /> : <EmptyFilterState />}
+            </View>
+          ) : (
+            <View
+              style={styles.listContainer}
+              sentry-label="ignore devtools sentry dump list container"
+            >
+              <View {...panResponder.panHandlers}>
+                <FlatList
+                  sentry-label="ignore sentry events list"
+                  ref={flatListRef}
+                  data={filteredEntries}
+                  renderItem={renderSentryEventItem}
+                  keyExtractor={keyExtractor}
+                  inverted
+                  contentContainerStyle={styles.listContent}
+                  showsVerticalScrollIndicator
+                  removeClippedSubviews
+                  onEndReachedThreshold={END_REACHED_THRESHOLD}
+                  maintainVisibleContentPosition={
+                    MAINTAIN_VISIBLE_CONTENT_POSITION
+                  }
+                  initialNumToRender={10}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  scrollEnabled={false}
+                />
+              </View>
+            </View>
+          )}
         </>
       )}
     </View>
@@ -432,7 +474,9 @@ const styles = StyleSheet.create({
 });
 
 // Export wrapper component with TickProvider
-export function SentryEventLogDumpModalContent(props: SentryEventLogDumpModalContentProps) {
+export function SentryEventLogDumpModalContent(
+  props: SentryEventLogDumpModalContentProps,
+) {
   return (
     <TickProvider>
       <SentryEventLogDumpModalContentInner {...props} />

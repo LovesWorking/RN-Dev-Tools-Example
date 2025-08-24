@@ -1,5 +1,12 @@
-import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from "react-native";
-import { Settings, EyeOff, Database, Palette } from 'rn-better-dev-tools/icons';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { Settings, EyeOff, Database, Palette } from "rn-better-dev-tools/icons";
 import { useState, useEffect } from "react";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 import { useDevToolsTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -22,7 +29,7 @@ const loadAsyncStorage = async () => {
       AsyncStorageModule = module.default;
     } catch {
       console.warn(
-        "AsyncStorage not found. Bubble visibility settings will not persist across app restarts."
+        "AsyncStorage not found. Bubble visibility settings will not persist across app restarts.",
       );
     }
   })();
@@ -135,7 +142,7 @@ export function BubbleSettingsDetail({
       if (AsyncStorageModule) {
         await AsyncStorageModule.setItem(
           STORAGE_KEY,
-          JSON.stringify(newSettings)
+          JSON.stringify(newSettings),
         );
       }
       setSettings(newSettings);
@@ -148,29 +155,30 @@ export function BubbleSettingsDetail({
 
   const handleToggle = async (key: keyof BubbleVisibilitySettings) => {
     const newSettings = { ...settings, [key]: !settings[key] };
-    
+
     // Mark this preference as explicitly set by the user
     try {
       await loadAsyncStorage();
       if (AsyncStorageModule) {
-        const prefsStored = await AsyncStorageModule.getItem(USER_PREFERENCES_KEY);
+        const prefsStored =
+          await AsyncStorageModule.getItem(USER_PREFERENCES_KEY);
         const currentPrefs = prefsStored ? JSON.parse(prefsStored) : {};
-        
-        const prefKey = key.replace('show', 'hasSet');
+
+        const prefKey = key.replace("show", "hasSet");
         const updatedPrefs = {
           ...currentPrefs,
           [prefKey]: true,
         };
-        
+
         await AsyncStorageModule.setItem(
           USER_PREFERENCES_KEY,
-          JSON.stringify(updatedPrefs)
+          JSON.stringify(updatedPrefs),
         );
       }
     } catch (error) {
       console.error("Failed to save user preference marker:", error);
     }
-    
+
     saveSettings(newSettings);
   };
 
@@ -223,7 +231,7 @@ export function BubbleSettingsDetail({
 
   return (
     <View style={styles.detailContainer}>
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         sentry-label="ignore bubble settings scroll"
@@ -244,8 +252,8 @@ export function BubbleSettingsDetail({
             <View style={styles.settingContent}>
               <Text style={styles.settingLabel}>Theme</Text>
               <Text style={styles.settingDescription}>
-                {themeName === "cyberpunk" 
-                  ? "Cyberpunk theme with glitch effects" 
+                {themeName === "cyberpunk"
+                  ? "Cyberpunk theme with glitch effects"
                   : "Clean dark theme"}
               </Text>
             </View>
@@ -253,16 +261,15 @@ export function BubbleSettingsDetail({
               onPress={toggleTheme}
               style={[
                 styles.themeToggleButton,
-                { 
+                {
                   backgroundColor: theme.colors.surface,
                   borderColor: theme.colors.border,
-                }
+                },
               ]}
             >
-              <Text style={[
-                styles.themeToggleText,
-                { color: theme.colors.text }
-              ]}>
+              <Text
+                style={[styles.themeToggleText, { color: theme.colors.text }]}
+              >
                 {themeName === "cyberpunk" ? "CYBER" : "DARK"}
               </Text>
             </TouchableOpacity>
@@ -295,16 +302,16 @@ export function BubbleSettingsDetail({
         </View>
 
         <View style={styles.footer}>
-        <View style={styles.noteContainer}>
-          <EyeOff size={16} color="#9CA3AF" />
-          <Text style={styles.noteText}>
-            User status indicator is always visible and cannot be disabled
+          <View style={styles.noteContainer}>
+            <EyeOff size={16} color="#9CA3AF" />
+            <Text style={styles.noteText}>
+              User status indicator is always visible and cannot be disabled
+            </Text>
+          </View>
+          <Text style={styles.restartNote}>
+            Changes are saved automatically and will persist across app restarts
           </Text>
         </View>
-        <Text style={styles.restartNote}>
-          Changes are saved automatically and will persist across app restarts
-        </Text>
-      </View>
       </ScrollView>
     </View>
   );

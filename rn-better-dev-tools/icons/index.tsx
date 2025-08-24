@@ -3,7 +3,7 @@
  * This allows us to replace 'lucide-react-native' with local icons
  */
 
-import type { FC } from 'react';
+import type { FC } from "react";
 import {
   ActivityIcon,
   AlertCircleIcon,
@@ -71,7 +71,7 @@ import {
   BarChart3Icon,
   GitBranchIcon,
   MinusIcon,
-} from './lucide-icons';
+} from "./lucide-icons";
 
 // Re-export all icons with shorter names
 export {
@@ -144,9 +144,9 @@ export {
 };
 
 // Re-export TouchpadIcon with its full name for compatibility
-export { TouchpadIcon } from './lucide-icons';
+export { TouchpadIcon } from "./lucide-icons";
 
-// Create placeholder icons for missing ones  
+// Create placeholder icons for missing ones
 export const Loader2 = ActivityIcon; // Using Activity as placeholder for Loader2
 export const PauseCircle = PauseIcon; // Using Pause as placeholder for PauseCircle
 export const Edit3 = FileCodeIcon; // Using FileCode as placeholder for Edit3

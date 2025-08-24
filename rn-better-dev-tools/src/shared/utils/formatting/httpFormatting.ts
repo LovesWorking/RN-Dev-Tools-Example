@@ -7,96 +7,96 @@
  * @param status HTTP status code
  * @returns Object with formatted text, color, and meaning
  */
-export function formatHttpStatus(status: number): { 
-  text: string; 
-  color: string; 
+export function formatHttpStatus(status: number): {
+  text: string;
+  color: string;
   meaning: string;
 } {
   // 1xx Informational
   if (status >= 100 && status < 200) {
     return {
       text: String(status),
-      color: '#3B82F6',
-      meaning: 'Informational',
+      color: "#3B82F6",
+      meaning: "Informational",
     };
   }
-  
+
   // 2xx Success
   if (status >= 200 && status < 300) {
     const meanings: Record<number, string> = {
-      200: 'OK',
-      201: 'Created',
-      202: 'Accepted',
-      204: 'No Content',
-      206: 'Partial Content',
+      200: "OK",
+      201: "Created",
+      202: "Accepted",
+      204: "No Content",
+      206: "Partial Content",
     };
     return {
       text: String(status),
-      color: '#10B981',
-      meaning: meanings[status] || 'Success',
+      color: "#10B981",
+      meaning: meanings[status] || "Success",
     };
   }
-  
+
   // 3xx Redirection
   if (status >= 300 && status < 400) {
     const meanings: Record<number, string> = {
-      301: 'Moved Permanently',
-      302: 'Found',
-      303: 'See Other',
-      304: 'Not Modified',
-      307: 'Temporary Redirect',
-      308: 'Permanent Redirect',
+      301: "Moved Permanently",
+      302: "Found",
+      303: "See Other",
+      304: "Not Modified",
+      307: "Temporary Redirect",
+      308: "Permanent Redirect",
     };
     return {
       text: String(status),
-      color: '#F59E0B',
-      meaning: meanings[status] || 'Redirect',
+      color: "#F59E0B",
+      meaning: meanings[status] || "Redirect",
     };
   }
-  
+
   // 4xx Client Error
   if (status >= 400 && status < 500) {
     const meanings: Record<number, string> = {
-      400: 'Bad Request',
-      401: 'Unauthorized',
-      402: 'Payment Required',
-      403: 'Forbidden',
-      404: 'Not Found',
-      405: 'Method Not Allowed',
-      408: 'Request Timeout',
-      409: 'Conflict',
-      410: 'Gone',
-      422: 'Unprocessable Entity',
-      429: 'Too Many Requests',
+      400: "Bad Request",
+      401: "Unauthorized",
+      402: "Payment Required",
+      403: "Forbidden",
+      404: "Not Found",
+      405: "Method Not Allowed",
+      408: "Request Timeout",
+      409: "Conflict",
+      410: "Gone",
+      422: "Unprocessable Entity",
+      429: "Too Many Requests",
     };
     return {
       text: String(status),
-      color: '#EF4444',
-      meaning: meanings[status] || 'Client Error',
+      color: "#EF4444",
+      meaning: meanings[status] || "Client Error",
     };
   }
-  
+
   // 5xx Server Error
   if (status >= 500) {
     const meanings: Record<number, string> = {
-      500: 'Internal Server Error',
-      501: 'Not Implemented',
-      502: 'Bad Gateway',
-      503: 'Service Unavailable',
-      504: 'Gateway Timeout',
-      505: 'HTTP Version Not Supported',
+      500: "Internal Server Error",
+      501: "Not Implemented",
+      502: "Bad Gateway",
+      503: "Service Unavailable",
+      504: "Gateway Timeout",
+      505: "HTTP Version Not Supported",
     };
     return {
       text: String(status),
-      color: '#DC2626',
-      meaning: meanings[status] || 'Server Error',
+      color: "#DC2626",
+      meaning: meanings[status] || "Server Error",
     };
   }
-  
+
   return {
     text: String(status),
-    color: '#6B7280',
-    meaning: 'Unknown',
+    color: "#6B7280",
+    meaning: "Unknown",
   };
 }
 
@@ -107,18 +107,18 @@ export function formatHttpStatus(status: number): {
  */
 export function getMethodColor(method: string): string {
   const colors: Record<string, string> = {
-    'GET': '#10B981',
-    'POST': '#3B82F6',
-    'PUT': '#F59E0B',
-    'DELETE': '#EF4444',
-    'PATCH': '#8B5CF6',
-    'HEAD': '#6B7280',
-    'OPTIONS': '#9CA3AF',
-    'CONNECT': '#EC4899',
-    'TRACE': '#84CC16',
+    GET: "#10B981",
+    POST: "#3B82F6",
+    PUT: "#F59E0B",
+    DELETE: "#EF4444",
+    PATCH: "#8B5CF6",
+    HEAD: "#6B7280",
+    OPTIONS: "#9CA3AF",
+    CONNECT: "#EC4899",
+    TRACE: "#84CC16",
   };
-  
-  return colors[method.toUpperCase()] || '#6B7280';
+
+  return colors[method.toUpperCase()] || "#6B7280";
 }
 
 /**
@@ -139,7 +139,7 @@ export function parseUrl(url: string): UrlComponents | null {
   try {
     const parsed = new URL(url);
     return {
-      protocol: parsed.protocol.replace(':', ''),
+      protocol: parsed.protocol.replace(":", ""),
       host: parsed.hostname,
       port: parsed.port || undefined,
       pathname: parsed.pathname,

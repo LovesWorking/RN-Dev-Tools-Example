@@ -32,11 +32,11 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
   // Game UI color mapping for status indicators - matching ActionButton style
   const getStatusColors = (colorName: ColorName) => {
     const colorMap = {
-      green: { 
-        bg: gameUIColors.success + "26", 
+      green: {
+        bg: gameUIColors.success + "26",
         border: gameUIColors.success + "59",
-        dot: gameUIColors.success, 
-        text: gameUIColors.success 
+        dot: gameUIColors.success,
+        text: gameUIColors.success,
       },
       yellow: {
         bg: gameUIColors.warning + "26",
@@ -44,11 +44,11 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
         dot: gameUIColors.warning,
         text: gameUIColors.warning,
       },
-      blue: { 
-        bg: gameUIColors.info + "26", 
+      blue: {
+        bg: gameUIColors.info + "26",
         border: gameUIColors.info + "59",
-        dot: gameUIColors.info, 
-        text: gameUIColors.info 
+        dot: gameUIColors.info,
+        text: gameUIColors.info,
       },
       purple: {
         bg: gameUIColors.storage + "26",
@@ -56,17 +56,17 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
         dot: gameUIColors.storage,
         text: gameUIColors.storage,
       },
-      red: { 
-        bg: gameUIColors.error + "26", 
+      red: {
+        bg: gameUIColors.error + "26",
         border: gameUIColors.error + "59",
-        dot: gameUIColors.error, 
-        text: gameUIColors.error 
+        dot: gameUIColors.error,
+        text: gameUIColors.error,
       },
-      gray: { 
-        bg: gameUIColors.muted + "26", 
+      gray: {
+        bg: gameUIColors.muted + "26",
         border: gameUIColors.muted + "59",
-        dot: gameUIColors.muted, 
-        text: gameUIColors.muted 
+        dot: gameUIColors.muted,
+        text: gameUIColors.muted,
       },
     };
     return colorMap[colorName] || colorMap.gray;
@@ -85,37 +85,22 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
   return (
     <TouchableOpacity
       sentry-label="ignore devtools query status"
-      style={[
-        styles.queryStatusTag,
-        activeStyle,
-      ]}
+      style={[styles.queryStatusTag, activeStyle]}
       disabled={!onPress}
       onPress={onPress}
       onPressIn={onTouchStart}
       activeOpacity={0.7}
     >
-      <View
-        style={[
-          styles.dot,
-          { backgroundColor: statusColors.dot },
-        ]}
-      />
+      <View style={[styles.dot, { backgroundColor: statusColors.dot }]} />
       {showLabel && (
-        <Text
-          style={[styles.label]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
+        <Text style={[styles.label]} numberOfLines={1} ellipsizeMode="tail">
           {label}
         </Text>
       )}
 
       {count > 0 && (
         <Text
-          style={[
-            styles.count,
-            { color: statusColors.dot },
-          ]}
+          style={[styles.count, { color: statusColors.dot }]}
           numberOfLines={1}
         >
           {count}

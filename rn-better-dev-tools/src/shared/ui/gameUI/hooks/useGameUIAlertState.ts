@@ -8,10 +8,10 @@ import {
   Activity,
   Database,
   HelpCircle,
-} from 'rn-better-dev-tools/icons';
+} from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../constants/gameUIColors";
 
-export type AlertStateType = 
+export type AlertStateType =
   | "OPTIMAL"
   | "WARNING"
   | "ERROR"
@@ -86,12 +86,12 @@ export interface GameUIStats {
  */
 export function useGameUIAlertState(
   stats: GameUIStats,
-  customStates?: Partial<Record<AlertStateType, AlertStateConfig>>
+  customStates?: Partial<Record<AlertStateType, AlertStateConfig>>,
 ) {
   // Merge custom states with defaults
   const alertStates = useMemo(
     () => ({ ...GAME_UI_ALERT_STATES, ...customStates }),
-    [customStates]
+    [customStates],
   );
 
   // Determine alert state based on stats
@@ -124,7 +124,7 @@ export function useGameUIAlertState(
         duration: 300,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   }, [alertState, alertOpacity, alertScale]);
 

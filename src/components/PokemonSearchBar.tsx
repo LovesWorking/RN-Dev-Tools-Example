@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   Animated,
   Text,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
-import { PokemonTheme } from '@/constants/PokemonTheme';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
+import { PokemonTheme } from "@/constants/PokemonTheme";
 
 interface PokemonSearchBarProps {
   value: string;
@@ -45,7 +45,7 @@ export function PokemonSearchBar({
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Glow animation
@@ -61,7 +61,7 @@ export function PokemonSearchBar({
           duration: 1500,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -89,12 +89,16 @@ export function PokemonSearchBar({
       <View style={styles.searchContainer}>
         <BlurView intensity={40} tint="dark" style={styles.blurContainer}>
           <LinearGradient
-            colors={['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.05)']}
+            colors={["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"]}
             style={styles.gradientOverlay}
           />
-          
+
           <View style={styles.inputWrapper}>
-            <Ionicons name="search" size={20} color="rgba(255, 255, 255, 0.5)" />
+            <Ionicons
+              name="search"
+              size={20}
+              color="rgba(255, 255, 255, 0.5)"
+            />
             <TextInput
               style={styles.input}
               value={value}
@@ -104,7 +108,7 @@ export function PokemonSearchBar({
               onSubmitEditing={handleSearchPress}
               returnKeyType="search"
             />
-            
+
             {/* Search Button */}
             <TouchableOpacity
               onPress={handleSearchPress}
@@ -173,46 +177,46 @@ const styles = StyleSheet.create({
   searchContainer: {
     height: 60,
     marginBottom: 15,
-    position: 'relative',
+    position: "relative",
   },
   blurContainer: {
     flex: 1,
     borderRadius: 30,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
   },
   inputWrapper: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   input: {
     flex: 1,
     marginHorizontal: 12,
     fontSize: 16,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
   searchButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...PokemonTheme.shadows.neon('#FFD700'),
+    justifyContent: "center",
+    alignItems: "center",
+    ...PokemonTheme.shadows.neon("#FFD700"),
   },
   glowEffect: {
-    position: 'absolute',
+    position: "absolute",
     top: -10,
     left: -10,
     right: -10,
     bottom: -10,
     borderRadius: 40,
-    backgroundColor: '#FFD700',
-    ...PokemonTheme.shadows.neon('#FFD700'),
+    backgroundColor: "#FFD700",
+    ...PokemonTheme.shadows.neon("#FFD700"),
   },
   randomButtonWrapper: {
     height: 55,
@@ -220,26 +224,26 @@ const styles = StyleSheet.create({
   randomButton: {
     flex: 1,
     borderRadius: 27.5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     ...PokemonTheme.shadows.card,
   },
   randomContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   randomTextContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginLeft: 10,
   },
   randomText: {
     marginHorizontal: 8,
   },
   randomLabel: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '900',
+    fontWeight: "900",
     letterSpacing: 2,
   },
   sparkle: {

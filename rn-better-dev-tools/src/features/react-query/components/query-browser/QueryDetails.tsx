@@ -12,12 +12,15 @@ export default function QueryDetails({ query }: Props) {
     return null;
   }
   // Convert the timestamp to a Date object and format it
-  const lastUpdated = new Date(query.state.dataUpdatedAt).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true
-  });
+  const lastUpdated = new Date(query.state.dataUpdatedAt).toLocaleTimeString(
+    "en-US",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    },
+  );
 
   return (
     <View style={styles.minWidth}>

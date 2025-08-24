@@ -34,7 +34,7 @@ export const SentryEventLogDetailView = ({
       timestamp: entry.timestamp,
       logType: entry.type,
     }),
-    [entry.id, entry.level, entry.timestamp, entry.type]
+    [entry.id, entry.level, entry.timestamp, entry.type],
   );
 
   // Render content based on active tab
@@ -42,8 +42,15 @@ export const SentryEventLogDetailView = ({
     switch (activeTab) {
       case "message":
         return (
-          <View style={styles.compactMessage} sentry-label="ignore devtools sentry event message container">
-            <Text style={styles.messageText} selectable sentry-label="ignore devtools sentry event message text">
+          <View
+            style={styles.compactMessage}
+            sentry-label="ignore devtools sentry event message container"
+          >
+            <Text
+              style={styles.messageText}
+              selectable
+              sentry-label="ignore devtools sentry event message text"
+            >
               {String(entry.message)}
             </Text>
           </View>
@@ -84,11 +91,17 @@ export const SentryEventLogDetailView = ({
   };
 
   return (
-    <View style={styles.container} sentry-label="ignore devtools sentry event detail container">
+    <View
+      style={styles.container}
+      sentry-label="ignore devtools sentry event detail container"
+    >
       <DetailHeader entry={entry} onBack={onBack} />
 
       {/* Tab navigation */}
-      <View style={styles.tabsContainer} sentry-label="ignore devtools sentry event tabs container">
+      <View
+        style={styles.tabsContainer}
+        sentry-label="ignore devtools sentry event tabs container"
+      >
         <TouchableOpacity
           accessibilityLabel="Message"
           accessibilityHint="View message"
@@ -179,7 +192,12 @@ export const SentryEventLogDetailView = ({
       </View>
 
       {/* Tab content */}
-      <View style={styles.tabContent} sentry-label="ignore devtools sentry event tab content">{renderTabContent()}</View>
+      <View
+        style={styles.tabContent}
+        sentry-label="ignore devtools sentry event tab content"
+      >
+        {renderTabContent()}
+      </View>
     </View>
   );
 };

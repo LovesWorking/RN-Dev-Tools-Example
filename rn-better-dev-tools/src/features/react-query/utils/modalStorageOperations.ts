@@ -61,12 +61,12 @@ export interface ModalVisibilityState {
 // Storage operations
 export const savePanelDimensions = async (
   storagePrefix: string,
-  dimensions: PanelDimensions
+  dimensions: PanelDimensions,
 ) => {
   try {
     await setItem(
       `${storagePrefix}_panel_dimensions`,
-      JSON.stringify(dimensions)
+      JSON.stringify(dimensions),
     );
   } catch {
     // Silently fail - persistence is optional
@@ -75,7 +75,7 @@ export const savePanelDimensions = async (
 
 export const savePanelHeight = async (
   storagePrefix: string,
-  height: number
+  height: number,
 ) => {
   try {
     await setItem(`${storagePrefix}_panel_height`, height.toString());
@@ -86,7 +86,7 @@ export const savePanelHeight = async (
 
 export const saveFloatingMode = async (
   storagePrefix: string,
-  isFloating: boolean
+  isFloating: boolean,
 ) => {
   try {
     await setItem(`${storagePrefix}_is_floating_mode`, isFloating.toString());
@@ -96,7 +96,7 @@ export const saveFloatingMode = async (
 };
 
 export const loadPanelState = async (
-  storagePrefix: string
+  storagePrefix: string,
 ): Promise<PanelState> => {
   try {
     const [dimensionsStr, heightStr, floatingModeStr] = await Promise.all([
@@ -119,7 +119,7 @@ export const loadPanelState = async (
 // Modal visibility state operations
 export const saveModalVisibilityState = async (
   storagePrefix: string,
-  state: ModalVisibilityState
+  state: ModalVisibilityState,
 ) => {
   try {
     const stateJson = JSON.stringify(state);
@@ -132,7 +132,7 @@ export const saveModalVisibilityState = async (
 };
 
 export const loadModalVisibilityState = async (
-  storagePrefix: string
+  storagePrefix: string,
 ): Promise<ModalVisibilityState | null> => {
   try {
     // storagePrefix already contains the full key, don't append _modal_state

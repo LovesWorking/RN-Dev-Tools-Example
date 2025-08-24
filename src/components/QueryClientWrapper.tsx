@@ -12,30 +12,33 @@ interface QueryClientWrapperProps {
   queryClient: QueryClient;
 }
 
-export function QueryClientWrapper({ children, queryClient }: QueryClientWrapperProps) {
+export function QueryClientWrapper({
+  children,
+  queryClient,
+}: QueryClientWrapperProps) {
   // Unified storage queries and external sync - all in one hook!
   useSyncQueriesExternal({
     queryClient,
-    socketURL: 'http://localhost:42831',
+    socketURL: "http://localhost:42831",
     deviceName: Platform.OS,
     platform: Platform.OS,
     deviceId: Platform.OS,
     extraDeviceInfo: {
-      'test-device-info': 'test123',
+      "test-device-info": "test123",
     },
     enableLogs: false,
     envVariables: {
-      'test-env-var': 'test',
+      "test-env-var": "test",
     },
     // mmkvStorage removed - using AsyncStorage instead for pure JS compatibility
     asyncStorage: AsyncStorage, // AsyncStorage for ['#storage', 'async', 'key'] queries + monitoring
     secureStorage: SecureStore, // SecureStore for ['#storage', 'secure', 'key'] queries + monitoring
     secureStorageKeys: [
-      'sessionToken',
-      'auth.session',
-      'auth.email',
-      'auth.last_sync',
-      'knock_push_token'
+      "sessionToken",
+      "auth.session",
+      "auth.email",
+      "auth.last_sync",
+      "knock_push_token",
     ], // SecureStore keys to monitor
   });
 

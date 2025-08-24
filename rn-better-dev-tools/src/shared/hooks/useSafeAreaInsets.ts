@@ -80,12 +80,12 @@ try {
   if (SafeAreaContextModule?.useSafeAreaInsets) {
     hasNativePackage = true;
     console.log(
-      "✅ react-native-safe-area-context package found - using native implementation"
+      "✅ react-native-safe-area-context package found - using native implementation",
     );
   }
 } catch {
   console.warn(
-    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation"
+    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation",
   );
 }
 
@@ -101,7 +101,7 @@ export const useSafeAreaInsets = (): SafeAreaInsets => {
 
   // Fallback state for pure JS implementation
   const [fallbackInsets, setFallbackInsets] = useState<SafeAreaInsets>(() =>
-    getPureJSSafeAreaInsets()
+    getPureJSSafeAreaInsets(),
   );
 
   useEffect(() => {

@@ -15,7 +15,8 @@ export function getEnvValue(key: string): any {
   // Try Expo Constants (for Expo apps)
   try {
     // Check if Constants exists as a global variable (from expo-constants)
-    const globalConstants = (globalThis as any).Constants || (global as any).Constants;
+    const globalConstants =
+      (globalThis as any).Constants || (global as any).Constants;
     if (globalConstants) {
       if (globalConstants.expoConfig?.extra?.[key] !== undefined) {
         return globalConstants.expoConfig.extra[key];

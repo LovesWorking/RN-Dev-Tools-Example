@@ -86,8 +86,8 @@ export function CyberpunkInput({
             toValue: 0,
             duration: 50,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
 
       // Glitch X displacement
@@ -117,8 +117,8 @@ export function CyberpunkInput({
             toValue: 0,
             duration: 20,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
 
       // Glitch Y displacement
@@ -143,8 +143,8 @@ export function CyberpunkInput({
             toValue: 0,
             duration: 30,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
 
       // Glitch scale effect
@@ -169,8 +169,8 @@ export function CyberpunkInput({
             toValue: 1,
             duration: 20,
             useNativeDriver: true,
-          })
-        ])
+          }),
+        ]),
       ).start();
     } else {
       // Reset animations when not focused
@@ -179,25 +179,25 @@ export function CyberpunkInput({
         duration: 200,
         useNativeDriver: true,
       }).start();
-      
+
       Animated.timing(glitchOpacity, {
         toValue: 0,
         duration: 100,
         useNativeDriver: true,
       }).start();
-      
+
       Animated.timing(glitchX, {
         toValue: 0,
         duration: 100,
         useNativeDriver: true,
       }).start();
-      
+
       Animated.timing(glitchY, {
         toValue: 0,
         duration: 100,
         useNativeDriver: true,
       }).start();
-      
+
       Animated.timing(glitchScale, {
         toValue: 1,
         duration: 100,
@@ -321,7 +321,9 @@ export function CyberpunkInput({
               <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                 <Path
                   d="M9 3h6M3 6h18m-2 0l-.701 10.52c-.105 1.578-.158 2.367-.499 2.965a3 3 0 01-1.298 1.215c-.62.3-1.41.3-2.993.3h-3.018c-1.582 0-2.373 0-2.993-.3A3 3 0 016.2 19.485c-.34-.598-.394-1.387-.499-2.966L5 6m5 4.5v5m4-5v5"
-                  stroke={isFocused ? gameUIColors.error : gameUIColors.error + "CC"}
+                  stroke={
+                    isFocused ? gameUIColors.error : gameUIColors.error + "CC"
+                  }
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
