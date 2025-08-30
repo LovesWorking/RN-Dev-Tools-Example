@@ -26,6 +26,12 @@ import {
   envVar,
 } from "@/rn-better-dev-tools/src/features/env";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
+import { IconShowcase } from "@/docs/svg/IconShowCase";
+import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
+import { IconComparison } from "@/docs/svg/PureRNSVGComparison";
+import WifiIconDemo from "@/docs/styles/WifiIconExample";
+import { GearIconComparison } from "@/docs/svg/GearIconComparison";
+// Cleaned up - icons now in rn-better-dev-tools/icons
 
 const { width, height } = Dimensions.get("window");
 
@@ -75,7 +81,7 @@ export default function PokemonScreen() {
         opacity: new Animated.Value(0),
         scale: new Animated.Value(Math.random() * 0.6 + 0.3),
         wobble: new Animated.Value(0),
-      })),
+      }))
   ).current;
 
   useEffect(() => {
@@ -92,7 +98,7 @@ export default function PokemonScreen() {
           duration: 2500,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Shimmer effect - continuous smooth animation with holographic feel
@@ -109,7 +115,7 @@ export default function PokemonScreen() {
           useNativeDriver: true,
         }),
         Animated.delay(2000),
-      ]),
+      ])
     ).start();
 
     // Card glow effect
@@ -125,7 +131,7 @@ export default function PokemonScreen() {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Animate bubbles with simpler logic
@@ -161,7 +167,7 @@ export default function PokemonScreen() {
             duration: 0,
             useNativeDriver: true,
           }),
-        ]),
+        ])
       ).start();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -245,7 +251,7 @@ export default function PokemonScreen() {
       setShowSuggestions(false);
       setSuggestions([]);
     },
-    [pokemonStack],
+    [pokemonStack]
   );
   const userRole: UserRole = "admin";
   const environment: Environment = "local";
@@ -402,6 +408,11 @@ export default function PokemonScreen() {
           },
         ]}
       >
+        {/* <GearsIconDemo /> */}
+        {/* <WifiIconDemo /> */}
+        {/* <IconComparison /> */}
+        {/* <GearIconComparison /> */}
+        {/* Icons now integrated in dial menu */}
         {/* Premium Header */}
         <Animated.View
           style={[
@@ -676,6 +687,8 @@ export default function PokemonScreen() {
             />
           ))}
         </View>
+        <ReactNativeShapesShowcase />
+        <IconShowcase />
       </ScrollView>
     </View>
   );

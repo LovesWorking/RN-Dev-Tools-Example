@@ -11,12 +11,10 @@ import {
 import {
   Database,
   Bug,
-  Server,
-  Wifi,
-  WifiOff,
-  X,
   Globe,
-} from "rn-better-dev-tools/icons";
+  EnvLaptopIcon,
+  WifiCircuitIcon,
+} from "@/rn-better-dev-tools/icons";
 import { TanstackLogo } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
 import {
@@ -90,7 +88,14 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
     {
       name: "Env",
-      icon: <Server size={24} color={gameUIColors.env} />,
+      icon: (
+        <EnvLaptopIcon
+          size={24}
+          color={gameUIColors.env}
+          glowColor={gameUIColors.env}
+          variant="quantum"
+        />
+      ),
       color: gameUIColors.env,
       onPress: onEnvPress,
     },
@@ -108,10 +113,14 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
     {
       name: "WiFi",
-      icon: isWifiEnabled ? (
-        <Wifi size={24} color={gameUIColors.network} />
-      ) : (
-        <WifiOff size={24} color={gameUIColors.muted} />
+      icon: (
+        <WifiCircuitIcon
+          size={24}
+          color={isWifiEnabled ? gameUIColors.network : gameUIColors.muted}
+          glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.muted}
+          variant="nodes"
+          strength={isWifiEnabled ? 4 : 0}
+        />
       ),
       color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
       onPress: onWifiToggle,
@@ -214,7 +223,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
-        ]),
+        ])
       );
       pulseAnimationRef.current.start();
     };
@@ -236,7 +245,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Gentle breathing effect for center button
@@ -254,7 +263,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Circuit traces fade in

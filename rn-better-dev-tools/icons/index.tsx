@@ -4,6 +4,14 @@
  */
 
 import type { FC } from "react";
+
+// Import our custom icons
+import { WifiIcon, WifiOffIcon, WifiCircuitIcon } from "./WifiCircuitIcon";
+import { ServerIcon, LaptopIcon, EnvLaptopIcon } from "./EnvLaptopIcon";
+
+// Export our custom icons with all their variants
+export { WifiIcon, WifiOffIcon, WifiCircuitIcon };
+export { ServerIcon, LaptopIcon, EnvLaptopIcon };
 import {
   ActivityIcon,
   AlertCircleIcon,
@@ -26,6 +34,7 @@ import {
   FileTextIcon,
   FilterIcon,
   FlaskConicalIcon,
+  GitBranchIcon,
   GlobeIcon,
   HardDriveIcon,
   LinkIcon,
@@ -34,14 +43,14 @@ import {
   PlayIcon,
   PlusIcon,
   RefreshCwIcon,
-  ServerIcon,
+  // ServerIcon, // Now using our custom EnvLaptopIcon
   SettingsIcon,
   TestTube2Icon,
   TrashIcon,
   Trash2Icon,
   UploadIcon,
-  WifiIcon,
-  WifiOffIcon,
+  // WifiIcon, // Now using our custom WifiCircuitIcon
+  // WifiOffIcon, // Now using our custom WifiCircuitIcon
   XIcon,
   XCircleIcon,
   ZapIcon,
@@ -69,7 +78,6 @@ import {
   ShieldIcon,
   TouchpadIcon,
   BarChart3Icon,
-  GitBranchIcon,
   MinusIcon,
 } from "./lucide-icons";
 
@@ -104,14 +112,14 @@ export {
   PlayIcon as Play,
   PlusIcon as Plus,
   RefreshCwIcon as RefreshCw,
-  ServerIcon as Server,
+  // ServerIcon as Server, // Using our custom ServerIcon
   SettingsIcon as Settings,
   TestTube2Icon as TestTube2,
   TrashIcon as Trash,
   Trash2Icon as Trash2,
   UploadIcon as Upload,
-  WifiIcon as Wifi,
-  WifiOffIcon as WifiOff,
+  // WifiIcon as Wifi, // Using our custom WifiIcon
+  // WifiOffIcon as WifiOff, // Using our custom WifiOffIcon
   XIcon as X,
   XCircleIcon as XCircle,
   ZapIcon as Zap,
@@ -141,6 +149,10 @@ export {
   BarChart3Icon as BarChart3,
   GitBranchIcon as GitBranch,
   MinusIcon as Minus,
+  // Add our custom icons to the main export
+  ServerIcon as Server,
+  WifiIcon as Wifi,
+  WifiOffIcon as WifiOff,
 };
 
 // Re-export TouchpadIcon with its full name for compatibility
