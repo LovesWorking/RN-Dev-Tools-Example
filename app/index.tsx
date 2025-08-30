@@ -32,6 +32,7 @@ import { IconComparison } from "@/docs/svg/PureRNSVGComparison";
 import WifiIconDemo from "@/docs/styles/WifiIconExample";
 import { GearIconComparison } from "@/docs/svg/GearIconComparison";
 // Cleaned up - icons now in rn-better-dev-tools/icons
+import StorageIconShowcase from "@/docs/styles/StorageIconShowcase";
 
 const { width, height } = Dimensions.get("window");
 
@@ -412,7 +413,7 @@ export default function PokemonScreen() {
         {/* <WifiIconDemo /> */}
         {/* <IconComparison /> */}
         {/* <GearIconComparison /> */}
-        {/* Icons now integrated in dial menu */}
+        <StorageIconShowcase />
         {/* Premium Header */}
         <Animated.View
           style={[

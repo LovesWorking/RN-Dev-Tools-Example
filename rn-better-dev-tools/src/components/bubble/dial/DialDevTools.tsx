@@ -9,11 +9,11 @@ import {
   Easing,
 } from "react-native";
 import {
-  Database,
   Bug,
   Globe,
   EnvLaptopIcon,
   WifiCircuitIcon,
+  StorageStackIcon,
 } from "@/rn-better-dev-tools/icons";
 import { TanstackLogo } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
 import DialIcon from "./DialIcon";
@@ -107,7 +107,13 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
     {
       name: "Storage",
-      icon: <Database size={24} color={gameUIColors.storage} />,
+      icon: (
+        <StorageStackIcon 
+          size={24} 
+          color={gameUIColors.storage} 
+          glowColor={gameUIColors.storage}
+        />
+      ),
       color: gameUIColors.storage,
       onPress: onStoragePress,
     },

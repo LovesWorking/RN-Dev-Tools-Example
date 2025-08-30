@@ -8,10 +8,16 @@ import type { FC } from "react";
 // Import our custom icons
 import { WifiIcon, WifiOffIcon, WifiCircuitIcon } from "./WifiCircuitIcon";
 import { ServerIcon, LaptopIcon, EnvLaptopIcon } from "./EnvLaptopIcon";
+import { StorageStackIcon } from "./StorageStackIcon";
 
 // Export our custom icons with all their variants
 export { WifiIcon, WifiOffIcon, WifiCircuitIcon };
 export { ServerIcon, LaptopIcon, EnvLaptopIcon };
+export { StorageStackIcon };
+
+// Create aliases for compatibility
+export const DatabaseIcon = StorageStackIcon;
+export const StorageIcon = StorageStackIcon;
 import {
   ActivityIcon,
   AlertCircleIcon,
@@ -26,7 +32,7 @@ import {
   ChevronUpIcon,
   ClockIcon,
   CopyIcon,
-  DatabaseIcon,
+  // DatabaseIcon, // Now using our custom StorageCircuitIcon
   DownloadIcon,
   EyeIcon,
   EyeOffIcon,
@@ -96,7 +102,7 @@ export {
   ChevronUpIcon as ChevronUp,
   ClockIcon as Clock,
   CopyIcon as Copy,
-  DatabaseIcon as Database,
+  // DatabaseIcon as Database, // Using our custom DatabaseIcon
   DownloadIcon as Download,
   EyeIcon as Eye,
   EyeOffIcon as EyeOff,
@@ -153,6 +159,7 @@ export {
   ServerIcon as Server,
   WifiIcon as Wifi,
   WifiOffIcon as WifiOff,
+  DatabaseIcon as Database,
 };
 
 // Re-export TouchpadIcon with its full name for compatibility
