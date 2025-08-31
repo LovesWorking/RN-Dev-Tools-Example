@@ -11,6 +11,7 @@ import type { NetworkEvent } from "../types";
 import { formatBytes, formatDuration } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { useTickEveryMinute } from "../../sentry/hooks/useTickEveryMinute";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
 interface NetworkEventItemCompactProps {
   event: NetworkEvent;
@@ -19,29 +20,29 @@ interface NetworkEventItemCompactProps {
 
 // Get color based on status
 function getStatusColor(status?: number, error?: string) {
-  if (error) return "#EF4444";
-  if (!status) return "#F59E0B";
-  if (status >= 200 && status < 300) return "#10B981";
-  if (status >= 300 && status < 400) return "#3B82F6";
-  if (status >= 400) return "#EF4444";
-  return "#6B7280";
+  if (error) return gameUIColors.error;
+  if (!status) return gameUIColors.warning;
+  if (status >= 200 && status < 300) return gameUIColors.success;
+  if (status >= 300 && status < 400) return gameUIColors.info;
+  if (status >= 400) return gameUIColors.error;
+  return gameUIColors.muted;
 }
 
 // Get method color
 function getMethodColor(method: string) {
   switch (method) {
     case "GET":
-      return "#10B981";
+      return gameUIColors.success;
     case "POST":
-      return "#3B82F6";
+      return gameUIColors.info;
     case "PUT":
-      return "#F59E0B";
+      return gameUIColors.warning;
     case "DELETE":
-      return "#EF4444";
+      return gameUIColors.error;
     case "PATCH":
-      return "#8B5CF6";
+      return gameUIColors.network;
     default:
-      return "#6B7280";
+      return gameUIColors.muted;
   }
 }
 
@@ -49,14 +50,14 @@ function getMethodColor(method: string) {
 function getContentTypeBadge(headers: Record<string, string>) {
   const contentType =
     headers?.["content-type"] || headers?.["Content-Type"] || "";
-  if (contentType.includes("json")) return { type: "JSON", color: "#3B82F6" };
-  if (contentType.includes("xml")) return { type: "XML", color: "#8B5CF6" };
-  if (contentType.includes("html")) return { type: "HTML", color: "#F59E0B" };
-  if (contentType.includes("text")) return { type: "TEXT", color: "#10B981" };
-  if (contentType.includes("image")) return { type: "IMG", color: "#EF4444" };
-  if (contentType.includes("video")) return { type: "VIDEO", color: "#EC4899" };
-  if (contentType.includes("audio")) return { type: "AUDIO", color: "#6366F1" };
-  if (contentType.includes("form")) return { type: "FORM", color: "#14B8A6" };
+  if (contentType.includes("json")) return { type: "JSON", color: gameUIColors.info };
+  if (contentType.includes("xml")) return { type: "XML", color: gameUIColors.network };
+  if (contentType.includes("html")) return { type: "HTML", color: gameUIColors.warning };
+  if (contentType.includes("text")) return { type: "TEXT", color: gameUIColors.success };
+  if (contentType.includes("image")) return { type: "IMG", color: gameUIColors.error };
+  if (contentType.includes("video")) return { type: "VIDEO", color: gameUIColors.critical };
+  if (contentType.includes("audio")) return { type: "AUDIO", color: gameUIColors.optional };
+  if (contentType.includes("form")) return { type: "FORM", color: gameUIColors.query };
   return null;
 }
 
@@ -75,7 +76,7 @@ function StatusIndicator({
   if (isPending) {
     return (
       <View style={styles.pendingBadge}>
-        <Clock size={10} color="#F59E0B" />
+        <Clock size={10} color={gameUIColors.warning} />
         <Text style={styles.pendingText}>...</Text>
       </View>
     );
@@ -84,7 +85,7 @@ function StatusIndicator({
   if (event.error) {
     return (
       <View style={styles.errorBadge}>
-        <AlertCircle size={10} color="#EF4444" />
+        <AlertCircle size={10} color={gameUIColors.error} />
         <Text style={styles.errorText}>ERR</Text>
       </View>
     );
@@ -113,13 +114,13 @@ function SizeIndicators({
     <View style={styles.sizeRow}>
       {requestSize ? (
         <View style={styles.sizeItem}>
-          <Upload size={8} color="#3B82F6" />
+          <Upload size={8} color={gameUIColors.info} />
           <Text style={styles.sizeText}>{formatBytes(requestSize)}</Text>
         </View>
       ) : null}
       {responseSize ? (
         <View style={styles.sizeItem}>
-          <Download size={8} color="#10B981" />
+          <Download size={8} color={gameUIColors.success} />
           <Text style={styles.sizeText}>{formatBytes(responseSize)}</Text>
         </View>
       ) : null}
@@ -219,7 +220,7 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
         </View>
 
         {/* Chevron */}
-        <ChevronRight size={14} color="#6B7280" />
+        <ChevronRight size={14} color={gameUIColors.muted} />
       </TouchableOpacity>
     );
   },
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint3,
     borderRadius: 6,
     paddingVertical: 8,
     paddingHorizontal: 10,
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
   },
   urlText: {
     fontSize: 12,
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     lineHeight: 16,
     fontFamily: "monospace",
   },
@@ -299,12 +300,12 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingHorizontal: 4,
     paddingVertical: 1,
-    backgroundColor: "rgba(245, 158, 11, 0.15)",
+    backgroundColor: `${gameUIColors.warning}26`,
     borderRadius: 3,
   },
   pendingText: {
     fontSize: 10,
-    color: "#F59E0B",
+    color: gameUIColors.warning,
     fontWeight: "600",
   },
   errorBadge: {
@@ -313,17 +314,17 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingHorizontal: 4,
     paddingVertical: 1,
-    backgroundColor: "rgba(239, 68, 68, 0.15)",
+    backgroundColor: `${gameUIColors.error}26`,
     borderRadius: 3,
   },
   errorText: {
     fontSize: 10,
-    color: "#EF4444",
+    color: gameUIColors.error,
     fontWeight: "600",
   },
   durationText: {
     fontSize: 9,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
   },
   typeBadge: {
     paddingHorizontal: 4,
@@ -337,7 +338,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 9,
-    color: "#6B7280",
+    color: gameUIColors.muted,
   },
   sizeRow: {
     flexDirection: "row",
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
   },
   sizeText: {
     fontSize: 8,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontFamily: "monospace",
   },
 });

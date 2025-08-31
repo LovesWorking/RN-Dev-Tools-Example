@@ -26,6 +26,7 @@ import {
   Check,
 } from "rn-better-dev-tools/icons";
 import type { NetworkEvent } from "../types";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
 interface NetworkFilterViewProps {
   events: NetworkEvent[];
@@ -53,15 +54,15 @@ function getContentType(event: NetworkEvent): { type: string; color: string } {
   const contentType =
     headers?.["content-type"] || headers?.["Content-Type"] || "";
 
-  if (contentType.includes("json")) return { type: "JSON", color: "#3B82F6" };
-  if (contentType.includes("xml")) return { type: "XML", color: "#8B5CF6" };
-  if (contentType.includes("html")) return { type: "HTML", color: "#F59E0B" };
-  if (contentType.includes("text")) return { type: "TEXT", color: "#10B981" };
-  if (contentType.includes("image")) return { type: "IMAGE", color: "#EF4444" };
-  if (contentType.includes("video")) return { type: "VIDEO", color: "#EC4899" };
-  if (contentType.includes("audio")) return { type: "AUDIO", color: "#6366F1" };
-  if (contentType.includes("form")) return { type: "FORM", color: "#14B8A6" };
-  return { type: "OTHER", color: "#6B7280" };
+  if (contentType.includes("json")) return { type: "JSON", color: gameUIColors.info };
+  if (contentType.includes("xml")) return { type: "XML", color: gameUIColors.network };
+  if (contentType.includes("html")) return { type: "HTML", color: gameUIColors.warning };
+  if (contentType.includes("text")) return { type: "TEXT", color: gameUIColors.success };
+  if (contentType.includes("image")) return { type: "IMAGE", color: gameUIColors.error };
+  if (contentType.includes("video")) return { type: "VIDEO", color: gameUIColors.critical };
+  if (contentType.includes("audio")) return { type: "AUDIO", color: gameUIColors.optional };
+  if (contentType.includes("form")) return { type: "FORM", color: gameUIColors.query };
+  return { type: "OTHER", color: gameUIColors.muted };
 }
 
 export function NetworkFilterView({
@@ -145,7 +146,7 @@ export function NetworkFilterView({
   // Get color for content type
   const getContentTypeColor = (type: string) => {
     const testEvent = events.find((e) => getContentType(e).type === type);
-    return testEvent ? getContentType(testEvent).color : "#6B7280";
+    return testEvent ? getContentType(testEvent).color : gameUIColors.muted;
   };
 
   const handleStatusFilter = (
@@ -231,17 +232,17 @@ export function NetworkFilterView({
   const getMethodColor = (method: string) => {
     switch (method) {
       case "GET":
-        return "#10B981";
+        return gameUIColors.success;
       case "POST":
-        return "#3B82F6";
+        return gameUIColors.info;
       case "PUT":
-        return "#F59E0B";
+        return gameUIColors.warning;
       case "DELETE":
-        return "#EF4444";
+        return gameUIColors.error;
       case "PATCH":
-        return "#8B5CF6";
+        return gameUIColors.network;
       default:
-        return "#6B7280";
+        return gameUIColors.muted;
     }
   };
 
@@ -258,7 +259,7 @@ export function NetworkFilterView({
       >
         <Filter
           size={14}
-          color={activeTab === "filters" ? "#8B5CF6" : "#6B7280"}
+          color={activeTab === "filters" ? gameUIColors.network : gameUIColors.muted}
         />
         <Text
           style={[
@@ -283,7 +284,7 @@ export function NetworkFilterView({
       >
         <Globe
           size={14}
-          color={activeTab === "domains" ? "#8B5CF6" : "#6B7280"}
+          color={activeTab === "domains" ? gameUIColors.network : gameUIColors.muted}
         />
         <Text
           style={[
@@ -311,7 +312,7 @@ export function NetworkFilterView({
             : styles.tabButtonInactive,
         ]}
       >
-        <Link size={14} color={activeTab === "urls" ? "#8B5CF6" : "#6B7280"} />
+        <Link size={14} color={activeTab === "urls" ? gameUIColors.network : gameUIColors.muted} />
         <Text
           style={[
             styles.tabButtonText,
@@ -398,12 +399,12 @@ export function NetworkFilterView({
                     {
                       color:
                         status === "success"
-                          ? "#10B981"
+                          ? gameUIColors.success
                           : status === "error"
-                            ? "#EF4444"
+                            ? gameUIColors.error
                             : status === "pending"
-                              ? "#F59E0B"
-                              : "#8B5CF6",
+                              ? gameUIColors.warning
+                              : gameUIColors.network,
                     },
                   ]}
                 >
@@ -685,16 +686,16 @@ export function NetworkFilterView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0A0A0B",
+    backgroundColor: gameUIColors.background,
   },
   tabContainer: {
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.blackTint2,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(139, 92, 246, 0.1)",
+    borderBottomColor: `${gameUIColors.network}1A`,
   },
   tabButton: {
     flex: 1,
@@ -708,12 +709,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tabButtonActive: {
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
-    borderColor: "#8B5CF6",
+    backgroundColor: `${gameUIColors.network}26`,
+    borderColor: gameUIColors.network,
   },
   tabButtonInactive: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: gameUIColors.blackTint3,
+    borderColor: gameUIColors.border,
   },
   tabButtonText: {
     fontSize: 11,
@@ -721,13 +722,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   tabButtonTextActive: {
-    color: "#8B5CF6",
+    color: gameUIColors.network,
   },
   tabButtonTextInactive: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
   },
   tabBadge: {
-    backgroundColor: "rgba(139, 92, 246, 0.25)",
+    backgroundColor: `${gameUIColors.network}40`,
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 8,
@@ -736,7 +737,7 @@ const styles = StyleSheet.create({
   },
   tabBadgeText: {
     fontSize: 9,
-    color: "#8B5CF6",
+    color: gameUIColors.network,
     fontWeight: "700",
   },
   content: {
@@ -758,12 +759,12 @@ const styles = StyleSheet.create({
   sectionLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: `${gameUIColors.network}1A`,
   },
   sectionTitle: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#6B7280",
+    color: gameUIColors.muted,
     textTransform: "uppercase",
     letterSpacing: 1.2,
   },
@@ -773,13 +774,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   filterCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: gameUIColors.blackTint2,
     borderRadius: 12,
     padding: 14,
     minWidth: 104,
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: gameUIColors.border,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -787,26 +788,26 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   activeFilterCard: {
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
-    borderColor: "rgba(139, 92, 246, 0.4)",
+    backgroundColor: `${gameUIColors.network}26`,
+    borderColor: `${gameUIColors.network}66`,
     borderWidth: 1.5,
-    shadowColor: "#8B5CF6",
+    shadowColor: gameUIColors.network,
     shadowOpacity: 0.2,
   },
   filterIconContainer: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: `${gameUIColors.network}1A`,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "rgba(139, 92, 246, 0.15)",
+    borderColor: `${gameUIColors.network}26`,
   },
   filterLabel: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     marginBottom: 6,
     fontWeight: "500",
     textTransform: "capitalize",
@@ -814,7 +815,7 @@ const styles = StyleSheet.create({
   filterCount: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontFamily: "monospace",
   },
   methodBadge: {
@@ -823,7 +824,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: gameUIColors.border,
   },
   methodText: {
     fontSize: 13,
@@ -841,15 +842,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     padding: 10,
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: `${gameUIColors.network}1A`,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(139, 92, 246, 0.3)",
+    borderColor: `${gameUIColors.network}4D`,
     marginBottom: 16,
   },
   addButtonText: {
     fontSize: 12,
-    color: "#8B5CF6",
+    color: gameUIColors.network,
     fontWeight: "600",
   },
   addInputContainer: {
@@ -862,11 +863,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 36,
     paddingHorizontal: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.blackTint3,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(139, 92, 246, 0.3)",
-    color: "#E5E7EB",
+    borderColor: `${gameUIColors.network}4D`,
+    color: gameUIColors.primaryLight,
     fontSize: 12,
   },
   confirmButton: {

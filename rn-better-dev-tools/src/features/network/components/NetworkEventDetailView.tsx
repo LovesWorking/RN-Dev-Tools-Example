@@ -29,6 +29,7 @@ import {
   formatHttpStatus,
 } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
@@ -60,9 +61,9 @@ const CollapsibleSection: React.FC<{
           <Text style={styles.collapsibleTitleText}>{title}</Text>
         </View>
         {isOpen ? (
-          <ChevronUp size={16} color="#9CA3AF" />
+          <ChevronUp size={16} color={gameUIColors.secondary} />
         ) : (
-          <ChevronDown size={16} color="#9CA3AF" />
+          <ChevronDown size={16} color={gameUIColors.secondary} />
         )}
       </TouchableOpacity>
       {isOpen ? (
@@ -114,9 +115,9 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
     <View style={styles.urlBreakdown}>
       <View style={styles.urlRow}>
         {urlParts.isSecure ? (
-          <Lock size={12} color="#10B981" />
+          <Lock size={12} color={gameUIColors.success} />
         ) : (
-          <Unlock size={12} color="#F59E0B" />
+          <Unlock size={12} color={gameUIColors.warning} />
         )}
         <Text style={styles.urlDomain}>{urlParts.host}</Text>
         <Text style={styles.urlProtocol}>
@@ -127,7 +128,7 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
           onPress={() => handleCopy(url)}
           style={styles.copyButton}
         >
-          <Copy size={12} color="#6B7280" />
+          <Copy size={12} color={gameUIColors.muted} />
         </TouchableOpacity>
       </View>
       <View style={styles.urlPathRow}>
@@ -182,13 +183,13 @@ export function NetworkEventDetailView({
             </View>
           ) : isPending ? (
             <View style={styles.pendingBadge}>
-              <Clock size={10} color="#F59E0B" />
+              <Clock size={10} color={gameUIColors.warning} />
               <Text style={styles.pendingBadgeText}>Pending</Text>
             </View>
           ) : null}
           {event.duration ? (
             <View style={styles.httpDuration}>
-              <Clock size={10} color="#6B7280" />
+              <Clock size={10} color={gameUIColors.muted} />
               <Text style={styles.httpDurationText}>
                 {formatDuration(event.duration)}
               </Text>
@@ -200,7 +201,7 @@ export function NetworkEventDetailView({
 
         {event.error ? (
           <View style={styles.errorBox}>
-            <AlertCircle size={12} color="#EF4444" />
+            <AlertCircle size={12} color={gameUIColors.error} />
             <Text style={styles.errorText}>{event.error}</Text>
           </View>
         ) : null}
@@ -209,7 +210,7 @@ export function NetworkEventDetailView({
       {/* Timing Information - Always visible */}
       <View style={styles.timingSection}>
         <View style={styles.timingRow}>
-          <Clock size={12} color="#9CA3AF" />
+          <Clock size={12} color={gameUIColors.secondary} />
           <Text style={styles.timingLabel}>Started:</Text>
           <Text style={styles.timingValue}>
             {formatRelativeTime(event.timestamp)}
@@ -223,7 +224,7 @@ export function NetworkEventDetailView({
           <View style={styles.sizeRow}>
             {event.requestSize !== undefined ? (
               <View style={styles.sizeItem}>
-                <Upload size={10} color="#3B82F6" />
+                <Upload size={10} color={gameUIColors.info} />
                 <Text style={styles.sizeLabel}>Sent:</Text>
                 <Text style={styles.sizeValue}>
                   {formatBytes(event.requestSize)}
@@ -232,7 +233,7 @@ export function NetworkEventDetailView({
             ) : null}
             {event.responseSize !== undefined ? (
               <View style={styles.sizeItem}>
-                <Download size={10} color="#10B981" />
+                <Download size={10} color={gameUIColors.success} />
                 <Text style={styles.sizeLabel}>Received:</Text>
                 <Text style={styles.sizeValue}>
                   {formatBytes(event.responseSize)}
@@ -246,7 +247,7 @@ export function NetworkEventDetailView({
       {/* Request Headers - Collapsible */}
       <CollapsibleSection
         title="Request Headers"
-        icon={<Upload size={14} color="#3B82F6" />}
+        icon={<Upload size={14} color={gameUIColors.info} />}
         defaultOpen={false}
       >
         {Object.keys(event.requestHeaders).length > 0 ? (
@@ -267,7 +268,7 @@ export function NetworkEventDetailView({
       {/* Response Headers - Collapsible */}
       <CollapsibleSection
         title="Response Headers"
-        icon={<Download size={14} color="#10B981" />}
+        icon={<Download size={14} color={gameUIColors.success} />}
         defaultOpen={false}
       >
         {Object.keys(event.responseHeaders).length > 0 ? (
@@ -289,7 +290,7 @@ export function NetworkEventDetailView({
       {event.requestData ? (
         <CollapsibleSection
           title="Request Body"
-          icon={<FileJson size={14} color="#8B5CF6" />}
+          icon={<FileJson size={14} color={gameUIColors.network} />}
           defaultOpen={false}
         >
           <View style={styles.dataViewerContainer}>
@@ -308,7 +309,7 @@ export function NetworkEventDetailView({
       {event.responseData ? (
         <CollapsibleSection
           title="Response Body"
-          icon={<FileJson size={14} color="#10B981" />}
+          icon={<FileJson size={14} color={gameUIColors.success} />}
           defaultOpen={false}
         >
           <View style={styles.dataViewerContainer}>
@@ -326,7 +327,7 @@ export function NetworkEventDetailView({
       {/* Filter Options - Collapsible */}
       <CollapsibleSection
         title="Filter Options"
-        icon={<Filter size={14} color="#F59E0B" />}
+        icon={<Filter size={14} color={gameUIColors.warning} />}
         defaultOpen={false}
       >
         <View style={styles.filterOptionsContainer}>
@@ -443,16 +444,16 @@ export function NetworkEventDetailView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
   },
   // Request details section - always visible
   requestDetailsSection: {
     marginHorizontal: 12,
     marginTop: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint3,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.border,
     padding: 12,
   },
   httpHeader: {
@@ -462,13 +463,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   httpMethodBadge: {
-    backgroundColor: "rgba(139, 92, 246, 0.2)",
+    backgroundColor: `${gameUIColors.network}33`,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   httpMethod: {
-    color: "#8B5CF6",
+    color: gameUIColors.network,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 0.5,
@@ -486,13 +487,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(245, 158, 11, 0.2)",
+    backgroundColor: `${gameUIColors.warning}33`,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   pendingBadgeText: {
-    color: "#F59E0B",
+    color: gameUIColors.warning,
     fontSize: 11,
     fontWeight: "600",
   },
@@ -503,12 +504,12 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   httpDurationText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
   },
   // URL breakdown styles
   urlBreakdown: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.blackTint1,
     borderRadius: 4,
     padding: 8,
   },
@@ -519,13 +520,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   urlDomain: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 12,
     fontWeight: "600",
     flex: 1,
   },
   urlProtocol: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 10,
   },
   copyButton: {
@@ -535,7 +536,7 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
   },
   urlPath: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     fontFamily: "monospace",
   },
@@ -543,10 +544,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    borderTopColor: gameUIColors.border,
   },
   urlParamsTitle: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 10,
     fontWeight: "600",
     marginBottom: 4,
@@ -554,7 +555,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   urlParam: {
-    color: "#3B82F6",
+    color: gameUIColors.info,
     fontSize: 11,
     fontFamily: "monospace",
     marginLeft: 8,
@@ -564,10 +565,10 @@ const styles = StyleSheet.create({
   timingSection: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint3,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.border,
     padding: 12,
   },
   timingRow: {
@@ -576,16 +577,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   timingLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
   },
   timingValue: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 11,
     fontWeight: "600",
   },
   timingExact: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 10,
     marginLeft: 4,
   },
@@ -595,7 +596,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    borderTopColor: gameUIColors.border,
   },
   sizeItem: {
     flexDirection: "row",
@@ -603,11 +604,11 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   sizeLabel: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 10,
   },
   sizeValue: {
-    color: "#3B82F6",
+    color: gameUIColors.info,
     fontSize: 10,
     fontFamily: "monospace",
     fontWeight: "600",
@@ -616,10 +617,10 @@ const styles = StyleSheet.create({
   collapsibleSection: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint3,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.border,
     overflow: "hidden",
   },
   collapsibleHeader: {
@@ -627,7 +628,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: gameUIColors.blackTint2,
   },
   collapsibleTitle: {
     flexDirection: "row",
@@ -635,7 +636,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   collapsibleTitleText: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 13,
     fontWeight: "600",
   },
@@ -653,19 +654,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    backgroundColor: `${gameUIColors.error}1A`,
     padding: 8,
     borderRadius: 4,
     marginTop: 8,
   },
   errorText: {
-    color: "#EF4444",
+    color: gameUIColors.error,
     fontSize: 11,
     flex: 1,
   },
   // Empty state
   emptyText: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 12,
     fontStyle: "italic",
     textAlign: "center",
@@ -678,15 +679,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint3,
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.border,
   },
   filterOptionActive: {
-    backgroundColor: "rgba(245, 158, 11, 0.1)",
-    borderColor: "rgba(245, 158, 11, 0.2)",
+    backgroundColor: `${gameUIColors.warning}1A`,
+    borderColor: `${gameUIColors.warning}33`,
   },
   filterOptionLeft: {
     flexDirection: "row",
@@ -698,14 +699,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterOptionLabel: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     marginBottom: 2,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   filterOptionValue: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 13,
     fontFamily: "monospace",
   },
@@ -713,32 +714,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: gameUIColors.blackTint3,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: gameUIColors.border,
   },
   filterToggleActive: {
-    backgroundColor: "rgba(245, 158, 11, 0.15)",
-    borderColor: "rgba(245, 158, 11, 0.3)",
+    backgroundColor: `${gameUIColors.warning}26`,
+    borderColor: `${gameUIColors.warning}4D`,
   },
   filterToggleText: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#6B7280",
+    color: gameUIColors.muted,
     letterSpacing: 0.5,
   },
   filterToggleTextActive: {
-    color: "#F59E0B",
+    color: gameUIColors.warning,
   },
   filterInfoBox: {
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: `${gameUIColors.network}1A`,
     borderRadius: 6,
     padding: 10,
     borderWidth: 1,
-    borderColor: "rgba(139, 92, 246, 0.2)",
+    borderColor: `${gameUIColors.network}33`,
   },
   filterInfoText: {
-    color: "#9CA3AF",
+    color: gameUIColors.secondary,
     fontSize: 11,
     lineHeight: 16,
   },

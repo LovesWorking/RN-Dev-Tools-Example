@@ -17,7 +17,6 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Zap,
   X,
   Link,
 } from "rn-better-dev-tools/icons";
@@ -27,6 +26,7 @@ import ClaudeModal60FPSClean, {
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
 import { NetworkFilterView } from "./NetworkFilterView";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
@@ -45,7 +45,7 @@ interface NetworkModalProps {
 function EmptyState({ isEnabled }: { isEnabled: boolean }) {
   return (
     <View style={styles.emptyState}>
-      <Globe size={32} color="#374151" />
+      <Globe size={32} color={gameUIColors.muted} />
       <Text style={styles.emptyTitle}>No network events</Text>
       <Text style={styles.emptyText}>
         {isEnabled
@@ -76,7 +76,6 @@ function NetworkModalInner({
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
-  const [showDevMode, setShowDevMode] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [ignoredDomains, setIgnoredDomains] = useState<Set<string>>(new Set());
   const [ignoredUrls, setIgnoredUrls] = useState<Set<string>>(new Set());
@@ -221,33 +220,6 @@ function NetworkModalInner({
 
   // Compact header with actions (like Sentry/Storage modals)
   const renderHeaderContent = () => {
-    if (showDevMode) {
-      return (
-        <View style={styles.headerContainer}>
-          <BackButton
-            onPress={() => setShowDevMode(false)}
-            color={theme.colors.text}
-          />
-          <Text
-            style={[
-              styles.headerTitle,
-              {
-                color: theme.colors.text,
-                fontFamily:
-                  theme.name === "cyberpunk" ? "monospace" : undefined,
-                fontSize: theme.name === "cyberpunk" ? 14 : 14,
-                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-                textTransform:
-                  theme.name === "cyberpunk" ? "uppercase" : undefined,
-              },
-            ]}
-          >
-            {theme.name === "cyberpunk" ? "// DEV TEST MODE" : "Dev Test Mode"}
-          </Text>
-        </View>
-      );
-    }
     if (showFilterView) {
       return (
         <View style={styles.headerContainer}>
@@ -331,7 +303,7 @@ function NetworkModalInner({
               style={[
                 styles.headerFilteredText,
                 {
-                  color: "#F59E0B",
+                  color: gameUIColors.warning,
                   fontFamily:
                     theme.name === "cyberpunk" ? "monospace" : undefined,
                   fontSize: theme.name === "cyberpunk" ? 10 : 11,
@@ -341,34 +313,10 @@ function NetworkModalInner({
               ({events.length - filteredEvents.length} HIDDEN)
             </Text>
           ) : null}
-          {isEnabled ? (
-            <View
-              style={[
-                styles.listeningIndicator,
-                {
-                  backgroundColor:
-                    theme.name === "cyberpunk"
-                      ? theme.colors.networkColor
-                      : "#10B981",
-                },
-              ]}
-            />
-          ) : null}
         </View>
 
         {/* Action buttons in header */}
         <View style={styles.headerActions}>
-          <TouchableOpacity
-            sentry-label="ignore dev mode"
-            onPress={() => setShowDevMode(true)}
-            style={[
-              styles.headerActionButton,
-              showDevMode && styles.activeDevButton,
-            ]}
-          >
-            <Zap size={14} color={showDevMode ? "#EF4444" : "#6B7280"} />
-          </TouchableOpacity>
-
           <TouchableOpacity
             sentry-label="ignore filter"
             onPress={() => setShowFilterView(true)}
@@ -382,8 +330,8 @@ function NetworkModalInner({
               size={14}
               color={
                 filter.status || filter.method || filter.contentType
-                  ? "#8B5CF6"
-                  : "#6B7280"
+                  ? gameUIColors.network
+                  : gameUIColors.muted
               }
             />
           </TouchableOpacity>
@@ -396,7 +344,7 @@ function NetworkModalInner({
               isEnabled ? styles.startButton : styles.stopButton,
             ]}
           >
-            <Power size={14} color={isEnabled ? "#10B981" : "#EF4444"} />
+            <Power size={14} color={isEnabled ? gameUIColors.success : gameUIColors.error} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -407,7 +355,7 @@ function NetworkModalInner({
           >
             <Trash2
               size={14}
-              color={events.length > 0 ? "#6B7280" : "#374151"}
+              color={events.length > 0 ? gameUIColors.muted : gameUIColors.blackTint3}
             />
           </TouchableOpacity>
         </View>
@@ -417,11 +365,11 @@ function NetworkModalInner({
 
   const renderSearchBar = () => (
     <View style={styles.searchContainer}>
-      <Search size={14} color="#9CA3AF" />
+      <Search size={14} color={gameUIColors.muted} />
       <TextInput
         style={styles.searchInput}
         placeholder="Search URL, method, error..."
-        placeholderTextColor="#6B7280"
+        placeholderTextColor={gameUIColors.muted}
         value={searchText}
         onChangeText={handleSearch}
         sentry-label="ignore network search"
@@ -432,7 +380,7 @@ function NetworkModalInner({
           onPress={() => handleSearch("")}
           sentry-label="ignore clear search"
         >
-          <X size={16} color="#9CA3AF" />
+          <X size={16} color={gameUIColors.muted} />
         </TouchableOpacity>
       ) : null}
     </View>
@@ -507,10 +455,8 @@ function NetworkModalInner({
       styles={{}}
     >
       <View style={styles.container}>
-        {/* Show dev mode if active */}
-        {showDevMode ? (
-          <></>
-        ) : showFilterView ? (
+        {/* Show filter view if active */}
+        {showFilterView ? (
           <NetworkFilterView
             events={events}
             filter={filter}
@@ -565,7 +511,7 @@ function NetworkModalInner({
                   })
                 }
               >
-                <CheckCircle size={12} color="#10B981" />
+                <CheckCircle size={12} color={gameUIColors.success} />
                 <Text style={styles.statValue}>{stats.successfulRequests}</Text>
                 <Text style={styles.statLabel}>OK</Text>
               </TouchableOpacity>
@@ -581,7 +527,7 @@ function NetworkModalInner({
                   })
                 }
               >
-                <XCircle size={12} color="#EF4444" />
+                <XCircle size={12} color={gameUIColors.error} />
                 <Text style={[styles.statValue, styles.errorText]}>
                   {stats.failedRequests}
                 </Text>
@@ -599,7 +545,7 @@ function NetworkModalInner({
                   })
                 }
               >
-                <Clock size={12} color="#F59E0B" />
+                <Clock size={12} color={gameUIColors.warning} />
                 <Text style={[styles.statValue, styles.pendingText]}>
                   {stats.pendingRequests}
                 </Text>
@@ -609,7 +555,7 @@ function NetworkModalInner({
 
             {!isEnabled ? (
               <View style={styles.disabledBanner}>
-                <Power size={14} color="#F59E0B" />
+                <Power size={14} color={gameUIColors.warning} />
                 <Text style={styles.disabledText}>
                   Network interception is disabled
                 </Text>
@@ -646,7 +592,7 @@ function NetworkModalInner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#171717",
+    backgroundColor: gameUIColors.background,
   },
   // Compact header styles matching Sentry/Storage modals
   headerContainer: {
@@ -658,7 +604,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
   headerTitle: {
-    color: "#E5E7EB",
+    color: gameUIColors.primaryLight,
     fontSize: 14,
     fontWeight: "500",
     flex: 1,
@@ -668,27 +614,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.blackTint1,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
   headerStatsText: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: gameUIColors.muted,
     fontWeight: "500",
   },
   headerFilteredText: {
     fontSize: 11,
-    color: "#F59E0B",
+    color: gameUIColors.warning,
     fontWeight: "500",
     marginLeft: 4,
-  },
-  listeningIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#10B981",
   },
   headerActions: {
     flexDirection: "row",
@@ -700,31 +640,27 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint2,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: gameUIColors.border,
     alignItems: "center",
     justifyContent: "center",
   },
   startButton: {
-    backgroundColor: "rgba(16, 185, 129, 0.1)",
-    borderColor: "rgba(16, 185, 129, 0.2)",
+    backgroundColor: `${gameUIColors.success}1A`,
+    borderColor: `${gameUIColors.success}33`,
   },
   stopButton: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderColor: "rgba(239, 68, 68, 0.2)",
+    backgroundColor: `${gameUIColors.error}1A`,
+    borderColor: `${gameUIColors.error}33`,
   },
   activeFilterButton: {
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
-    borderColor: "rgba(139, 92, 246, 0.2)",
-  },
-  activeDevButton: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderColor: "rgba(239, 68, 68, 0.2)",
+    backgroundColor: `${gameUIColors.network}1A`,
+    borderColor: `${gameUIColors.network}33`,
   },
   activeIgnoreButton: {
-    backgroundColor: "rgba(245, 158, 11, 0.1)",
-    borderColor: "rgba(245, 158, 11, 0.2)",
+    backgroundColor: `${gameUIColors.warning}1A`,
+    borderColor: `${gameUIColors.warning}33`,
   },
   detailHeaderActions: {
     flexDirection: "row",
@@ -736,7 +672,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    backgroundColor: gameUIColors.blackTint1,
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -746,7 +682,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 13,
     marginLeft: 6,
   },
@@ -756,15 +692,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: gameUIColors.blackTint2,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.06)",
+    borderBottomColor: gameUIColors.border,
   },
   statChip: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: gameUIColors.blackTint3,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -772,25 +708,25 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   statChipActive: {
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
-    borderColor: "rgba(139, 92, 246, 0.4)",
+    backgroundColor: `${gameUIColors.network}26`,
+    borderColor: `${gameUIColors.network}66`,
   },
   statValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
   },
   statLabel: {
     fontSize: 10,
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontWeight: "500",
     textTransform: "uppercase",
   },
   errorText: {
-    color: "#EF4444",
+    color: gameUIColors.error,
   },
   pendingText: {
-    color: "#F59E0B",
+    color: gameUIColors.warning,
   },
   disabledBanner: {
     flexDirection: "row",
@@ -799,13 +735,13 @@ const styles = StyleSheet.create({
     padding: 8,
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    backgroundColor: `${gameUIColors.warning}1A`,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.2)",
+    borderColor: `${gameUIColors.warning}33`,
   },
   disabledText: {
-    color: "#F59E0B",
+    color: gameUIColors.warning,
     fontSize: 11,
     flex: 1,
   },
@@ -817,14 +753,14 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   emptyTitle: {
-    color: "#FFFFFF",
+    color: gameUIColors.primary,
     fontSize: 14,
     fontWeight: "600",
     marginTop: 12,
     marginBottom: 6,
   },
   emptyText: {
-    color: "#6B7280",
+    color: gameUIColors.muted,
     fontSize: 12,
     textAlign: "center",
   },

@@ -2,6 +2,8 @@
  * HTTP-specific formatting utilities
  */
 
+import { gameUIColors } from "../../ui/gameUI/constants/gameUIColors";
+
 /**
  * Format HTTP status code with color and meaning
  * @param status HTTP status code
@@ -16,7 +18,7 @@ export function formatHttpStatus(status: number): {
   if (status >= 100 && status < 200) {
     return {
       text: String(status),
-      color: "#3B82F6",
+      color: gameUIColors.info,
       meaning: "Informational",
     };
   }
@@ -32,7 +34,7 @@ export function formatHttpStatus(status: number): {
     };
     return {
       text: String(status),
-      color: "#10B981",
+      color: gameUIColors.success,
       meaning: meanings[status] || "Success",
     };
   }
@@ -49,7 +51,7 @@ export function formatHttpStatus(status: number): {
     };
     return {
       text: String(status),
-      color: "#F59E0B",
+      color: gameUIColors.warning,
       meaning: meanings[status] || "Redirect",
     };
   }
@@ -71,7 +73,7 @@ export function formatHttpStatus(status: number): {
     };
     return {
       text: String(status),
-      color: "#EF4444",
+      color: gameUIColors.error,
       meaning: meanings[status] || "Client Error",
     };
   }
@@ -88,14 +90,14 @@ export function formatHttpStatus(status: number): {
     };
     return {
       text: String(status),
-      color: "#DC2626",
+      color: gameUIColors.error,
       meaning: meanings[status] || "Server Error",
     };
   }
 
   return {
     text: String(status),
-    color: "#6B7280",
+    color: gameUIColors.muted,
     meaning: "Unknown",
   };
 }
@@ -107,18 +109,18 @@ export function formatHttpStatus(status: number): {
  */
 export function getMethodColor(method: string): string {
   const colors: Record<string, string> = {
-    GET: "#10B981",
-    POST: "#3B82F6",
-    PUT: "#F59E0B",
-    DELETE: "#EF4444",
-    PATCH: "#8B5CF6",
-    HEAD: "#6B7280",
-    OPTIONS: "#9CA3AF",
-    CONNECT: "#EC4899",
-    TRACE: "#84CC16",
+    GET: gameUIColors.success,
+    POST: gameUIColors.info,
+    PUT: gameUIColors.warning,
+    DELETE: gameUIColors.error,
+    PATCH: gameUIColors.network,
+    HEAD: gameUIColors.muted,
+    OPTIONS: gameUIColors.secondary,
+    CONNECT: gameUIColors.critical,
+    TRACE: gameUIColors.env,
   };
 
-  return colors[method.toUpperCase()] || "#6B7280";
+  return colors[method.toUpperCase()] || gameUIColors.muted;
 }
 
 /**
