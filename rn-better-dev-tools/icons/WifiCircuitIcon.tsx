@@ -1,348 +1,215 @@
 import React from "react";
-import { View } from "react-native";
+import { View, ViewStyle } from "react-native";
+import { IconBackground } from "./shared/IconBackground";
 
 interface WifiIconProps {
   size?: number;
   color?: string;
   glowColor?: string;
-  variant?: "nodes" | "grid";
   strength?: 0 | 1 | 2 | 3 | 4;
+  colorPreset?: "cyan" | "green" | "purple" | "pink" | "yellow" | "orange";
+  variant?: "circuit" | "matrix" | "glitch" | "nodes" | "grid";
+  noBackground?: boolean;
 }
+
+const ColorPresets = {
+  cyan: { color: "#00D4FF", glow: "#00D4FF" },
+  green: { color: "#00FF88", glow: "#00FF88" },
+  purple: { color: "#9945FF", glow: "#9945FF" },
+  pink: { color: "#FF45FF", glow: "#FF45FF" },
+  yellow: { color: "#FFD700", glow: "#FFD700" },
+  orange: { color: "#FF8800", glow: "#FF8800" },
+};
 
 export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
   size = 24,
-  color = "#00D4FF",
-  glowColor = "#00D4FF",
-  variant = "nodes",
+  color,
+  glowColor,
   strength = 4,
+  colorPreset = "cyan",
+  variant = "nodes",
+  noBackground = true,
 }) => {
   const scale = size / 60;
   const strokeWidth = 2.5 * scale;
   const isOff = strength === 0;
-  const activeColor = isOff ? "#333" : color;
-  const activeGlow = isOff ? "#333" : glowColor;
 
-  const renderVariant = () => {
-    switch (variant) {
-      case "nodes":
-        return (
-          <>
-            {/* Connected circuit nodes forming a network */}
-            {strength > 0 && (
-              <>
-                {/* Connection lines */}
-                <View style={{
-                  position: "absolute",
-                  width: size * 0.4,
-                  height: 0.5 * scale,
-                  backgroundColor: activeGlow,
-                  opacity: 0.2,
-                  left: size * 0.3,
-                  top: size * 0.25,
-                  transform: [{ rotate: "20deg" }],
-                }} />
-                <View style={{
-                  position: "absolute",
-                  width: size * 0.4,
-                  height: 0.5 * scale,
-                  backgroundColor: activeGlow,
-                  opacity: 0.2,
-                  left: size * 0.3,
-                  top: size * 0.25,
-                  transform: [{ rotate: "-20deg" }],
-                }} />
-                <View style={{
-                  position: "absolute",
-                  width: 0.5 * scale,
-                  height: size * 0.3,
-                  backgroundColor: activeGlow,
-                  opacity: 0.2,
-                  left: size / 2 - 0.25 * scale,
-                  top: size * 0.25,
-                }} />
-              </>
-            )}
+  // Use preset colors if no custom colors provided
+  const baseColor = color || ColorPresets[colorPreset].color;
+  const baseGlow = glowColor || ColorPresets[colorPreset].glow;
+  const activeColor = isOff ? "#333" : baseColor;
+  const activeGlow = isOff ? "#333" : baseGlow;
 
-            {/* Network nodes */}
-            {[
-              { x: size * 0.5, y: size * 0.25, size: 3, opacity: 1 },
-              { x: size * 0.3, y: size * 0.35, size: 2, opacity: 0.8 },
-              { x: size * 0.7, y: size * 0.35, size: 2, opacity: 0.8 },
-              { x: size * 0.2, y: size * 0.45, size: 1.5, opacity: 0.6 },
-              { x: size * 0.8, y: size * 0.45, size: 1.5, opacity: 0.6 },
-              { x: size * 0.5, y: size * 0.5, size: 2.5, opacity: 0.9 },
-            ].map((node, i) => (
+  const iconContent = (
+    <>
+      {/* Central dot */}
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 5 * scale,
+            height: 5 * scale,
+            borderRadius: 2.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 2.5 * scale,
+            top: size * 0.7,
+            opacity: strength > 0 ? 1 : 0.3,
+          } as ViewStyle
+        }
+      />
+
+      {/* WiFi signal arcs - proper cone shape */}
+      {/* Small arc */}
+      {strength >= 1 && (
+        <View
+          style={
+            {
+              position: "absolute",
+              width: 15 * scale,
+              height: 15 * scale,
+              borderRadius: 7.5 * scale,
+              borderWidth: strokeWidth,
+              borderColor: activeColor,
+              borderTopColor: "transparent",
+              borderLeftColor: "transparent",
+              borderRightColor: "transparent",
+              left: size / 2 - 7.5 * scale,
+              top: size * 0.55,
+              transform: [{ rotate: "180deg" }],
+              opacity: strength >= 1 ? 0.9 : 0.3,
+            } as ViewStyle
+          }
+        />
+      )}
+
+      {/* Medium arc */}
+      {strength >= 2 && (
+        <View
+          style={
+            {
+              position: "absolute",
+              width: 30 * scale,
+              height: 30 * scale,
+              borderRadius: 15 * scale,
+              borderWidth: strokeWidth,
+              borderColor: activeColor,
+              borderTopColor: "transparent",
+              borderLeftColor: "transparent",
+              borderRightColor: "transparent",
+              left: size / 2 - 15 * scale,
+              top: size * 0.45,
+              transform: [{ rotate: "180deg" }],
+              opacity: strength >= 2 ? 0.8 : 0.3,
+            } as ViewStyle
+          }
+        />
+      )}
+
+      {/* Large arc */}
+      {strength >= 3 && (
+        <View
+          style={
+            {
+              position: "absolute",
+              width: 45 * scale,
+              height: 45 * scale,
+              borderRadius: 22.5 * scale,
+              borderWidth: strokeWidth,
+              borderColor: activeColor,
+              borderTopColor: "transparent",
+              borderLeftColor: "transparent",
+              borderRightColor: "transparent",
+              left: size / 2 - 22.5 * scale,
+              top: size * 0.35,
+              transform: [{ rotate: "180deg" }],
+              opacity: strength >= 3 ? 0.7 : 0.3,
+            } as ViewStyle
+          }
+        />
+      )}
+
+      {/* Extra large arc for full strength */}
+      {strength >= 4 && (
+        <View
+          style={
+            {
+              position: "absolute",
+              width: 60 * scale,
+              height: 60 * scale,
+              borderRadius: 30 * scale,
+              borderWidth: strokeWidth,
+              borderColor: activeColor,
+              borderTopColor: "transparent",
+              borderLeftColor: "transparent",
+              borderRightColor: "transparent",
+              left: size / 2 - 30 * scale,
+              top: size * 0.25,
+              transform: [{ rotate: "180deg" }],
+              opacity: 0.6,
+            } as ViewStyle
+          }
+        />
+      )}
+
+      {/* Data flow dots on arcs */}
+      {strength > 0 &&
+        [
+          { x: 0.35, y: 0.5, show: strength >= 2 },
+          { x: 0.65, y: 0.5, show: strength >= 2 },
+          { x: 0.25, y: 0.4, show: strength >= 3 },
+          { x: 0.75, y: 0.4, show: strength >= 3 },
+          { x: 0.15, y: 0.3, show: strength >= 4 },
+          { x: 0.85, y: 0.3, show: strength >= 4 },
+        ].map(
+          (dot, i) =>
+            dot.show && (
               <View
-                key={i}
-                style={{
-                  position: "absolute",
-                  width: node.size * scale,
-                  height: node.size * scale,
-                  borderRadius: node.size * scale / 2,
-                  backgroundColor: activeColor,
-                  left: node.x - node.size * scale / 2,
-                  top: node.y - node.size * scale / 2,
-                  opacity: node.opacity * (strength / 4),
-                }}
+                key={`dot-${i}`}
+                style={
+                  {
+                    position: "absolute",
+                    width: 1.5 * scale,
+                    height: 1.5 * scale,
+                    borderRadius: 0.75 * scale,
+                    backgroundColor: activeGlow,
+                    left: dot.x * size - 0.75 * scale,
+                    top: dot.y * size,
+                    opacity: 0.6,
+                  } as ViewStyle
+                }
               />
-            ))}
+            )
+        )}
+    </>
+  );
 
-            {/* WiFi Arcs */}
-            {strength >= 2 && (
-              <View style={{
-                position: "absolute",
-                bottom: -8 * scale,
-                left: size / 2 - 10 * scale,
-                transform: [{ rotate: "180deg" }],
-              }}>
-                <View style={{
-                  width: 20 * scale,
-                  height: 20 * scale,
-                  borderRadius: 10 * scale,
-                  borderWidth: strokeWidth,
-                  borderColor: activeColor,
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                }} />
-              </View>
-            )}
-
-            {strength >= 3 && (
-              <View style={{
-                position: "absolute",
-                bottom: -14 * scale,
-                left: size / 2 - 17 * scale,
-                transform: [{ rotate: "180deg" }],
-              }}>
-                <View style={{
-                  width: 34 * scale,
-                  height: 34 * scale,
-                  borderRadius: 17 * scale,
-                  borderWidth: strokeWidth,
-                  borderColor: activeColor,
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                }} />
-              </View>
-            )}
-
-            {strength >= 4 && (
-              <View style={{
-                position: "absolute",
-                bottom: -22 * scale,
-                left: size / 2 - 25 * scale,
-                transform: [{ rotate: "180deg" }],
-              }}>
-                <View style={{
-                  width: 50 * scale,
-                  height: 50 * scale,
-                  borderRadius: 25 * scale,
-                  borderWidth: strokeWidth,
-                  borderColor: activeColor,
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                }} />
-              </View>
-            )}
-
-            {/* Center node */}
-            <View style={{
-              position: "absolute",
-              width: 5 * scale,
-              height: 5 * scale,
-              borderRadius: 2.5 * scale,
-              backgroundColor: activeColor,
-              bottom: 0,
-              left: size / 2 - 2.5 * scale,
-              zIndex: 10,
-            }} />
-          </>
-        );
-
-      case "grid":
-        return (
-          <>
-            {/* Grid pattern background */}
-            {strength > 0 && (
-              <>
-                {/* Horizontal lines */}
-                {[0.2, 0.35, 0.5, 0.65].map((y, i) => (
-                  <View
-                    key={`h-${i}`}
-                    style={{
-                      position: "absolute",
-                      width: size * 0.7,
-                      height: 0.5 * scale,
-                      backgroundColor: activeGlow,
-                      opacity: 0.1,
-                      left: size * 0.15,
-                      top: size * y,
-                    }}
-                  />
-                ))}
-                {/* Vertical lines */}
-                {[0.25, 0.4, 0.5, 0.6, 0.75].map((x, i) => (
-                  <View
-                    key={`v-${i}`}
-                    style={{
-                      position: "absolute",
-                      width: 0.5 * scale,
-                      height: size * 0.5,
-                      backgroundColor: activeGlow,
-                      opacity: 0.1,
-                      left: size * x,
-                      top: size * 0.2,
-                    }}
-                  />
-                ))}
-                {/* Grid intersection points */}
-                {[
-                  { x: 0.25, y: 0.35 },
-                  { x: 0.5, y: 0.35 },
-                  { x: 0.75, y: 0.35 },
-                  { x: 0.4, y: 0.5 },
-                  { x: 0.6, y: 0.5 },
-                ].map((point, i) => (
-                  <View
-                    key={`p-${i}`}
-                    style={{
-                      position: "absolute",
-                      width: 2 * scale,
-                      height: 2 * scale,
-                      borderRadius: 1 * scale,
-                      backgroundColor: activeGlow,
-                      left: size * point.x - 1 * scale,
-                      top: size * point.y - 1 * scale,
-                      opacity: 0.4,
-                    }}
-                  />
-                ))}
-              </>
-            )}
-
-            {/* WiFi Arcs */}
-            {strength >= 2 && (
-              <View style={{
-                position: "absolute",
-                bottom: -8 * scale,
-                left: size / 2 - 10 * scale,
-                transform: [{ rotate: "180deg" }],
-              }}>
-                <View style={{
-                  width: 20 * scale,
-                  height: 20 * scale,
-                  borderRadius: 10 * scale,
-                  borderWidth: strokeWidth,
-                  borderColor: activeColor,
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                }} />
-              </View>
-            )}
-
-            {strength >= 3 && (
-              <View style={{
-                position: "absolute",
-                bottom: -14 * scale,
-                left: size / 2 - 17 * scale,
-                transform: [{ rotate: "180deg" }],
-              }}>
-                <View style={{
-                  width: 34 * scale,
-                  height: 34 * scale,
-                  borderRadius: 17 * scale,
-                  borderWidth: strokeWidth,
-                  borderColor: activeColor,
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                }} />
-              </View>
-            )}
-
-            {strength >= 4 && (
-              <View style={{
-                position: "absolute",
-                bottom: -22 * scale,
-                left: size / 2 - 25 * scale,
-                transform: [{ rotate: "180deg" }],
-              }}>
-                <View style={{
-                  width: 50 * scale,
-                  height: 50 * scale,
-                  borderRadius: 25 * scale,
-                  borderWidth: strokeWidth,
-                  borderColor: activeColor,
-                  borderTopColor: "transparent",
-                  borderLeftColor: "transparent",
-                  borderRightColor: "transparent",
-                }} />
-              </View>
-            )}
-
-            {/* Grid center dot */}
-            <View style={{
-              position: "absolute",
-              width: 4 * scale,
-              height: 4 * scale,
-              borderRadius: 2 * scale,
-              backgroundColor: activeColor,
-              bottom: 0.5 * scale,
-              left: size / 2 - 2 * scale,
-              zIndex: 10,
-            }} />
-          </>
-        );
-
-      default:
-        return null;
-    }
-  };
+  if (noBackground) {
+    return (
+      <View
+        style={
+          {
+            width: size,
+            height: size,
+            position: "relative",
+            alignItems: "center",
+            justifyContent: "center",
+          } as ViewStyle
+        }
+      >
+        {iconContent}
+      </View>
+    );
+  }
 
   return (
-    <View style={{ width: size, height: size, position: "relative" }}>
-      {renderVariant()}
-    </View>
+    <IconBackground size={size} glowColor={activeGlow} variant={variant}>
+      {iconContent}
+    </IconBackground>
   );
 };
 
-// Simplified version for standard use (matching lucide-icons interface)
-export const WifiIcon = ({
-  size = 24,
-  color = "currentColor",
-  strokeWidth = 2,
-  ...props
-}: any) => {
-  return (
-    <WifiCircuitIcon
-      size={size}
-      color={color}
-      glowColor={color}
-      variant="nodes"
-      strength={4}
-      {...props}
-    />
-  );
-};
-
-export const WifiOffIcon = ({
-  size = 24,
-  color = "currentColor",
-  strokeWidth = 2,
-  ...props
-}: any) => {
-  return (
-    <WifiCircuitIcon
-      size={size}
-      color={color}
-      glowColor={color}
-      variant="nodes"
-      strength={0}
-      {...props}
-    />
-  );
-};
+// Export aliases for compatibility
+export const WifiIcon = WifiCircuitIcon;
+export const WifiOffIcon: React.FC<WifiIconProps> = (props) => (
+  <WifiCircuitIcon {...props} strength={0} />
+);

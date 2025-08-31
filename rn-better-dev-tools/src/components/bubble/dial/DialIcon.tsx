@@ -25,7 +25,7 @@ type Props = {
   totalIcons: number;
 };
 
-const DialIcon: React.FC<Props> = ({
+export const DialIcon: React.FC<Props> = ({
   index,
   icon,
   iconsProgress,
@@ -38,60 +38,12 @@ const DialIcon: React.FC<Props> = ({
 
   // Animation values - using interpolation for better performance
   const scale = useRef(new Animated.Value(1)).current;
-  const glowOpacity = useRef(new Animated.Value(0)).current;
-  const rotation = useRef(new Animated.Value(0)).current;
-
-  const isSelected = selectedIcon === index;
 
   // Calculate final position for this icon
   const radius = CIRCLE_RADIUS - VIEW_SIZE / 2 - 20;
   const finalX = radius * Math.cos(angle);
   const finalY = radius * Math.sin(angle);
 
-  // Handle selection animation
-  useEffect(() => {
-    if (isSelected) {
-      Animated.parallel([
-        Animated.spring(scale, {
-          toValue: 1.15,
-          damping: 12,
-          stiffness: 180,
-          useNativeDriver: true,
-        }),
-        Animated.timing(glowOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.spring(rotation, {
-          toValue: 10,
-          damping: 15,
-          stiffness: 150,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.spring(scale, {
-          toValue: 1,
-          damping: 15,
-          stiffness: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(glowOpacity, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.spring(rotation, {
-          toValue: 0,
-          damping: 15,
-          stiffness: 150,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [isSelected, scale, glowOpacity, rotation]);
 
   // Hover animation on press in/out
   const handlePressIn = () => {
@@ -105,7 +57,7 @@ const DialIcon: React.FC<Props> = ({
 
   const handlePressOut = () => {
     Animated.spring(scale, {
-      toValue: isSelected ? 1.15 : 1,
+      toValue: 1,
       damping: 15,
       stiffness: 400,
       useNativeDriver: true,
@@ -142,12 +94,12 @@ const DialIcon: React.FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.cos(angle), Math.cos(angle + Math.PI * 2)],
-      }),
+      })
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalX - radius * Math.cos(angle + Math.PI * 2)],
-    }),
+    })
   );
 
   const translateY = Animated.add(
@@ -156,12 +108,12 @@ const DialIcon: React.FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.sin(angle), Math.sin(angle + Math.PI * 2)],
-      }),
+      })
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalY - radius * Math.sin(angle + Math.PI * 2)],
-    }),
+    })
   );
 
   // Opacity animation
@@ -183,60 +135,41 @@ const DialIcon: React.FC<Props> = ({
       { translateX }, // Apply translation from center
       { translateY }, // Apply translation from center
       { scale: Animated.multiply(scale, progressScale) },
-      {
-        rotate: rotation.interpolate({
-          inputRange: [0, 10],
-          outputRange: ["0deg", "10deg"],
-        }),
-      },
     ],
   };
 
-  // Glow effect style
-  const glowStyle = {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: icon.color,
-    opacity: Animated.multiply(glowOpacity, 0.2),
-    borderRadius: VIEW_SIZE / 2,
-    transform: [{ scale: 1.5 }],
-  };
 
   return (
     <Animated.View style={[styles.view, animatedStyle]}>
-      {/* Glow effect behind icon */}
-      <Animated.View style={glowStyle} pointerEvents="none" />
-
       <Pressable
         onPress={() => onPress(index)}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        style={[
-          styles.pressable,
-          {
-            backgroundColor: isSelected
-              ? icon.color + "20"
-              : gameUIColors.buttonBackground,
-
-            borderColor: isSelected ? icon.color : gameUIColors.border,
-            borderWidth: isSelected ? 2 : 1,
-          },
-        ]}
+        style={styles.pressable}
       >
-        {/* Icon with cyberpunk styling */}
-        <View style={styles.iconWrapper}>{icon.icon}</View>
+        {/* Gradient background layers for depth */}
+        <View style={[
+          styles.iconGradientBg,
+          {
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+          }
+        ]} />
+        
+        {/* Inner glow effect */}
+        <View style={[
+          styles.iconInnerGlow,
+          {
+            backgroundColor: "rgba(255, 255, 255, 0.02)",
+          }
+        ]} />
 
-        {/* Label with neon effect */}
-        <Text
-          style={[
-            styles.label,
-            {
-              color: isSelected ? icon.color : gameUIColors.secondary,
-              textShadowColor: isSelected ? icon.color : "transparent",
-              textShadowOffset: { width: 0, height: 0 },
-              textShadowRadius: isSelected ? 8 : 0,
-            },
-          ]}
-        >
+        {/* Icon */}
+        <View style={styles.iconWrapper}>
+          {icon.icon}
+        </View>
+
+        {/* Label */}
+        <Text style={styles.label}>
           {icon.name.toUpperCase()}
         </Text>
       </Pressable>
@@ -254,18 +187,29 @@ const styles = StyleSheet.create({
   pressable: {
     width: "100%",
     height: "100%",
-    borderRadius: VIEW_SIZE / 2,
     justifyContent: "center",
     alignItems: "center",
     padding: 4,
-    shadowColor: gameUIColors.info,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    backgroundColor: "transparent",
+  },
+  iconGradientBg: {
+    position: "absolute",
+    width: "85%",
+    height: "85%",
+    borderRadius: 12,
+    opacity: 0.3,
+  },
+  iconInnerGlow: {
+    position: "absolute",
+    width: "70%",
+    height: "70%",
+    borderRadius: 10,
+    opacity: 0.5,
   },
   iconWrapper: {
-    marginBottom: 2,
+    marginBottom: 4,
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
     fontSize: 8,
@@ -273,7 +217,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontFamily: "monospace",
     marginTop: 2,
+    color: gameUIColors.secondary,
   },
 });
-
-export default DialIcon;

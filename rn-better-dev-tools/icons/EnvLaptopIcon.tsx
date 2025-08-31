@@ -1,376 +1,240 @@
 import React from "react";
-import { View } from "react-native";
+import { View, ViewStyle } from "react-native";
+import { IconBackground } from "./shared/IconBackground";
 
 interface EnvLaptopIconProps {
   size?: number;
   color?: string;
   glowColor?: string;
-  variant?: "quantum" | "cosmic" | "stellar";
+  colorPreset?: "green" | "cyan" | "purple" | "pink" | "yellow" | "orange";
+  variant?: "circuit" | "matrix" | "glitch" | "nodes" | "grid";
+  noBackground?: boolean;
 }
+
+const ColorPresets = {
+  green: { color: "#00FF88", glow: "#00FF88" },
+  cyan: { color: "#00D4FF", glow: "#00D4FF" },
+  purple: { color: "#9945FF", glow: "#9945FF" },
+  pink: { color: "#FF45FF", glow: "#FF45FF" },
+  yellow: { color: "#FFD700", glow: "#FFD700" },
+  orange: { color: "#FF8800", glow: "#FF8800" },
+};
 
 export const EnvLaptopIcon: React.FC<EnvLaptopIconProps> = ({
   size = 24,
-  color = "#00FF88",
-  glowColor = "#00FF88",
-  variant = "quantum",
+  color,
+  glowColor,
+  colorPreset = "green",
+  variant = "circuit",
+  noBackground = true,
 }) => {
-  const scale = size / 24;
+  const scale = noBackground ? size / 24 : size / 40;
 
-  // Helper function to create a glow layer
-  const createGlowLayer = (width: number, height: number, opacity: number, blur?: number) => ({
-    position: "absolute" as const,
-    width: width * scale,
-    height: height * scale,
-    backgroundColor: glowColor,
-    opacity,
-    borderRadius: blur ? blur * scale : 0,
-  });
+  // Use preset colors if no custom colors provided
+  const activeColor = color || ColorPresets[colorPreset].color;
+  const activeGlow = glowColor || ColorPresets[colorPreset].glow;
 
-  // Color presets for different environments
-  const colorPresets = {
-    cyan: "#00D4FF",
-    green: "#00FF88",
-    purple: "#9945FF",
-    pink: "#FF45FF",
-    yellow: "#FFD700",
-    orange: "#FF8800",
-    blue: "#4545FF",
-    red: "#FF3366",
-  };
-
-  const renderVariant = () => {
-    switch (variant) {
-      case "quantum":
-        return (
-          <>
-            {/* Quantum particles */}
-            {[
-              { x: 3, y: 3, size: 0.8 },
-              { x: 19, y: 3, size: 0.8 },
-              { x: 5, y: 10, size: 0.6 },
-              { x: 17, y: 10, size: 0.6 },
-            ].map((p, i) => (
-              <View key={i} style={{
+  const iconContent = (
+    <>
+      {/* Laptop base/keyboard */}
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 8 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 + 4 * scale,
+            opacity: 0.85,
+          } as ViewStyle
+        }
+      >
+        {/* Keyboard keys */}
+        {[
+          [3, 1.5],
+          [6, 1.5],
+          [9, 1.5],
+          [12, 1.5],
+          [15, 1.5],
+          [3, 3.5],
+          [6, 3.5],
+          [9, 3.5],
+          [12, 3.5],
+          [15, 3.5],
+          [5, 5.5],
+          [10, 5.5],
+          [14, 5.5],
+        ].map(([x, y], i) => (
+          <View
+            key={i}
+            style={
+              {
                 position: "absolute",
-                width: p.size * scale,
-                height: p.size * scale,
-                borderRadius: p.size * scale / 2,
-                backgroundColor: glowColor,
-                left: p.x * scale,
-                top: p.y * scale,
-                opacity: 0.4 + (i * 0.1),
-              }} />
-            ))}
+                width: 2 * scale,
+                height: 1 * scale,
+                backgroundColor: "#000",
+                opacity: 0.3,
+                left: x * scale,
+                top: y * scale,
+                borderRadius: 0.2 * scale,
+              } as ViewStyle
+            }
+          />
+        ))}
+      </View>
 
-            {/* Quantum field background */}
-            <View style={{
-              ...createGlowLayer(20, 12, 0.05),
-              left: 2 * scale,
-              top: 3 * scale,
-              borderRadius: 2 * scale,
-            }} />
+      {/* Base glow */}
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 22 * scale,
+            height: 10 * scale,
+            backgroundColor: activeGlow,
+            borderRadius: 1 * scale,
+            left: size / 2 - 11 * scale,
+            top: size / 2 + 3 * scale,
+            opacity: 0.15,
+          } as ViewStyle
+        }
+      />
 
-            {/* Laptop screen with quantum glow */}
-            <View style={{
+      {/* Laptop screen */}
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 18 * scale,
+            height: 12 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: size / 2 - 9 * scale,
+            top: size / 2 - 10 * scale,
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      >
+        {/* Screen inner */}
+        <View
+          style={
+            {
               position: "absolute",
-              width: 20 * scale,
-              height: 12 * scale,
-              borderWidth: 1.5 * scale,
-              borderColor: color,
-              borderRadius: 2 * scale,
-              left: 2 * scale,
-              top: 3 * scale,
-              backgroundColor: "transparent",
-            }}>
-              {/* Screen quantum effect */}
-              <View style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                backgroundColor: glowColor,
-                opacity: 0.1,
-              }} />
-              
-              {/* Terminal lines effect */}
-              {[0.3, 0.5, 0.7].map((y, i) => (
-                <View key={i} style={{
-                  position: "absolute",
-                  width: (10 + i * 2) * scale,
-                  height: 0.5 * scale,
-                  backgroundColor: glowColor,
-                  opacity: 0.3,
-                  left: 2 * scale,
-                  top: y * 12 * scale,
-                }} />
-              ))}
-            </View>
-
-            {/* Laptop base */}
-            <View style={{
-              position: "absolute",
-              width: 24 * scale,
-              height: 1 * scale,
-              backgroundColor: color,
-              left: 0,
-              bottom: 6 * scale,
-            }} />
-
-            {/* Keyboard area with quantum dots */}
-            <View style={{
-              position: "absolute",
-              width: 22 * scale,
-              height: 4 * scale,
-              borderWidth: 1 * scale,
-              borderColor: color,
-              backgroundColor: "transparent",
+              width: 16 * scale,
+              height: 10 * scale,
+              backgroundColor: "#000",
+              opacity: 0.5,
               left: 1 * scale,
-              bottom: 1 * scale,
-            }}>
-              {/* Quantum keyboard dots */}
-              {[
-                { x: 2, y: 1 },
-                { x: 6, y: 1 },
-                { x: 10, y: 1 },
-                { x: 14, y: 1 },
-                { x: 18, y: 1 },
-                { x: 4, y: 2.5 },
-                { x: 8, y: 2.5 },
-                { x: 12, y: 2.5 },
-                { x: 16, y: 2.5 },
-              ].map((dot, i) => (
-                <View key={i} style={{
-                  position: "absolute",
-                  width: 1 * scale,
-                  height: 1 * scale,
-                  borderRadius: 0.5 * scale,
-                  backgroundColor: glowColor,
-                  left: dot.x * scale,
-                  top: dot.y * scale,
-                  opacity: 0.5,
-                }} />
-              ))}
-            </View>
-          </>
-        );
+              top: 1 * scale,
+              borderRadius: 0.5 * scale,
+            } as ViewStyle
+          }
+        />
 
-      case "cosmic":
-        return (
-          <>
-            {/* Cosmic stars */}
-            {[
-              { x: 4, y: 2, size: 0.5 },
-              { x: 18, y: 4, size: 0.7 },
-              { x: 6, y: 8, size: 0.5 },
-              { x: 16, y: 10, size: 0.6 },
-              { x: 10, y: 5, size: 0.8 },
-            ].map((star, i) => (
-              <View key={i} style={{
+        {/* Code lines on screen */}
+        {[2, 4, 6, 8].map((y, i) => (
+          <View
+            key={i}
+            style={
+              {
                 position: "absolute",
-                width: star.size * scale,
-                height: star.size * scale,
-                borderRadius: star.size * scale / 2,
-                backgroundColor: glowColor,
-                left: star.x * scale,
-                top: star.y * scale,
-                opacity: 0.3 + (i * 0.15),
-              }} />
-            ))}
+                width: (10 - i * 2) * scale,
+                height: 0.5 * scale,
+                backgroundColor: activeGlow,
+                opacity: 0.6,
+                left: 2 * scale,
+                top: y * scale,
+              } as ViewStyle
+            }
+          />
+        ))}
+      </View>
 
-            {/* Cosmic nebula background */}
-            <View style={{
-              position: "absolute",
-              width: 24 * scale,
-              height: 16 * scale,
-              borderRadius: 8 * scale,
-              backgroundColor: glowColor,
-              opacity: 0.03,
-              left: 0,
-              top: 2 * scale,
-            }} />
+      {/* Screen glow */}
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 14 * scale,
+            backgroundColor: activeGlow,
+            borderRadius: 1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 11 * scale,
+            opacity: 0.1,
+          } as ViewStyle
+        }
+      />
 
-            {/* Laptop screen */}
-            <View style={{
-              position: "absolute",
-              width: 20 * scale,
-              height: 12 * scale,
-              borderWidth: 1.5 * scale,
-              borderColor: color,
-              borderRadius: 2 * scale,
-              left: 2 * scale,
-              top: 3 * scale,
-              backgroundColor: "transparent",
-            }}>
-              {/* Cosmic matrix effect */}
-              {[0.2, 0.4, 0.6, 0.8].map((x, i) => (
-                <View key={i} style={{
-                  position: "absolute",
-                  width: 0.5 * scale,
-                  height: (4 + i * 2) * scale,
-                  backgroundColor: glowColor,
-                  opacity: 0.2,
-                  left: x * 20 * scale,
-                  top: (2 + i) * scale,
-                }} />
-              ))}
-            </View>
+      {/* Power indicator */}
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 2 * scale,
+            height: 1 * scale,
+            backgroundColor: activeGlow,
+            borderRadius: 0.5 * scale,
+            left: size / 2 - 1 * scale,
+            top: size / 2 + 10 * scale,
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
 
-            {/* Base */}
-            <View style={{
+      {/* Circuit data dots on screen */}
+      {[
+        { x: 0.25, y: 0.3 },
+        { x: 0.75, y: 0.3 },
+        { x: 0.5, y: 0.5 },
+        { x: 0.3, y: 0.7 },
+        { x: 0.7, y: 0.7 },
+      ].map((dot, i) => (
+        <View
+          key={`screen-dot-${i}`}
+          style={
+            {
               position: "absolute",
-              width: 24 * scale,
+              width: 1 * scale,
               height: 1 * scale,
-              backgroundColor: color,
-              left: 0,
-              bottom: 6 * scale,
-            }} />
+              borderRadius: 0.5 * scale,
+              backgroundColor: activeGlow,
+              left: size / 2 - 9 * scale + dot.x * 18 * scale,
+              top: size / 2 - 10 * scale + dot.y * 12 * scale,
+              opacity: 0.4,
+            } as ViewStyle
+          }
+        />
+      ))}
+    </>
+  );
 
-            {/* Keyboard */}
-            <View style={{
-              position: "absolute",
-              width: 22 * scale,
-              height: 4 * scale,
-              borderWidth: 1 * scale,
-              borderColor: color,
-              backgroundColor: "transparent",
-              left: 1 * scale,
-              bottom: 1 * scale,
-            }} />
-          </>
-        );
-
-      case "stellar":
-        return (
-          <>
-            {/* Stellar constellation points */}
-            {[
-              { x: 5, y: 4, size: 1 },
-              { x: 8, y: 6, size: 0.8 },
-              { x: 15, y: 5, size: 1 },
-              { x: 18, y: 7, size: 0.8 },
-              { x: 12, y: 8, size: 0.6 },
-            ].map((point, i) => (
-              <View key={i} style={{
-                position: "absolute",
-                width: point.size * scale,
-                height: point.size * scale,
-                borderRadius: point.size * scale / 2,
-                borderWidth: 0.5 * scale,
-                borderColor: glowColor,
-                backgroundColor: "transparent",
-                left: point.x * scale,
-                top: point.y * scale,
-                opacity: 0.4 + (i * 0.1),
-              }} />
-            ))}
-
-            {/* Constellation lines */}
-            <View style={{
-              position: "absolute",
-              width: 10 * scale,
-              height: 0.3 * scale,
-              backgroundColor: glowColor,
-              opacity: 0.2,
-              left: 5 * scale,
-              top: 5 * scale,
-              transform: [{ rotate: "20deg" }],
-            }} />
-            <View style={{
-              position: "absolute",
-              width: 8 * scale,
-              height: 0.3 * scale,
-              backgroundColor: glowColor,
-              opacity: 0.2,
-              left: 12 * scale,
-              top: 6 * scale,
-              transform: [{ rotate: "-15deg" }],
-            }} />
-
-            {/* Laptop screen */}
-            <View style={{
-              position: "absolute",
-              width: 20 * scale,
-              height: 12 * scale,
-              borderWidth: 1.5 * scale,
-              borderColor: color,
-              borderRadius: 2 * scale,
-              left: 2 * scale,
-              top: 3 * scale,
-              backgroundColor: "transparent",
-            }}>
-              {/* Stellar grid */}
-              {[0.25, 0.5, 0.75].map((pos, i) => (
-                <React.Fragment key={i}>
-                  <View style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: 0.3 * scale,
-                    backgroundColor: glowColor,
-                    opacity: 0.1,
-                    top: pos * 12 * scale,
-                  }} />
-                  <View style={{
-                    position: "absolute",
-                    width: 0.3 * scale,
-                    height: "100%",
-                    backgroundColor: glowColor,
-                    opacity: 0.1,
-                    left: pos * 20 * scale,
-                  }} />
-                </React.Fragment>
-              ))}
-            </View>
-
-            {/* Base */}
-            <View style={{
-              position: "absolute",
-              width: 24 * scale,
-              height: 1 * scale,
-              backgroundColor: color,
-              left: 0,
-              bottom: 6 * scale,
-            }} />
-
-            {/* Keyboard */}
-            <View style={{
-              position: "absolute",
-              width: 22 * scale,
-              height: 4 * scale,
-              borderWidth: 1 * scale,
-              borderColor: color,
-              backgroundColor: "transparent",
-              left: 1 * scale,
-              bottom: 1 * scale,
-            }} />
-          </>
-        );
-
-      default:
-        return null;
-    }
-  };
+  if (noBackground) {
+    return (
+      <View
+        style={
+          {
+            width: size,
+            height: size,
+            position: "relative",
+            alignItems: "center",
+            justifyContent: "center",
+          } as ViewStyle
+        }
+      >
+        {iconContent}
+      </View>
+    );
+  }
 
   return (
-    <View style={{ width: size, height: size, position: "relative" }}>
-      {renderVariant()}
-    </View>
+    <IconBackground size={size} glowColor={activeGlow} variant={variant}>
+      {iconContent}
+    </IconBackground>
   );
 };
 
-// Simplified Server/Laptop icon for standard use
-export const ServerIcon = ({
-  size = 24,
-  color = "currentColor",
-  ...props
-}: any) => {
-  return (
-    <EnvLaptopIcon
-      size={size}
-      color={color}
-      glowColor={color}
-      variant="quantum"
-      {...props}
-    />
-  );
-};
-
-export const LaptopIcon = ServerIcon;
+// Export aliases for compatibility
+export const ServerIcon = EnvLaptopIcon;
+export const LaptopIcon = EnvLaptopIcon;

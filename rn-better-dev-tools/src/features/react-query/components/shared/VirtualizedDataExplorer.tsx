@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
-  InteractionManager,
   FlatList,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -384,6 +383,7 @@ const useDataFlattening = (
   autoExpandFirstLevel = false,
 ) => {
   const [flatData, setFlatData] = useState<FlatDataItem[]>([]);
+  const flatDataMapRef = useRef<Map<string, { item: FlatDataItem; index: number }>>(new Map());
 
   // Initialize with root expanded and optionally first level
   const getInitialExpanded = useCallback(() => {
@@ -406,15 +406,25 @@ const useDataFlattening = (
     getInitialExpanded(),
   );
   const [isProcessing, setIsProcessing] = useState(false);
-  const circularCache = useRef(new WeakSet());
+  
+  // Debug logging - commented out for less noise
+  // console.log('[VirtualizedDataExplorer] Hook render - isProcessing:', isProcessing);
+  // Store circular cache outside of re-renders to prevent reset
+  const circularCacheRef = useRef<WeakSet<object>>();
+  const processingRef = useRef(false);
+  const dataVersionRef = useRef(0);
+  const lastActionRef = useRef<{ type: 'expand' | 'collapse' | 'init'; itemId?: string }>();
 
-  const flattenData = useCallback(
+  // Stable flattenData function that doesn't depend on expandedItems
+  const flattenDataStable = useCallback(
     (
       value: JsonValue,
       key = "root",
       depth = 0,
       parentId?: string,
       path: string[] = [],
+      expandedSet: Set<string>,
+      circularCache: WeakSet<object>,
     ): FlatDataItem[] => {
       // Early termination for performance [[memory:4875251]]
       if (depth > Math.min(maxDepth, MAX_DEPTH_LIMIT)) return [];
@@ -430,7 +440,7 @@ const useDataFlattening = (
 
       // Check for circular references
       if (value && typeof value === "object") {
-        if (circularCache.current.has(value)) {
+        if (circularCache.has(value)) {
           return [
             {
               id,
@@ -448,7 +458,7 @@ const useDataFlattening = (
             },
           ];
         }
-        circularCache.current.add(value);
+        circularCache.add(value);
       }
 
       const currentItem: FlatDataItem = {
@@ -458,7 +468,7 @@ const useDataFlattening = (
         valueType,
         depth,
         isExpandable,
-        isExpanded: expandedItems.has(id),
+        isExpanded: expandedSet.has(id),
         parentId,
         hasChildren: childCount > 0,
         childCount,
@@ -471,7 +481,7 @@ const useDataFlattening = (
       // Only add children if expanded and not too deep [[memory:4875251]]
       if (
         isExpandable &&
-        expandedItems.has(id) &&
+        expandedSet.has(id) &&
         depth < Math.min(maxDepth, MAX_DEPTH_LIMIT)
       ) {
         try {
@@ -526,12 +536,14 @@ const useDataFlattening = (
             const chunk = limitedEntries.slice(i, i + CHUNK_SIZE);
             for (const [childKey, childValue] of chunk) {
               result.push(
-                ...flattenData(
+                ...flattenDataStable(
                   childValue,
                   childKey,
                   depth + 1,
                   id,
                   currentPath,
+                  expandedSet,
+                  circularCache,
                 ),
               );
             }
@@ -548,59 +560,345 @@ const useDataFlattening = (
 
       return result;
     },
-    [maxDepth, expandedItems],
+    [maxDepth], // Only depend on maxDepth, not expandedItems
   );
 
-  // Progressive data processing
+  // Only process full data when data changes (not on expand/collapse)
   useEffect(() => {
+    console.log('\n[VirtualizedDataExplorer] ====== USE EFFECT ======');
+    console.log('[VirtualizedDataExplorer] lastActionRef:', lastActionRef.current);
+    console.log('[VirtualizedDataExplorer] expandedItems.size:', expandedItems.size);
+    
+    // Skip if this was just an expand/collapse action
+    if (lastActionRef.current && (lastActionRef.current.type === 'expand' || lastActionRef.current.type === 'collapse')) {
+      console.log('[VirtualizedDataExplorer] Skipping full processing - was expand/collapse');
+      // Make sure processing flag is cleared for incremental updates
+      if (isProcessing) {
+        setIsProcessing(false);
+        processingRef.current = false;
+      }
+      lastActionRef.current = undefined;
+      return;
+    }
+
+    // Prevent concurrent processing
+    if (processingRef.current) {
+      console.log('[VirtualizedDataExplorer] Skipping - already processing');
+      return;
+    }
+
+    console.log('[VirtualizedDataExplorer] Starting FULL data processing');
     let isCancelled = false;
+    let timeoutId: NodeJS.Timeout | undefined;
+    processingRef.current = true;
     setIsProcessing(true);
 
-    const processData = () => {
-      InteractionManager.runAfterInteractions(() => {
-        if (isCancelled) return;
-
-        try {
-          // Reset circular cache for fresh processing
-          circularCache.current = new WeakSet();
-
-          // No need to reset here as initial state handles it
-
-          const newFlatData = flattenData(data);
-
-          if (!isCancelled) {
-            setFlatData(newFlatData);
-            setIsProcessing(false);
-          }
-        } catch (error) {
-          // Reset to empty data on error
-          if (!isCancelled) {
-            setFlatData([]);
-            setIsProcessing(false);
-          }
+    const processData = async () => {
+      // Failsafe timeout to prevent stuck processing
+      timeoutId = setTimeout(() => {
+        if (processingRef.current && !isCancelled) {
+          console.error('[VirtualizedDataExplorer] Processing timeout - forcing clear after 5 seconds');
+          setIsProcessing(false);
+          processingRef.current = false;
         }
-      });
+      }, 5000);
+      // Small delay to debounce rapid changes
+      // Small delay to batch rapid changes
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      if (isCancelled) {
+        console.log('[VirtualizedDataExplorer] Processing cancelled during delay');
+        processingRef.current = false;
+        return;
+      }
+
+      try {
+        // Initialize circular cache for new data
+        circularCacheRef.current = new WeakSet();
+        dataVersionRef.current = data as any;
+
+        console.log('[VirtualizedDataExplorer] Processing full data tree');
+        console.log('[VirtualizedDataExplorer] Data type:', typeof data);
+        console.log('[VirtualizedDataExplorer] ExpandedItems:', Array.from(expandedItems));
+        const startTime = Date.now();
+
+        const newFlatData = flattenDataStable(
+          data,
+          "root",
+          0,
+          undefined,
+          [],
+          expandedItems,
+          circularCacheRef.current,
+        );
+
+        console.log(`[VirtualizedDataExplorer] Full processing: ${newFlatData.length} items in ${Date.now() - startTime}ms`);
+        
+        // Build the map for incremental updates
+        const newMap = new Map<string, { item: FlatDataItem; index: number }>();
+        newFlatData.forEach((item, index) => {
+          newMap.set(item.id, { item, index });
+        });
+        flatDataMapRef.current = newMap;
+        console.log('[VirtualizedDataExplorer] Built map with', newMap.size, 'entries');
+        console.log('[VirtualizedDataExplorer] Map keys:', Array.from(newMap.keys()));
+
+        if (!isCancelled) {
+          setFlatData(newFlatData);
+          setIsProcessing(false);
+          processingRef.current = false;
+          if (timeoutId) clearTimeout(timeoutId);
+          console.log('[VirtualizedDataExplorer] Full processing complete');
+        } else {
+          console.log('[VirtualizedDataExplorer] Processing was cancelled');
+          if (timeoutId) clearTimeout(timeoutId);
+        }
+      } catch (error) {
+        console.error('[VirtualizedDataExplorer] Error during processing:', error);
+        // Reset to empty data on error
+        if (!isCancelled) {
+          console.log('[VirtualizedDataExplorer] Resetting to empty data due to error');
+          setFlatData([]);
+          flatDataMapRef.current = new Map();
+          setIsProcessing(false);
+          processingRef.current = false;
+          if (timeoutId) clearTimeout(timeoutId);
+        } else {
+          if (timeoutId) clearTimeout(timeoutId);
+        }
+      }
     };
 
     processData();
 
     return () => {
+      console.log('[VirtualizedDataExplorer] useEffect cleanup - cancelling processing');
       isCancelled = true;
+      processingRef.current = false;
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [data, flattenData]);
+  }, [data, expandedItems, flattenDataStable, maxDepth]);
+
+  // Incremental update function for expand/collapse
+  const updateFlatDataIncremental = useCallback(
+    (itemId: string, isExpanding: boolean) => {
+      console.log(`\n[VirtualizedDataExplorer] ====== INCREMENTAL UPDATE ======`);
+      console.log(`[VirtualizedDataExplorer] ItemId: ${itemId}, isExpanding: ${isExpanding}`);
+      
+      // Clear processing flag since we're doing incremental update
+      setIsProcessing(false);
+      processingRef.current = false;
+      
+      setFlatData((prevFlatData) => {
+        console.log('[VirtualizedDataExplorer] Current flatData length:', prevFlatData.length);
+        console.log('[VirtualizedDataExplorer] Map size:', flatDataMapRef.current.size);
+        
+        const itemEntry = flatDataMapRef.current.get(itemId);
+        if (!itemEntry) {
+          console.error(`[VirtualizedDataExplorer] ERROR: Item '${itemId}' not found in map!`);
+          console.log('[VirtualizedDataExplorer] Available keys in map:', Array.from(flatDataMapRef.current.keys()));
+          return prevFlatData;
+        }
+        
+        console.log('[VirtualizedDataExplorer] Found item:', {
+          key: itemEntry.item.key,
+          index: itemEntry.index,
+          isExpandable: itemEntry.item.isExpandable,
+          hasChildren: itemEntry.item.hasChildren,
+          childCount: itemEntry.item.childCount,
+          valueType: itemEntry.item.valueType,
+        });
+
+        const { item, index } = itemEntry;
+        
+        if (isExpanding && item.isExpandable && item.hasChildren) {
+          console.log('[VirtualizedDataExplorer] Starting expansion...');
+          // Expand: insert children after the item
+          const newItems = [...prevFlatData];
+          
+          // Create a new circular cache for this subtree
+          const subCircularCache = new WeakSet<object>();
+          if (item.value && typeof item.value === 'object') {
+            subCircularCache.add(item.value);
+          }
+
+          console.log('[VirtualizedDataExplorer] Calling flattenDataStable with:', {
+            value: typeof item.value,
+            itemId: itemId,
+            depth: item.depth,
+            path: item.path,
+          });
+
+          // We need to get the actual children, not re-process the parent
+          // So we process each child entry individually
+          const childrenItems: FlatDataItem[] = [];
+          
+          try {
+            let entries: [string, JsonValue][] = [];
+            const valueType = item.valueType;
+            
+            switch (valueType) {
+              case "array":
+                entries = Array.isArray(item.value)
+                  ? item.value.map((childValue, index): [string, JsonValue] => [
+                      index.toString(),
+                      childValue,
+                    ])
+                  : [];
+                break;
+              case "object":
+                entries =
+                  typeof item.value === "object" &&
+                  item.value !== null &&
+                  !(item.value instanceof Date) &&
+                  !(item.value instanceof Error) &&
+                  !(item.value instanceof RegExp) &&
+                  !(item.value instanceof Map) &&
+                  !(item.value instanceof Set)
+                    ? Object.entries(item.value)
+                    : [];
+                break;
+              case "map":
+                entries =
+                  item.value instanceof Map
+                    ? Array.from(item.value.entries()).map(([k, v]) => [
+                        String(k),
+                        v as JsonValue,
+                      ])
+                    : [];
+                break;
+              case "set":
+                entries =
+                  item.value instanceof Set
+                    ? Array.from(item.value.values()).map((v, index) => [
+                        index.toString(),
+                        v as JsonValue,
+                      ])
+                    : [];
+                break;
+            }
+            
+            console.log(`[VirtualizedDataExplorer] Found ${entries.length} child entries`);
+            
+            // Process each child
+            for (const [childKey, childValue] of entries) {
+              const childItems = flattenDataStable(
+                childValue,
+                childKey,
+                item.depth + 1,
+                itemId,
+                item.path,
+                new Set(), // Children start collapsed
+                subCircularCache,
+              );
+              childrenItems.push(...childItems);
+            }
+          } catch (error) {
+            console.error('[VirtualizedDataExplorer] Error processing children:', error);
+          }
+          
+          const childrenToInsert = childrenItems;
+
+          console.log(`[VirtualizedDataExplorer] Will insert ${childrenToInsert.length} children`);
+          if (childrenToInsert.length > 0) {
+            console.log('[VirtualizedDataExplorer] First child to insert:', {
+              id: childrenToInsert[0].id,
+              key: childrenToInsert[0].key,
+              depth: childrenToInsert[0].depth,
+              parentId: childrenToInsert[0].parentId,
+            });
+          }
+          
+          // Update the parent item to show it's expanded
+          newItems[index] = { ...item, isExpanded: true };
+          
+          // Insert children after the parent
+          newItems.splice(index + 1, 0, ...childrenToInsert);
+          
+          // Rebuild the map
+          const newMap = new Map<string, { item: FlatDataItem; index: number }>();
+          newItems.forEach((item, idx) => {
+            newMap.set(item.id, { item, index: idx });
+          });
+          flatDataMapRef.current = newMap;
+          console.log(`[VirtualizedDataExplorer] Expansion complete - new total: ${newItems.length} items`);
+          console.log('[VirtualizedDataExplorer] New map size:', newMap.size);
+          
+          return newItems;
+        } else if (!isExpanding) {
+          // Collapse: remove all descendants
+          const itemsToRemove = new Set<string>();
+          const findDescendants = (parentId: string, depth: number) => {
+            prevFlatData.forEach(child => {
+              if (child.parentId === parentId || (child.id.startsWith(parentId + '.') && child.depth > depth)) {
+                itemsToRemove.add(child.id);
+                if (child.hasChildren) {
+                  findDescendants(child.id, child.depth);
+                }
+              }
+            });
+          };
+          
+          findDescendants(itemId, item.depth);
+          
+          // Filter out descendants and update the parent
+          const newItems = prevFlatData
+            .map((it, idx) => {
+              if (it.id === itemId) {
+                return { ...it, isExpanded: false };
+              }
+              return it;
+            })
+            .filter(it => !itemsToRemove.has(it.id));
+          
+          // Rebuild the map
+          const newMap = new Map<string, { item: FlatDataItem; index: number }>();
+          newItems.forEach((item, idx) => {
+            newMap.set(item.id, { item, index: idx });
+          });
+          flatDataMapRef.current = newMap;
+          console.log(`[VirtualizedDataExplorer] Collapse complete - removed ${itemsToRemove.size} items, new total: ${newItems.length}`);
+          
+          return newItems;
+        }
+        
+        return prevFlatData;
+      });
+    },
+    [flattenDataStable],
+  );
 
   const toggleExpanded = useCallback((itemId: string) => {
+    console.log(`\n[VirtualizedDataExplorer] ====== TOGGLE EXPANDED ======`);
+    console.log(`[VirtualizedDataExplorer] ItemId: ${itemId}`);
+    console.log('[VirtualizedDataExplorer] Current expandedItems:', Array.from(expandedItems));
+    console.log('[VirtualizedDataExplorer] FlatData length:', flatData.length);
+    console.log('[VirtualizedDataExplorer] Map has item?:', flatDataMapRef.current.has(itemId));
+    
     setExpandedItems((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(itemId)) {
-        newSet.delete(itemId);
-      } else {
+      const isExpanding = !newSet.has(itemId);
+      console.log(`[VirtualizedDataExplorer] Action: ${isExpanding ? 'EXPANDING' : 'COLLAPSING'}`);
+      
+      if (isExpanding) {
         newSet.add(itemId);
+      } else {
+        newSet.delete(itemId);
       }
+      
+      console.log('[VirtualizedDataExplorer] New expandedItems will be:', Array.from(newSet));
+      
+      // Store the action for the effect to use
+      lastActionRef.current = { type: isExpanding ? 'expand' : 'collapse', itemId };
+      
+      // Perform incremental update
+      updateFlatDataIncremental(itemId, isExpanding);
+      
       return newSet;
     });
-  }, []);
+  }, [updateFlatDataIncremental, expandedItems, flatData.length]);
 
+  // console.log('[VirtualizedDataExplorer] Returning from hook - isProcessing:', isProcessing, 'flatData.length:', flatData.length);
   return { flatData, isProcessing, toggleExpanded };
 };
 
@@ -626,6 +924,7 @@ const VirtualizedItem = React.memo(
 
     // Use inline handler since component is already memoized [[memory:4875251]]
     const handlePress = () => {
+      console.log(`[VirtualizedItem] Pressed item: ${item.id}, expandable: ${item.isExpandable}`);
       if (item.isExpandable) {
         onToggleExpanded(item.id);
       }
@@ -771,11 +1070,13 @@ export const VirtualizedDataExplorer: React.FC<
   initialExpanded = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(rawMode); // Auto-expand in raw mode
+  // console.log('[VirtualizedDataExplorer] Component render - rawMode:', rawMode, 'title:', title);
   const { flatData, isProcessing, toggleExpanded } = useDataFlattening(
     data,
     maxDepth,
     initialExpanded,
   );
+  // console.log('[VirtualizedDataExplorer] Got from hook - isProcessing:', isProcessing, 'flatData.length:', flatData.length);
 
   // Calculate visible types for the legend
   const visibleTypes = useMemo(() => {
@@ -833,13 +1134,14 @@ export const VirtualizedDataExplorer: React.FC<
       );
     }
 
+    // console.log('[VirtualizedDataExplorer] Rendering raw mode - isProcessing:', isProcessing);
     return (
       <View style={{ flex: 1 }}>
         {isProcessing ? (
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <Text style={STABLE_STYLES.loadingText}>Processing data...</Text>
+            <Text style={STABLE_STYLES.loadingText}>Processing data... (raw mode, isProcessing={String(isProcessing)})</Text>
           </View>
         ) : (
           <FlatList
@@ -911,7 +1213,7 @@ export const VirtualizedDataExplorer: React.FC<
         <>
           {isProcessing ? (
             <View style={STABLE_STYLES.loadingContainer}>
-              <Text style={STABLE_STYLES.loadingText}>Processing data...</Text>
+              <Text style={STABLE_STYLES.loadingText}>Processing data... (isProcessing={String(isProcessing)})</Text>
             </View>
           ) : (
             <View

@@ -83,10 +83,10 @@ export function StorageModalWithTabs({
     useState<StorageKeyConversation | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [detailTab, setDetailTab] = useState<"overview" | "changes">(
-    "overview",
+    "overview"
   );
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
-    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"]),
+    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"])
   );
   const lastEventRef = useRef<AsyncStorageEvent | null>(null);
   const hasLoadedFilters = useRef(false);
@@ -107,7 +107,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedFilters = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.eventFilters(),
+          devToolsStorageKeys.storage.eventFilters()
         );
         if (storedFilters) {
           const filters = JSON.parse(storedFilters) as string[];
@@ -134,7 +134,7 @@ export function StorageModalWithTabs({
         const filters = Array.from(ignoredPatterns);
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.eventFilters(),
-          JSON.stringify(filters),
+          JSON.stringify(filters)
         );
       } catch (error) {
         console.warn("Failed to save storage event filters:", error);
@@ -185,7 +185,7 @@ export function StorageModalWithTabs({
     (conversation: StorageKeyConversation) => {
       setSelectedConversation(conversation);
     },
-    [],
+    []
   );
 
   const handleTogglePattern = useCallback((pattern: string) => {
@@ -221,7 +221,7 @@ export function StorageModalWithTabs({
   };
 
   const getValueType = (
-    value: unknown,
+    value: unknown
   ): StorageKeyConversation["valueType"] => {
     const parsed = parseValue(value);
     if (parsed === null) return "null";
@@ -256,7 +256,7 @@ export function StorageModalWithTabs({
 
       // Filter out keys that match ignored patterns
       const shouldIgnore = Array.from(ignoredPatterns).some((pattern) =>
-        key.includes(pattern),
+        key.includes(pattern)
       );
 
       if (shouldIgnore) return;
@@ -288,7 +288,7 @@ export function StorageModalWithTabs({
     // Convert to array and sort by last updated
     return Array.from(keyMap.values()).sort(
       (a, b) =>
-        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime(),
+        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
     );
   }, [events, ignoredPatterns]);
 
@@ -360,7 +360,7 @@ export function StorageModalWithTabs({
         </TouchableOpacity>
       );
     },
-    [],
+    []
   );
 
   if (!visible) return null;
@@ -393,7 +393,7 @@ export function StorageModalWithTabs({
         (e) =>
           e.action === "setItem" ||
           e.action === "mergeItem" ||
-          e.action === "removeItem",
+          e.action === "removeItem"
       ).length;
 
       return (
@@ -630,7 +630,7 @@ export function StorageModalWithTabs({
     if (conversations.length === 0) {
       return (
         <View style={styles.emptyState}>
-          <Database size={48} color={gameUIColors.muted} />
+          <Database size={48} color={gameUIColors.muted} noBackground={true} />
           <Text style={styles.emptyTitle}>
             {isListening ? "No storage events yet" : "Event listener is paused"}
           </Text>

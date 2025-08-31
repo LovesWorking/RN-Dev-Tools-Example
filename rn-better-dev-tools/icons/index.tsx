@@ -9,20 +9,25 @@ import type { FC } from "react";
 import { WifiIcon, WifiOffIcon, WifiCircuitIcon } from "./WifiCircuitIcon";
 import { ServerIcon, LaptopIcon, EnvLaptopIcon } from "./EnvLaptopIcon";
 import { StorageStackIcon } from "./StorageStackIcon";
+import { SentryBugIcon } from "./SentryBugIcon";
+import { ReactQueryIcon } from "./ReactQueryIcon";
 
 // Export our custom icons with all their variants
 export { WifiIcon, WifiOffIcon, WifiCircuitIcon };
 export { ServerIcon, LaptopIcon, EnvLaptopIcon };
 export { StorageStackIcon };
+export { SentryBugIcon };
+export { ReactQueryIcon };
 
 // Create aliases for compatibility
 export const DatabaseIcon = StorageStackIcon;
 export const StorageIcon = StorageStackIcon;
+export const BugIcon = SentryBugIcon;
 import {
   ActivityIcon,
   AlertCircleIcon,
   AlertTriangleIcon,
-  BugIcon,
+  // BugIcon, // Now using our custom SentryBugIcon
   CheckIcon,
   CheckCircleIcon,
   CheckCircle2Icon,
@@ -92,7 +97,7 @@ export {
   ActivityIcon as Activity,
   AlertCircleIcon as AlertCircle,
   AlertTriangleIcon as AlertTriangle,
-  BugIcon as Bug,
+  // BugIcon as Bug, // Using our custom BugIcon
   CheckIcon as Check,
   CheckCircleIcon as CheckCircle,
   CheckCircle2Icon as CheckCircle2,
@@ -160,6 +165,7 @@ export {
   WifiIcon as Wifi,
   WifiOffIcon as WifiOff,
   DatabaseIcon as Database,
+  BugIcon as Bug,
 };
 
 // Re-export TouchpadIcon with its full name for compatibility

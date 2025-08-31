@@ -359,6 +359,71 @@ export const ReactNativeShapesShowcase = () => {
           </View>
           <Text style={styles.shapeLabel}>Base</Text>
         </View>
+
+        {/* 42. Hexagon (3 overlapping rectangles) */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.hexagonFilledContainer}>
+            <View style={styles.hexagonRect1} />
+            <View style={styles.hexagonRect2} />
+            <View style={styles.hexagonRect3} />
+          </View>
+          <Text style={styles.shapeLabel}>Hexagon</Text>
+        </View>
+
+        {/* 43. Hexagon with Rounded Corners */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.hexagonRoundedContainer}>
+            <View style={styles.hexagonRoundedRect1} />
+            <View style={styles.hexagonRoundedRect2} />
+            <View style={styles.hexagonRoundedRect3} />
+          </View>
+          <Text style={styles.shapeLabel}>Hexagon Rounded</Text>
+        </View>
+
+        {/* 44. Diamond (Square rotated 45°) */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.diamond} />
+          <Text style={styles.shapeLabel}>Diamond</Text>
+        </View>
+
+        {/* 45. Octagon (2 overlapping squares) */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.octagonSimpleContainer}>
+            <View style={styles.octagonSquare1} />
+            <View style={styles.octagonSquare2} />
+          </View>
+          <Text style={styles.shapeLabel}>Octagon</Text>
+        </View>
+
+        {/* 46. Star (Many overlapping rectangles) */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.starContainer}>
+            {[0, 36, 72, 108, 144].map((angle) => (
+              <View key={angle} style={[styles.starRay, { transform: [{ rotate: `${angle}deg` }] }]} />
+            ))}
+          </View>
+          <Text style={styles.shapeLabel}>Star</Text>
+        </View>
+
+        {/* 47. Hexagon Thick (Thicker rectangles for better fill) */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.hexagonThickContainer}>
+            <View style={styles.hexagonThickRect1} />
+            <View style={styles.hexagonThickRect2} />
+            <View style={styles.hexagonThickRect3} />
+          </View>
+          <Text style={styles.shapeLabel}>Hexagon Thick</Text>
+        </View>
+
+        {/* 48. Hexagon Wide (Very wide rectangles) */}
+        <View style={styles.shapeContainer}>
+          <View style={styles.hexagonWideContainer}>
+            <View style={styles.hexagonWideRect1} />
+            <View style={styles.hexagonWideRect2} />
+            <View style={styles.hexagonWideRect3} />
+          </View>
+          <Text style={styles.shapeLabel}>Hexagon Wide</Text>
+        </View>
       </View>
     </ScrollView>
   );
@@ -1357,5 +1422,180 @@ const styles = StyleSheet.create({
     backgroundColor: "#64748b",
     height: 55,
     width: 100,
+  },
+
+  // 42. Hexagon (3 overlapping rectangles)
+  hexagonFilledContainer: {
+    width: 50,
+    height: 50,
+    position: "relative",
+  },
+  hexagonRect1: {
+    width: 50,
+    height: 28,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 11,
+  },
+  hexagonRect2: {
+    width: 50,
+    height: 28,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 11,
+    transform: [{ rotate: "60deg" }],
+  },
+  hexagonRect3: {
+    width: 50,
+    height: 28,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 11,
+    transform: [{ rotate: "-60deg" }],
+  },
+
+  // 43. Hexagon with Rounded Corners (like React Query)
+  hexagonRoundedContainer: {
+    width: 50,
+    height: 50,
+    position: "relative",
+  },
+  hexagonRoundedRect1: {
+    width: 50,
+    height: 29,
+    backgroundColor: "#fbbf24",
+    borderRadius: 4,
+    position: "absolute",
+    top: 10.5,
+  },
+  hexagonRoundedRect2: {
+    width: 50,
+    height: 29,
+    backgroundColor: "#fbbf24",
+    borderRadius: 4,
+    position: "absolute",
+    top: 10.5,
+    transform: [{ rotate: "60deg" }],
+  },
+  hexagonRoundedRect3: {
+    width: 50,
+    height: 29,
+    backgroundColor: "#fbbf24",
+    borderRadius: 4,
+    position: "absolute",
+    top: 10.5,
+    transform: [{ rotate: "-60deg" }],
+  },
+
+  // 44. Diamond (Square rotated 45°)
+  diamond: {
+    width: 40,
+    height: 40,
+    backgroundColor: "#a78bfa",
+    transform: [{ rotate: "45deg" }],
+    marginTop: 5,
+  },
+
+  // 45. Octagon (2 overlapping squares)
+  octagonSimpleContainer: {
+    width: 50,
+    height: 50,
+    position: "relative",
+  },
+  octagonSquare1: {
+    width: 35,
+    height: 35,
+    backgroundColor: "#34d399",
+    position: "absolute",
+    top: 7.5,
+    left: 7.5,
+  },
+  octagonSquare2: {
+    width: 35,
+    height: 35,
+    backgroundColor: "#34d399",
+    position: "absolute",
+    top: 7.5,
+    left: 7.5,
+    transform: [{ rotate: "45deg" }],
+  },
+
+  // 46. Star (Many overlapping rectangles)
+  starContainer: {
+    width: 50,
+    height: 50,
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  starRay: {
+    width: 50,
+    height: 3,
+    backgroundColor: "#f87171",
+    position: "absolute",
+    top: 23.5,
+  },
+
+  // 47. Hexagon Thick (Thicker rectangles for better fill)
+  hexagonThickContainer: {
+    width: 50,
+    height: 50,
+    position: "relative",
+  },
+  hexagonThickRect1: {
+    width: 50,
+    height: 29,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 10.5,
+  },
+  hexagonThickRect2: {
+    width: 50,
+    height: 29,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 10.5,
+    transform: [{ rotate: "60deg" }],
+  },
+  hexagonThickRect3: {
+    width: 50,
+    height: 29,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 10.5,
+    transform: [{ rotate: "-60deg" }],
+  },
+
+  // 48. Hexagon Wide (Very wide rectangles)
+  hexagonWideContainer: {
+    width: 50,
+    height: 50,
+    position: "relative",
+  },
+  hexagonWideRect1: {
+    width: 58,
+    height: 33,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 8.5,
+    left: -4,
+  },
+  hexagonWideRect2: {
+    width: 58,
+    height: 33,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 8.5,
+    left: -4,
+    transform: [{ rotate: "60deg" }],
+  },
+  hexagonWideRect3: {
+    width: 58,
+    height: 33,
+    backgroundColor: "#fbbf24",
+    position: "absolute",
+    top: 8.5,
+    left: -4,
+    transform: [{ rotate: "-60deg" }],
   },
 });

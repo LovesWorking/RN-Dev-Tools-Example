@@ -33,6 +33,17 @@ import WifiIconDemo from "@/docs/styles/WifiIconExample";
 import { GearIconComparison } from "@/docs/svg/GearIconComparison";
 // Cleaned up - icons now in rn-better-dev-tools/icons
 import StorageIconShowcase from "@/docs/styles/StorageIconShowcase";
+import SentryBugShowcase from "@/docs/styles/SentryBugShowcase";
+import ReactQueryShowcase from "@/docs/styles/ReactQueryShowcase";
+import ReactQueryVariations from "@/docs/styles/ReactQueryVariations";
+import ReactQueryExactShowcase from "@/docs/styles/ReactQueryExact";
+// import HexagonTests from "@/docs/styles/HexagonTests";
+import HexagonShowcase from "@/docs/styles/HexagonShowcase";
+import { ReactLogoShapesShowcase } from "@/docs/svg/ReactLogoShapesShowcase";
+import { UniversalShapeEditor } from "@/docs/tools/UniversalShapeEditor";
+import CyberpunkIconGallery from "@/docs/styles/CyberpunkIconGallery";
+import IconVariationsGallery from "@/docs/styles/IconVariationsGallery";
+import { EnvLaptopIcon } from "@/rn-better-dev-tools/icons/EnvLaptopIcon";
 
 const { width, height } = Dimensions.get("window");
 
@@ -409,11 +420,21 @@ export default function PokemonScreen() {
           },
         ]}
       >
+        {/* Icon Variations Gallery at the top */}
+        <IconVariationsGallery />
+        {/* <UniversalShapeEditor /> */}
         {/* <GearsIconDemo /> */}
         {/* <WifiIconDemo /> */}
         {/* <IconComparison /> */}
         {/* <GearIconComparison /> */}
-        <StorageIconShowcase />
+        {/* <StorageIconShowcase /> */}
+        {/* <SentryBugShowcase /> */}
+        {/* <ReactQueryShowcase /> */}
+        {/* <ReactQueryVariations /> */}
+        {/* <ReactQueryExactShowcase /> */}
+        {/* <ReactNativeShapesShowcase /> */}
+        {/* <ReactLogoShapesShowcase /> */}
+        {/* <HexagonShowcase /> */}
         {/* Premium Header */}
         <Animated.View
           style={[

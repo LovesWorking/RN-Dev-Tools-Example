@@ -9,14 +9,14 @@ import {
   Easing,
 } from "react-native";
 import {
-  Bug,
   Globe,
   EnvLaptopIcon,
   WifiCircuitIcon,
   StorageStackIcon,
+  ReactQueryIcon,
 } from "@/rn-better-dev-tools/icons";
-import { TanstackLogo } from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/svgs";
-import DialIcon from "./DialIcon";
+import { SentryBugIcon } from "@/rn-better-dev-tools/icons/SentryBugIcon";
+import { DialIcon } from "./DialIcon";
 import {
   gameUIColors,
   getThemedDialColors,
@@ -79,9 +79,12 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     {
       name: "Query",
       icon: (
-        <View style={styles.tanstackContainer}>
-          <TanstackLogo />
-        </View>
+        <ReactQueryIcon
+          size={32}
+          color={gameUIColors.query}
+          glowColor={gameUIColors.query}
+          noBackground={true}
+        />
       ),
       color: gameUIColors.query,
       onPress: onQueryPress,
@@ -90,10 +93,10 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       name: "Env",
       icon: (
         <EnvLaptopIcon
-          size={24}
+          size={32}
           color={gameUIColors.env}
           glowColor={gameUIColors.env}
-          variant="quantum"
+          noBackground={true}
         />
       ),
       color: gameUIColors.env,
@@ -101,17 +104,25 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
     {
       name: "Sentry",
-      icon: <Bug size={24} color={gameUIColors.debug} />,
+      icon: (
+        <SentryBugIcon
+          size={32}
+          color={gameUIColors.debug}
+          glowColor={gameUIColors.debug}
+          noBackground={true}
+        />
+      ),
       color: gameUIColors.debug,
       onPress: onSentryPress,
     },
     {
       name: "Storage",
       icon: (
-        <StorageStackIcon 
-          size={24} 
-          color={gameUIColors.storage} 
+        <StorageStackIcon
+          size={32}
+          color={gameUIColors.storage}
           glowColor={gameUIColors.storage}
+          noBackground={true}
         />
       ),
       color: gameUIColors.storage,
@@ -121,11 +132,11 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       name: "WiFi",
       icon: (
         <WifiCircuitIcon
-          size={24}
+          size={32}
           color={isWifiEnabled ? gameUIColors.network : gameUIColors.muted}
           glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.muted}
-          variant="nodes"
           strength={isWifiEnabled ? 4 : 0}
+          noBackground={true}
         />
       ),
       color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
@@ -133,7 +144,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     },
     {
       name: "Network",
-      icon: <Globe size={24} color={gameUIColors.network} />,
+      icon: <Globe size={32} color={gameUIColors.network} />,
       color: gameUIColors.network,
       onPress: onNetworkPress || (() => {}),
     },
@@ -619,12 +630,6 @@ const styles = StyleSheet.create({
   buttonPressable: {
     width: "100%",
     height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  tanstackContainer: {
-    width: 24,
-    height: 24,
     justifyContent: "center",
     alignItems: "center",
   },
