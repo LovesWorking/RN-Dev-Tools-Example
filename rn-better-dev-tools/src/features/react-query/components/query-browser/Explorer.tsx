@@ -318,6 +318,7 @@ type Props = {
   activeQuery?: Query<unknown, Error, unknown, QueryKey> | undefined;
   dataPath?: string[];
   itemsDeletable?: boolean;
+  dataVersion?: number;
 };
 // Optimized Explorer component following rule2 guidelines [[memory:4875251]]
 export default function Explorer({
@@ -328,9 +329,11 @@ export default function Explorer({
   activeQuery,
   dataPath,
   itemsDeletable,
+  dataVersion = 0,
 }: Props) {
   const queryClient = useQueryClient();
   const [isRowFocused, setIsRowFocused] = useState(false);
+  
   
   // Local state for input value to handle typing properly
   const [localInputValue, setLocalInputValue] = useState<string>("");
@@ -545,6 +548,7 @@ export default function Explorer({
                           valueType === "Iterable" ||
                           valueType === "object"
                         }
+                        dataVersion={dataVersion}
                       />
                     ))}
                   </View>
@@ -585,6 +589,7 @@ export default function Explorer({
                                   editable={editable}
                                   dataPath={[...currentDataPath, entry.label]}
                                   activeQuery={activeQuery}
+                                  dataVersion={dataVersion}
                                 />
                               ))}
                             </View>

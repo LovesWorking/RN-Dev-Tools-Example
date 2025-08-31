@@ -52,7 +52,6 @@ export function QueryBrowserModal({
     : devToolsStorageKeys.reactQuery.browserModal();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
-    console.log("mode", mode === "floating");
     setModalMode(mode);
   }, []);
 

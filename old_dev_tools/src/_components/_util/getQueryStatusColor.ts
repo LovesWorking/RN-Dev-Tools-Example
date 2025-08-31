@@ -1,4 +1,4 @@
-import type { Query } from "@tanstack/query-core";
+import type { Query } from "@tanstack/react-query";
 
 export function getQueryStatusColor({
   queryState,

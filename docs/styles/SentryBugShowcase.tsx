@@ -14,7 +14,7 @@ const BugColors = {
 
 // Demo Component
 export const SentryBugShowcase: React.FC = () => {
-  const variants = ["circuit", "matrix", "glitch", "cyber", "quantum"] as const;
+  const variants = ["circuit", "matrix", "glitch", "nodes", "grid"] as const;
   const colors = Object.keys(BugColors) as (keyof typeof BugColors)[];
 
   return (

@@ -16,7 +16,7 @@ const StorageColors = {
 
 // Demo Component
 export const StorageIconShowcase: React.FC = () => {
-  const stackVariants = ["layers", "nodes", "grid", "pulse", "circuit"] as const;
+  const stackVariants = ["circuit", "nodes", "grid", "matrix", "glitch"] as const;
   const colors = Object.keys(StorageColors) as (keyof typeof StorageColors)[];
 
   return (
@@ -48,14 +48,14 @@ export const StorageIconShowcase: React.FC = () => {
 
       {/* Color Spectrum */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🌈 COLOR SPECTRUM - LAYERS</Text>
+        <Text style={styles.sectionTitle}>🌈 COLOR SPECTRUM - CIRCUIT</Text>
         <View style={styles.colorGrid}>
           {colors.map((colorKey) => (
             <View key={colorKey} style={styles.colorBox}>
               <View style={[styles.darkBg, styles.colorBgBox]}>
                 <StorageStackIcon
                   size={50}
-                  variant="layers"
+                  variant="circuit"
                   color={StorageColors[colorKey]}
                   glowColor={StorageColors[colorKey]}
                 />

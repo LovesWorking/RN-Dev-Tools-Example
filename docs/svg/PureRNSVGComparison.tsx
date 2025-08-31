@@ -1,7 +1,8 @@
 import React from "react";
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-// Import lucide-react-native icons (SVG-based) - v1
-import * as LucideIcons from "lucide-react-native";
+// Note: lucide-react-native is not installed - SVG comparison disabled
+// import * as LucideIcons from "lucide-react-native";
+const LucideIcons = {}; // Placeholder for missing dependency
 // Import our pure React Native icons - v2
 import * as PureRNIconsV2 from "../../rn-better-dev-tools/icons/lucide-icons";
 // Import our improved pure React Native icons - v3
@@ -107,7 +108,11 @@ export const IconComparison = () => {
               {/* SVG Icon */}
               <View style={styles.iconContainer}>
                 <View style={[styles.iconBox, styles.svgIconBox]}>
-                  <LucideIcon size={28} color="#4A5568" strokeWidth={1.5} />
+                  {LucideIcon ? (
+                    <LucideIcon size={28} color="#4A5568" strokeWidth={1.5} />
+                  ) : (
+                    <Text style={styles.missingIcon}>N/A</Text>
+                  )}
                 </View>
                 <Text style={styles.iconLabel}>SVG</Text>
               </View>

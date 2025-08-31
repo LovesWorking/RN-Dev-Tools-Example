@@ -15,7 +15,12 @@ export default function deleteItem({
     // Early return if path is missing
     return;
   }
+  
   const oldData = activeQuery.state.data;
   const newData = deleteNestedDataByPath(oldData, dataPath);
-  queryClient.setQueryData(activeQuery.queryKey, newData);
+  
+  // Force a new object reference to ensure React detects the change
+  const forceNewReference = JSON.parse(JSON.stringify(newData));
+  
+  queryClient.setQueryData(activeQuery.queryKey, forceNewReference);
 }

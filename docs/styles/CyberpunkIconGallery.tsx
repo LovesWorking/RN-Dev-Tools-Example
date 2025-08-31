@@ -18,7 +18,7 @@ const CyberpunkIconGallery: React.FC = () => {
         {/* ENV Laptop Icons */}
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={iconSize} variant="quantum" />
+            <EnvLaptopIcon size={iconSize} variant="matrix" />
           </View>
           <Text style={styles.iconLabel}>ENV Laptop</Text>
           <Text style={styles.iconVariant}>Quantum</Text>
@@ -26,7 +26,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={iconSize} variant="cosmic" />
+            <EnvLaptopIcon size={iconSize} variant="circuit" />
           </View>
           <Text style={styles.iconLabel}>ENV Laptop</Text>
           <Text style={styles.iconVariant}>Cosmic</Text>
@@ -34,7 +34,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={iconSize} variant="stellar" />
+            <EnvLaptopIcon size={iconSize} variant="glitch" />
           </View>
           <Text style={styles.iconLabel}>ENV Laptop</Text>
           <Text style={styles.iconVariant}>Stellar</Text>
@@ -92,7 +92,7 @@ const CyberpunkIconGallery: React.FC = () => {
         {/* ENV with different colors */}
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={iconSize} variant="quantum" color="cyan" />
+            <EnvLaptopIcon size={iconSize} variant="matrix" color="cyan" />
           </View>
           <Text style={styles.iconLabel}>ENV</Text>
           <Text style={styles.iconVariant}>Cyan</Text>
@@ -100,7 +100,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={iconSize} variant="quantum" color="purple" />
+            <EnvLaptopIcon size={iconSize} variant="matrix" color="purple" />
           </View>
           <Text style={styles.iconLabel}>ENV</Text>
           <Text style={styles.iconVariant}>Purple</Text>
@@ -108,7 +108,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={iconSize} variant="quantum" color="green" />
+            <EnvLaptopIcon size={iconSize} variant="matrix" color="green" />
           </View>
           <Text style={styles.iconLabel}>ENV</Text>
           <Text style={styles.iconVariant}>Green</Text>
@@ -146,7 +146,7 @@ const CyberpunkIconGallery: React.FC = () => {
       <View style={styles.sizeGrid}>
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={30} variant="quantum" />
+            <EnvLaptopIcon size={30} variant="matrix" />
           </View>
           <Text style={styles.iconLabel}>Small</Text>
           <Text style={styles.iconVariant}>30px</Text>
@@ -154,7 +154,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={45} variant="quantum" />
+            <EnvLaptopIcon size={45} variant="matrix" />
           </View>
           <Text style={styles.iconLabel}>Medium</Text>
           <Text style={styles.iconVariant}>45px</Text>
@@ -162,7 +162,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={60} variant="quantum" />
+            <EnvLaptopIcon size={60} variant="matrix" />
           </View>
           <Text style={styles.iconLabel}>Large</Text>
           <Text style={styles.iconVariant}>60px</Text>
@@ -170,7 +170,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>
-            <EnvLaptopIcon size={80} variant="quantum" />
+            <EnvLaptopIcon size={80} variant="matrix" />
           </View>
           <Text style={styles.iconLabel}>XL</Text>
           <Text style={styles.iconVariant}>80px</Text>

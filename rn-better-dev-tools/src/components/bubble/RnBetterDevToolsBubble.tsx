@@ -100,7 +100,7 @@ export function RnBetterDevToolsBubble({
         "[RnBetterDevToolsBubble] Default visibility props: " +
           propsProvided.join(", ") +
           ". " +
-          "Users can override these in settings.",
+          "Users can override these in settings."
       );
     }
   }, [
@@ -119,7 +119,6 @@ export function RnBetterDevToolsBubble({
   const {
     isModalOpen,
     isEnvModalOpen,
-    isSentryModalOpen,
     isStorageModalOpen,
     selectedQueryKey,
     activeFilter,
@@ -147,23 +146,6 @@ export function RnBetterDevToolsBubble({
     // isSentryModalOpen || // Disabled - Sentry modal causing import issues
     isStorageModalOpen ||
     isNetworkModalOpen;
-
-  // Debug which modal is stuck open
-  useEffect(() => {
-    if (isAnyModalOpen) {
-      console.log("Modal open states:", {
-        isModalOpen,
-        isEnvModalOpen,
-        isStorageModalOpen,
-      });
-    }
-  }, [
-    isModalOpen,
-    isEnvModalOpen,
-    isSentryModalOpen,
-    isStorageModalOpen,
-    isAnyModalOpen,
-  ]);
 
   // Removed auto-open for dev tools console
 

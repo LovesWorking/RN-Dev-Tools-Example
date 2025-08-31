@@ -35,7 +35,7 @@ const INDENT_STYLES = Array.from(
       container: {
         marginLeft: depth * 10, // Reduced space for tighter tree lines
       },
-    }).container
+    }).container,
 );
 
 // Enhanced type color cache using centralized theme colors [[memory:4875251]]
@@ -317,14 +317,8 @@ const getTypeColor = (valueType: string): string => {
 };
 
 // Memoized components for performance
-const ExpanderComponent = ({
-  expanded,
-  onPress,
-}: {
-  expanded: boolean;
-  onPress: () => void;
-}) => {
-  return (
+const Expander = React.memo(
+  ({ expanded, onPress }: { expanded: boolean; onPress: () => void }) => (
     <TouchableOpacity
       sentry-label="ignore devtools data explorer expander"
       style={STABLE_STYLES.expanderContainer}
@@ -347,57 +341,49 @@ const ExpanderComponent = ({
         </Svg>
       </View>
     </TouchableOpacity>
-  );
-};
-ExpanderComponent.displayName = "Expander";
-const Expander = React.memo(ExpanderComponent);
+  ),
+);
 
 // Type legend component to replace inline type indicators
-const TypeLegendComponent = ({
-  visibleTypes,
-}: {
-  visibleTypes: string[];
-}): React.ReactElement => {
-  const uniqueTypes = Array.from(new Set(visibleTypes)).slice(0, 8); // Limit to 8 most common types
+const TypeLegend = React.memo(
+  ({ visibleTypes }: { visibleTypes: string[] }) => {
+    const uniqueTypes = Array.from(new Set(visibleTypes)).slice(0, 8); // Limit to 8 most common types
 
-  return (
-    <View style={STABLE_STYLES.typeLegend}>
-      {uniqueTypes.map((type) => {
-        const color = getTypeColor(type);
-        return (
-          <View
-            key={type}
-            style={[
-              STABLE_STYLES.typeBadge,
-              {
-                backgroundColor: `${color}10`,
-                borderColor: `${color}30`,
-              },
-            ]}
-          >
+    return (
+      <View style={STABLE_STYLES.typeLegend}>
+        {uniqueTypes.map((type) => {
+          const color = getTypeColor(type);
+          return (
             <View
-              style={[STABLE_STYLES.typeColor, { backgroundColor: color }]}
-            />
-            <Text style={STABLE_STYLES.typeName}>{type}</Text>
-          </View>
-        );
-      })}
-    </View>
-  );
-};
-TypeLegendComponent.displayName = "TypeLegend";
-const TypeLegend = React.memo(TypeLegendComponent);
+              key={type}
+              style={[
+                STABLE_STYLES.typeBadge,
+                {
+                  backgroundColor: `${color}10`,
+                  borderColor: `${color}30`,
+                },
+              ]}
+            >
+              <View
+                style={[STABLE_STYLES.typeColor, { backgroundColor: color }]}
+              />
+              <Text style={STABLE_STYLES.typeName}>{type}</Text>
+            </View>
+          );
+        })}
+      </View>
+    );
+  },
+);
 
 // Optimized data flattening with chunked processing to prevent UI blocking [[memory:4875251]]
 const useDataFlattening = (
   data: JsonValue,
   maxDepth = 10,
-  autoExpandFirstLevel = false
+  autoExpandFirstLevel = false,
 ) => {
   const [flatData, setFlatData] = useState<FlatDataItem[]>([]);
-  const flatDataMapRef = useRef<
-    Map<string, { item: FlatDataItem; index: number }>
-  >(new Map());
+  const flatDataMapRef = useRef<Map<string, { item: FlatDataItem; index: number }>>(new Map());
 
   // Initialize with root expanded and optionally first level
   const getInitialExpanded = useCallback(() => {
@@ -417,18 +403,17 @@ const useDataFlattening = (
   }, [autoExpandFirstLevel, data]);
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(() =>
-    getInitialExpanded()
+    getInitialExpanded(),
   );
   const [isProcessing, setIsProcessing] = useState(false);
-
+  
   // Debug logging - commented out for less noise
+  // console.log('[VirtualizedDataExplorer] Hook render - isProcessing:', isProcessing);
   // Store circular cache outside of re-renders to prevent reset
   const circularCacheRef = useRef<WeakSet<object>>(new WeakSet<object>());
   const processingRef = useRef(false);
   const dataVersionRef = useRef(0);
-  const lastActionRef = useRef<
-    { type: "expand" | "collapse" | "init"; itemId?: string } | undefined
-  >(undefined);
+  const lastActionRef = useRef<{ type: 'expand' | 'collapse' | 'init'; itemId?: string } | undefined>(undefined);
 
   // Stable flattenData function that doesn't depend on expandedItems
   const flattenDataStable = useCallback(
@@ -439,7 +424,7 @@ const useDataFlattening = (
       key = "root",
       depth = 0,
       parentId?: string,
-      path: string[] = []
+      path: string[] = [],
     ): FlatDataItem[] => {
       // Early termination for performance [[memory:4875251]]
       if (depth > Math.min(maxDepth, MAX_DEPTH_LIMIT)) return [];
@@ -558,8 +543,8 @@ const useDataFlattening = (
                   childKey,
                   depth + 1,
                   id,
-                  currentPath
-                )
+                  currentPath,
+                ),
               );
             }
 
@@ -569,24 +554,24 @@ const useDataFlattening = (
             }
           }
         } catch (error) {
-          console.error(error);
           // Skip malformed data
         }
       }
 
       return result;
     },
-    [maxDepth] // Only depend on maxDepth, not expandedItems
+    [maxDepth], // Only depend on maxDepth, not expandedItems
   );
 
   // Only process full data when data changes (not on expand/collapse)
   useEffect(() => {
+    console.log('\n[VirtualizedDataExplorer] ====== USE EFFECT ======');
+    console.log('[VirtualizedDataExplorer] lastActionRef:', lastActionRef.current);
+    console.log('[VirtualizedDataExplorer] expandedItems.size:', expandedItems.size);
+    
     // Skip if this was just an expand/collapse action
-    if (
-      lastActionRef.current &&
-      (lastActionRef.current.type === "expand" ||
-        lastActionRef.current.type === "collapse")
-    ) {
+    if (lastActionRef.current && (lastActionRef.current.type === 'expand' || lastActionRef.current.type === 'collapse')) {
+      console.log('[VirtualizedDataExplorer] Skipping full processing - was expand/collapse');
       // Make sure processing flag is cleared for incremental updates
       if (isProcessing) {
         setIsProcessing(false);
@@ -598,9 +583,11 @@ const useDataFlattening = (
 
     // Prevent concurrent processing
     if (processingRef.current) {
+      console.log('[VirtualizedDataExplorer] Skipping - already processing');
       return;
     }
 
+    console.log('[VirtualizedDataExplorer] Starting FULL data processing');
     let isCancelled = false;
     let timeoutId: number | undefined;
     processingRef.current = true;
@@ -610,15 +597,17 @@ const useDataFlattening = (
       // Failsafe timeout to prevent stuck processing
       timeoutId = setTimeout(() => {
         if (processingRef.current && !isCancelled) {
+          console.error('[VirtualizedDataExplorer] Processing timeout - forcing clear after 5 seconds');
           setIsProcessing(false);
           processingRef.current = false;
         }
       }, 5000);
       // Small delay to debounce rapid changes
       // Small delay to batch rapid changes
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
       if (isCancelled) {
+        console.log('[VirtualizedDataExplorer] Processing cancelled during delay');
         processingRef.current = false;
         return;
       }
@@ -628,6 +617,11 @@ const useDataFlattening = (
         circularCacheRef.current = new WeakSet();
         dataVersionRef.current = data as any;
 
+        console.log('[VirtualizedDataExplorer] Processing full data tree');
+        console.log('[VirtualizedDataExplorer] Data type:', typeof data);
+        console.log('[VirtualizedDataExplorer] ExpandedItems:', Array.from(expandedItems));
+        const startTime = Date.now();
+
         const newFlatData = flattenDataStable(
           data,
           expandedItems,
@@ -635,28 +629,35 @@ const useDataFlattening = (
           "root",
           0,
           undefined,
-          []
+          [],
         );
 
+        console.log(`[VirtualizedDataExplorer] Full processing: ${newFlatData.length} items in ${Date.now() - startTime}ms`);
+        
         // Build the map for incremental updates
         const newMap = new Map<string, { item: FlatDataItem; index: number }>();
         newFlatData.forEach((item, index) => {
           newMap.set(item.id, { item, index });
         });
         flatDataMapRef.current = newMap;
+        console.log('[VirtualizedDataExplorer] Built map with', newMap.size, 'entries');
+        console.log('[VirtualizedDataExplorer] Map keys:', Array.from(newMap.keys()));
 
         if (!isCancelled) {
           setFlatData(newFlatData);
           setIsProcessing(false);
           processingRef.current = false;
           if (timeoutId) clearTimeout(timeoutId);
+          console.log('[VirtualizedDataExplorer] Full processing complete');
         } else {
+          console.log('[VirtualizedDataExplorer] Processing was cancelled');
           if (timeoutId) clearTimeout(timeoutId);
         }
       } catch (error) {
-        console.error(error);
+        console.error('[VirtualizedDataExplorer] Error during processing:', error);
         // Reset to empty data on error
         if (!isCancelled) {
+          console.log('[VirtualizedDataExplorer] Resetting to empty data due to error');
           setFlatData([]);
           flatDataMapRef.current = new Map();
           setIsProcessing(false);
@@ -671,6 +672,7 @@ const useDataFlattening = (
     processData();
 
     return () => {
+      console.log('[VirtualizedDataExplorer] useEffect cleanup - cancelling processing');
       isCancelled = true;
       processingRef.current = false;
       if (timeoutId) clearTimeout(timeoutId);
@@ -680,36 +682,61 @@ const useDataFlattening = (
   // Incremental update function for expand/collapse
   const updateFlatDataIncremental = useCallback(
     (itemId: string, isExpanding: boolean) => {
+      console.log(`\n[VirtualizedDataExplorer] ====== INCREMENTAL UPDATE ======`);
+      console.log(`[VirtualizedDataExplorer] ItemId: ${itemId}, isExpanding: ${isExpanding}`);
+      
       // Clear processing flag since we're doing incremental update
       setIsProcessing(false);
       processingRef.current = false;
-
+      
       setFlatData((prevFlatData) => {
+        console.log('[VirtualizedDataExplorer] Current flatData length:', prevFlatData.length);
+        console.log('[VirtualizedDataExplorer] Map size:', flatDataMapRef.current.size);
+        
         const itemEntry = flatDataMapRef.current.get(itemId);
         if (!itemEntry) {
+          console.error(`[VirtualizedDataExplorer] ERROR: Item '${itemId}' not found in map!`);
+          console.log('[VirtualizedDataExplorer] Available keys in map:', Array.from(flatDataMapRef.current.keys()));
           return prevFlatData;
         }
+        
+        console.log('[VirtualizedDataExplorer] Found item:', {
+          key: itemEntry.item.key,
+          index: itemEntry.index,
+          isExpandable: itemEntry.item.isExpandable,
+          hasChildren: itemEntry.item.hasChildren,
+          childCount: itemEntry.item.childCount,
+          valueType: itemEntry.item.valueType,
+        });
 
         const { item, index } = itemEntry;
-
+        
         if (isExpanding && item.isExpandable && item.hasChildren) {
+          console.log('[VirtualizedDataExplorer] Starting expansion...');
           // Expand: insert children after the item
           const newItems = [...prevFlatData];
-
+          
           // Create a new circular cache for this subtree
           const subCircularCache = new WeakSet<object>();
-          if (item.value && typeof item.value === "object") {
+          if (item.value && typeof item.value === 'object') {
             subCircularCache.add(item.value);
           }
+
+          console.log('[VirtualizedDataExplorer] Calling flattenDataStable with:', {
+            value: typeof item.value,
+            itemId: itemId,
+            depth: item.depth,
+            path: item.path,
+          });
 
           // We need to get the actual children, not re-process the parent
           // So we process each child entry individually
           const childrenItems: FlatDataItem[] = [];
-
+          
           try {
             let entries: [string, JsonValue][] = [];
             const valueType = item.valueType;
-
+            
             switch (valueType) {
               case "array":
                 entries = Array.isArray(item.value)
@@ -750,7 +777,9 @@ const useDataFlattening = (
                     : [];
                 break;
             }
-
+            
+            console.log(`[VirtualizedDataExplorer] Found ${entries.length} child entries`);
+            
             // Process each child
             for (const [childKey, childValue] of entries) {
               const childItems = flattenDataStable(
@@ -760,46 +789,48 @@ const useDataFlattening = (
                 childKey,
                 item.depth + 1,
                 itemId,
-                item.path
+                item.path,
               );
               childrenItems.push(...childItems);
             }
           } catch (error) {
-            console.error(error);
+            console.error('[VirtualizedDataExplorer] Error processing children:', error);
           }
-
+          
           const childrenToInsert = childrenItems;
 
+          console.log(`[VirtualizedDataExplorer] Will insert ${childrenToInsert.length} children`);
           if (childrenToInsert.length > 0) {
-            // Children are ready to insert
+            console.log('[VirtualizedDataExplorer] First child to insert:', {
+              id: childrenToInsert[0].id,
+              key: childrenToInsert[0].key,
+              depth: childrenToInsert[0].depth,
+              parentId: childrenToInsert[0].parentId,
+            });
           }
-
+          
           // Update the parent item to show it's expanded
           newItems[index] = { ...item, isExpanded: true };
-
+          
           // Insert children after the parent
           newItems.splice(index + 1, 0, ...childrenToInsert);
-
+          
           // Rebuild the map
-          const newMap = new Map<
-            string,
-            { item: FlatDataItem; index: number }
-          >();
+          const newMap = new Map<string, { item: FlatDataItem; index: number }>();
           newItems.forEach((item, idx) => {
             newMap.set(item.id, { item, index: idx });
           });
           flatDataMapRef.current = newMap;
-
+          console.log(`[VirtualizedDataExplorer] Expansion complete - new total: ${newItems.length} items`);
+          console.log('[VirtualizedDataExplorer] New map size:', newMap.size);
+          
           return newItems;
         } else if (!isExpanding) {
           // Collapse: remove all descendants
           const itemsToRemove = new Set<string>();
           const findDescendants = (parentId: string, depth: number) => {
-            prevFlatData.forEach((child) => {
-              if (
-                child.parentId === parentId ||
-                (child.id.startsWith(parentId + ".") && child.depth > depth)
-              ) {
+            prevFlatData.forEach(child => {
+              if (child.parentId === parentId || (child.id.startsWith(parentId + '.') && child.depth > depth)) {
                 itemsToRemove.add(child.id);
                 if (child.hasChildren) {
                   findDescendants(child.id, child.depth);
@@ -807,9 +838,9 @@ const useDataFlattening = (
               }
             });
           };
-
+          
           findDescendants(itemId, item.depth);
-
+          
           // Filter out descendants and update the parent
           const newItems = prevFlatData
             .map((it, idx) => {
@@ -818,202 +849,205 @@ const useDataFlattening = (
               }
               return it;
             })
-            .filter((it) => !itemsToRemove.has(it.id));
-
+            .filter(it => !itemsToRemove.has(it.id));
+          
           // Rebuild the map
-          const newMap = new Map<
-            string,
-            { item: FlatDataItem; index: number }
-          >();
+          const newMap = new Map<string, { item: FlatDataItem; index: number }>();
           newItems.forEach((item, idx) => {
             newMap.set(item.id, { item, index: idx });
           });
           flatDataMapRef.current = newMap;
-
+          console.log(`[VirtualizedDataExplorer] Collapse complete - removed ${itemsToRemove.size} items, new total: ${newItems.length}`);
+          
           return newItems;
         }
-
+        
         return prevFlatData;
       });
     },
-    [flattenDataStable]
+    [flattenDataStable],
   );
 
-  const toggleExpanded = useCallback(
-    (itemId: string) => {
-      setExpandedItems((prev) => {
-        const newSet = new Set(prev);
-        const isExpanding = !newSet.has(itemId);
+  const toggleExpanded = useCallback((itemId: string) => {
+    console.log(`\n[VirtualizedDataExplorer] ====== TOGGLE EXPANDED ======`);
+    console.log(`[VirtualizedDataExplorer] ItemId: ${itemId}`);
+    console.log('[VirtualizedDataExplorer] Current expandedItems:', Array.from(expandedItems));
+    console.log('[VirtualizedDataExplorer] FlatData length:', flatData.length);
+    console.log('[VirtualizedDataExplorer] Map has item?:', flatDataMapRef.current.has(itemId));
+    
+    setExpandedItems((prev) => {
+      const newSet = new Set(prev);
+      const isExpanding = !newSet.has(itemId);
+      console.log(`[VirtualizedDataExplorer] Action: ${isExpanding ? 'EXPANDING' : 'COLLAPSING'}`);
+      
+      if (isExpanding) {
+        newSet.add(itemId);
+      } else {
+        newSet.delete(itemId);
+      }
+      
+      console.log('[VirtualizedDataExplorer] New expandedItems will be:', Array.from(newSet));
+      
+      // Store the action for the effect to use
+      lastActionRef.current = { type: isExpanding ? 'expand' : 'collapse', itemId };
+      
+      // Perform incremental update
+      updateFlatDataIncremental(itemId, isExpanding);
+      
+      return newSet;
+    });
+  }, [updateFlatDataIncremental, expandedItems, flatData.length]);
 
-        if (isExpanding) {
-          newSet.add(itemId);
-        } else {
-          newSet.delete(itemId);
-        }
-
-        // Store the action for the effect to use
-        lastActionRef.current = {
-          type: isExpanding ? "expand" : "collapse",
-          itemId,
-        };
-
-        // Perform incremental update
-        updateFlatDataIncremental(itemId, isExpanding);
-
-        return newSet;
-      });
-    },
-    [updateFlatDataIncremental]
-  );
-
+  // console.log('[VirtualizedDataExplorer] Returning from hook - isProcessing:', isProcessing, 'flatData.length:', flatData.length);
   return { flatData, isProcessing, toggleExpanded };
 };
 
 // Optimized virtualized item renderer with full-row clickability [[memory:4875251]]
-const VirtualizedItemComponent = ({
-  item,
-  onToggleExpanded,
-}: {
-  item: FlatDataItem;
-  onToggleExpanded: (id: string) => void;
-}): React.ReactElement => {
-  const [isPressed, setIsPressed] = useState(false);
-  const [showFullKey, setShowFullKey] = useState(false);
+const VirtualizedItem = React.memo(
+  ({
+    item,
+    onToggleExpanded,
+  }: {
+    item: FlatDataItem;
+    onToggleExpanded: (id: string) => void;
+  }) => {
+    const [isPressed, setIsPressed] = useState(false);
+    const [showFullKey, setShowFullKey] = useState(false);
 
-  // Use pre-computed styles to avoid inline calculations [[memory:4875251]]
-  const indentStyle =
-    INDENT_STYLES[Math.min(item.depth, MAX_DEPTH_LIMIT)] || INDENT_STYLES[0];
-  const color = getTypeColor(item.valueType);
+    // Use pre-computed styles to avoid inline calculations [[memory:4875251]]
+    const indentStyle =
+      INDENT_STYLES[Math.min(item.depth, MAX_DEPTH_LIMIT)] || INDENT_STYLES[0];
+    const color = getTypeColor(item.valueType);
 
-  // Check if key is long and needs special layout
-  const isLongKey = item.key.length > LONG_KEY_THRESHOLD;
+    // Check if key is long and needs special layout
+    const isLongKey = item.key.length > LONG_KEY_THRESHOLD;
 
-  // Use inline handler since component is already memoized [[memory:4875251]]
-  const handlePress = () => {
-    if (item.isExpandable) {
-      onToggleExpanded(item.id);
-    }
-  };
+    // Use inline handler since component is already memoized [[memory:4875251]]
+    const handlePress = () => {
+      console.log(`[VirtualizedItem] Pressed item: ${item.id}, expandable: ${item.isExpandable}`);
+      if (item.isExpandable) {
+        onToggleExpanded(item.id);
+      }
+    };
 
-  const handleKeyPress = () => {
-    if (isLongKey) {
-      setShowFullKey(!showFullKey);
-    }
-  };
+    const handleKeyPress = () => {
+      if (isLongKey) {
+        setShowFullKey(!showFullKey);
+      }
+    };
 
-  // Always show full key for better identification
-  const displayKey = item.key;
+    // Always show full key for better identification
+    const displayKey = item.key;
 
-  return (
-    <View style={[STABLE_STYLES.itemContainer, indentStyle]}>
-      {/* Tree lines */}
-      {item.depth > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            left: -10,
-            top: 0,
-            bottom: 0,
-            width: 1,
-            backgroundColor: gameUIColors.primary + "26",
-          }}
-        />
-      )}
-      {item.depth > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            left: -10,
-            top: 10, // Center of the 20px height (marginTop: 4 + height: 12 / 2)
-            width: 10, // Connect to the arrow
-            height: 1,
-            backgroundColor: gameUIColors.primary + "26",
-          }}
-        />
-      )}
-      <TouchableOpacity
-        sentry-label="ignore devtools data explorer item"
-        style={[
-          STABLE_STYLES.itemTouchable,
-          isPressed && STABLE_STYLES.itemTouchablePressed,
-          isLongKey && { minHeight: LONG_ITEM_HEIGHT, paddingVertical: 2 },
-        ]}
-        onPress={handlePress}
-        onPressIn={() => setIsPressed(true)}
-        onPressOut={() => setIsPressed(false)}
-        activeOpacity={item.isExpandable ? 0.7 : 1}
-        disabled={!item.isExpandable}
-      >
-        {item.isExpandable ? (
-          <Expander expanded={item.isExpanded} onPress={() => {}} />
-        ) : (
-          <View style={STABLE_STYLES.expanderContainer} />
+    return (
+      <View style={[STABLE_STYLES.itemContainer, indentStyle]}>
+        {/* Tree lines */}
+        {item.depth > 0 && (
+          <View
+            style={{
+              position: "absolute",
+              left: -10,
+              top: 0,
+              bottom: 0,
+              width: 1,
+              backgroundColor: gameUIColors.primary + "26",
+            }}
+          />
         )}
+        {item.depth > 0 && (
+          <View
+            style={{
+              position: "absolute",
+              left: -10,
+              top: 10, // Center of the 20px height (marginTop: 4 + height: 12 / 2)
+              width: 10, // Connect to the arrow
+              height: 1,
+              backgroundColor: gameUIColors.primary + "26",
+            }}
+          />
+        )}
+        <TouchableOpacity
+          sentry-label="ignore devtools data explorer item"
+          style={[
+            STABLE_STYLES.itemTouchable,
+            isPressed && STABLE_STYLES.itemTouchablePressed,
+            isLongKey && { minHeight: LONG_ITEM_HEIGHT, paddingVertical: 2 },
+          ]}
+          onPress={handlePress}
+          onPressIn={() => setIsPressed(true)}
+          onPressOut={() => setIsPressed(false)}
+          activeOpacity={item.isExpandable ? 0.7 : 1}
+          disabled={!item.isExpandable}
+        >
+          {item.isExpandable ? (
+            <Expander expanded={item.isExpanded} onPress={() => {}} />
+          ) : (
+            <View style={STABLE_STYLES.expanderContainer} />
+          )}
 
-        {isLongKey ? (
-          // Vertical layout for long keys
-          <View style={STABLE_STYLES.labelContainerVertical}>
-            <View style={STABLE_STYLES.labelContainerVerticalRow}>
-              <TouchableOpacity
-                sentry-label="ignore devtools data explorer key press"
-                onPress={handleKeyPress}
-                style={{ flex: 1 }}
-              >
-                <Text
-                  style={STABLE_STYLES.labelTextTruncated}
-                  numberOfLines={undefined}
+          {isLongKey ? (
+            // Vertical layout for long keys
+            <View style={STABLE_STYLES.labelContainerVertical}>
+              <View style={STABLE_STYLES.labelContainerVerticalRow}>
+                <TouchableOpacity
+                  sentry-label="ignore devtools data explorer key press"
+                  onPress={handleKeyPress}
+                  style={{ flex: 1 }}
                 >
-                  {displayKey}:
+                  <Text
+                    style={STABLE_STYLES.labelTextTruncated}
+                    numberOfLines={undefined}
+                  >
+                    {displayKey}:
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {item.isExpandable ? (
+                <Text
+                  style={[
+                    STABLE_STYLES.valueTextVertical,
+                    { color: gameUIColors.secondary },
+                  ]}
+                >
+                  {item.valueType} ({item.childCount}{" "}
+                  {item.childCount === 1 ? "item" : "items"})
                 </Text>
-              </TouchableOpacity>
+              ) : (
+                <Text style={[STABLE_STYLES.valueTextVertical, { color }]}>
+                  {formatValue(item.value, item.valueType)}
+                </Text>
+              )}
             </View>
+          ) : (
+            // Horizontal layout for normal keys
+            <View style={STABLE_STYLES.labelContainer}>
+              <Text style={STABLE_STYLES.labelText} numberOfLines={undefined}>
+                {item.key}:
+              </Text>
 
-            {item.isExpandable ? (
-              <Text
-                style={[
-                  STABLE_STYLES.valueTextVertical,
-                  { color: gameUIColors.secondary },
-                ]}
-              >
-                {item.valueType} ({item.childCount}{" "}
-                {item.childCount === 1 ? "item" : "items"})
-              </Text>
-            ) : (
-              <Text style={[STABLE_STYLES.valueTextVertical, { color }]}>
-                {formatValue(item.value, item.valueType)}
-              </Text>
-            )}
-          </View>
-        ) : (
-          // Horizontal layout for normal keys
-          <View style={STABLE_STYLES.labelContainer}>
-            <Text style={STABLE_STYLES.labelText} numberOfLines={undefined}>
-              {item.key}:
-            </Text>
-
-            {item.isExpandable ? (
-              <Text
-                style={[
-                  STABLE_STYLES.valueText,
-                  { color: gameUIColors.secondary },
-                ]}
-              >
-                {item.valueType} ({item.childCount}{" "}
-                {item.childCount === 1 ? "item" : "items"})
-              </Text>
-            ) : (
-              <Text style={[STABLE_STYLES.valueText, { color }]}>
-                {formatValue(item.value, item.valueType)}
-              </Text>
-            )}
-          </View>
-        )}
-      </TouchableOpacity>
-    </View>
-  );
-};
-VirtualizedItemComponent.displayName = "VirtualizedItem";
-const VirtualizedItem = React.memo(VirtualizedItemComponent);
+              {item.isExpandable ? (
+                <Text
+                  style={[
+                    STABLE_STYLES.valueText,
+                    { color: gameUIColors.secondary },
+                  ]}
+                >
+                  {item.valueType} ({item.childCount}{" "}
+                  {item.childCount === 1 ? "item" : "items"})
+                </Text>
+              ) : (
+                <Text style={[STABLE_STYLES.valueText, { color }]}>
+                  {formatValue(item.value, item.valueType)}
+                </Text>
+              )}
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  },
+);
 
 // Main virtualized data explorer component
 interface VirtualizedDataExplorerProps {
@@ -1036,11 +1070,13 @@ export const VirtualizedDataExplorer: React.FC<
   initialExpanded = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(rawMode); // Auto-expand in raw mode
+  // console.log('[VirtualizedDataExplorer] Component render - rawMode:', rawMode, 'title:', title);
   const { flatData, isProcessing, toggleExpanded } = useDataFlattening(
     data,
     maxDepth,
-    initialExpanded
+    initialExpanded,
   );
+  // console.log('[VirtualizedDataExplorer] Got from hook - isProcessing:', isProcessing, 'flatData.length:', flatData.length);
 
   // Calculate visible types for the legend
   const visibleTypes = useMemo(() => {
@@ -1060,7 +1096,7 @@ export const VirtualizedDataExplorer: React.FC<
   // Calculate average item size for better FlatList performance [[memory:4875251]]
   const averageItemSize = useMemo(() => {
     const longKeyCount = flatData.filter(
-      (item) => item.key.length > LONG_KEY_THRESHOLD
+      (item) => item.key.length > LONG_KEY_THRESHOLD,
     ).length;
     const normalKeyCount = flatData.length - longKeyCount;
 
@@ -1073,6 +1109,7 @@ export const VirtualizedDataExplorer: React.FC<
 
   // Simple keyExtractor without useCallback [[memory:4875251]]
   const keyExtractor = (item: FlatDataItem) => item.id;
+
   const hasData =
     data &&
     (typeof data === "object" || Array.isArray(data)) &&
@@ -1097,15 +1134,14 @@ export const VirtualizedDataExplorer: React.FC<
       );
     }
 
+    // console.log('[VirtualizedDataExplorer] Rendering raw mode - isProcessing:', isProcessing);
     return (
       <View style={{ flex: 1 }}>
         {isProcessing ? (
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <Text style={STABLE_STYLES.loadingText}>
-              Processing data... (raw mode, isProcessing={String(isProcessing)})
-            </Text>
+            <Text style={STABLE_STYLES.loadingText}>Processing data... (raw mode, isProcessing={String(isProcessing)})</Text>
           </View>
         ) : (
           <FlatList
@@ -1177,9 +1213,7 @@ export const VirtualizedDataExplorer: React.FC<
         <>
           {isProcessing ? (
             <View style={STABLE_STYLES.loadingContainer}>
-              <Text style={STABLE_STYLES.loadingText}>
-                Processing data... (isProcessing={String(isProcessing)})
-              </Text>
+              <Text style={STABLE_STYLES.loadingText}>Processing data... (isProcessing={String(isProcessing)})</Text>
             </View>
           ) : (
             <View

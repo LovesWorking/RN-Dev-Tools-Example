@@ -8,6 +8,7 @@ import { getQueryStatusLabel } from "../utils/getQueryStatusLabel";
 import { useActionButtons } from "../hooks/useActionButtons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { DataViewer } from "./shared/DataViewer";
+import { useEffect, useRef, useState } from "react";
 
 interface ActionButtonConfig {
   label: string;
@@ -106,18 +107,39 @@ function DataExplorer({
   visible: boolean;
   selectedQuery: Query;
 }) {
+  // Track data version to force re-render when data changes
+  const [dataVersion, setDataVersion] = useState(0);
+  const prevDataRef = useRef(selectedQuery.state.data);
+  const prevKeysRef = useRef<string>("");
+  
+  useEffect(() => {
+    const currentData = selectedQuery.state.data;
+    const currentKeys = currentData ? JSON.stringify(Object.keys(currentData)) : "";
+    const prevKeys = prevKeysRef.current;
+    
+    // Check both reference change and structural change
+    if (prevDataRef.current !== currentData || prevKeys !== currentKeys) {
+      setDataVersion(v => v + 1);
+      prevDataRef.current = currentData;
+      prevKeysRef.current = currentKeys;
+    }
+  }, [selectedQuery.state.data]);
+  
   if (!visible) return null;
+  
   return (
     <View style={styles.dataContainer}>
       <Text style={styles.dataHeader}>Data Editor</Text>
       <View style={styles.dataContent}>
         <Explorer
-          // Removed key to prevent re-rendering on every change
+          // Don't use key - it causes the component to unmount/remount and lose state
+          // Instead pass dataVersion as a prop to trigger re-renders
           editable={true}
           label="Data"
           value={selectedQuery.state.data}
           defaultExpanded={["Data"]}
           activeQuery={selectedQuery}
+          dataVersion={dataVersion}
         />
       </View>
     </View>

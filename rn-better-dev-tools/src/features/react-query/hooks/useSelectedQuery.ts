@@ -5,23 +5,29 @@ import { Query, QueryKey, useQueryClient } from "@tanstack/react-query";
  * Custom hook to track a single query by its queryKey with live updates
  * Optimized to only re-render when the specific query changes
  */
+interface QueryWithVersion {
+  query: Query | undefined;
+  version: number;
+}
+
 export function useGetQueryByQueryKey(queryKey?: QueryKey) {
   const queryClient = useQueryClient();
-  const [selectedQuery, setSelectedQuery] = useState<Query | undefined>(
-    undefined,
-  );
+  const [queryState, setQueryState] = useState<QueryWithVersion>({
+    query: undefined,
+    version: 0,
+  });
   const queryHashRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!queryKey) {
-      setSelectedQuery(undefined);
+      setQueryState({ query: undefined, version: 0 });
       queryHashRef.current = undefined;
       return;
     }
 
     // Get initial query state
     const query = queryClient.getQueryCache().find({ queryKey, exact: true });
-    setSelectedQuery(query);
+    setQueryState({ query, version: 0 });
 
     // Store the stringified queryKey for comparison
     const queryKeyString = JSON.stringify(queryKey);
@@ -38,12 +44,18 @@ export function useGetQueryByQueryKey(queryKey?: QueryKey) {
         if ("query" in event && event.query) {
           // Check if the event is for our query by comparing the stringified keys
           const eventQueryKeyString = JSON.stringify(event.query.queryKey);
-          if (eventQueryKeyString === queryHashRef.current) {
+          const isOurQuery = eventQueryKeyString === queryHashRef.current;
+          
+          if (isOurQuery) {
             if (event.type === "removed") {
-              setSelectedQuery(undefined);
+              setQueryState({ query: undefined, version: 0 });
             } else {
               // For 'updated' and 'added' events, use the query from the event
-              setSelectedQuery(event.query);
+              // Update both the query and increment version to force re-renders
+              setQueryState(prev => ({
+                query: event.query,
+                version: prev.version + 1
+              }));
             }
           }
         }
@@ -54,5 +66,7 @@ export function useGetQueryByQueryKey(queryKey?: QueryKey) {
     return () => unsubscribe();
   }, [queryClient, queryKey]);
 
-  return selectedQuery;
+  // Return just the query, but because we're updating the queryState object
+  // with a new version, components will re-render when data changes
+  return queryState.query;
 }

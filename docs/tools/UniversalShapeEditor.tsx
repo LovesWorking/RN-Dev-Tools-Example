@@ -83,7 +83,7 @@ interface TransformValues {
   skewY: string;
 }
 
-const PRESET_SHAPES = {
+const PRESET_SHAPES: Record<string, ShapeStyle> = {
   circle: {
     width: 100,
     height: 100,
@@ -102,7 +102,7 @@ const PRESET_SHAPES = {
     width: 0,
     height: 0,
     backgroundColor: "transparent",
-    borderStyle: "solid",
+    borderStyle: "solid" as const,
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderBottomWidth: 100,
@@ -131,7 +131,7 @@ const PRESET_SHAPES = {
     width: 0,
     height: 0,
     backgroundColor: "transparent",
-    borderStyle: "solid",
+    borderStyle: "solid" as const,
     borderLeftWidth: 100,
     borderRightWidth: 100,
     borderBottomWidth: 70,
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
           <View style={styles.control}>
             <Text style={styles.controlLabel}>{label}</Text>
             <Switch
-              value={(value as boolean) || false}
+              value={Boolean(value)}
               onValueChange={(val) => updateStyle(key, val)}
               trackColor={{ false: "#ccc", true: "#61DAFB" }}
             />
