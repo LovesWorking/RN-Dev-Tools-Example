@@ -41,6 +41,7 @@ import ReactQueryExactShowcase from "@/docs/styles/ReactQueryExact";
 import HexagonShowcase from "@/docs/styles/HexagonShowcase";
 import { ReactLogoShapesShowcase } from "@/docs/svg/ReactLogoShapesShowcase";
 import { UniversalShapeEditor } from "@/docs/tools/UniversalShapeEditor";
+import { RandomShapeGenerator } from "@/docs/tools/RandomShapeGenerator";
 import CyberpunkIconGallery from "@/docs/styles/CyberpunkIconGallery";
 import IconVariationsGallery from "@/docs/styles/IconVariationsGallery";
 import { EnvLaptopIcon } from "@/rn-better-dev-tools/icons/EnvLaptopIcon";
@@ -421,7 +422,8 @@ export default function PokemonScreen() {
         ]}
       >
         {/* Icon Variations Gallery */}
-        <IconVariationsGallery />
+        {/* <IconVariationsGallery /> */}
+        {/* <RandomShapeGenerator /> */}
         {/* <UniversalShapeEditor /> */}
         {/* <GearsIconDemo /> */}
         {/* <WifiIconDemo /> */}

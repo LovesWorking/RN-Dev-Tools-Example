@@ -28,7 +28,7 @@ const defaultTheme = {
 
   // Tool Colors - Different colors for different tools
   env: "#4AFF9F", // Green for environment
-  storage: "#FFEB3B", // Yellow for storage
+  storage: "#BA68C8", // Purple/Magenta for storage (was yellow)
   query: "#00B8E6", // Cyan for query
   debug: "#FF5252", // Red for debug
   network: "#9D4EDD", // Purple for network
@@ -74,7 +74,7 @@ const cyanTheme = {
 
   // Tool Colors - All cyan/blue
   env: "#4DD0ED",
-  storage: "#00B8E6",
+  storage: "#0090B8",
   query: "#00B8E6",
   debug: "#0074A3",
   network: "#5E9CAE",
@@ -120,7 +120,7 @@ const pinkTheme = {
 
   // Tool Colors
   env: "#FFB6C1",
-  storage: "#FF69B4",
+  storage: "#FF00FF",
   query: "#FFC0CB",
   debug: "#FF1493",
   network: "#DB7093",
@@ -166,7 +166,7 @@ const greenTheme = {
 
   // Tool Colors
   env: "#00E673",
-  storage: "#4AFF9F",
+  storage: "#00B85C",
   query: "#00E673",
   debug: "#00B85C",
   network: "#5E9E7E",
@@ -212,7 +212,7 @@ const orangeTheme = {
 
   // Tool Colors
   env: "#FFA500",
-  storage: "#FF8C00",
+  storage: "#FF6F00",
   query: "#FFDAB9",
   debug: "#CC7000",
   network: "#CD853F",

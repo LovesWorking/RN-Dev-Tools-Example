@@ -365,7 +365,7 @@ function NetworkModalInner({
 
   const renderSearchBar = () => (
     <View style={styles.searchContainer}>
-      <Search size={14} color={gameUIColors.muted} />
+      <Search size={14} color={gameUIColors.secondary} />
       <TextInput
         style={styles.searchInput}
         placeholder="Search URL, method, error..."
@@ -374,13 +374,15 @@ function NetworkModalInner({
         onChangeText={handleSearch}
         sentry-label="ignore network search"
         accessibilityLabel="Search network requests"
+        autoCapitalize="none"
+        autoCorrect={false}
       />
       {searchText.length > 0 ? (
         <TouchableOpacity
           onPress={() => handleSearch("")}
           sentry-label="ignore clear search"
         >
-          <X size={16} color={gameUIColors.muted} />
+          <X size={16} color={gameUIColors.secondary} />
         </TouchableOpacity>
       ) : null}
     </View>
@@ -512,7 +514,9 @@ function NetworkModalInner({
                 }
               >
                 <CheckCircle size={12} color={gameUIColors.success} />
-                <Text style={styles.statValue}>{stats.successfulRequests}</Text>
+                <Text style={[styles.statValue, { color: gameUIColors.success }]}>
+                  {stats.successfulRequests}
+                </Text>
                 <Text style={styles.statLabel}>OK</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -528,7 +532,7 @@ function NetworkModalInner({
                 }
               >
                 <XCircle size={12} color={gameUIColors.error} />
-                <Text style={[styles.statValue, styles.errorText]}>
+                <Text style={[styles.statValue, { color: gameUIColors.error }]}>
                   {stats.failedRequests}
                 </Text>
                 <Text style={styles.statLabel}>ERR</Text>
@@ -546,7 +550,7 @@ function NetworkModalInner({
                 }
               >
                 <Clock size={12} color={gameUIColors.warning} />
-                <Text style={[styles.statValue, styles.pendingText]}>
+                <Text style={[styles.statValue, { color: gameUIColors.warning }]}>
                   {stats.pendingRequests}
                 </Text>
                 <Text style={styles.statLabel}>WAIT</Text>
@@ -668,12 +672,14 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: 4,
   },
-  // Search bar
+  // Search bar - minimal design with theme colors
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: gameUIColors.blackTint1,
-    borderRadius: 6,
+    backgroundColor: gameUIColors.blackTint2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: gameUIColors.border,
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginHorizontal: 12,
@@ -682,17 +688,17 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: gameUIColors.primary,
+    color: gameUIColors.primaryLight,
     fontSize: 13,
     marginLeft: 6,
   },
-  // Stats bar
+  // Stats bar - minimal design
   statsBar: {
     flexDirection: "row",
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 12,
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: gameUIColors.blackTint1,
     borderBottomWidth: 1,
     borderBottomColor: gameUIColors.border,
   },
@@ -714,19 +720,13 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: gameUIColors.primary,
+    fontFamily: "monospace",
   },
   statLabel: {
     fontSize: 10,
     color: gameUIColors.muted,
     fontWeight: "500",
     textTransform: "uppercase",
-  },
-  errorText: {
-    color: gameUIColors.error,
-  },
-  pendingText: {
-    color: gameUIColors.warning,
   },
   disabledBanner: {
     flexDirection: "row",
