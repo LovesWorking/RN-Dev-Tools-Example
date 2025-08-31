@@ -93,7 +93,6 @@ const CopyButton = React.memo(
           setTimeout(() => setCopyState("NoCopy"), 1500);
         }
       } catch (error) {
-        console.error("Copy failed:", error);
         setCopyState("ErrorCopy");
         setTimeout(() => setCopyState("NoCopy"), 1500);
       }
@@ -172,19 +171,15 @@ const DeleteItemButton = React.memo(
     isFocused?: boolean;
   }) => {
     const queryClient = useQueryClient();
-    const dataPathRef = useRef(dataPath);
-    const activeQueryRef = useRef(activeQuery);
-    dataPathRef.current = dataPath;
-    activeQueryRef.current = activeQuery;
 
     const handleDelete = useCallback(() => {
-      if (!activeQueryRef.current) return;
+      if (!activeQuery) return;
       deleteItem({
         queryClient,
-        activeQuery: activeQueryRef.current,
-        dataPath: dataPathRef.current,
+        activeQuery: activeQuery,
+        dataPath: dataPath,
       });
-    }, [queryClient]);
+    }, [queryClient, activeQuery, dataPath]);
 
     if (!activeQuery) return null;
 
@@ -223,17 +218,13 @@ const ClearArrayButton = React.memo(
     isFocused?: boolean;
   }) => {
     const queryClient = useQueryClient();
-    const dataPathRef = useRef(dataPath);
-    const activeQueryRef = useRef(activeQuery);
-    dataPathRef.current = dataPath;
-    activeQueryRef.current = activeQuery;
 
     const handleClear = useCallback(() => {
-      if (!activeQueryRef.current) return;
-      const oldData = activeQueryRef.current.state.data as unknown as JsonValue;
-      const newData = updateNestedDataByPath(oldData, dataPathRef.current, []);
-      queryClient.setQueryData(activeQueryRef.current.queryKey, newData);
-    }, [queryClient]);
+      if (!activeQuery) return;
+      const oldData = activeQuery.state.data as unknown as JsonValue;
+      const newData = updateNestedDataByPath(oldData, dataPath, []);
+      queryClient.setQueryData(activeQuery.queryKey, newData);
+    }, [queryClient, activeQuery, dataPath]);
 
     if (!activeQuery) return null;
 
@@ -274,25 +265,19 @@ const ToggleValueButton = React.memo(
     value: JsonValue;
   }) => {
     const queryClient = useQueryClient();
-    const dataPathRef = useRef(dataPath);
-    const activeQueryRef = useRef(activeQuery);
-    const valueRef = useRef(value);
-    dataPathRef.current = dataPath;
-    activeQueryRef.current = activeQuery;
-    valueRef.current = value;
 
     const handleClick = useCallback(() => {
-      if (!activeQueryRef.current) return;
-      const oldData = activeQueryRef.current.state.data as unknown as JsonValue;
+      if (!activeQuery) return;
+      const oldData = activeQuery.state.data as unknown as JsonValue;
       const currentValue =
-        typeof valueRef.current === "boolean" ? valueRef.current : false;
+        typeof value === "boolean" ? value : false;
       const newData = updateNestedDataByPath(
         oldData,
-        dataPathRef.current,
+        dataPath,
         !currentValue,
       );
-      queryClient.setQueryData(activeQueryRef.current.queryKey, newData);
-    }, [queryClient]);
+      queryClient.setQueryData(activeQuery.queryKey, newData);
+    }, [queryClient, activeQuery, dataPath, value]);
 
     if (!activeQuery) return null;
 
@@ -643,18 +628,14 @@ export default function Explorer({
                         onFocus={() => setIsRowFocused(true)}
                         onBlur={() => setIsRowFocused(false)}
                         showNumberControls={valueType === "number"}
-                        onIncrement={() =>
-                          handleChange(
-                            true,
-                            String(typeof value === "number" ? value + 1 : 1),
-                          )
-                        }
-                        onDecrement={() =>
-                          handleChange(
-                            true,
-                            String(typeof value === "number" ? value - 1 : -1),
-                          )
-                        }
+                        onIncrement={() => {
+                          const currentNum = Number(localInputValue) || 0;
+                          handleChange(true, String(currentNum + 1));
+                        }}
+                        onDecrement={() => {
+                          const currentNum = Number(localInputValue) || 0;
+                          handleChange(true, String(currentNum - 1));
+                        }}
                         showDeleteButton={itemsDeletable}
                         onDelete={() => {
                           deleteItem({

@@ -45,11 +45,11 @@ export function PokemonCardSwipeable({
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
   const scale = useRef(
-    new Animated.Value(index === 0 ? 1 : 1 - index * 0.05),
+    new Animated.Value(index === 0 ? 1 : 1 - index * 0.05)
   ).current;
   const gestureRotation = useRef(new Animated.Value(0)).current;
   const opacity = useRef(
-    new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0),
+    new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0)
   ).current;
 
   useEffect(() => {
@@ -206,7 +206,7 @@ export function PokemonCardSwipeable({
           }
         },
       }),
-    [isActive, index, onSwipe],
+    [isActive, index, onSwipe]
   );
 
   // Create animated styles using React Native Animated
@@ -391,7 +391,7 @@ function CardFrame() {
 function CardHeader({ data }: { data: any }) {
   return (
     <View style={styles.cardHeader}>
-      <Text style={styles.pokemonNameHeader}>{data.name.toUpperCase()}</Text>
+      <Text style={styles.pokemonNameHeader}>{data?.name?.toUpperCase()}</Text>
       <View style={styles.hpContainer}>
         <Text style={styles.hpText}>HP</Text>
         <Text style={styles.hpValue}>
