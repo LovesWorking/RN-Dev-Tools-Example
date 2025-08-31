@@ -45,7 +45,8 @@ export function ReactQueryModal({
   const selectedQuery = useGetQueryByQueryKey(selectedQueryKey);
   const selectedMutation = useGetMutationById(selectedMutationId);
 
-  const inDetail = !!selectedQuery || !!selectedMutation;
+  // Check if we have a key/id even if the query/mutation hasn't been found yet
+  const inDetail = !!selectedQueryKey || !!selectedMutationId;
   const isQueryMode = activeTab === "queries";
   const isMutationMode = activeTab === "mutations";
 
@@ -57,8 +58,8 @@ export function ReactQueryModal({
   };
   const showQueryBrowserModal = visible && !inDetail && isQueryMode;
   const showMutationBrowserModal = visible && !inDetail && isMutationMode;
-  const showDataEditorModal = visible && inDetail && !!selectedQuery;
-  const showMutationEditorModal = visible && inDetail && !!selectedMutation;
+  const showDataEditorModal = visible && inDetail && isQueryMode && !!selectedQueryKey;
+  const showMutationEditorModal = visible && inDetail && isMutationMode && !!selectedMutationId;
 
   return (
     <>

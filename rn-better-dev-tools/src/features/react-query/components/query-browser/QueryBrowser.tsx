@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   ScrollView,
-  FlatList,
   ViewStyle,
 } from "react-native";
 import { Query } from "@tanstack/react-query";
@@ -22,29 +21,6 @@ interface Props {
   queries?: Query[]; // Optional external queries to override useAllQueries
 }
 
-// Stable module-scope functions to prevent FlatList view recreation [[memory:4875251]]
-interface ExtraData {
-  selectedQuery: Query | undefined;
-  handleQuerySelect: (query: Query) => void;
-  filteredQueries: Query[];
-}
-
-const renderItem = ({
-  item,
-  extraData,
-}: {
-  item: Query;
-  extraData?: ExtraData;
-}) => (
-  <QueryRow
-    query={item}
-    isSelected={extraData?.selectedQuery?.queryHash === item.queryHash}
-    onSelect={extraData?.handleQuerySelect ?? (() => {})}
-  />
-);
-
-// Key extractor for FlatList optimization [[memory:4875251]]
-const keyExtractor = (item: Query) => item.queryHash;
 
 export default function QueryBrowser({
   selectedQuery,
@@ -70,7 +46,7 @@ export default function QueryBrowser({
     });
   }, [allQueries, activeFilter]);
 
-  // Function to handle query selection with stable comparison - exact same logic as working version
+  // Function to handle query selection with stable comparison
   const handleQuerySelect = React.useCallback(
     (query: Query) => {
       // Compare queries by their queryKey and queryHash for stable selection
@@ -99,26 +75,20 @@ export default function QueryBrowser({
   }
 
   return (
-    <View style={styles.listWrapper}>
-      <FlatList
-        sentry-label="ignore devtools query browser list"
-        data={filteredQueries}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        contentContainerStyle={contentContainerStyle || styles.listContent}
-        showsVerticalScrollIndicator
-        removeClippedSubviews
-        extraData={{
-          selectedQuery,
-          handleQuerySelect,
-          filteredQueries,
-        }}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-        scrollEnabled={false}
-      />
-    </View>
+    <ScrollView
+      style={styles.listWrapper}
+      contentContainerStyle={contentContainerStyle || styles.listContent}
+      showsVerticalScrollIndicator
+    >
+      {filteredQueries.map((query) => (
+        <QueryRow
+          key={query.queryHash}
+          query={query}
+          isSelected={selectedQuery?.queryHash === query.queryHash}
+          onSelect={handleQuerySelect}
+        />
+      ))}
+    </ScrollView>
   );
 }
 
