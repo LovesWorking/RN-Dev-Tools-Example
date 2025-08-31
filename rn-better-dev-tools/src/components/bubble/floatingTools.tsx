@@ -419,6 +419,13 @@ export function FloatingTools({
   const [isDragging, setIsDragging] = useState(false);
   const [bubbleSize, setBubbleSize] = useState({ width: 100, height: 32 });
   const [isHidden, setIsHidden] = useState(false);
+  
+  // Track drag distance to differentiate between click and drag
+  const dragDistanceRef = useRef(0);
+  const isDragRef = useRef(false);
+  
+  // Store the position before hiding to restore when showing
+  const savedPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   const safeAreaInsets = useFloatingToolsSafeArea();
 
@@ -464,11 +471,60 @@ export function FloatingTools({
     safeAreaInsets.top,
   ]);
 
+  // Toggle hide/show function
+  const toggleHideShow = useCallback(() => {
+    const currentX = (animatedPosition.x as any).__getValue();
+    const currentY = (animatedPosition.y as any).__getValue();
+    const { width: screenWidth } = Dimensions.get("window");
+    
+    if (isHidden) {
+      // Show the bubble - restore to saved position or default visible position
+      let targetX: number;
+      let targetY: number;
+      
+      if (savedPositionRef.current) {
+        // Restore to the saved position
+        targetX = savedPositionRef.current.x;
+        targetY = savedPositionRef.current.y;
+      } else {
+        // Default visible position if no saved position
+        targetX = screenWidth - bubbleSize.width - 20;
+        targetY = currentY;
+      }
+      
+      setIsHidden(false);
+      Animated.timing(animatedPosition, {
+        toValue: { x: targetX, y: targetY },
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => {
+        savePosition(targetX, targetY);
+      });
+    } else {
+      // Hide the bubble - save current position before hiding
+      savedPositionRef.current = { x: currentX, y: currentY };
+      
+      const hiddenX = screenWidth - 32; // Only show the 32px grabber
+      setIsHidden(true);
+      Animated.timing(animatedPosition, {
+        toValue: { x: hiddenX, y: currentY },
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => {
+        savePosition(hiddenX, currentY);
+      });
+    }
+  }, [animatedPosition, isHidden, bubbleSize.width, savePosition]);
+
   const panResponder = useMemo(
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
+          // Reset drag tracking
+          dragDistanceRef.current = 0;
+          isDragRef.current = false;
+          
           setIsDragging(true);
           animatedPosition.setOffset({
             x: (animatedPosition.x as any).__getValue(),
@@ -476,13 +532,29 @@ export function FloatingTools({
           });
           animatedPosition.setValue({ x: 0, y: 0 });
         },
-        onPanResponderMove: Animated.event(
-          [null, { dx: animatedPosition.x, dy: animatedPosition.y }],
-          { useNativeDriver: false },
-        ),
+        onPanResponderMove: (evt, gestureState) => {
+          // Track total drag distance
+          const totalDistance = Math.abs(gestureState.dx) + Math.abs(gestureState.dy);
+          dragDistanceRef.current = totalDistance;
+          
+          // Mark as drag if moved more than 5 pixels
+          if (totalDistance > 5) {
+            isDragRef.current = true;
+          }
+          
+          // Update position
+          animatedPosition.setValue({ x: gestureState.dx, y: gestureState.dy });
+        },
         onPanResponderRelease: () => {
           setIsDragging(false);
           animatedPosition.flattenOffset();
+          
+          // Check if it was a click (minimal movement)
+          if (dragDistanceRef.current <= 5 && !isDragRef.current) {
+            // It's a click - toggle hide/show
+            toggleHideShow();
+            return;
+          }
           let currentX = (animatedPosition.x as any).__getValue();
           let currentY = (animatedPosition.y as any).__getValue();
           const { width: screenWidth, height: screenHeight } =
@@ -519,6 +591,11 @@ export function FloatingTools({
             if (isHidden && currentX < screenWidth - 32 - 10) {
               setIsHidden(false);
             }
+            
+            // Update saved position if bubble is in visible area (not hidden)
+            if (currentX < screenWidth - bubbleSize.width / 2) {
+              savedPositionRef.current = { x: currentX, y: currentY };
+            }
 
             // Animate to the clamped position if needed
             if (
@@ -549,6 +626,8 @@ export function FloatingTools({
       bubbleSize.height,
       isHidden,
       safeAreaInsets,
+      toggleHideShow,
+      savedPositionRef,
     ],
   );
 
