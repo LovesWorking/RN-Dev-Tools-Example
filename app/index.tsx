@@ -420,7 +420,7 @@ export default function PokemonScreen() {
           },
         ]}
       >
-        {/* Icon Variations Gallery at the top */}
+        {/* Icon Variations Gallery */}
         <IconVariationsGallery />
         {/* <UniversalShapeEditor /> */}
         {/* <GearsIconDemo /> */}

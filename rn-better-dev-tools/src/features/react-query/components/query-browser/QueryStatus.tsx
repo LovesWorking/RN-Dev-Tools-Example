@@ -74,18 +74,16 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
 
   const statusColors = getStatusColors(color);
 
-  // Create active style based on the status color - React Query DevTools style
-  const activeStyle = isActive
-    ? {
-        backgroundColor: gameUIColors.primary + "1F",
-        transform: [{ scale: 1.05 }],
-      }
-    : {};
-
   return (
     <TouchableOpacity
       sentry-label="ignore devtools query status"
-      style={[styles.queryStatusTag, activeStyle]}
+      style={[
+        styles.queryStatusTag,
+        isActive && {
+          backgroundColor: statusColors.dot + "15",
+          borderColor: statusColors.dot + "40",
+        },
+      ]}
       disabled={!onPress}
       onPress={onPress}
       onPressIn={onTouchStart}
@@ -114,32 +112,31 @@ const styles = StyleSheet.create({
   queryStatusTag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: gameUIColors.primary + "0F", // Light background like React Query DevTools
-    borderRadius: 12, // Pill shape
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    height: 24,
+    backgroundColor: "transparent",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    height: 26,
     gap: 6,
-    borderWidth: 0, // No border for clean look
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginLeft: 2,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   label: {
     fontSize: 11,
     fontWeight: "500",
-    color: gameUIColors.secondary, // Neutral text color
-    textTransform: "capitalize", // Not all caps like RQ DevTools
+    color: gameUIColors.secondary,
     fontFamily: "system",
   },
   count: {
-    fontSize: 12,
+    fontSize: 11,
     fontVariant: ["tabular-nums"],
     fontWeight: "600",
-    marginRight: 4,
+    marginLeft: "auto",
     fontFamily: "system",
   },
 });
