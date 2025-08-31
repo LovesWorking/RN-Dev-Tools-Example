@@ -25,11 +25,11 @@ export function MutationBrowserFooter({
   modalMode,
 }: MutationBrowserFooterProps) {
   const isFloatingMode = modalMode === "floating";
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
 
   // Use useMemo to ensure paddingBottom is recalculated when isFloatingMode changes
   const paddingBottom = useMemo(() => {
-    return !isFloatingMode ? insets.bottom + 8 : 0;
+    return !isFloatingMode ? insets.bottom : 0;
   }, [isFloatingMode, insets.bottom]);
 
   return (

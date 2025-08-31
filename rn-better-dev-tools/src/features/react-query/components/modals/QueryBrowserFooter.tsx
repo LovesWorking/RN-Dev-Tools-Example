@@ -22,13 +22,15 @@ export function QueryBrowserFooter({
   onFilterChange,
   isFloatingMode = true, // Default to floating mode if not specified
 }: QueryBrowserFooterProps) {
-  const insets = useSafeAreaInsets();
+  // Use safe area insets with a minimum bottom padding of 16 for docked mode
+  // This ensures proper spacing even on resized simulators or devices without home indicator
+  const insets = useSafeAreaInsets({ minBottom: 16 });
 
   return (
     <View
       style={[
         styles.filterFooter,
-        { paddingBottom: !isFloatingMode ? insets.bottom + 8 : 0 },
+        { paddingBottom: !isFloatingMode ? insets.bottom : 0 },
         // Remove border radius when docked to bottom
         !isFloatingMode && styles.dockedFooter,
       ]}

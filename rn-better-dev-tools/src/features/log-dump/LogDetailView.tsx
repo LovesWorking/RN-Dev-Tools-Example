@@ -61,7 +61,7 @@ export const LogDetailView = ({
   entry: ConsoleTransportEntry;
   onBack: () => void;
 }) => {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   // Create sections data for FlatList
@@ -217,7 +217,7 @@ export const LogDetailView = ({
 
   // Get the current modal data
   const currentModalData = sections.find(
-    (section) => section.id === activeModal,
+    (section) => section.id === activeModal
   );
 
   // If modal is active, show it instead of the main view

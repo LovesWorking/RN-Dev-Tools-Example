@@ -26,7 +26,7 @@ export function DataEditorMode({
   selectedQuery,
   isFloatingMode,
 }: DataEditorModeProps) {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
   const queryClient = useQueryClient();
   const actionButtons = useActionButtons(selectedQuery, queryClient);
 

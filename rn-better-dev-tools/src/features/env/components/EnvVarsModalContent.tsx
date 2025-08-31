@@ -35,7 +35,7 @@ export function EnvVarsModalContent({
   requiredEnvVars = [],
 }: EnvVarsModalContentProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
 
   // ==========================================================
   // Auto-collect environment variables
@@ -147,13 +147,13 @@ export function EnvVarsModalContent({
   };
 
   const missingCount = processedEnvVars.filter(
-    (env) => env.status === "missing",
+    (env) => env.status === "missing"
   ).length;
   const presentCount = processedEnvVars.filter(
-    (env) => env.status === "present",
+    (env) => env.status === "present"
   ).length;
   const uncheckedCount = processedEnvVars.filter(
-    (env) => env.status === "unchecked",
+    (env) => env.status === "unchecked"
   ).length;
 
   return (

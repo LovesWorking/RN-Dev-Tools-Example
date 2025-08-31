@@ -11,7 +11,7 @@ interface ConsoleSectionListProps {
  * Handles layout and scrolling while delegating section rendering to children.
  */
 export function ConsoleSectionList({ children }: ConsoleSectionListProps) {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
 
   return (
     <>

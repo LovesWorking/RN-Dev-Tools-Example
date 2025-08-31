@@ -50,7 +50,7 @@ export function ExpandableSectionWithModal({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unusedHandleIndicatorColor = handleIndicatorColor;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -114,8 +114,8 @@ export function ExpandableSectionWithModal({
                   paddingTop: fullScreen
                     ? insets.top
                     : showModalHeader
-                      ? insets.top
-                      : 0,
+                    ? insets.top
+                    : 0,
                 },
               ]}
             >

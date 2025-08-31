@@ -51,10 +51,10 @@ const QueryStatus: React.FC<QueryStatusProps> = ({
         text: gameUIColors.info,
       },
       purple: {
-        bg: gameUIColors.storage + "26",
-        border: gameUIColors.storage + "59",
-        dot: gameUIColors.storage,
-        text: gameUIColors.storage,
+        bg: gameUIColors.optional + "26",
+        border: gameUIColors.optional + "59",
+        dot: gameUIColors.optional,
+        text: gameUIColors.optional,
       },
       red: {
         bg: gameUIColors.error + "26",

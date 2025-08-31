@@ -17,7 +17,7 @@ export function MutationEditorMode({
   selectedMutation,
   isFloatingMode,
 }: MutationEditorModeProps) {
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets({ minBottom: 16 });
   const actionButtons = useMutationActionButtons(selectedMutation);
 
   return (
