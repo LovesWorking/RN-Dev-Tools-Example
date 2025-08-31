@@ -76,6 +76,7 @@ export function EnvironmentIndicator({
         flexDirection: "row",
         alignItems: "center",
         paddingVertical: 6,
+        paddingLeft: 8,
         flexShrink: 0,
       }}
     >

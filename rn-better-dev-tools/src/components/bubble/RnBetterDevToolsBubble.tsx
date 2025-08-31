@@ -184,8 +184,6 @@ export function RnBetterDevToolsBubble({
               userRole={userRole}
               onPress={() => setShowFloatingMenu(true)}
             />
-            {/* Menu selection buttons */}
-            <View style={{ flexDirection: "row", gap: 4, marginTop: 8 }}></View>
           </FloatingTools>
         </View>
 
