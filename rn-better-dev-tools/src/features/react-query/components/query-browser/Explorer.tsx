@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef } from "react";
+import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { JsonValue } from "../../types/types";
 import { Query, QueryKey, useQueryClient } from "@tanstack/react-query";
 import { updateNestedDataByPath } from "../../utils/updateNestedDataByPath";
@@ -71,6 +71,7 @@ const Expander = React.memo(
     );
   },
 );
+Expander.displayName = "Expander";
 type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
 
 // Memoized CopyButton component optimized with ref pattern [[memory:4875251]]
@@ -157,6 +158,7 @@ const CopyButton = React.memo(
     );
   },
 );
+CopyButton.displayName = "CopyButton";
 
 // Memoized DeleteItemButton component [[memory:4875251]]
 const DeleteItemButton = React.memo(
@@ -208,6 +210,7 @@ const DeleteItemButton = React.memo(
     );
   },
 );
+DeleteItemButton.displayName = "DeleteItemButton";
 // Memoized ClearArrayButton component [[memory:4875251]]
 const ClearArrayButton = React.memo(
   ({
@@ -258,6 +261,7 @@ const ClearArrayButton = React.memo(
     );
   },
 );
+ClearArrayButton.displayName = "ClearArrayButton";
 // Memoized ToggleValueButton with pre-computed styles [[memory:4875251]]
 const ToggleValueButton = React.memo(
   ({
@@ -320,6 +324,7 @@ const ToggleValueButton = React.memo(
     );
   },
 );
+ToggleValueButton.displayName = "ToggleValueButton";
 type Props = {
   editable?: boolean;
   label: string;
@@ -341,6 +346,20 @@ export default function Explorer({
 }: Props) {
   const queryClient = useQueryClient();
   const [isRowFocused, setIsRowFocused] = useState(false);
+  
+  // Local state for input value to handle typing properly
+  const [localInputValue, setLocalInputValue] = useState<string>("");
+  
+  // Sync local state with prop value
+  useEffect(() => {
+    if (value !== null && value !== undefined && (typeof value === "string" || typeof value === "number")) {
+      const newValue = value.toString();
+      if (newValue !== localInputValue) {
+        setLocalInputValue(newValue);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, label]); // Don't include localInputValue in deps to avoid infinite loop
 
   // Determine if this is a main section
   const isMainSection = useMemo(() => {
@@ -438,19 +457,24 @@ export default function Explorer({
 
   const handleChange = useCallback(
     (isNumber: boolean, newValue: string) => {
+      // Update local state immediately for responsive typing
+      setLocalInputValue(newValue);
+      
       if (!activeQueryRef.current) return;
       const oldData = activeQueryRef.current.state.data as unknown as JsonValue;
       if (isNumber && isNaN(Number(newValue))) return;
       const updatedValue =
         valueTypeRef.current === "number" ? Number(newValue) : newValue;
+      
       const newData = updateNestedDataByPath(
         oldData,
         dataPathRef.current,
         updatedValue,
       );
+      
       queryClient.setQueryData(activeQueryRef.current.queryKey, newData);
     },
-    [queryClient],
+    [queryClient, setLocalInputValue],
   );
 
   return (
@@ -612,11 +636,7 @@ export default function Explorer({
                         keyboardType={
                           valueType === "number" ? "numeric" : "default"
                         }
-                        value={
-                          value === null || value === undefined
-                            ? ""
-                            : value.toString()
-                        }
+                        value={localInputValue}
                         onChangeText={(newValue) =>
                           handleChange(valueType === "number", newValue)
                         }

@@ -112,7 +112,7 @@ function DataExplorer({
       <Text style={styles.dataHeader}>Data Editor</Text>
       <View style={styles.dataContent}>
         <Explorer
-          key={selectedQuery.queryHash}
+          // Removed key to prevent re-rendering on every change
           editable={true}
           label="Data"
           value={selectedQuery.state.data}
