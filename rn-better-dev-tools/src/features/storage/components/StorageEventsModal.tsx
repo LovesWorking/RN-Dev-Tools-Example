@@ -480,6 +480,8 @@ export function StorageEventsModal({
         onClose={onClose}
         onBack={() => setSelectedConversation(null)}
         enableSharedModalDimensions={enableSharedModalDimensions}
+        ignoredPatterns={ignoredPatterns}
+        onTogglePattern={handleTogglePattern}
       />
     );
   }

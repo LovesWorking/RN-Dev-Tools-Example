@@ -16,10 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
   AlertCircle,
-  GitBranch,
-  Plus,
-  Minus,
-  Edit3,
+  Filter,
 } from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
@@ -29,10 +26,8 @@ import {
   GameUICollapsibleSection,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
-
-// Diff functionality is not yet implemented
-const diff = null as any;
-type Difference = any;
+import { CollapsibleDiffViewer } from "./CollapsibleDiffViewer";
+import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 
 interface StorageKeyConversation {
   key: string;
@@ -53,6 +48,8 @@ interface StorageKeyConversation {
 interface StorageEventDetailContentProps {
   conversation: StorageKeyConversation;
   activeTab?: DetailTab;
+  ignoredPatterns?: Set<string>;
+  onTogglePattern?: (pattern: string) => void;
 }
 
 interface KeyStats {
@@ -82,12 +79,15 @@ type DetailTab = "overview" | "history" | "changes";
 export function StorageEventDetailContent({
   conversation,
   activeTab = "overview",
+  ignoredPatterns = new Set(),
+  onTogglePattern = () => {},
 }: StorageEventDetailContentProps) {
   const [keyStats, setKeyStats] = useState<KeyStats | null>(null);
   const [expandedHistory, setExpandedHistory] = useState(false);
   const [expandedValueChanges, setExpandedValueChanges] = useState(false);
   const [expandedChangeItems, setExpandedChangeItems] = useState<number[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!conversation) return;
@@ -226,171 +226,6 @@ export function StorageEventDetailContent({
     );
   };
 
-  const renderDiff = (oldValue: unknown, newValue: unknown) => {
-    // Parse values if they're strings
-    const oldParsed = parseValue(oldValue);
-    const newParsed = parseValue(newValue);
-
-    // Only show diff for objects and arrays
-    if (
-      (!oldParsed || typeof oldParsed !== "object") &&
-      (!newParsed || typeof newParsed !== "object")
-    ) {
-      return null;
-    }
-
-    // Calculate the differences
-    let differences: Difference[] = [];
-    try {
-      differences = diff(oldParsed || {}, newParsed || {}, { cyclesFix: true });
-    } catch (error) {
-      console.warn("Failed to calculate diff:", error);
-      return null;
-    }
-
-    if (differences.length === 0) {
-      return null;
-    }
-
-    const getDiffIcon = (type: string) => {
-      switch (type) {
-        case "CREATE":
-          return <Plus size={12} color={gameUIColors.success} />;
-        case "REMOVE":
-          return <Minus size={12} color={gameUIColors.error} />;
-        case "CHANGE":
-          return <Edit3 size={12} color={gameUIColors.warning} />;
-        default:
-          return null;
-      }
-    };
-
-    const getDiffColor = (type: string) => {
-      switch (type) {
-        case "CREATE":
-          return gameUIColors.success;
-        case "REMOVE":
-          return gameUIColors.error;
-        case "CHANGE":
-          return gameUIColors.warning;
-        default:
-          return gameUIColors.muted;
-      }
-    };
-
-    const formatPath = (path: (string | number)[]) => {
-      return path
-        .map((p, i) => {
-          if (typeof p === "number") {
-            return `[${p}]`;
-          }
-          if (i === 0) {
-            return p;
-          }
-          return `.${p}`;
-        })
-        .join("");
-    };
-
-    const formatValue = (value: any) => {
-      if (value === null) return "null";
-      if (value === undefined) return "undefined";
-      if (typeof value === "string") return `"${value}"`;
-      if (typeof value === "object") {
-        if (Array.isArray(value)) {
-          return `[${value.length} items]`;
-        }
-        return `{${Object.keys(value).length} keys}`;
-      }
-      return String(value);
-    };
-
-    return (
-      <View style={styles.diffSection}>
-        <View style={styles.diffHeader}>
-          <GitBranch size={14} color={gameUIColors.info} />
-          <Text style={styles.diffTitle}>DIFF</Text>
-          <View style={styles.diffCountBadge}>
-            <Text style={styles.diffCountText}>{differences.length}</Text>
-          </View>
-        </View>
-
-        <View style={styles.diffContent}>
-          {differences.slice(0, 10).map((diff, index) => (
-            <View key={index} style={styles.diffItem}>
-              <View style={styles.diffItemHeader}>
-                {getDiffIcon(diff.type)}
-                <Text
-                  style={[styles.diffType, { color: getDiffColor(diff.type) }]}
-                >
-                  {diff.type}
-                </Text>
-                <Text style={styles.diffPath}>{formatPath(diff.path)}</Text>
-              </View>
-
-              <View style={styles.diffValues}>
-                {diff.type === "CHANGE" && (
-                  <>
-                    <View style={styles.diffValueRow}>
-                      <Text style={styles.diffValueLabel}>OLD:</Text>
-                      <Text
-                        style={[
-                          styles.diffValue,
-                          { color: gameUIColors.optional },
-                        ]}
-                      >
-                        {formatValue((diff as any).oldValue)}
-                      </Text>
-                    </View>
-                    <View style={styles.diffValueRow}>
-                      <Text style={styles.diffValueLabel}>NEW:</Text>
-                      <Text
-                        style={[
-                          styles.diffValue,
-                          { color: gameUIColors.success },
-                        ]}
-                      >
-                        {formatValue(diff.value)}
-                      </Text>
-                    </View>
-                  </>
-                )}
-                {diff.type === "CREATE" && (
-                  <View style={styles.diffValueRow}>
-                    <Text style={styles.diffValueLabel}>VALUE:</Text>
-                    <Text
-                      style={[
-                        styles.diffValue,
-                        { color: gameUIColors.success },
-                      ]}
-                    >
-                      {formatValue(diff.value)}
-                    </Text>
-                  </View>
-                )}
-                {diff.type === "REMOVE" && (
-                  <View style={styles.diffValueRow}>
-                    <Text style={styles.diffValueLabel}>REMOVED:</Text>
-                    <Text
-                      style={[styles.diffValue, { color: gameUIColors.error }]}
-                    >
-                      {formatValue((diff as any).oldValue)}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          ))}
-
-          {differences.length > 10 && (
-            <Text style={styles.moreText}>
-              +{differences.length - 10} more changes
-            </Text>
-          )}
-        </View>
-      </View>
-    );
-  };
 
   const renderValueContent = (
     value: unknown,
@@ -523,6 +358,13 @@ export function StorageEventDetailContent({
         </View>
         <View style={styles.card}>
           {renderValueContent(keyStats.currentValue, "VALUE")}
+          {/* Show diff if there was a recent change */}
+          {keyStats.valueChanges.length > 0 && (
+            <CollapsibleDiffViewer 
+              oldValue={keyStats.valueChanges[0].from}
+              newValue={keyStats.valueChanges[0].to}
+            />
+          )}
         </View>
       </View>
 
@@ -576,6 +418,44 @@ export function StorageEventDetailContent({
           </View>
         </View>
       </View>
+
+      {/* Filter Button */}
+      {(() => {
+        const key = conversation.key;
+        const isKeyIgnored = Array.from(ignoredPatterns).some(pattern => 
+          key.includes(pattern)
+        );
+
+        return (
+          <View style={[styles.filterSection, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                isKeyIgnored && styles.filterButtonActive,
+              ]}
+              onPress={() => onTogglePattern(key)}
+              activeOpacity={0.7}
+              sentry-label="ignore toggle key filter"
+            >
+              <Filter 
+                size={14} 
+                color={isKeyIgnored ? gameUIColors.warning : gameUIColors.info} 
+              />
+              <Text style={[
+                styles.filterButtonText,
+                isKeyIgnored && styles.filterButtonTextActive
+              ]}>
+                {isKeyIgnored ? "Stop Ignoring This Key" : "Ignore Events from This Key"}
+              </Text>
+            </TouchableOpacity>
+            {!isKeyIgnored && (
+              <Text style={styles.filterHintText}>
+                Events from this key will be hidden from the list
+              </Text>
+            )}
+          </View>
+        );
+      })()}
     </>
   );
 
@@ -621,28 +501,20 @@ export function StorageEventDetailContent({
 
               {expandedChangeItems.includes(index) && (
                 <View style={styles.changeDetails}>
-                  <View style={styles.changeValueSection}>
-                    {renderValueContent(
-                      change.from,
-                      "PREVIOUS VALUE",
-                      gameUIColors.optional,
-                    )}
-                  </View>
-
-                  <View style={styles.changeArrowContainer}>
-                    <Text style={styles.changeArrow}>↓</Text>
-                  </View>
-
+                  {/* Current Value Only */}
                   <View style={styles.changeValueSection}>
                     {renderValueContent(
                       change.to,
-                      "NEW VALUE",
-                      gameUIColors.success,
+                      "CURRENT VALUE",
+                      gameUIColors.info,
                     )}
                   </View>
 
-                  {/* DIFF Section */}
-                  {renderDiff(change.from, change.to)}
+                  {/* Diff Section shows what changed */}
+                  <CollapsibleDiffViewer 
+                    oldValue={change.from}
+                    newValue={change.to}
+                  />
                 </View>
               )}
             </View>
@@ -922,86 +794,45 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
     lineHeight: 18,
   },
-  diffSection: {
-    marginTop: 12,
+  
+  // Filter Button
+  filterSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: gameUIColors.border + "20",
-    paddingTop: 12,
+    marginTop: 12,
   },
-  diffHeader: {
+  filterButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 8,
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: gameUIColors.info + "12",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: gameUIColors.info + "25",
   },
-  diffTitle: {
-    fontSize: 10,
+  filterButtonActive: {
+    backgroundColor: gameUIColors.warning + "12",
+    borderColor: gameUIColors.warning + "25",
+  },
+  filterButtonText: {
+    fontSize: 13,
     fontWeight: "600",
     color: gameUIColors.info,
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
-  diffCountBadge: {
-    backgroundColor: gameUIColors.info + "20",
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 4,
-    minWidth: 16,
-    alignItems: "center",
+  filterButtonTextActive: {
+    color: gameUIColors.warning,
   },
-  diffCountText: {
-    fontSize: 9,
-    fontWeight: "600",
-    color: gameUIColors.info,
-    fontFamily: "monospace",
-  },
-  diffContent: {
-    backgroundColor: gameUIColors.panel + "50",
-    borderRadius: 6,
-    padding: 8,
-  },
-  diffItem: {
-    marginBottom: 8,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "10",
-  },
-  diffItemHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 4,
-  },
-  diffType: {
-    fontSize: 9,
-    fontWeight: "600",
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-  },
-  diffPath: {
-    fontSize: 10,
-    color: gameUIColors.primaryLight,
-    fontFamily: "monospace",
-    flex: 1,
-  },
-  diffValues: {
-    paddingLeft: 18,
-  },
-  diffValueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginVertical: 2,
-  },
-  diffValueLabel: {
-    fontSize: 9,
+  filterHintText: {
+    fontSize: 11,
     color: gameUIColors.secondary,
-    fontFamily: "monospace",
-    minWidth: 50,
-  },
-  diffValue: {
-    fontSize: 10,
-    fontFamily: "monospace",
-    flex: 1,
+    textAlign: "center",
+    marginTop: 8,
+    fontStyle: "italic",
   },
 });

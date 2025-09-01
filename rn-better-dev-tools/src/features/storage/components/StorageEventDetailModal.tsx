@@ -4,6 +4,7 @@ import ClaudeModal60FPSClean, {
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
+import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import {
   View,
   Text,
@@ -23,6 +24,7 @@ import {
   CheckCircle,
   XCircle,
   Copy,
+  Filter,
 } from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
@@ -37,6 +39,8 @@ interface StorageEventDetailModalProps {
   onClose: () => void;
   onBack: () => void;
   enableSharedModalDimensions?: boolean;
+  ignoredPatterns?: Set<string>;
+  onTogglePattern?: (pattern: string) => void;
 }
 
 interface KeyStats {
@@ -67,6 +71,8 @@ export function StorageEventDetailModal({
   onClose,
   onBack,
   enableSharedModalDimensions = false,
+  ignoredPatterns = new Set(),
+  onTogglePattern = () => {},
 }: StorageEventDetailModalProps) {
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [keyStats, setKeyStats] = useState<KeyStats | null>(null);
@@ -74,6 +80,7 @@ export function StorageEventDetailModal({
   const [showOperationHistory, setShowOperationHistory] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -749,6 +756,44 @@ export function StorageEventDetailModal({
             )}
           </View>
         )}
+
+        {/* Filter Button */}
+        {event?.data?.key && (() => {
+          const key = event.data.key;
+          const isKeyIgnored = Array.from(ignoredPatterns).some(pattern => 
+            key.includes(pattern)
+          );
+
+          return (
+            <View style={[styles.filterSection, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+              <TouchableOpacity
+                style={[
+                  styles.filterButton,
+                  isKeyIgnored && styles.filterButtonActive,
+                ]}
+                onPress={() => onTogglePattern(key)}
+                activeOpacity={0.7}
+                sentry-label="ignore toggle key filter"
+              >
+                <Filter 
+                  size={14} 
+                  color={isKeyIgnored ? "#F59E0B" : "#3B82F6"} 
+                />
+                <Text style={[
+                  styles.filterButtonText,
+                  isKeyIgnored && styles.filterButtonTextActive
+                ]}>
+                  {isKeyIgnored ? "Stop Ignoring This Key" : "Ignore Events from This Key"}
+                </Text>
+              </TouchableOpacity>
+              {!isKeyIgnored && (
+                <Text style={styles.filterHintText}>
+                  Events from this key will be hidden from the list
+                </Text>
+              )}
+            </View>
+          );
+        })()}
       </ScrollView>
     </ClaudeModal60FPSClean>
   );
@@ -1065,5 +1110,46 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontStyle: "italic",
     fontFamily: "monospace",
+  },
+  
+  // Filter Button
+  filterSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.06)",
+    marginTop: 12,
+  },
+  filterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: "rgba(59, 130, 246, 0.08)",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: "rgba(59, 130, 246, 0.15)",
+  },
+  filterButtonActive: {
+    backgroundColor: "rgba(245, 158, 11, 0.08)",
+    borderColor: "rgba(245, 158, 11, 0.15)",
+  },
+  filterButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#3B82F6",
+    letterSpacing: 0.3,
+  },
+  filterButtonTextActive: {
+    color: "#F59E0B",
+  },
+  filterHintText: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    textAlign: "center",
+    marginTop: 8,
+    fontStyle: "italic",
   },
 });

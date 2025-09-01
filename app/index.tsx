@@ -28,6 +28,7 @@ import {
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import { IconShowcase } from "@/docs/svg/IconShowCase";
 import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
+import { StorageDiffTest } from "@/components/StorageDiffTest";
 
 const { width, height } = Dimensions.get("window");
 
@@ -404,6 +405,9 @@ export default function PokemonScreen() {
           },
         ]}
       >
+        {/* Storage Diff Test Component */}
+        <StorageDiffTest />
+        
         {/* Icon Variations Gallery */}
         {/* <IconVariationsGallery /> */}
         {/* <RandomShapeGenerator /> */}

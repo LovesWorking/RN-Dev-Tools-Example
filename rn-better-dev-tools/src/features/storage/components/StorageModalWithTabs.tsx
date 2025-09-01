@@ -611,6 +611,8 @@ export function StorageModalWithTabs({
         <StorageEventDetailContent
           conversation={selectedConversation}
           activeTab={detailTab}
+          ignoredPatterns={ignoredPatterns}
+          onTogglePattern={handleTogglePattern}
         />
       );
     }
