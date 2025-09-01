@@ -26,6 +26,7 @@ import { ClaudeGridMenu } from "./ClaudeGridMenu";
 import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./dial/DialDevTools";
 import Dial2 from "./dial/Dial2";
+import { useDevToolsSettings } from "./DevToolsSettingsModal";
 
 // Re-export types that developers will need
 export type { UserRole } from "./floatingTools";
@@ -67,9 +68,10 @@ export function RnBetterDevToolsBubble({
   hideStorageButton,
   onOpenPerformanceTest,
 }: RnBetterDevToolsBubbleProps) {
-  const [showFloatingMenu, setShowFloatingMenu] = useState(false); // Set to false for production
+  const [showFloatingMenu, setShowFloatingMenu] = useState(true); // Temporarily true for testing
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
+  const { settings: devToolsSettings, refreshSettings } = useDevToolsSettings();
 
   // Menu type selection
   type MenuType = "claude" | "dial" | "dial2";
@@ -139,6 +141,7 @@ export function RnBetterDevToolsBubble({
   // Removed auto-open - Dial2 is now the primary selector
 
   // Hide bubble when any modal is open to prevent visual overlap
+  // Don't hide for settings modal so we can see live updates
   const isAnyModalOpen =
     isModalOpen ||
     // isDebugModalOpen || // Not used anymore - we use showFloatingMenu instead
@@ -161,11 +164,20 @@ export function RnBetterDevToolsBubble({
           style={{ opacity: isAnyModalOpen || showFloatingMenu ? 0 : 1 }}
         >
           <FloatingTools enablePositionPersistence>
-            <EnvironmentIndicator environment={environment!} />
-            <UserStatus
-              userRole={userRole}
-              onPress={() => setShowFloatingMenu(true)}
-            />
+            {/* Environment indicator badge */}
+            {devToolsSettings.floatingTools.environment && !hideEnvironment && (
+              <EnvironmentIndicator environment={environment!} />
+            )}
+            {/* User status - always shown, opens the dial menu */}
+            {!hideUserStatus && (
+              <UserStatus
+                userRole={userRole}
+                onPress={() => {
+                  refreshSettings(); // Reload settings from storage
+                  setShowFloatingMenu(true);
+                }}
+              />
+            )}
           </FloatingTools>
         </View>
 
@@ -209,6 +221,7 @@ export function RnBetterDevToolsBubble({
               },
               isWifiEnabled,
               environment,
+              settings: devToolsSettings,
             };
 
             switch (menuType) {
@@ -276,6 +289,7 @@ export function RnBetterDevToolsBubble({
           onClose={() => setIsNetworkModalOpen(false)}
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
+
       </QueryClientProvider>
     </ErrorBoundary>
   );

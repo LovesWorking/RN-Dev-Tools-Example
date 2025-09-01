@@ -22,6 +22,7 @@ import {
   getThemedDialColors,
   THEME_ACCENT,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { DevToolsSettingsModal, type DevToolsSettings, useDevToolsSettings } from "../DevToolsSettingsModal";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
@@ -42,7 +43,10 @@ interface DialDevToolsProps {
   onWifiToggle: () => void;
   onNetworkPress?: () => void;
   onClose?: () => void;
+  onSettingsPress?: () => void;
   isWifiEnabled?: boolean;
+  settings?: DevToolsSettings;
+  autoOpenSettings?: boolean;
 }
 
 const DialDevTools: React.FC<DialDevToolsProps> = ({
@@ -53,9 +57,41 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   onWifiToggle,
   onNetworkPress,
   onClose,
+  onSettingsPress,
   isWifiEnabled = true,
+  settings: externalSettings,
+  autoOpenSettings = false,
 }) => {
   const [selectedIcon, setSelectedIcon] = React.useState(-1);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = React.useState(false);
+  const { settings: hookSettings, refreshSettings } = useDevToolsSettings();
+  // Initialize with external settings if provided, otherwise use hook settings
+  const [localSettings, setLocalSettings] = React.useState(externalSettings || hookSettings);
+  
+  // Always use localSettings (which can be updated by the modal)
+  const settings = localSettings;
+  
+  
+  // Update local settings when external settings change
+  React.useEffect(() => {
+    if (externalSettings) {
+      setLocalSettings(externalSettings);
+    }
+  }, [externalSettings]);
+  
+  // Update local settings when hook settings change (if no external settings)
+  React.useEffect(() => {
+    if (!externalSettings) {
+      setLocalSettings(hookSettings);
+    }
+  }, [hookSettings, externalSettings]);
+
+  // Auto-open settings modal when prop is true
+  React.useEffect(() => {
+    if (autoOpenSettings && !isSettingsModalOpen) {
+      setIsSettingsModalOpen(true);
+    }
+  }, [autoOpenSettings, isSettingsModalOpen]);
 
   // React Native Animated values
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -75,7 +111,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const glitchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulseAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
 
-  const icons: IconType[] = [
+  const allIcons: IconType[] = [
     {
       name: "Query",
       icon: (
@@ -149,6 +185,51 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       onPress: onNetworkPress || (() => {}),
     },
   ];
+
+  // Create icons array with empty spots for disabled tools
+  const icons = allIcons.map((icon) => {
+    if (!settings) {
+      return icon; // If no settings, show all icons
+    }
+    
+    let isEnabled = true;
+    switch (icon.name) {
+      case "Query":
+        isEnabled = settings.dialTools.query;
+        break;
+      case "Env":
+        isEnabled = settings.dialTools.env;
+        break;
+      case "Sentry":
+        isEnabled = settings.dialTools.sentry;
+        break;
+      case "Storage":
+        isEnabled = settings.dialTools.storage;
+        break;
+      case "WiFi":
+        isEnabled = settings.dialTools.wifi;
+        break;
+      case "Network":
+        isEnabled = settings.dialTools.network;
+        break;
+    }
+    
+    console.log(`[DialDevTools] Icon ${icon.name} enabled: ${isEnabled}`);
+    
+    // Return empty spot for disabled tools
+    if (!isEnabled) {
+      return {
+        name: `empty-${icon.name}`,
+        icon: null,
+        color: 'transparent',
+        onPress: () => {}, // No-op for empty spots
+      };
+    }
+    
+    return icon;
+  });
+  
+  console.log('[DialDevTools] Final icons array:', icons.map(i => i.name));
 
   // Initialize animations on mount
   useEffect(() => {
@@ -367,10 +448,13 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       }),
     ]).start();
 
-    // Trigger action then close
+    // Trigger action
     setTimeout(() => {
       icons[index].onPress();
-      handleClose();
+      // Only close if it's not the WiFi toggle
+      if (icons[index].name !== "WiFi") {
+        handleClose();
+      }
     }, 50);
   };
 
@@ -456,7 +540,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
               onPress={handleIconPress}
               iconsProgress={iconsProgress}
               icon={icon}
-              key={i}
+              key={`${i}-${icon.name}`}
               index={i}
               totalIcons={icons.length}
             />
@@ -475,7 +559,14 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             <View style={styles.buttonBorder}>
               <Animated.View style={[styles.button, pulseAnimatedStyle]}>
                 <Pressable
-                  onPress={() => handleClose()}
+                  onPress={() => {
+                    // Open internal settings modal
+                    setIsSettingsModalOpen(true);
+                    // Also call external handler if provided
+                    if (onSettingsPress) {
+                      onSettingsPress();
+                    }
+                  }}
                   style={styles.buttonPressable}
                 >
                   <Text style={styles.centerText}>RN BETTER</Text>
@@ -486,6 +577,21 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           </View>
         </Animated.View>
       </Animated.View>
+      
+      {/* Settings Modal - Part of dial component for proper z-index */}
+      <DevToolsSettingsModal
+        visible={isSettingsModalOpen}
+        onClose={() => {
+          setIsSettingsModalOpen(false);
+          refreshSettings(); // Refresh from storage
+        }}
+        onSettingsChange={(newSettings) => {
+          console.log('[DialDevTools] onSettingsChange called with:', newSettings);
+          // Immediately update local settings for instant feedback
+          setLocalSettings(newSettings);
+          console.log('[DialDevTools] Called setLocalSettings with new settings');
+        }}
+      />
     </View>
   );
 };

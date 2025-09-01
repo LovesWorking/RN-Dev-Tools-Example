@@ -29,6 +29,12 @@ import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSaf
 import { IconShowcase } from "@/docs/svg/IconShowCase";
 import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
 import { StorageDiffTest } from "@/components/StorageDiffTest";
+import { AutoDiffTest } from "@/components/AutoDiffTest";
+import { DiffThemeShowcase } from "@/rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffThemeShowcase";
+
+// Import PureModalExample for testing
+import PureModalExample from "@/rn-better-dev-tools/src/components/modals/PureModal/PureModalExample";
+import TestDialSettings from "./TestDialSettings";
 
 const { width, height } = Dimensions.get("window");
 
@@ -38,7 +44,17 @@ function getRandomPokemonNames(count: number): string[] {
   return shuffled.slice(0, count);
 }
 
-export default function PokemonScreen() {
+// Temporarily replace with DiffThemeShowcase for testing
+export default function TestScreen() {
+  // return <DiffThemeShowcase />;
+  // return <PureModalExample />;
+  // return <TestDialSettings />; // Testing dial settings
+  return <PokemonScreen />;
+}
+
+// Original PokemonScreen component
+// export default function PokemonScreen() {
+function PokemonScreen() {
   const queryClient = useQueryClient();
 
   const insets = useSafeAreaInsets();
@@ -405,9 +421,12 @@ export default function PokemonScreen() {
           },
         ]}
       >
+        {/* Diff Theme Showcase - All theme variations */}
+        <DiffThemeShowcase />
+
         {/* Storage Diff Test Component */}
         <StorageDiffTest />
-        
+
         {/* Icon Variations Gallery */}
         {/* <IconVariationsGallery /> */}
         {/* <RandomShapeGenerator /> */}

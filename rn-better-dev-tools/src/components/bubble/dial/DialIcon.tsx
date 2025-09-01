@@ -139,40 +139,50 @@ export const DialIcon: React.FC<Props> = ({
   };
 
 
+  // Check if this is an empty spot
+  const isEmpty = icon.icon === null;
+  
   return (
     <Animated.View style={[styles.view, animatedStyle]}>
-      <Pressable
-        onPress={() => onPress(index)}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={styles.pressable}
-      >
-        {/* Gradient background layers for depth */}
-        <View style={[
-          styles.iconGradientBg,
-          {
-            backgroundColor: "rgba(0, 0, 0, 0.2)",
-          }
-        ]} />
-        
-        {/* Inner glow effect */}
-        <View style={[
-          styles.iconInnerGlow,
-          {
-            backgroundColor: "rgba(255, 255, 255, 0.02)",
-          }
-        ]} />
-
-        {/* Icon */}
-        <View style={styles.iconWrapper}>
-          {icon.icon}
+      {isEmpty ? (
+        // Empty spot - just show a subtle circle
+        <View style={styles.emptySpot}>
+          <View style={styles.emptyDot} />
         </View>
+      ) : (
+        <Pressable
+          onPress={() => onPress(index)}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={styles.pressable}
+        >
+          {/* Gradient background layers for depth */}
+          <View style={[
+            styles.iconGradientBg,
+            {
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+            }
+          ]} />
+          
+          {/* Inner glow effect */}
+          <View style={[
+            styles.iconInnerGlow,
+            {
+              backgroundColor: "rgba(255, 255, 255, 0.02)",
+            }
+          ]} />
 
-        {/* Label */}
-        <Text style={styles.label}>
-          {icon.name.toUpperCase()}
-        </Text>
-      </Pressable>
+          {/* Icon */}
+          <View style={styles.iconWrapper}>
+            {icon.icon}
+          </View>
+
+          {/* Label */}
+          <Text style={styles.label}>
+            {icon.name.toUpperCase()}
+          </Text>
+        </Pressable>
+      )}
     </Animated.View>
   );
 };
@@ -218,5 +228,19 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
     marginTop: 2,
     color: gameUIColors.secondary,
+  },
+  emptySpot: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: `${gameUIColors.muted}15`,
+    borderWidth: 1,
+    borderColor: `${gameUIColors.muted}50`,
   },
 });

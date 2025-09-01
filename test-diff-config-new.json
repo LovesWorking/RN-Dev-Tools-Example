@@ -1,0 +1,22 @@
+{
+  "api": {
+    "baseUrl": "https://api.production.com",
+    "timeout": 10000,
+    "retries": 5,
+    "rateLimit": 100
+  },
+  "features": {
+    "darkMode": true,
+    "analytics": true,
+    "betaFeatures": false
+  },
+  "database": {
+    "host": "db.production.com",
+    "port": 5432,
+    "ssl": true
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 3600
+  }
+}

@@ -16,7 +16,7 @@ import {
   Server,
   Wifi,
   WifiOff,
-  X,
+  Globe,
 } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "rn-better-dev-tools/src/shared/ui/gameUI";
 
@@ -26,6 +26,7 @@ interface MagneticGridMenuProps {
   onSentryPress: () => void;
   onStoragePress: () => void;
   onWifiToggle: () => void;
+  onNetworkPress?: () => void;
   onClose?: () => void;
   isWifiEnabled?: boolean;
   buttonPosition?: { x: number; y: number };
@@ -37,6 +38,7 @@ export function ClaudeGridMenu({
   onSentryPress,
   onStoragePress,
   onWifiToggle,
+  onNetworkPress,
   onClose,
   isWifiEnabled = true,
   buttonPosition = { x: 30, y: 30 },
@@ -412,7 +414,7 @@ export function ClaudeGridMenu({
       label: "QUERY",
       sublabel: "DATABASE",
       primaryColor: gameUIColors.query,
-      secondaryColor: gameUIColors.info,
+      secondaryColor: gameUIColors.query,
       accentColor: gameUIColors.query,
     },
     {
@@ -421,7 +423,7 @@ export function ClaudeGridMenu({
       label: "ENV",
       sublabel: "SYSTEM",
       primaryColor: gameUIColors.env,
-      secondaryColor: gameUIColors.success,
+      secondaryColor: gameUIColors.env,
       accentColor: gameUIColors.env,
     },
     {
@@ -430,7 +432,7 @@ export function ClaudeGridMenu({
       label: "SENTRY",
       sublabel: "DEBUG",
       primaryColor: gameUIColors.debug,
-      secondaryColor: gameUIColors.error,
+      secondaryColor: gameUIColors.debug,
       accentColor: gameUIColors.debug,
     },
     {
@@ -439,7 +441,7 @@ export function ClaudeGridMenu({
       label: "STORAGE",
       sublabel: "MEMORY",
       primaryColor: gameUIColors.storage,
-      secondaryColor: gameUIColors.warning,
+      secondaryColor: gameUIColors.storage,
       accentColor: gameUIColors.storage,
     },
     {
@@ -449,22 +451,20 @@ export function ClaudeGridMenu({
       ) : (
         <WifiOff size={18} color={gameUIColors.muted} />
       ),
-      label: isWifiEnabled ? "ONLINE" : "OFFLINE",
+      label: isWifiEnabled ? "WIFI" : "OFFLINE",
       sublabel: isWifiEnabled ? "CONNECTED" : "DISABLED",
       primaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
-      secondaryColor: isWifiEnabled
-        ? gameUIColors.optional
-        : gameUIColors.secondary,
+      secondaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
       accentColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
     },
     {
-      onPress: onClose,
-      icon: <X size={18} color={gameUIColors.secondary} />,
-      label: "EXIT",
-      sublabel: "CLOSE",
-      primaryColor: gameUIColors.muted,
-      secondaryColor: gameUIColors.secondary,
-      accentColor: gameUIColors.muted,
+      onPress: onNetworkPress || (() => {}),
+      icon: <Globe size={18} color={gameUIColors.network} />,
+      label: "NETWORK",
+      sublabel: "MONITOR",
+      primaryColor: gameUIColors.network,
+      secondaryColor: gameUIColors.network,
+      accentColor: gameUIColors.network,
     },
   ];
 

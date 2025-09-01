@@ -1,0 +1,21 @@
+{
+  "fruits": [
+    "apple",
+    "blueberry",
+    "cherry",
+    "dragonfruit"
+  ],
+  "numbers": [
+    1,
+    3,
+    5,
+    7,
+    9
+  ],
+  "tags": [
+    "typescript",
+    "react",
+    "nodejs",
+    "graphql"
+  ]
+}

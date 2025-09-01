@@ -23,6 +23,9 @@ import {
   Filter,
   Activity,
   Clock,
+  ChevronLeft,
+  ChevronRight,
+  Key,
 } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -81,10 +84,9 @@ export function StorageModalWithTabs({
   const [isListening, setIsListening] = useState(false);
   const [selectedConversation, setSelectedConversation] =
     useState<StorageKeyConversation | null>(null);
+  const [selectedEventIndex, setSelectedEventIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const [detailTab, setDetailTab] = useState<"overview" | "changes">(
-    "overview"
-  );
+  const [detailTab, setDetailTab] = useState<"current" | "diff">("current");
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
     new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"])
   );
@@ -184,6 +186,8 @@ export function StorageModalWithTabs({
   const handleConversationPress = useCallback(
     (conversation: StorageKeyConversation) => {
       setSelectedConversation(conversation);
+      setSelectedEventIndex(0);
+      setDetailTab("current");
     },
     []
   );
@@ -398,54 +402,64 @@ export function StorageModalWithTabs({
 
       return (
         <View style={styles.headerContainer}>
-          <BackButton
-            onPress={() => {
-              setSelectedConversation(null);
-              setDetailTab("overview");
-            }}
-            color={gameUIColors.primary}
-            size={16}
-          />
+          <View style={styles.headerTopRow}>
+            <BackButton
+              onPress={() => {
+                setSelectedConversation(null);
+                setSelectedEventIndex(0);
+                setDetailTab("current");
+              }}
+              color={gameUIColors.primary}
+              size={16}
+            />
+
+            <View style={styles.keyNameContainer}>
+              <HardDrive size={14} color={gameUIColors.storage} />
+              <Text style={styles.keyNameText} numberOfLines={1}>
+                {selectedConversation.key}
+              </Text>
+            </View>
+          </View>
 
           <View style={styles.tabNavigationContainer}>
             <TouchableOpacity
-              onPress={() => setDetailTab("overview")}
+              onPress={() => setDetailTab("current")}
               style={[
                 styles.tabButton,
-                detailTab === "overview" && styles.tabButtonActive,
+                detailTab === "current" && styles.tabButtonActive,
               ]}
             >
               <Database
                 size={12}
                 color={
-                  detailTab === "overview"
-                    ? gameUIColors.storage
+                  detailTab === "current"
+                    ? gameUIColors.info
                     : gameUIColors.secondary
                 }
               />
               <Text
                 style={[
                   styles.tabButtonText,
-                  detailTab === "overview"
+                  detailTab === "current"
                     ? styles.tabButtonTextActive
                     : styles.tabButtonTextInactive,
                 ]}
               >
-                Overview
+                Current Value
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => setDetailTab("changes")}
+              onPress={() => setDetailTab("diff")}
               style={[
                 styles.tabButton,
-                detailTab === "changes" && styles.tabButtonActive,
+                detailTab === "diff" && styles.tabButtonActive,
               ]}
             >
               <Activity
                 size={12}
                 color={
-                  detailTab === "changes"
+                  detailTab === "diff"
                     ? gameUIColors.warning
                     : gameUIColors.secondary
                 }
@@ -453,28 +467,13 @@ export function StorageModalWithTabs({
               <Text
                 style={[
                   styles.tabButtonText,
-                  detailTab === "changes"
+                  detailTab === "diff"
                     ? styles.tabButtonTextActive
                     : styles.tabButtonTextInactive,
                 ]}
               >
-                Changes
+                Diff
               </Text>
-              <View
-                style={[
-                  styles.eventBadge,
-                  { backgroundColor: gameUIColors.warning + "20" },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.eventBadgeText,
-                    { color: gameUIColors.warning },
-                  ]}
-                >
-                  {keyStats}
-                </Text>
-              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -611,6 +610,8 @@ export function StorageModalWithTabs({
         <StorageEventDetailContent
           conversation={selectedConversation}
           activeTab={detailTab}
+          selectedEventIndex={selectedEventIndex}
+          onEventIndexChange={setSelectedEventIndex}
           ignoredPatterns={ignoredPatterns}
           onTogglePattern={handleTogglePattern}
         />
@@ -683,12 +684,11 @@ export function StorageModalWithTabs({
 
 const styles = StyleSheet.create({
   headerContainer: {
+    flex: 1,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
     gap: 8,
-    minHeight: 32,
-    paddingHorizontal: 12,
   },
 
   headerTitle: {
@@ -710,7 +710,8 @@ const styles = StyleSheet.create({
     padding: 2,
     borderWidth: 1,
     borderColor: gameUIColors.border + "40",
-    justifyContent: "space-evenly",
+    height: 32,
+    alignItems: "center",
   },
 
   tabButton: {
@@ -771,7 +772,6 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: "row",
     gap: 6,
-    marginLeft: "auto",
   },
 
   iconButton: {
@@ -868,5 +868,59 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     fontFamily: "monospace",
+  },
+
+  eventNavigation: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 8,
+  },
+
+  navButton: {
+    padding: 4,
+    borderRadius: 4,
+  },
+
+  navButtonDisabled: {
+    opacity: 0.3,
+  },
+
+  eventCounter: {
+    color: gameUIColors.primary,
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: "monospace",
+    paddingHorizontal: 8,
+  },
+
+  headerTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 12,
+  },
+
+  keyNameContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: gameUIColors.panel + "40",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: gameUIColors.storage + "20",
+    height: 28,
+  },
+
+  keyNameText: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: "600",
+    color: gameUIColors.storage,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
   },
 });

@@ -95,6 +95,57 @@ export function StorageDiffTest() {
   const [currentKey, setCurrentKey] = useState('diff_test');
   const [currentData, setCurrentData] = useState<any>(null);
 
+  // Auto-trigger storage changes for demo
+  useEffect(() => {
+    const autoDemo = async () => {
+      // Create multiple events to test navigation
+      const key = 'nav_test';
+      
+      // Event 1
+      await AsyncStorage.setItem(key, JSON.stringify({
+        version: 1,
+        user: 'Alice',
+        status: 'active'
+      }));
+      
+      // Event 2 after 1 second
+      setTimeout(async () => {
+        await AsyncStorage.setItem(key, JSON.stringify({
+          version: 2,
+          user: 'Alice Smith',
+          status: 'active',
+          role: 'admin'
+        }));
+      }, 1000);
+      
+      // Event 3 after 2 seconds
+      setTimeout(async () => {
+        await AsyncStorage.setItem(key, JSON.stringify({
+          version: 3,
+          user: 'Alice Smith',
+          status: 'premium',
+          role: 'admin',
+          features: ['dashboard', 'analytics']
+        }));
+      }, 2000);
+      
+      // Event 4 after 3 seconds
+      setTimeout(async () => {
+        await AsyncStorage.setItem(key, JSON.stringify({
+          version: 4,
+          user: 'Alice Smith',
+          status: 'premium',
+          role: 'super_admin',
+          features: ['dashboard', 'analytics', 'reports', 'settings'],
+          lastLogin: new Date().toISOString()
+        }));
+        setStatus('Created 4 events for navigation testing');
+      }, 3000);
+    };
+    
+    autoDemo();
+  }, []);
+
   // Load current data on mount
   useEffect(() => {
     loadCurrentData();

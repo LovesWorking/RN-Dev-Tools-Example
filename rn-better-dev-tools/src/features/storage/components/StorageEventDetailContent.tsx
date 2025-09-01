@@ -15,6 +15,8 @@ import {
   Download,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   AlertCircle,
   Filter,
 } from "rn-better-dev-tools/icons";
@@ -26,7 +28,8 @@ import {
   GameUICollapsibleSection,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
-import { CollapsibleDiffViewer } from "./CollapsibleDiffViewer";
+import { ThemedSplitView } from "./DiffViewer/modes/ThemedSplitView";
+import { diffThemes } from "./DiffViewer/themes/diffThemes";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 
 interface StorageKeyConversation {
@@ -47,7 +50,9 @@ interface StorageKeyConversation {
 
 interface StorageEventDetailContentProps {
   conversation: StorageKeyConversation;
-  activeTab?: DetailTab;
+  activeTab?: "current" | "diff";
+  selectedEventIndex?: number;
+  onEventIndexChange?: (index: number) => void;
   ignoredPatterns?: Set<string>;
   onTogglePattern?: (pattern: string) => void;
 }
@@ -74,11 +79,12 @@ interface KeyStats {
   }[];
 }
 
-type DetailTab = "overview" | "history" | "changes";
 
 export function StorageEventDetailContent({
   conversation,
-  activeTab = "overview",
+  activeTab = "current",
+  selectedEventIndex = 0,
+  onEventIndexChange = () => {},
   ignoredPatterns = new Set(),
   onTogglePattern = () => {},
 }: StorageEventDetailContentProps) {
@@ -86,6 +92,10 @@ export function StorageEventDetailContent({
   const [expandedHistory, setExpandedHistory] = useState(false);
   const [expandedValueChanges, setExpandedValueChanges] = useState(false);
   const [expandedChangeItems, setExpandedChangeItems] = useState<number[]>([]);
+  const [expandedCurrentValue, setExpandedCurrentValue] = useState(true);
+  const [expandedRecentChanges, setExpandedRecentChanges] = useState(true);
+  const [expandedChangeValues, setExpandedChangeValues] = useState<{[key: number]: boolean}>({});
+  const [expandedChangeDiffs, setExpandedChangeDiffs] = useState<{[key: number]: boolean}>({});
   const scrollViewRef = useRef<ScrollView>(null);
   const insets = useSafeAreaInsets();
 
@@ -293,252 +303,133 @@ export function StorageEventDetailContent({
 
   const latestEvent = keyStats.latestEvent || conversation.lastEvent;
 
-  const renderOverview = () => (
-    <>
-      {/* Export Button */}
-      <View style={styles.actionBar}>
-        <TouchableOpacity
-          onPress={handleExportEvents}
-          style={styles.exportButton}
-          sentry-label="ignore export all data"
-        >
-          <Download size={14} color={gameUIColors.info} />
-          <Text style={styles.exportText}>EXPORT EVENTS</Text>
-        </TouchableOpacity>
-      </View>
+  // Old render functions removed - now using simplified tab structure
+  
 
-      {/* Latest Event Overview */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Database size={16} color={gameUIColors.success} />
-          <Text style={styles.sectionTitle}>Latest Event</Text>
-          <View style={styles.liveBadge}>
-            <View style={styles.liveDot} />
-            <Text style={styles.liveText}>LIVE</Text>
-          </View>
-        </View>
-
+  // Render current value tab
+  const renderCurrentValue = () => {
+    if (!keyStats) return null;
+    
+    // Get the value at the selected event
+    const setItemChanges = keyStats.valueChanges.filter(change => change.action === "setItem");
+    const changeIndex = Math.min(selectedEventIndex, setItemChanges.length - 1);
+    const selectedChange = setItemChanges[changeIndex];
+    const valueToShow = selectedChange ? selectedChange.to : keyStats.currentValue;
+    
+    return (
+      <View style={styles.fullPageSection}>
         <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.label}>Last Action</Text>
-            <View
-              style={[
-                styles.actionBadge,
-                {
-                  backgroundColor: `${getActionColor(latestEvent.action)}20`,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.actionText,
-                  { color: getActionColor(latestEvent.action) },
-                ]}
-              >
-                {latestEvent.action.toUpperCase()}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Time</Text>
-            <Text style={styles.timeValue}>
-              {formatTimestamp(latestEvent.timestamp)} (
-              {formatRelativeTime(latestEvent.timestamp)})
-            </Text>
-          </View>
+          {renderValueContent(valueToShow, "CURRENT VALUE")}
         </View>
       </View>
+    );
+  };
 
-      {/* Current Value */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Hash size={16} color={gameUIColors.info} />
-          <Text style={styles.sectionTitle}>Current Value</Text>
-        </View>
-        <View style={styles.card}>
-          {renderValueContent(keyStats.currentValue, "VALUE")}
-          {/* Show diff if there was a recent change */}
-          {keyStats.valueChanges.length > 0 && (
-            <CollapsibleDiffViewer 
-              oldValue={keyStats.valueChanges[0].from}
-              newValue={keyStats.valueChanges[0].to}
-            />
-          )}
-        </View>
-      </View>
-
-      {/* Statistics */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <BarChart3 size={16} color={gameUIColors.optional} />
-          <Text style={styles.sectionTitle}>Statistics</Text>
-        </View>
-        <View style={styles.card}>
-          <View style={styles.statsGrid}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{keyStats.totalOperations}</Text>
-              <Text style={styles.statLabel}>Total</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: gameUIColors.success }]}>
-                {keyStats.setCount}
-              </Text>
-              <Text style={styles.statLabel}>Sets</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: gameUIColors.error }]}>
-                {keyStats.removeCount}
-              </Text>
-              <Text style={styles.statLabel}>Removes</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: gameUIColors.info }]}>
-                {keyStats.mergeCount}
-              </Text>
-              <Text style={styles.statLabel}>Merges</Text>
-            </View>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.row}>
-            <Text style={styles.label}>First Seen</Text>
-            <Text style={styles.timeValue}>
-              {formatTimestamp(keyStats.firstSeen)} (
-              {formatRelativeTime(keyStats.firstSeen)})
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Last Updated</Text>
-            <Text style={styles.timeValue}>
-              {formatTimestamp(keyStats.lastSeen)} (
-              {formatRelativeTime(keyStats.lastSeen)})
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Filter Button */}
-      {(() => {
-        const key = conversation.key;
-        const isKeyIgnored = Array.from(ignoredPatterns).some(pattern => 
-          key.includes(pattern)
-        );
-
-        return (
-          <View style={[styles.filterSection, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                isKeyIgnored && styles.filterButtonActive,
-              ]}
-              onPress={() => onTogglePattern(key)}
-              activeOpacity={0.7}
-              sentry-label="ignore toggle key filter"
-            >
-              <Filter 
-                size={14} 
-                color={isKeyIgnored ? gameUIColors.warning : gameUIColors.info} 
-              />
-              <Text style={[
-                styles.filterButtonText,
-                isKeyIgnored && styles.filterButtonTextActive
-              ]}>
-                {isKeyIgnored ? "Stop Ignoring This Key" : "Ignore Events from This Key"}
-              </Text>
-            </TouchableOpacity>
-            {!isKeyIgnored && (
-              <Text style={styles.filterHintText}>
-                Events from this key will be hidden from the list
-              </Text>
-            )}
-          </View>
-        );
-      })()}
-    </>
-  );
-
-  const renderChanges = () => (
-    <View style={styles.fullPageSection}>
-      {keyStats.valueChanges.length > 0 ? (
-        <>
-          {keyStats.valueChanges.map((change, index) => (
-            <View key={index} style={styles.changeContainer}>
-              <TouchableOpacity
-                onPress={() => toggleValueChange(index)}
-                style={styles.changeHeader}
-                sentry-label="ignore value change toggle"
-              >
-                <View style={styles.changeHeaderLeft}>
-                  <AlertCircle size={14} color={gameUIColors.warning} />
-                  <Text style={styles.changeTime}>
-                    {formatTimestamp(change.timestamp)} (
-                    {formatRelativeTime(change.timestamp)})
-                  </Text>
-                  <View
-                    style={[
-                      styles.changeActionBadge,
-                      { backgroundColor: `${getActionColor(change.action)}15` },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.changeActionText,
-                        { color: getActionColor(change.action) },
-                      ]}
-                    >
-                      {change.action.toUpperCase()}
-                    </Text>
-                  </View>
-                </View>
-                {expandedChangeItems.includes(index) ? (
-                  <ChevronUp size={14} color={gameUIColors.muted} />
-                ) : (
-                  <ChevronDown size={14} color={gameUIColors.muted} />
-                )}
-              </TouchableOpacity>
-
-              {expandedChangeItems.includes(index) && (
-                <View style={styles.changeDetails}>
-                  {/* Current Value Only */}
-                  <View style={styles.changeValueSection}>
-                    {renderValueContent(
-                      change.to,
-                      "CURRENT VALUE",
-                      gameUIColors.info,
-                    )}
-                  </View>
-
-                  {/* Diff Section shows what changed */}
-                  <CollapsibleDiffViewer 
-                    oldValue={change.from}
-                    newValue={change.to}
-                  />
-                </View>
-              )}
-            </View>
-          ))}
-        </>
-      ) : (
+  // Render diff tab
+  const renderDiff = () => {
+    if (!keyStats || keyStats.valueChanges.length === 0) {
+      return (
         <View style={styles.emptyState}>
           <AlertCircle size={32} color={gameUIColors.muted} />
-          <Text style={styles.emptyText}>No value changes recorded</Text>
+          <Text style={styles.emptyText}>No changes to display</Text>
+        </View>
+      );
+    }
+
+    // Use the selected event index to show the right change
+    const setItemChanges = keyStats.valueChanges.filter(change => change.action === "setItem");
+    const changeIndex = Math.min(selectedEventIndex, setItemChanges.length - 1);
+    const selectedChange = setItemChanges[changeIndex] || setItemChanges[0];
+    
+    return (
+      <View style={styles.fullPageSection}>
+        <ThemedSplitView
+          oldValue={parseValue(selectedChange.from)}
+          newValue={parseValue(selectedChange.to)}
+          differences={[]}
+          theme={diffThemes.gitClassic}
+          options={{
+            hideLineNumbers: false,
+            disableWordDiff: false,
+            showDiffOnly: false,
+            compareMethod: 'words',
+            contextLines: 3,
+            lineOffset: 0,
+          }}
+          showThemeName={false}
+        />
+      </View>
+    );
+  };
+
+  // Get total events for navigation - look at all value changes
+  const navigationItems = keyStats?.valueChanges || [];
+  const totalEvents = navigationItems.length;
+  
+  // Debug log
+  console.log('Navigation Debug:', {
+    totalEvents,
+    selectedEventIndex,
+    hasKeyStats: !!keyStats,
+    valueChanges: keyStats?.valueChanges?.length || 0,
+    conversationEvents: conversation.events.length,
+    navigationItems: navigationItems.length
+  });
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        sentry-label="ignore storage event detail scroll"
+      >
+        {activeTab === "current" && renderCurrentValue()}
+        {activeTab === "diff" && renderDiff()}
+      </ScrollView>
+      
+      {/* Bottom Navigation - Show for testing (normally totalEvents > 1) */}
+      {true && (
+        <View style={styles.bottomNavigation}>
+          <TouchableOpacity
+            onPress={() => onEventIndexChange(Math.max(0, selectedEventIndex - 1))}
+            disabled={selectedEventIndex === 0}
+            style={[styles.navButton, selectedEventIndex === 0 && styles.navButtonDisabled]}
+          >
+            <ChevronLeft 
+              size={20} 
+              color={selectedEventIndex === 0 ? gameUIColors.muted : gameUIColors.primary} 
+            />
+            <Text style={[styles.navButtonText, selectedEventIndex === 0 && styles.navButtonTextDisabled]}>
+              Previous
+            </Text>
+          </TouchableOpacity>
+          
+          <View style={styles.eventCounterContainer}>
+            <Text style={styles.eventCounter}>
+              Event {selectedEventIndex + 1} of {totalEvents}
+            </Text>
+            <Text style={styles.eventTimestamp}>
+              {formatRelativeTime(navigationItems[selectedEventIndex]?.timestamp)}
+            </Text>
+          </View>
+          
+          <TouchableOpacity
+            onPress={() => onEventIndexChange(Math.min(totalEvents - 1, selectedEventIndex + 1))}
+            disabled={selectedEventIndex === totalEvents - 1}
+            style={[styles.navButton, selectedEventIndex === totalEvents - 1 && styles.navButtonDisabled]}
+          >
+            <Text style={[styles.navButtonText, selectedEventIndex === totalEvents - 1 && styles.navButtonTextDisabled]}>
+              Next
+            </Text>
+            <ChevronRight 
+              size={20} 
+              color={selectedEventIndex === totalEvents - 1 ? gameUIColors.muted : gameUIColors.primary} 
+            />
+          </TouchableOpacity>
         </View>
       )}
     </View>
-  );
-
-  return (
-    <ScrollView
-      ref={scrollViewRef}
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      sentry-label="ignore storage event detail scroll"
-    >
-      {activeTab === "overview" && renderOverview()}
-      {activeTab === "changes" && renderChanges()}
-    </ScrollView>
   );
 }
 
@@ -546,6 +437,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: gameUIColors.background,
+  },
+  scrollContainer: {
+    flex: 1,
   },
   fullPageSection: {
     paddingHorizontal: 12,
@@ -834,5 +728,64 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
     fontStyle: "italic",
+  },
+  
+  // Bottom Navigation Styles
+  bottomNavigation: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: gameUIColors.panel + "40",
+    borderTopWidth: 1,
+    borderTopColor: gameUIColors.border + "40",
+  },
+  
+  navButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: gameUIColors.panel + "60",
+    minWidth: 100,
+    justifyContent: "center",
+  },
+  
+  navButtonDisabled: {
+    opacity: 0.3,
+  },
+  
+  navButtonText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: gameUIColors.primary,
+    fontFamily: "monospace",
+    textTransform: "uppercase",
+  },
+  
+  navButtonTextDisabled: {
+    color: gameUIColors.muted,
+  },
+  
+  eventCounterContainer: {
+    alignItems: "center",
+  },
+  
+  eventCounter: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: gameUIColors.primary,
+    fontFamily: "monospace",
+    textTransform: "uppercase",
+  },
+  
+  eventTimestamp: {
+    fontSize: 11,
+    color: gameUIColors.secondary,
+    fontFamily: "monospace",
+    marginTop: 2,
   },
 });
