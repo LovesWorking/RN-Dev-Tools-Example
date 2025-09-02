@@ -75,7 +75,7 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
           }}
           bgColorClass="btnTriggerLoading"
           text={
-            query.state.data === undefined
+            query.state.fetchStatus === "fetching"
               ? "Restore Loading"
               : "Trigger Loading"
           }
@@ -88,7 +88,7 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
             triggerError({ query, queryClient });
           }}
           bgColorClass="btnTriggerLoadiError"
-          text={queryStatus === "error" ? "Restore" : "Trigger Error"}
+          text={queryStatus === "error" ? "Restore Error" : "Trigger Error"}
           _textColorClass="btnTriggerLoadiError"
         />
       </View>

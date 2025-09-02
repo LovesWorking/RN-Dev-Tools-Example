@@ -17,11 +17,11 @@ export function useActionButtons(
   selectedQuery: Query,
   queryClient: QueryClient,
 ): ActionButtonConfig[] {
-  return useMemo(() => {
+  const actionButtons = useMemo(() => {
     const queryStatus = selectedQuery.state.status;
     const isFetching = getQueryStatusLabel(selectedQuery) === "fetching";
 
-    return [
+    const buttons: ActionButtonConfig[] = [
       {
         label: "Refetch",
         bgColorClass: "btnRefetch" as const,
@@ -30,7 +30,10 @@ export function useActionButtons(
         onPress: () => refetch({ query: selectedQuery }),
       },
       {
-        label: selectedQuery.state.data === undefined ? "Restore" : "Loading",
+        label:
+          selectedQuery.state.fetchStatus === "fetching"
+            ? "Restore"
+            : "Loading",
         bgColorClass: "btnTriggerLoading" as const,
         textColorClass: "btnTriggerLoading" as const,
         disabled: false,
@@ -44,5 +47,16 @@ export function useActionButtons(
         onPress: () => triggerError({ query: selectedQuery, queryClient }),
       },
     ];
-  }, [selectedQuery, queryClient]);
+
+    return buttons;
+  }, [
+    queryClient,
+    selectedQuery.queryHash,
+    selectedQuery.state.status,
+    selectedQuery.state.fetchStatus,
+    selectedQuery.state.dataUpdatedAt,
+    selectedQuery.state.errorUpdatedAt,
+    selectedQuery.state.isInvalidated,
+  ]);
+  return actionButtons;
 }
