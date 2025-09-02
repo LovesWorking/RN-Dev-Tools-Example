@@ -19,7 +19,10 @@
     "nuke:android": "rm -rf ./node_modules && rm -rf ./android && npm install && npm run prebuild && npm run android",
     "nuke:both": "rm -rf ./node_modules && rm -rf ./ios && rm -rf ./android && npm install && npm run prebuild && npm run ios && npm run android",
     "nuke:all": "rm -rf ./node_modules && rm -rf ./ios && rm -rf ./android && rm -rf ./.expo && npm cache clean --force && npm install && npm run prebuild",
-    "clear:cache": "rm -rf .expo && rm -rf node_modules/.cache && npx expo start --clear"
+    "clear:cache": "rm -rf .expo && rm -rf node_modules/.cache && npx expo start --clear",
+    "screenshot": "bash scripts/screenshot.sh",
+    "screenshot:ios": "bash scripts/screenshot.sh ios",
+    "screenshot:android": "bash scripts/screenshot.sh android"
   },
   "jest": {
     "preset": "jest-expo"

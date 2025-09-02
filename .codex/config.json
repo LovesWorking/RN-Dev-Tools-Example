@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "peekaboo": {
+      "command": "peekaboo",
+      "args": ["--stdio"],
+      "env": {
+        "PEEKABOO_SIM": "booted"
+      },
+      "timeoutMs": 120000
+    }
+  }
+}

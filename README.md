@@ -31,6 +31,16 @@ https://github.com/user-attachments/assets/24183264-fff2-4e7d-86f7-2775362cf485
 4. Download and launch the [React Native DevTools](https://github.com/LovesWorking/rn-better-dev-tools) desktop app
 5. The app will automatically connect and sync React Query state, storage, and environment variables
 
+## 🖼️ Quick Screenshot Helper
+
+- `npm run screenshot` auto-detects iOS/Android and saves to `./screenshots/sim-<timestamp>.png`.
+- `npm run screenshot:ios` forces iOS Simulator capture.
+- `npm run screenshot:android` captures from Android device/emulator via `adb`.
+
+Requirements:
+- iOS: Xcode Command Line Tools (`xcrun`) and a booted Simulator.
+- Android: Android Platform Tools (`adb`) and a connected device/emulator.
+
 ## 💾 Storage Demo
 
 This example app demonstrates real-time storage monitoring with:
