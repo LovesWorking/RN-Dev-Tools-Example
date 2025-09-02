@@ -27,11 +27,11 @@ export interface GameUICompactStatsProps {
     healthColor?: string;
   };
   // Bottom bar stats
-  bottomStats?: Array<{
+  bottomStats?: {
     label: string;
     value: number | string;
     color?: string;
-  }>;
+  }[];
   // Container style
   style?: ViewStyle;
   // Whether to show only active stats (value > 0)
@@ -129,16 +129,21 @@ export function GameUICompactStats({
               style={[styles.statCard, { borderColor: stat.color + "30" }]}
             >
               <View style={styles.cardContent}>
-                <IconComponent size={12} color={stat.color} />
+                <View style={[styles.iconBadge, { backgroundColor: stat.color + "1A", borderColor: stat.color + "33" }]}>
+                  <IconComponent size={12} color={stat.color} />
+                </View>
                 <View style={styles.cardInfo}>
-                  <Text style={[styles.cardLabel, { color: stat.color }]}>
-                    {stat.label}
-                  </Text>
+                  <Text style={styles.cardLabel}>{stat.label}</Text>
                   <Text style={styles.cardSubtitle}>{stat.subtitle}</Text>
                 </View>
-                <Text style={[styles.statNumber, { color: stat.color }]}>
-                  {stat.value.toString().padStart(2, "0")}
-                </Text>
+                <View style={styles.valueBlock}>
+                  <Text style={[styles.statNumber, { color: stat.color }]}>
+                    {stat.value.toString().padStart(2, "0")}
+                  </Text>
+                  {totalCount ? (
+                    <Text style={styles.percentText}>{Math.round(percentage)}%</Text>
+                  ) : null}
+                </View>
               </View>
               {stat.showBar !== false && totalCount && (
                 <View
@@ -197,7 +202,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: gameUIColors.border + "40",
     overflow: "hidden",
     position: "relative",
   },
@@ -286,10 +291,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   statCard: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: gameUIColors.blackTint2,
     borderRadius: 8,
     borderWidth: 1,
-    padding: 8,
+    borderColor: gameUIColors.border,
+    padding: 10,
     marginBottom: 4,
   },
   cardContent: {
@@ -302,10 +308,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardLabel: {
-    fontSize: 10,
-    fontWeight: "600",
+    fontSize: 11,
+    fontWeight: "700",
     fontFamily: "monospace",
     letterSpacing: 0.5,
+    color: gameUIColors.primary,
   },
   cardSubtitle: {
     fontSize: 8,
@@ -318,6 +325,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "monospace",
     minWidth: 28,
+  },
+  valueBlock: {
+    alignItems: 'flex-end',
+  },
+  percentText: {
+    fontSize: 9,
+    color: gameUIColors.secondary,
+    fontFamily: 'monospace',
   },
   statBar: {
     height: 3,
@@ -335,7 +350,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.05)",
+    borderTopColor: gameUIColors.border + "40",
   },
   bottomStat: {
     flex: 1,
@@ -357,6 +372,14 @@ const styles = StyleSheet.create({
   bottomDivider: {
     width: 1,
     height: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: gameUIColors.border + "40",
+  },
+  iconBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

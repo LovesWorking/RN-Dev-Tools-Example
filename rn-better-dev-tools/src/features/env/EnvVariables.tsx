@@ -6,10 +6,7 @@
 // Re-export all public APIs from this feature
 export * from "./types";
 export * from "./utils/helpers";
-export {
-  EnvVarsContent,
-  useEnvVarsSubtitle,
-} from "./components/EnvVarsContent";
+export { useEnvVarsSubtitle } from "./components/EnvVarsContent";
 export { EnvVarsSection } from "./components/EnvVarsSection";
 export { EnvVarsDetailContent } from "./components/EnvVarsSection";
 export { EnvVarsModal } from "./components/EnvVarsModal";
@@ -18,5 +15,4 @@ export { EnvironmentIndicator } from "./components/EnvironmentIndicator";
 export { useDynamicEnv } from "./hooks/useDynamicEnv";
 
 // Re-export components for backward compatibility
-export { EnvVarsModalContent } from "./components/EnvVarsModalContent";
 export { GameUIEnvContent } from "./components/GameUIEnvContent";
