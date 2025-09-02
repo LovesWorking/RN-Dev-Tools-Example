@@ -21,6 +21,7 @@ import {
   Info,
 } from "rn-better-dev-tools/icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { settingsBus } from "./settingsBus";
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
@@ -67,12 +68,12 @@ const defaultSettings: DevToolsSettings = {
     network: true,
   },
   floatingTools: {
-    query: true,
+    query: false,
     env: true,
-    sentry: true,
-    storage: true,
-    wifi: true,
-    network: true,
+    sentry: false,
+    storage: false,
+    wifi: false,
+    network: false,
     environment: true,
   },
 };
@@ -125,6 +126,8 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
       setSettings(newSettings);
       onSettingsChange?.(newSettings);
+      // Notify listeners (e.g., floating bubble) to refresh immediately
+      settingsBus.emit(newSettings);
     } catch (error) {
       console.error("Failed to save dev tools settings:", error);
     }
@@ -457,6 +460,18 @@ export const useDevToolsSettings = () => {
 
   useEffect(() => {
     loadSettings();
+    // Subscribe to settings changes
+    const unsub = settingsBus.addListener((payload) => {
+      try {
+        if (payload) {
+          setSettings(payload);
+          setLastRefresh(Date.now());
+        }
+      } catch {}
+    });
+    return () => {
+      unsub();
+    };
   }, [loadSettings]);
 
   // Refresh settings when component using this hook becomes visible

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Dimensions } from "react-native";
+import { View, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
@@ -27,6 +27,14 @@ import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./dial/DialDevTools";
 import Dial2 from "./dial/Dial2";
 import { useDevToolsSettings } from "./DevToolsSettingsModal";
+import {
+  ReactQueryIcon,
+  EnvLaptopIcon,
+  StorageStackIcon,
+  WifiCircuitIcon,
+  Globe,
+} from "rn-better-dev-tools/icons";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Re-export types that developers will need
 export type { UserRole } from "./floatingTools";
@@ -178,6 +186,64 @@ export function RnBetterDevToolsBubble({
                 }}
               />
             )}
+
+            {/* Quick-access floating tool icons */}
+            {devToolsSettings.floatingTools.query && !hideQueryButton && (
+              <TouchableOpacity
+                accessibilityLabel="Open React Query DevTools"
+                onPress={handleQueryPress}
+                style={styles.fab}
+              >
+                <ReactQueryIcon size={16} color={gameUIColors.query} glowColor={gameUIColors.query} noBackground />
+              </TouchableOpacity>
+            )}
+
+            {devToolsSettings.floatingTools.env && !hideEnvButton && (
+              <TouchableOpacity
+                accessibilityLabel="Open Environment Tools"
+                onPress={handleEnvPress}
+                style={styles.fab}
+              >
+                <EnvLaptopIcon size={16} color={gameUIColors.env} glowColor={gameUIColors.env} noBackground />
+              </TouchableOpacity>
+            )}
+
+            {devToolsSettings.floatingTools.storage && !hideStorageButton && (
+              <TouchableOpacity
+                accessibilityLabel="Open Storage Tools"
+                onPress={handleStoragePress}
+                style={styles.fab}
+              >
+                <StorageStackIcon size={16} color={gameUIColors.storage} glowColor={gameUIColors.storage} noBackground />
+              </TouchableOpacity>
+            )}
+
+            {devToolsSettings.floatingTools.wifi && !hideWifiToggle && (
+              <TouchableOpacity
+                accessibilityLabel="Toggle WiFi online/offline"
+                onPress={() => setIsWifiEnabled(!isWifiEnabled)}
+                style={styles.fab}
+              >
+                <WifiCircuitIcon
+                  size={16}
+                  color={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
+                  glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
+                  strength={4}
+                  showSlash={!isWifiEnabled}
+                  noBackground
+                />
+              </TouchableOpacity>
+            )}
+
+            {devToolsSettings.floatingTools.network && (
+              <TouchableOpacity
+                accessibilityLabel="Open Network Monitor"
+                onPress={() => setIsNetworkModalOpen(true)}
+                style={styles.fab}
+              >
+                <Globe size={16} color={gameUIColors.network} />
+              </TouchableOpacity>
+            )}
           </FloatingTools>
         </View>
 
@@ -294,3 +360,18 @@ export function RnBetterDevToolsBubble({
     </ErrorBoundary>
   );
 }
+
+const styles = StyleSheet.create({
+  fab: {
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginRight: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 0,
+    minHeight: 0,
+    // No background or border — icon-only buttons
+    backgroundColor: 'transparent',
+  },
+});
