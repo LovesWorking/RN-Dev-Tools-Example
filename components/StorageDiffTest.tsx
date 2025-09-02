@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -147,11 +147,7 @@ export function StorageDiffTest() {
   }, []);
 
   // Load current data on mount
-  useEffect(() => {
-    loadCurrentData();
-  }, [currentKey]);
-
-  const loadCurrentData = async () => {
+  const loadCurrentData = useCallback(async () => {
     try {
       const data = await AsyncStorage.getItem(currentKey);
       if (data) {
@@ -162,9 +158,13 @@ export function StorageDiffTest() {
         setStatus(`No data found for key: ${currentKey}`);
       }
     } catch (error) {
-      setStatus(`Error loading: ${error.message}`);
+      setStatus(`Error loading: ${(error as Error).message}`);
     }
-  };
+  }, [currentKey]);
+
+  useEffect(() => {
+    loadCurrentData();
+  }, [currentKey, loadCurrentData]);
 
   // CREATE Operations
   const createSimple = async () => {
@@ -173,7 +173,7 @@ export function StorageDiffTest() {
       await loadCurrentData();
       setStatus('✅ Created simple object with name, age, active fields');
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -183,7 +183,7 @@ export function StorageDiffTest() {
       await loadCurrentData();
       setStatus('✅ Created nested object with user.profile, user.settings, stats');
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -193,7 +193,7 @@ export function StorageDiffTest() {
       await loadCurrentData();
       setStatus('✅ Created object with arrays: users[], scores[], items[]');
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -226,7 +226,7 @@ export function StorageDiffTest() {
       await AsyncStorage.setItem(currentKey, JSON.stringify(updated));
       await loadCurrentData();
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -267,7 +267,7 @@ export function StorageDiffTest() {
       await AsyncStorage.setItem(currentKey, JSON.stringify(updated));
       await loadCurrentData();
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -299,7 +299,7 @@ export function StorageDiffTest() {
       await AsyncStorage.setItem(currentKey, JSON.stringify(updated));
       await loadCurrentData();
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -337,7 +337,7 @@ export function StorageDiffTest() {
       await AsyncStorage.setItem(currentKey, JSON.stringify(updated));
       await loadCurrentData();
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -350,20 +350,20 @@ export function StorageDiffTest() {
       const updated = { ...currentData };
       
       if (updated.users && Array.isArray(updated.users)) {
-        const removedUsers = updated.users.slice(2);
+        // const removedUsers = updated.users.slice(2); // Unused variable
         updated.users = updated.users.slice(0, 2); // Keep only first 2
         updated.scores = updated.scores.slice(1); // Remove first
         updated.items.pop(); // Remove last
         setStatus(`✅ Removed array items: users[2+], scores[0], items[last] - see DEL badges`);
       } else if (updated.data && Array.isArray(updated.data)) {
-        updated.data = updated.data.filter((_, i) => i % 2 === 0); // Keep even indices
+        updated.data = updated.data.filter((_: any, i: number) => i % 2 === 0); // Keep even indices
         setStatus('✅ Removed odd-indexed items from data[] - see multiple DEL badges');
       }
       
       await AsyncStorage.setItem(currentKey, JSON.stringify(updated));
       await loadCurrentData();
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -373,7 +373,7 @@ export function StorageDiffTest() {
       setCurrentData(null);
       setStatus('✅ Cleared all data - storage key removed completely');
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -424,7 +424,7 @@ export function StorageDiffTest() {
       await loadCurrentData();
       setStatus('✅ Mixed changes: ~4 CHG (yellow) + ~5 NEW (green) badges - expand to explore!');
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -455,7 +455,7 @@ export function StorageDiffTest() {
       await loadCurrentData();
       setStatus('✅ Type changes: All fields show CHG - note color changes (green→orange, etc)');
     } catch (error) {
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${(error as Error).message}`);
     }
   };
 
@@ -637,7 +637,7 @@ export function StorageDiffTest() {
         
         <View style={styles.step}>
           <Text style={styles.stepNumber}>5️⃣</Text>
-          <Text style={styles.stepText}>Look for "Found X changes" section</Text>
+          <Text style={styles.stepText}>Look for {"Found X changes"} section</Text>
         </View>
         
         <View style={styles.step}>

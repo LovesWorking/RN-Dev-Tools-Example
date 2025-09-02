@@ -75,10 +75,13 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     initialSettings || defaultSettings
   );
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
-  const [activeTab, setActiveTab] = useState<'dial' | 'floating'>('dial');
+  const [activeTab, setActiveTab] = useState<"dial" | "floating">("dial");
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const screenHeight = Dimensions.get('window').height;
+  const screenHeight = Dimensions.get("window").height;
+  const screenWidth = Dimensions.get("window").width;
+  const modalHeight = Math.floor(screenHeight * 0.33); // 1/3 of screen height
+  const modalWidth = Math.min(screenWidth - 32, 400); // Modal width with padding
 
   useEffect(() => {
     loadSettings();
@@ -90,7 +93,7 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
         // Migrate old settings format to new format
-        if (parsed.floatingTools && !('query' in parsed.floatingTools)) {
+        if (parsed.floatingTools && !("query" in parsed.floatingTools)) {
           parsed.floatingTools = {
             ...defaultSettings.floatingTools,
             environment: parsed.floatingTools.environment ?? true,
@@ -116,14 +119,16 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
   };
 
   const toggleDialTool = (tool: keyof DevToolsSettings["dialTools"]) => {
-    const currentEnabled = Object.values(settings.dialTools).filter(v => v).length;
+    const currentEnabled = Object.values(settings.dialTools).filter(
+      (v) => v
+    ).length;
     const isCurrentlyEnabled = settings.dialTools[tool];
-    
+
     // If trying to enable and already at 6, don't allow
     if (!isCurrentlyEnabled && currentEnabled >= 6) {
       return; // Could also show a toast/alert here
     }
-    
+
     const newSettings = {
       ...settings,
       dialTools: {
@@ -134,7 +139,9 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     saveSettings(newSettings);
   };
 
-  const toggleFloatingTool = (tool: keyof DevToolsSettings["floatingTools"]) => {
+  const toggleFloatingTool = (
+    tool: keyof DevToolsSettings["floatingTools"]
+  ) => {
     const newSettings = {
       ...settings,
       floatingTools: {
@@ -145,8 +152,10 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     saveSettings(newSettings);
   };
 
+  // Modal is fixed to bottom sheet mode
   const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
+    // Keep it as bottom sheet only
+    setModalMode("bottomSheet");
   }, []);
 
   const getToolColor = (tool: string): string => {
@@ -175,69 +184,90 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     return descriptions[tool] || "";
   };
 
-  // Custom header matching React Query modal style - just tabs, nothing else
+  // Custom header matching React Query modal style - tabs with close button
   const renderHeaderContent = () => (
     <View style={styles.headerContainer}>
       <View style={styles.tabNavigationContainer}>
         <TouchableOpacity
-          onPress={() => setActiveTab('dial')}
+          onPress={() => setActiveTab("dial")}
           style={[
             styles.tabButton,
-            activeTab === 'dial' ? styles.tabButtonActive : styles.tabButtonInactive
+            activeTab === "dial"
+              ? styles.tabButtonActive
+              : styles.tabButtonInactive,
           ]}
         >
           <Text
             style={[
               styles.tabButtonText,
-              activeTab === 'dial' ? styles.tabButtonTextActive : styles.tabButtonTextInactive
+              activeTab === "dial"
+                ? styles.tabButtonTextActive
+                : styles.tabButtonTextInactive,
             ]}
           >
             DIAL MENU
           </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
-          onPress={() => setActiveTab('floating')}
+          onPress={() => setActiveTab("floating")}
           style={[
             styles.tabButton,
-            activeTab === 'floating' ? styles.tabButtonActive : styles.tabButtonInactive
+            activeTab === "floating"
+              ? styles.tabButtonActive
+              : styles.tabButtonInactive,
           ]}
         >
           <Text
             style={[
               styles.tabButtonText,
-              activeTab === 'floating' ? styles.tabButtonTextActive : styles.tabButtonTextInactive
+              activeTab === "floating"
+                ? styles.tabButtonTextActive
+                : styles.tabButtonTextInactive,
             ]}
           >
             FLOATING
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Close button on the right, outside the tabs */}
+      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+        <Text style={styles.closeButtonText}>✕</Text>
+      </TouchableOpacity>
     </View>
   );
 
   const renderContent = () => (
     <View style={styles.container}>
-      <ScrollView 
-        style={styles.scrollContent} 
+      <ScrollView
+        style={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
         {/* Show only the active tab's content */}
-        {activeTab === 'dial' ? (
+        {activeTab === "dial" ? (
           <View style={styles.section}>
             {(() => {
-              const enabledCount = Object.values(settings.dialTools).filter(v => v).length;
+              const enabledCount = Object.values(settings.dialTools).filter(
+                (v) => v
+              ).length;
               const isAtLimit = enabledCount >= 6;
-              
+
               return Object.entries(settings.dialTools).map(([key, value]) => {
                 const isDisabled = !value && isAtLimit;
-                
+
                 return (
                   <TouchableOpacity
                     key={key}
-                    style={[styles.toolCard, isDisabled && styles.toolCardDisabled]}
-                    onPress={() => !isDisabled && toggleDialTool(key as keyof DevToolsSettings["dialTools"])}
+                    style={[
+                      styles.toolCard,
+                      isDisabled && styles.toolCardDisabled,
+                    ]}
+                    onPress={() =>
+                      !isDisabled &&
+                      toggleDialTool(key as keyof DevToolsSettings["dialTools"])
+                    }
                     activeOpacity={isDisabled ? 1 : 0.7}
                   >
                     <View
@@ -248,32 +278,51 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
                           borderLeftWidth: 3,
                           borderLeftColor: `${getToolColor(key)}40`,
                         },
-                        isDisabled && { opacity: 0.5 }
+                        isDisabled && { opacity: 0.5 },
                       ]}
                     >
-                      <View style={[
-                        styles.toolIndicator,
-                        { 
-                          backgroundColor: value ? getToolColor(key) : 'transparent',
-                          borderColor: value ? getToolColor(key) : `${gameUIColors.muted}40`,
-                          shadowColor: value ? getToolColor(key) : 'transparent',
-                          shadowOffset: { width: 0, height: 0 },
-                          shadowOpacity: value ? 0.6 : 0,
-                          shadowRadius: 8,
-                          elevation: value ? 4 : 0,
-                        }
-                      ]} />
-                      
+                      <View
+                        style={[
+                          styles.toolIndicator,
+                          {
+                            backgroundColor: value
+                              ? getToolColor(key)
+                              : "transparent",
+                            borderColor: value
+                              ? getToolColor(key)
+                              : `${gameUIColors.muted}40`,
+                            shadowColor: value
+                              ? getToolColor(key)
+                              : "transparent",
+                            shadowOffset: { width: 0, height: 0 },
+                            shadowOpacity: value ? 0.6 : 0,
+                            shadowRadius: 8,
+                            elevation: value ? 4 : 0,
+                          },
+                        ]}
+                      />
+
                       <View style={styles.toolInfo}>
-                        <Text style={[
-                          styles.toolName,
-                          { color: value ? gameUIColors.primary : gameUIColors.secondary },
-                          isDisabled && { opacity: 0.5 }
-                        ]}>
+                        <Text
+                          style={[
+                            styles.toolName,
+                            {
+                              color: value
+                                ? gameUIColors.primary
+                                : gameUIColors.secondary,
+                            },
+                            isDisabled && { opacity: 0.5 },
+                          ]}
+                        >
                           {key.toUpperCase()}
-                          {isDisabled && ' (MAX 6)'}
+                          {isDisabled && " (MAX 6)"}
                         </Text>
-                        <Text style={[styles.toolDescription, isDisabled && { opacity: 0.5 }]}>
+                        <Text
+                          style={[
+                            styles.toolDescription,
+                            isDisabled && { opacity: 0.5 },
+                          ]}
+                        >
                           {getToolDescription(key)}
                         </Text>
                       </View>
@@ -281,11 +330,17 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
                       <Switch
                         value={value}
                         disabled={isDisabled}
-                        onValueChange={() => toggleDialTool(key as keyof DevToolsSettings["dialTools"])}
-                        thumbColor={value ? getToolColor(key) : gameUIColors.muted}
-                        trackColor={{ 
+                        onValueChange={() =>
+                          toggleDialTool(
+                            key as keyof DevToolsSettings["dialTools"]
+                          )
+                        }
+                        thumbColor={
+                          value ? getToolColor(key) : gameUIColors.muted
+                        }
+                        trackColor={{
                           false: `${gameUIColors.muted}30`,
-                          true: `${getToolColor(key)}40`
+                          true: `${getToolColor(key)}40`,
                         }}
                         ios_backgroundColor={`${gameUIColors.muted}30`}
                         style={[styles.switch, isDisabled && { opacity: 0.5 }]}
@@ -299,59 +354,81 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
         ) : (
           <View style={styles.section}>
             {Object.entries(settings.floatingTools).map(([key, value]) => (
-            <TouchableOpacity
-              key={key}
-              style={styles.toolCard}
-              onPress={() => toggleFloatingTool(key as keyof DevToolsSettings["floatingTools"])}
-              activeOpacity={0.7}
-            >
-              <View
-                style={[
-                  styles.cardGradient,
-                  value && {
-                    backgroundColor: `${getToolColor(key)}08`,
-                    borderLeftWidth: 3,
-                    borderLeftColor: `${getToolColor(key)}40`,
-                  }
-                ]}
+              <TouchableOpacity
+                key={key}
+                style={styles.toolCard}
+                onPress={() =>
+                  toggleFloatingTool(
+                    key as keyof DevToolsSettings["floatingTools"]
+                  )
+                }
+                activeOpacity={0.7}
               >
-                <View style={[
-                  styles.toolIndicator,
-                  { 
-                    backgroundColor: value ? getToolColor(key) : 'transparent',
-                    borderColor: value ? getToolColor(key) : `${gameUIColors.muted}40`,
-                    shadowColor: value ? getToolColor(key) : 'transparent',
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: value ? 0.6 : 0,
-                    shadowRadius: 8,
-                    elevation: value ? 4 : 0,
-                  }
-                ]} />
-                
-                <View style={styles.toolInfo}>
-                  <Text style={[
-                    styles.toolName,
-                    { color: value ? gameUIColors.primary : gameUIColors.secondary }
-                  ]}>
-                    {key.toUpperCase().replace('_', ' ')}
-                  </Text>
-                  <Text style={styles.toolDescription}>{getToolDescription(key)}</Text>
-                </View>
+                <View
+                  style={[
+                    styles.cardGradient,
+                    value && {
+                      backgroundColor: `${getToolColor(key)}08`,
+                      borderLeftWidth: 3,
+                      borderLeftColor: `${getToolColor(key)}40`,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.toolIndicator,
+                      {
+                        backgroundColor: value
+                          ? getToolColor(key)
+                          : "transparent",
+                        borderColor: value
+                          ? getToolColor(key)
+                          : `${gameUIColors.muted}40`,
+                        shadowColor: value ? getToolColor(key) : "transparent",
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: value ? 0.6 : 0,
+                        shadowRadius: 8,
+                        elevation: value ? 4 : 0,
+                      },
+                    ]}
+                  />
 
-                <Switch
-                  value={value}
-                  onValueChange={() => toggleFloatingTool(key as keyof DevToolsSettings["floatingTools"])}
-                  thumbColor={value ? getToolColor(key) : gameUIColors.muted}
-                  trackColor={{ 
-                    false: `${gameUIColors.muted}30`,
-                    true: `${getToolColor(key)}40`
-                  }}
-                  ios_backgroundColor={`${gameUIColors.muted}30`}
-                  style={styles.switch}
-                />
-              </View>
-            </TouchableOpacity>
-          ))}
+                  <View style={styles.toolInfo}>
+                    <Text
+                      style={[
+                        styles.toolName,
+                        {
+                          color: value
+                            ? gameUIColors.primary
+                            : gameUIColors.secondary,
+                        },
+                      ]}
+                    >
+                      {key.toUpperCase().replace("_", " ")}
+                    </Text>
+                    <Text style={styles.toolDescription}>
+                      {getToolDescription(key)}
+                    </Text>
+                  </View>
+
+                  <Switch
+                    value={value}
+                    onValueChange={() =>
+                      toggleFloatingTool(
+                        key as keyof DevToolsSettings["floatingTools"]
+                      )
+                    }
+                    thumbColor={value ? getToolColor(key) : gameUIColors.muted}
+                    trackColor={{
+                      false: `${gameUIColors.muted}30`,
+                      true: `${getToolColor(key)}40`,
+                    }}
+                    ios_backgroundColor={`${gameUIColors.muted}30`}
+                    style={styles.switch}
+                  />
+                </View>
+              </TouchableOpacity>
+            ))}
           </View>
         )}
       </ScrollView>
@@ -363,16 +440,20 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
       visible={visible}
       onClose={onClose}
       header={{
-        showToggleButton: true,
+        showToggleButton: false, // Hide toggle button since we're using bottom sheet only
         customContent: renderHeaderContent(),
       }}
-      initialMode={modalMode}
+      initialMode="bottomSheet"
       onModeChange={handleModeChange}
       persistenceKey="devtools_settings"
-      enablePersistence={true}
-      minHeight={300}
+      enablePersistence={false} // Disable persistence for consistent behavior
+      // minHeight removed to allow drag to close
       maxHeight={screenHeight - insets.top} // Allow resizing up to status bar
-      initialHeight={500}
+      initialHeight={modalHeight}
+      initialFloatingPosition={{
+        x: (screenWidth - modalWidth) / 2, // Center horizontally
+        y: insets.top + 20, // Position at top with safe area padding
+      }}
       enableGlitchEffects={theme.name === "cyberpunk"}
     >
       {renderContent()}
@@ -391,7 +472,7 @@ export const useDevToolsSettings = () => {
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
         // Migrate old settings format to new format
-        if (parsed.floatingTools && !('query' in parsed.floatingTools)) {
+        if (parsed.floatingTools && !("query" in parsed.floatingTools)) {
           parsed.floatingTools = {
             ...defaultSettings.floatingTools,
             environment: parsed.floatingTools.environment ?? true,
@@ -427,14 +508,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: gameUIColors.background,
   },
-  
+
   // Header styles matching React Query modal exactly
   headerContainer: {
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 12,
   },
   tabNavigationContainer: {
+    flex: 1,
     flexDirection: "row",
     backgroundColor: gameUIColors.panel,
     borderRadius: 6,
@@ -473,7 +557,7 @@ const styles = StyleSheet.create({
   tabButtonTextInactive: {
     color: gameUIColors.muted,
   },
-  
+
   // Scroll content
   scrollContent: {
     flex: 1,
@@ -482,15 +566,15 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 24,
   },
-  
+
   // Sections
   section: {
     marginHorizontal: 16,
     marginBottom: 24,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
     paddingHorizontal: 4,
   },
@@ -509,7 +593,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: gameUIColors.primary,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 1.2,
   },
   sectionCount: {
@@ -517,12 +601,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     opacity: 0.7,
   },
-  
+
   // Tool Cards
   toolCard: {
     marginBottom: 10,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
     backgroundColor: gameUIColors.blackTint2,
     borderWidth: 1,
     borderColor: `${gameUIColors.border}20`,
@@ -531,8 +615,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   cardGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 14,
   },
   toolIndicator: {
@@ -547,7 +631,7 @@ const styles = StyleSheet.create({
   },
   toolName: {
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.8,
     marginBottom: 3,
   },
@@ -558,5 +642,20 @@ const styles = StyleSheet.create({
   },
   switch: {
     transform: [{ scale: 0.9 }],
+  },
+  closeButton: {
+    marginLeft: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: gameUIColors.error + "1A",
+    borderWidth: 1,
+    borderColor: gameUIColors.error + "33",
+  },
+  closeButtonText: {
+    color: gameUIColors.error,
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });

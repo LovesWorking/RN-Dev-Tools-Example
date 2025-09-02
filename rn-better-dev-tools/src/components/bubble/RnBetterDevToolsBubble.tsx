@@ -68,7 +68,7 @@ export function RnBetterDevToolsBubble({
   hideStorageButton,
   onOpenPerformanceTest,
 }: RnBetterDevToolsBubbleProps) {
-  const [showFloatingMenu, setShowFloatingMenu] = useState(true); // Temporarily true for testing
+  const [showFloatingMenu, setShowFloatingMenu] = useState(false);
   const [isWifiEnabled, setIsWifiEnabled] = useState(true);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const { settings: devToolsSettings, refreshSettings } = useDevToolsSettings();

@@ -38,7 +38,10 @@ import {
   isListening as checkIsListening,
 } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
-import { StorageEventDetailContent } from "./StorageEventDetailContent";
+import {
+  StorageEventDetailContent,
+  StorageEventDetailFooter,
+} from "./StorageEventDetailContent";
 import { StorageFilterView } from "./StorageFilterView";
 import { ValueTypeBadge } from "@/rn-better-dev-tools/src/shared/ui/components/ValueTypeBadge";
 
@@ -82,8 +85,9 @@ export function StorageModalWithTabs({
   // Event Listener state
   const [events, setEvents] = useState<AsyncStorageEvent[]>([]);
   const [isListening, setIsListening] = useState(false);
-  const [selectedConversation, setSelectedConversation] =
-    useState<StorageKeyConversation | null>(null);
+  const [selectedConversationKey, setSelectedConversationKey] = useState<
+    string | null
+  >(null);
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const [detailTab, setDetailTab] = useState<"current" | "diff">("current");
@@ -180,12 +184,12 @@ export function StorageModalWithTabs({
 
   const handleClearEvents = useCallback(() => {
     setEvents([]);
-    setSelectedConversation(null);
+    setSelectedConversationKey(null);
   }, []);
 
   const handleConversationPress = useCallback(
     (conversation: StorageKeyConversation) => {
-      setSelectedConversation(conversation);
+      setSelectedConversationKey(conversation.key);
       setSelectedEventIndex(0);
       setDetailTab("current");
     },
@@ -296,6 +300,12 @@ export function StorageModalWithTabs({
     );
   }, [events, ignoredPatterns]);
 
+  // Get the live selected conversation from the current conversations array
+  const selectedConversation = useMemo(() => {
+    if (!selectedConversationKey) return null;
+    return conversations.find((c) => c.key === selectedConversationKey) || null;
+  }, [selectedConversationKey, conversations]);
+
   const getActionColor = (action: string) => {
     switch (action) {
       case "setItem":
@@ -392,34 +402,17 @@ export function StorageModalWithTabs({
 
     // Show detail view with tabs
     if (selectedConversation) {
-      const keyStats = selectedConversation.events.length;
-      const valueChanges = selectedConversation.events.filter(
-        (e) =>
-          e.action === "setItem" ||
-          e.action === "mergeItem" ||
-          e.action === "removeItem"
-      ).length;
-
       return (
         <View style={styles.headerContainer}>
-          <View style={styles.headerTopRow}>
-            <BackButton
-              onPress={() => {
-                setSelectedConversation(null);
-                setSelectedEventIndex(0);
-                setDetailTab("current");
-              }}
-              color={gameUIColors.primary}
-              size={16}
-            />
-
-            <View style={styles.keyNameContainer}>
-              <HardDrive size={14} color={gameUIColors.storage} />
-              <Text style={styles.keyNameText} numberOfLines={1}>
-                {selectedConversation.key}
-              </Text>
-            </View>
-          </View>
+          <BackButton
+            onPress={() => {
+              setSelectedConversationKey(null);
+              setSelectedEventIndex(0);
+              setDetailTab("current");
+            }}
+            color={gameUIColors.primary}
+            size={16}
+          />
 
           <View style={styles.tabNavigationContainer}>
             <TouchableOpacity
@@ -607,14 +600,21 @@ export function StorageModalWithTabs({
     // Events tab content
     if (selectedConversation) {
       return (
-        <StorageEventDetailContent
-          conversation={selectedConversation}
-          activeTab={detailTab}
-          selectedEventIndex={selectedEventIndex}
-          onEventIndexChange={setSelectedEventIndex}
-          ignoredPatterns={ignoredPatterns}
-          onTogglePattern={handleTogglePattern}
-        />
+        <View style={styles.contentWrapper}>
+          <View style={styles.keyNameHeader}>
+            <HardDrive size={16} color={gameUIColors.storage} />
+            <Text style={styles.keyNameHeaderText} numberOfLines={1}>
+              {selectedConversation.key}
+            </Text>
+          </View>
+          <StorageEventDetailContent
+            conversation={selectedConversation}
+            activeTab={detailTab}
+            selectedEventIndex={selectedEventIndex}
+            onEventIndexChange={setSelectedEventIndex}
+            disableInternalFooter={true}
+          />
+        </View>
       );
     }
 
@@ -662,6 +662,16 @@ export function StorageModalWithTabs({
     );
   };
 
+  const footerNode = selectedConversation && selectedConversation.events.length > 1
+    ? (
+        <StorageEventDetailFooter
+          conversation={selectedConversation}
+          selectedEventIndex={selectedEventIndex}
+          onEventIndexChange={setSelectedEventIndex}
+        />
+      )
+    : null;
+
   return (
     <ClaudeModal60FPSClean
       visible={visible}
@@ -676,6 +686,8 @@ export function StorageModalWithTabs({
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
       styles={{}}
+      footer={footerNode}
+      footerHeight={footerNode ? 68 : 0}
     >
       {renderContent()}
     </ClaudeModal60FPSClean>
@@ -918,6 +930,30 @@ const styles = StyleSheet.create({
   keyNameText: {
     flex: 1,
     fontSize: 13,
+    fontWeight: "600",
+    color: gameUIColors.storage,
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+  },
+
+  contentWrapper: {
+    flex: 1,
+  },
+
+  keyNameHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: gameUIColors.panel + "40",
+    borderBottomWidth: 1,
+    borderBottomColor: gameUIColors.border + "20",
+  },
+
+  keyNameHeaderText: {
+    flex: 1,
+    fontSize: 14,
     fontWeight: "600",
     color: gameUIColors.storage,
     fontFamily: "monospace",

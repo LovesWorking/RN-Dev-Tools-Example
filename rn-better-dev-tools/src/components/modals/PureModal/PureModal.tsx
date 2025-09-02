@@ -665,16 +665,20 @@ export const PureModal: React.FC<PureModalProps> = ({
     // Save state after mode change
     if (enablePersistence && persistenceKey) {
       setTimeout(() => {
-        const state = {
-          mode: newMode,
-          position: { x: dimensions.left, y: dimensions.top },
-          size: { width: dimensions.width, height: dimensions.height },
-          bottomSheetHeight: panelHeight,
+        const state: PersistedModalState = {
+          mode: newMode as ModalMode,
+          dimensions: {
+            width: dimensions.width,
+            height: dimensions.height,
+            top: dimensions.top,
+            left: dimensions.left,
+          },
+          panelHeight: panelHeight,
         };
-        storageManager.saveState(persistenceKey, state);
+        ModalStorage.save(persistenceKey, state, storageAdapter);
       }, 100);
     }
-  }, [currentMode, onModeChange, enablePersistence, persistenceKey, dimensions, panelHeight]);
+  }, [currentMode, onModeChange, enablePersistence, persistenceKey, dimensions, panelHeight, storageAdapter]);
 
   // Visibility animations
   useEffect(() => {

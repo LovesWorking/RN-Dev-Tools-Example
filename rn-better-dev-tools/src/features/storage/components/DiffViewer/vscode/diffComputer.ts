@@ -21,6 +21,7 @@ export interface LineRange {
   start: number;
   end: number;
   isEmpty: boolean;
+  lineCount: number;
   
   toRange(): { start: number; end: number };
   contains(line: number): boolean;

@@ -125,6 +125,10 @@ interface ClaudeModalProps {
   persistenceKey?: string;
   enablePersistence?: boolean;
   enableGlitchEffects?: boolean;
+  initialFloatingPosition?: { x?: number; y?: number }; // Initial position for floating mode
+  // New: Optional sticky footer rendered outside internal ScrollView
+  footer?: React.ReactNode;
+  footerHeight?: number; // Used to pad ScrollView content bottom
 }
 
 // ============================================================================
@@ -392,6 +396,9 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
   onModeChange,
   persistenceKey,
   enablePersistence = true,
+  initialFloatingPosition,
+  footer,
+  footerHeight = 0,
 }) => {
   const insets = useSafeAreaInsets();
   const [isStateLoaded, setIsStateLoaded] = useState(!enablePersistence);
@@ -536,11 +543,11 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     currentDimensionsRef.current = dimensions;
   }, [dimensions]);
 
-  // Floating mode animations
+  // Floating mode animations - use initialFloatingPosition if provided
   const floatingPosition = useRef(
     new Animated.ValueXY({
-      x: (SCREEN.width - FLOATING_WIDTH) / 2,
-      y: (SCREEN.height - FLOATING_HEIGHT) / 2,
+      x: initialFloatingPosition?.x ?? (SCREEN.width - FLOATING_WIDTH) / 2,
+      y: initialFloatingPosition?.y ?? (SCREEN.height - FLOATING_HEIGHT) / 2,
     })
   ).current;
   const floatingScale = useRef(new Animated.Value(0)).current;
@@ -1081,12 +1088,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
           <ScrollView
             style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: footerHeight as number }}
             showsVerticalScrollIndicator={true}
             nestedScrollEnabled={true}
           >
             {children}
           </ScrollView>
+          {footer ? (
+            <View style={footerStyles.footerContainer}>{footer}</View>
+          ) : null}
         </View>
 
         {/* Corner resize handles - positioned absolutely on the outer container */}
@@ -1165,12 +1175,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: footerHeight as number }}
               showsVerticalScrollIndicator={true}
               nestedScrollEnabled={true}
             >
               {children}
             </ScrollView>
+            {footer ? (
+              <View style={footerStyles.footerContainer}>{footer}</View>
+            ) : null}
           </View>
         </Animated.View>
       </Animated.View>
@@ -1362,6 +1375,7 @@ const styles = StyleSheet.create({
     backgroundColor: gameUIColors.background,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
+    overflow: "hidden",
   },
   cornerHandle: {
     position: "absolute",
@@ -1389,6 +1403,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 8,
+  },
+});
+
+// Footer container styles (absolute within modal content area)
+const footerStyles = StyleSheet.create({
+  footerContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: gameUIColors.background,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
 });
 

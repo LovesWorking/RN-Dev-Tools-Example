@@ -243,8 +243,8 @@ export function ThemedSplitView({
     <View style={[dynamicStyles.container, theme.glowColor && {
       shadowColor: theme.glowColor,
       shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: theme.neonIntensity === 'high' ? 0.5 : theme.neonIntensity === 'medium' ? 0.3 : 0.1,
-      shadowRadius: theme.neonIntensity === 'high' ? 10 : theme.neonIntensity === 'medium' ? 5 : 2,
+      shadowOpacity: theme.neonIntensity && theme.neonIntensity > 0.7 ? 0.5 : theme.neonIntensity && theme.neonIntensity > 0.3 ? 0.3 : 0.1,
+      shadowRadius: theme.neonIntensity && theme.neonIntensity > 0.7 ? 10 : theme.neonIntensity && theme.neonIntensity > 0.3 ? 5 : 2,
     }]}>
       {showThemeName && (
         <View style={dynamicStyles.themeBadge}>

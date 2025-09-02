@@ -204,7 +204,7 @@ export default function PureModalExample() {
           </View>
 
           {/* Features List */}
-          <Text style={[styles.sectionTitle, { color: getTheme().colors.text }]}>
+          <Text style={[styles.featureSectionTitle, { color: getTheme().colors.text }]}>
             Features
           </Text>
           <View style={styles.featureList}>
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   
   // Features Section
-  sectionTitle: {
+  featureSectionTitle: {
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 12,

@@ -22,7 +22,11 @@ import {
   getThemedDialColors,
   THEME_ACCENT,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { DevToolsSettingsModal, type DevToolsSettings, useDevToolsSettings } from "../DevToolsSettingsModal";
+import {
+  DevToolsSettingsModal,
+  type DevToolsSettings,
+  useDevToolsSettings,
+} from "../DevToolsSettingsModal";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
@@ -66,19 +70,20 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const [isSettingsModalOpen, setIsSettingsModalOpen] = React.useState(false);
   const { settings: hookSettings, refreshSettings } = useDevToolsSettings();
   // Initialize with external settings if provided, otherwise use hook settings
-  const [localSettings, setLocalSettings] = React.useState(externalSettings || hookSettings);
-  
+  const [localSettings, setLocalSettings] = React.useState(
+    externalSettings || hookSettings
+  );
+
   // Always use localSettings (which can be updated by the modal)
   const settings = localSettings;
-  
-  
+
   // Update local settings when external settings change
   React.useEffect(() => {
     if (externalSettings) {
       setLocalSettings(externalSettings);
     }
   }, [externalSettings]);
-  
+
   // Update local settings when hook settings change (if no external settings)
   React.useEffect(() => {
     if (!externalSettings) {
@@ -191,7 +196,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     if (!settings) {
       return icon; // If no settings, show all icons
     }
-    
+
     let isEnabled = true;
     switch (icon.name) {
       case "Query":
@@ -213,23 +218,26 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         isEnabled = settings.dialTools.network;
         break;
     }
-    
+
     console.log(`[DialDevTools] Icon ${icon.name} enabled: ${isEnabled}`);
-    
+
     // Return empty spot for disabled tools
     if (!isEnabled) {
       return {
         name: `empty-${icon.name}`,
         icon: null,
-        color: 'transparent',
+        color: "transparent",
         onPress: () => {}, // No-op for empty spots
       };
     }
-    
+
     return icon;
   });
-  
-  console.log('[DialDevTools] Final icons array:', icons.map(i => i.name));
+
+  console.log(
+    "[DialDevTools] Final icons array:",
+    icons.map((i) => i.name)
+  );
 
   // Initialize animations on mount
   useEffect(() => {
@@ -560,24 +568,42 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
               <Animated.View style={[styles.button, pulseAnimatedStyle]}>
                 <Pressable
                   onPress={() => {
-                    // Open internal settings modal
-                    setIsSettingsModalOpen(true);
-                    // Also call external handler if provided
-                    if (onSettingsPress) {
-                      onSettingsPress();
+                    if (isSettingsModalOpen) {
+                      // Close settings modal
+                      setIsSettingsModalOpen(false);
+                    } else {
+                      // Open internal settings modal
+                      setIsSettingsModalOpen(true);
+                      // Also call external handler if provided
+                      if (onSettingsPress) {
+                        onSettingsPress();
+                      }
                     }
                   }}
                   style={styles.buttonPressable}
                 >
-                  <Text style={styles.centerText}>RN BETTER</Text>
-                  <Text style={styles.centerText}>DEV TOOLS</Text>
+                  {isSettingsModalOpen ? (
+                    <>
+                      <Text style={[styles.centerText, styles.closeTextTop]}>
+                        CLOSE
+                      </Text>
+                      <Text style={[styles.centerText, styles.closeTextBottom]}>
+                        SETTINGS
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.centerText}>RN BETTER</Text>
+                      <Text style={styles.centerText}>DEV TOOLS</Text>
+                    </>
+                  )}
                 </Pressable>
               </Animated.View>
             </View>
           </View>
         </Animated.View>
       </Animated.View>
-      
+
       {/* Settings Modal - Part of dial component for proper z-index */}
       <DevToolsSettingsModal
         visible={isSettingsModalOpen}
@@ -586,10 +612,15 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           refreshSettings(); // Refresh from storage
         }}
         onSettingsChange={(newSettings) => {
-          console.log('[DialDevTools] onSettingsChange called with:', newSettings);
+          console.log(
+            "[DialDevTools] onSettingsChange called with:",
+            newSettings
+          );
           // Immediately update local settings for instant feedback
           setLocalSettings(newSettings);
-          console.log('[DialDevTools] Called setLocalSettings with new settings');
+          console.log(
+            "[DialDevTools] Called setLocalSettings with new settings"
+          );
         }}
       />
     </View>
@@ -750,5 +781,11 @@ const styles = StyleSheet.create({
     textShadowColor: gameUIColors.info,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 4,
+  },
+  closeTextTop: {
+    marginBottom: -2,
+  },
+  closeTextBottom: {
+    marginTop: -2,
   },
 });

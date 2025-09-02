@@ -47,6 +47,11 @@ export interface DiffTheme {
   // Borders and dividers
   borderColor: string;
   dividerColor: string;
+  
+  // Additional theme properties
+  glowColor?: string;
+  neonIntensity?: number;
+  accentColor?: string;
 
   // Summary bar
   summaryBackground: string;
