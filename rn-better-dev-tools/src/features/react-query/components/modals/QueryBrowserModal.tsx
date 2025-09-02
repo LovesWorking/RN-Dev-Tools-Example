@@ -63,6 +63,15 @@ export function QueryBrowserModal({
       activeTab="queries"
       onTabChange={onTabChange}
       onBack={() => onQuerySelect(undefined)}
+      onClose={onClose}
+    />
+  );
+
+  const footerNode = (
+    <QueryBrowserFooter
+      activeFilter={activeFilter}
+      onFilterChange={setActiveFilter}
+      isFloatingMode={modalMode === "floating"}
     />
   );
 
@@ -80,17 +89,14 @@ export function QueryBrowserModal({
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
       styles={{}}
+      footer={footerNode}
+      footerHeight={56}
     >
       <View style={{ flex: 1 }}>
         <QueryBrowserMode
           selectedQuery={selectedQuery}
           onQuerySelect={onQuerySelect}
           activeFilter={activeFilter}
-        />
-        <QueryBrowserFooter
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          isFloatingMode={modalMode === "floating"}
         />
       </View>
     </ClaudeModal60FPSClean>

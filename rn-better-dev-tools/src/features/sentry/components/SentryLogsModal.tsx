@@ -5,6 +5,7 @@ import ClaudeModal60FPSClean, {
 import { SentryLogsContent } from "./SentryLogsSection";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
+import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 import {
   ConsoleTransportEntry,
   LogType,
@@ -110,6 +111,9 @@ export function SentryLogsModal({
           >
             {selectedEntry ? "Event Details" : "Filters"}
           </Text>
+          <View style={{ marginLeft: "auto" }}>
+            <CloseButton onPress={onClose} />
+          </View>
         </View>
       );
     }
@@ -185,6 +189,7 @@ export function SentryLogsModal({
           >
             <Trash size={16} color={gameUIColors.error} />
           </TouchableOpacity>
+          <CloseButton onPress={onClose} />
         </View>
       </View>
     );

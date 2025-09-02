@@ -117,6 +117,15 @@ export function MutationBrowserModal({
       activeTab="mutations"
       onTabChange={onTabChange}
       onBack={() => onMutationSelect(undefined)}
+      onClose={onClose}
+    />
+  );
+
+  const footerNode = (
+    <MutationBrowserFooter
+      activeFilter={activeFilter}
+      onFilterChange={setActiveFilter}
+      modalMode={modalMode}
     />
   );
 
@@ -134,6 +143,8 @@ export function MutationBrowserModal({
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
       styles={{}}
+      footer={footerNode}
+      footerHeight={56}
     >
       <View style={{ flex: 1 }}>
         <View {...panResponder.panHandlers} style={{ flex: 1 }}>
@@ -148,11 +159,6 @@ export function MutationBrowserModal({
             activeFilter={activeFilter}
           />
         </View>
-        <MutationBrowserFooter
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          modalMode={modalMode}
-        />
       </View>
     </ClaudeModal60FPSClean>
   );

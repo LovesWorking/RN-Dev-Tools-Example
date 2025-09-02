@@ -5,6 +5,7 @@ import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { View, Text } from "react-native";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
+import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useState, useCallback } from "react";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -106,6 +107,9 @@ export function EnvVarsModal({
             ? "VALIDATE & DEBUG ENV VARS"
             : "View and validate env configuration"}
         </Text>
+      </View>
+      <View style={{ marginLeft: "auto", marginRight: 8 }}>
+        <CloseButton onPress={onClose} />
       </View>
       {theme.name === "cyberpunk" && (
         <View

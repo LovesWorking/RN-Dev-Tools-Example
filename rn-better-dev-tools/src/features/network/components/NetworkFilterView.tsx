@@ -44,6 +44,8 @@ interface NetworkFilterViewProps {
   onAddDomain?: (domain: string) => void;
   onToggleUrl?: (url: string) => void;
   onAddUrl?: (url: string) => void;
+  // Optional external control of active tab; if provided, internal tabs are hidden
+  activeTab?: TabType;
 }
 
 type TabType = "filters" | "domains" | "urls";
@@ -76,8 +78,12 @@ export function NetworkFilterView({
   onAddDomain = () => {},
   onToggleUrl = () => {},
   onAddUrl = () => {},
+  activeTab: controlledActiveTab,
 }: NetworkFilterViewProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("filters");
+  const [internalActiveTab, setInternalActiveTab] = useState<TabType>(
+    "filters",
+  );
+  const activeTab = controlledActiveTab ?? internalActiveTab;
   const [showAddInput, setShowAddInput] = useState(false);
   const [newPattern, setNewPattern] = useState("");
 
@@ -249,7 +255,7 @@ export function NetworkFilterView({
   const renderTabs = () => (
     <View style={styles.tabContainer}>
       <TouchableOpacity
-        onPress={() => setActiveTab("filters")}
+        onPress={() => setInternalActiveTab("filters")}
         style={[
           styles.tabButton,
           activeTab === "filters"
@@ -274,7 +280,7 @@ export function NetworkFilterView({
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => setActiveTab("domains")}
+        onPress={() => setInternalActiveTab("domains")}
         style={[
           styles.tabButton,
           activeTab === "domains"
@@ -304,7 +310,7 @@ export function NetworkFilterView({
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => setActiveTab("urls")}
+        onPress={() => setInternalActiveTab("urls")}
         style={[
           styles.tabButton,
           activeTab === "urls"
@@ -665,7 +671,7 @@ export function NetworkFilterView({
 
   return (
     <View style={styles.container}>
-      {renderTabs()}
+      {controlledActiveTab == null && renderTabs()}
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {activeTab === "filters" && renderFiltersContent()}

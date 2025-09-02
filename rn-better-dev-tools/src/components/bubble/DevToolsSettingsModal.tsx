@@ -8,6 +8,18 @@ import {
   Switch,
   Dimensions,
 } from "react-native";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  ReactQueryIcon,
+  EnvLaptopIcon,
+  SentryBugIcon,
+  StorageStackIcon,
+  WifiCircuitIcon,
+  Globe,
+  Info,
+} from "rn-better-dev-tools/icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ClaudeModal60FPSClean, {
   type ModalMode,
@@ -166,7 +178,7 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
       storage: gameUIColors.storage,
       wifi: gameUIColors.network,
       network: gameUIColors.network,
-      environment: gameUIColors.info,
+      environment: gameUIColors.env,
     };
     return colors[tool] || gameUIColors.info;
   };
@@ -182,6 +194,117 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
       environment: "Environment badge indicator",
     };
     return descriptions[tool] || "";
+  };
+
+  // Glass + Neon Edge card renderer (variant 1 from showcase)
+  const renderToolCard = (
+    keyName: string,
+    value: boolean,
+    disabled: boolean,
+    onToggle: () => void
+  ) => {
+    const color = getToolColor(keyName);
+    const getToolIcon = (tool: string) => {
+      switch (tool) {
+        case "query":
+          return (
+            <ReactQueryIcon size={16} color={color} glowColor={color} noBackground />
+          );
+        case "env":
+          return <EnvLaptopIcon size={16} color={color} glowColor={color} noBackground />;
+        case "sentry":
+          return <SentryBugIcon size={16} color={color} glowColor={color} noBackground />;
+        case "storage":
+          return <StorageStackIcon size={16} color={color} glowColor={color} noBackground />;
+        case "wifi":
+          return <WifiCircuitIcon size={16} color={color} glowColor={color} strength={4} noBackground />;
+        case "network":
+          return <Globe size={16} color={color} />;
+        case "environment":
+          return <Info size={16} color={color} />;
+        default:
+          return <Info size={16} color={color} />;
+      }
+    };
+
+    return (
+      <TouchableOpacity
+        key={keyName}
+        activeOpacity={disabled ? 1 : 0.85}
+        onPress={() => !disabled && onToggle()}
+        style={{ marginBottom: 10, opacity: disabled ? 0.6 : 1 }}
+      >
+        <View
+          style={[
+            styles.glassCard,
+            {
+              borderColor: `${color}40`,
+              shadowColor: color,
+              shadowOpacity: 0.2,
+              shadowRadius: 6,
+              shadowOffset: { width: 0, height: 0 },
+            },
+          ]}
+        >
+          <View style={styles.glassCardInner}>
+            {/* Icon in colored circle */}
+            <View
+              style={[
+                styles.iconCircle,
+                {
+                  backgroundColor: `${color}26`,
+                  borderColor: `${color}66`,
+                },
+              ]}
+            >
+              {getToolIcon(keyName)}
+            </View>
+
+            {/* Title and description */}
+            <View style={styles.toolInfo}>
+              <Text style={styles.toolName}>
+                {keyName.toUpperCase().replace("_", " ")}
+                {disabled ? " (MAX 6)" : ""}
+              </Text>
+              <Text style={styles.toolDescription} numberOfLines={1}>
+                {getToolDescription(keyName)}
+              </Text>
+            </View>
+
+            {/* Pill toggle button */}
+            <TouchableOpacity
+              onPress={onToggle}
+              disabled={disabled}
+              activeOpacity={0.8}
+              style={[
+                styles.pillToggle,
+                {
+                  backgroundColor: value ? `${color}33` : "#1b2334",
+                  borderColor: value ? `${color}88` : "#2a3550",
+                  shadowColor: value ? color : "transparent",
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: value ? 0.4 : 0,
+                  shadowRadius: value ? 8 : 0,
+                },
+                disabled && { opacity: 0.5 },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.pillToggleText,
+                  { color: value ? color : "#8CA2C8" },
+                ]}
+              >
+                {value ? "ON" : "OFF"}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Chevron */}
+            <Ionicons name="chevron-forward" size={18} color="#7F91B2" />
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   // Custom header matching React Query modal style - tabs with close button
@@ -256,179 +379,21 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
 
               return Object.entries(settings.dialTools).map(([key, value]) => {
                 const isDisabled = !value && isAtLimit;
-
-                return (
-                  <TouchableOpacity
-                    key={key}
-                    style={[
-                      styles.toolCard,
-                      isDisabled && styles.toolCardDisabled,
-                    ]}
-                    onPress={() =>
-                      !isDisabled &&
-                      toggleDialTool(key as keyof DevToolsSettings["dialTools"])
-                    }
-                    activeOpacity={isDisabled ? 1 : 0.7}
-                  >
-                    <View
-                      style={[
-                        styles.cardGradient,
-                        value && {
-                          backgroundColor: `${getToolColor(key)}08`,
-                          borderLeftWidth: 3,
-                          borderLeftColor: `${getToolColor(key)}40`,
-                        },
-                        isDisabled && { opacity: 0.5 },
-                      ]}
-                    >
-                      <View
-                        style={[
-                          styles.toolIndicator,
-                          {
-                            backgroundColor: value
-                              ? getToolColor(key)
-                              : "transparent",
-                            borderColor: value
-                              ? getToolColor(key)
-                              : `${gameUIColors.muted}40`,
-                            shadowColor: value
-                              ? getToolColor(key)
-                              : "transparent",
-                            shadowOffset: { width: 0, height: 0 },
-                            shadowOpacity: value ? 0.6 : 0,
-                            shadowRadius: 8,
-                            elevation: value ? 4 : 0,
-                          },
-                        ]}
-                      />
-
-                      <View style={styles.toolInfo}>
-                        <Text
-                          style={[
-                            styles.toolName,
-                            {
-                              color: value
-                                ? gameUIColors.primary
-                                : gameUIColors.secondary,
-                            },
-                            isDisabled && { opacity: 0.5 },
-                          ]}
-                        >
-                          {key.toUpperCase()}
-                          {isDisabled && " (MAX 6)"}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.toolDescription,
-                            isDisabled && { opacity: 0.5 },
-                          ]}
-                        >
-                          {getToolDescription(key)}
-                        </Text>
-                      </View>
-
-                      <Switch
-                        value={value}
-                        disabled={isDisabled}
-                        onValueChange={() =>
-                          toggleDialTool(
-                            key as keyof DevToolsSettings["dialTools"]
-                          )
-                        }
-                        thumbColor={
-                          value ? getToolColor(key) : gameUIColors.muted
-                        }
-                        trackColor={{
-                          false: `${gameUIColors.muted}30`,
-                          true: `${getToolColor(key)}40`,
-                        }}
-                        ios_backgroundColor={`${gameUIColors.muted}30`}
-                        style={[styles.switch, isDisabled && { opacity: 0.5 }]}
-                      />
-                    </View>
-                  </TouchableOpacity>
+                return renderToolCard(key, value, isDisabled, () =>
+                  toggleDialTool(key as keyof DevToolsSettings["dialTools"])
                 );
               });
             })()}
           </View>
         ) : (
           <View style={styles.section}>
-            {Object.entries(settings.floatingTools).map(([key, value]) => (
-              <TouchableOpacity
-                key={key}
-                style={styles.toolCard}
-                onPress={() =>
-                  toggleFloatingTool(
-                    key as keyof DevToolsSettings["floatingTools"]
-                  )
-                }
-                activeOpacity={0.7}
-              >
-                <View
-                  style={[
-                    styles.cardGradient,
-                    value && {
-                      backgroundColor: `${getToolColor(key)}08`,
-                      borderLeftWidth: 3,
-                      borderLeftColor: `${getToolColor(key)}40`,
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.toolIndicator,
-                      {
-                        backgroundColor: value
-                          ? getToolColor(key)
-                          : "transparent",
-                        borderColor: value
-                          ? getToolColor(key)
-                          : `${gameUIColors.muted}40`,
-                        shadowColor: value ? getToolColor(key) : "transparent",
-                        shadowOffset: { width: 0, height: 0 },
-                        shadowOpacity: value ? 0.6 : 0,
-                        shadowRadius: 8,
-                        elevation: value ? 4 : 0,
-                      },
-                    ]}
-                  />
-
-                  <View style={styles.toolInfo}>
-                    <Text
-                      style={[
-                        styles.toolName,
-                        {
-                          color: value
-                            ? gameUIColors.primary
-                            : gameUIColors.secondary,
-                        },
-                      ]}
-                    >
-                      {key.toUpperCase().replace("_", " ")}
-                    </Text>
-                    <Text style={styles.toolDescription}>
-                      {getToolDescription(key)}
-                    </Text>
-                  </View>
-
-                  <Switch
-                    value={value}
-                    onValueChange={() =>
-                      toggleFloatingTool(
-                        key as keyof DevToolsSettings["floatingTools"]
-                      )
-                    }
-                    thumbColor={value ? getToolColor(key) : gameUIColors.muted}
-                    trackColor={{
-                      false: `${gameUIColors.muted}30`,
-                      true: `${getToolColor(key)}40`,
-                    }}
-                    ios_backgroundColor={`${gameUIColors.muted}30`}
-                    style={styles.switch}
-                  />
-                </View>
-              </TouchableOpacity>
-            ))}
+            {Object.entries(settings.floatingTools).map(([key, value]) =>
+              renderToolCard(key, value, false, () =>
+                toggleFloatingTool(
+                  key as keyof DevToolsSettings["floatingTools"]
+                )
+              )
+            )}
           </View>
         )}
       </ScrollView>
@@ -602,46 +567,49 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
 
-  // Tool Cards
-  toolCard: {
-    marginBottom: 10,
-    borderRadius: 12,
-    overflow: "hidden",
-    backgroundColor: gameUIColors.blackTint2,
+  // Tool Cards - Glass + Neon Edge variant
+  glassCard: {
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "#0F172A",
     borderWidth: 1,
-    borderColor: `${gameUIColors.border}20`,
+    borderColor: "#25324A",
   },
-  toolCardDisabled: {
-    opacity: 0.7,
-  },
-  cardGradient: {
+  glassCardInner: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 14,
+    gap: 10,
   },
-  toolIndicator: {
-    width: 4,
+  iconCircle: {
+    width: 28,
     height: 28,
-    borderRadius: 2,
-    marginRight: 14,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
   },
   toolInfo: {
     flex: 1,
   },
   toolName: {
+    color: "#E6EEFF",
+    fontWeight: "800",
     fontSize: 13,
-    fontWeight: "700",
-    letterSpacing: 0.8,
-    marginBottom: 3,
   },
   toolDescription: {
-    color: gameUIColors.secondary,
+    color: "#7F91B2",
     fontSize: 11,
-    opacity: 0.7,
   },
-  switch: {
-    transform: [{ scale: 0.9 }],
+  pillToggle: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  pillToggleText: {
+    fontWeight: "700",
+    fontSize: 11,
   },
   closeButton: {
     marginLeft: 8,
@@ -655,7 +623,7 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: gameUIColors.error,
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
 });

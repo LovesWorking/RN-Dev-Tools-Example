@@ -10,6 +10,7 @@ interface WifiIconProps {
   colorPreset?: "cyan" | "green" | "purple" | "pink" | "yellow" | "orange";
   variant?: "circuit" | "matrix" | "glitch" | "nodes" | "grid";
   noBackground?: boolean;
+  showSlash?: boolean;
 }
 
 const ColorPresets = {
@@ -29,6 +30,7 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
   colorPreset = "cyan",
   variant = "nodes",
   noBackground = true,
+  showSlash = false,
 }) => {
   const scale = size / 60;
   const strokeWidth = 2.5 * scale;
@@ -180,6 +182,27 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
               />
             )
         )}
+
+      {/* Slash overlay for off/disabled visual */}
+      {showSlash && (
+        <View
+          style={
+            {
+              position: "absolute",
+              width: size * 0.9, // span most of the icon width
+              height: strokeWidth * 1.6, // slightly thicker for visibility
+              backgroundColor: activeColor,
+              left: size * 0.05,
+              top: size * 0.4 - (strokeWidth * 1.6) / 2, // center vertically
+              opacity: 0.9,
+              transform: [{ rotate: "45deg" }],
+              borderRadius: strokeWidth,
+              zIndex: 10,
+              pointerEvents: "none",
+            } as ViewStyle
+          }
+        />
+      )}
     </>
   );
 
@@ -211,5 +234,5 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
 // Export aliases for compatibility
 export const WifiIcon = WifiCircuitIcon;
 export const WifiOffIcon: React.FC<WifiIconProps> = (props) => (
-  <WifiCircuitIcon {...props} strength={0} />
+  <WifiCircuitIcon {...props} strength={4} showSlash />
 );

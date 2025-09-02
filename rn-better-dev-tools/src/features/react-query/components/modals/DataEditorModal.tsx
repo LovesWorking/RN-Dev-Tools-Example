@@ -3,7 +3,7 @@ import { ClaudeModal60FPSClean } from "@/rn-better-dev-tools/src/components/moda
 import type { ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
-import { DataEditorMode } from "../DataEditorMode";
+import { DataEditorMode, DataEditorActionsFooter } from "../DataEditorMode";
 import { useState, useCallback } from "react";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
@@ -44,6 +44,7 @@ export function DataEditorModal({
       activeTab="queries"
       onTabChange={onTabChange}
       onBack={() => onQuerySelect(undefined)}
+      onClose={onClose}
     />
   );
 
@@ -52,6 +53,13 @@ export function DataEditorModal({
     : "@react_query_editor_modal";
 
   if (!visible || !selectedQuery) return null;
+
+  const footerNode = (
+    <DataEditorActionsFooter
+      selectedQuery={selectedQuery}
+      isFloatingMode={modalMode === "floating"}
+    />
+  );
 
   return (
     <ClaudeModal60FPSClean
@@ -67,10 +75,13 @@ export function DataEditorModal({
       initialMode="bottomSheet"
       enableGlitchEffects={theme.name === "cyberpunk"}
       styles={{}}
+      footer={footerNode}
+      footerHeight={72}
     >
       <DataEditorMode
         selectedQuery={selectedQuery}
         isFloatingMode={modalMode === "floating"}
+        disableInternalFooter={true}
       />
     </ClaudeModal60FPSClean>
   );

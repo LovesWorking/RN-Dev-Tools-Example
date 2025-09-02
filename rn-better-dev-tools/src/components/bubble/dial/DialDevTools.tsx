@@ -174,13 +174,16 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
       icon: (
         <WifiCircuitIcon
           size={32}
-          color={isWifiEnabled ? gameUIColors.network : gameUIColors.muted}
-          glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.muted}
-          strength={isWifiEnabled ? 4 : 0}
+          color={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
+          glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
+          // When WiFi is off, keep the icon visible in red
+          strength={isWifiEnabled ? 4 : 4}
+          showSlash={!isWifiEnabled}
           noBackground={true}
         />
       ),
-      color: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
+      // Use red to indicate WiFi is off in the dial accent as well
+      color: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
       onPress: onWifiToggle,
     },
     {

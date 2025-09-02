@@ -3,6 +3,7 @@ import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
+import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import {
@@ -396,6 +397,9 @@ export function StorageModalWithTabs({
           <Text style={styles.headerTitle} numberOfLines={1}>
             Filters
           </Text>
+          <View style={{ marginLeft: "auto" }}>
+            <CloseButton onPress={onClose} />
+          </View>
         </View>
       );
     }
@@ -468,6 +472,9 @@ export function StorageModalWithTabs({
                 Diff
               </Text>
             </TouchableOpacity>
+          </View>
+          <View style={{ marginLeft: "auto" }}>
+            <CloseButton onPress={onClose} />
           </View>
         </View>
       );
@@ -582,6 +589,11 @@ export function StorageModalWithTabs({
             </TouchableOpacity>
           </View>
         )}
+
+        {/* Always show a close button on the far right */}
+        <View style={{ marginLeft: "auto" }}>
+          <CloseButton onPress={onClose} />
+        </View>
       </View>
     );
   };

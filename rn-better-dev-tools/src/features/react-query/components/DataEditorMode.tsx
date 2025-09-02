@@ -21,11 +21,13 @@ interface ActionButtonConfig {
 interface DataEditorModeProps {
   selectedQuery: Query;
   isFloatingMode: boolean;
+  disableInternalFooter?: boolean;
 }
 
 export function DataEditorMode({
   selectedQuery,
   isFloatingMode,
+  disableInternalFooter = false,
 }: DataEditorModeProps) {
   const insets = useSafeAreaInsets({ minBottom: 16 });
   const queryClient = useQueryClient();
@@ -38,7 +40,10 @@ export function DataEditorMode({
         accessibilityHint="View data editor mode"
         sentry-label="ignore data editor mode"
         style={styles.explorerScrollContainer}
-        contentContainerStyle={styles.explorerScrollContent}
+        contentContainerStyle={[
+          styles.explorerScrollContent,
+          !disableInternalFooter && { paddingBottom: 72 },
+        ]}
       >
         {/* Data Explorer Section - Moved to top for immediate data editing */}
         <View style={styles.section}>
@@ -75,28 +80,66 @@ export function DataEditorMode({
         </View>
       </ScrollView>
 
-      {/* Action Footer with Safe Area */}
-      <View
-        style={[
-          styles.actionFooter,
-          { paddingBottom: isFloatingMode ? 0 : insets.bottom + 8 },
-        ]}
-      >
-        <View style={styles.actionsGrid}>
-          {actionButtons.map((action: ActionButtonConfig, index: number) => (
-            <ActionButton
-              sentry-label={`ignore action button ${action.label}`}
-              key={index}
-              onClick={action.onPress}
-              text={action.label}
-              bgColorClass={action.bgColorClass}
-              _textColorClass={action.textColorClass}
-              disabled={action.disabled}
-            />
-          ))}
+      {/* Action Footer with Safe Area (internal, optional) */}
+      {!disableInternalFooter && (
+        <View
+          style={[
+            styles.actionFooter,
+            { paddingBottom: isFloatingMode ? 0 : insets.bottom + 8 },
+          ]}
+        >
+          <View style={styles.actionsGrid}>
+            {actionButtons.map((action: ActionButtonConfig, index: number) => (
+              <ActionButton
+                sentry-label={`ignore action button ${action.label}`}
+                key={index}
+                onClick={action.onPress}
+                text={action.label}
+                bgColorClass={action.bgColorClass}
+                _textColorClass={action.textColorClass}
+                disabled={action.disabled}
+              />
+            ))}
+          </View>
         </View>
-      </View>
+      )}
     </>
+  );
+}
+
+// External footer component for sticky modal footer usage
+export function DataEditorActionsFooter({
+  selectedQuery,
+  isFloatingMode,
+}: {
+  selectedQuery: Query;
+  isFloatingMode: boolean;
+}) {
+  const insets = useSafeAreaInsets({ minBottom: 16 });
+  const queryClient = useQueryClient();
+  const actionButtons = useActionButtons(selectedQuery, queryClient);
+
+  return (
+    <View
+      style={[
+        styles.actionFooter,
+        { paddingBottom: isFloatingMode ? 0 : insets.bottom + 8 },
+      ]}
+    >
+      <View style={styles.actionsGrid}>
+        {actionButtons.map((action: ActionButtonConfig, index: number) => (
+          <ActionButton
+            sentry-label={`ignore action button ${action.label}`}
+            key={index}
+            onClick={action.onPress}
+            text={action.label}
+            bgColorClass={action.bgColorClass}
+            _textColorClass={action.textColorClass}
+            disabled={action.disabled}
+          />
+        ))}
+      </View>
+    </View>
   );
 }
 

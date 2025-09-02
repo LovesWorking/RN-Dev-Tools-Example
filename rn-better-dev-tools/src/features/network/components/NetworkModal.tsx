@@ -24,6 +24,7 @@ import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
+import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
@@ -76,7 +77,12 @@ function NetworkModalInner({
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
+  const [filterViewTab, setFilterViewTab] = useState<
+    "filters" | "domains" | "urls"
+  >("filters");
   const [searchText, setSearchText] = useState("");
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const searchInputRef = useRef<TextInput>(null);
   const [ignoredDomains, setIgnoredDomains] = useState<Set<string>>(new Set());
   const [ignoredUrls, setIgnoredUrls] = useState<Set<string>>(new Set());
   const flatListRef = useRef<FlatList<NetworkEvent>>(null);
@@ -98,7 +104,7 @@ function NetworkModalInner({
 
         // Load ignored domains
         const storedDomains = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredDomains(),
+          devToolsStorageKeys.network.ignoredDomains()
         );
         if (storedDomains) {
           const domains = JSON.parse(storedDomains) as string[];
@@ -107,7 +113,7 @@ function NetworkModalInner({
 
         // Load ignored URLs
         const storedUrls = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredUrls(),
+          devToolsStorageKeys.network.ignoredUrls()
         );
         if (storedUrls) {
           const urls = JSON.parse(storedUrls) as string[];
@@ -137,14 +143,14 @@ function NetworkModalInner({
         const domains = Array.from(ignoredDomains);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredDomains(),
-          JSON.stringify(domains),
+          JSON.stringify(domains)
         );
 
         // Save ignored URLs
         const urls = Array.from(ignoredUrls);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredUrls(),
-          JSON.stringify(urls),
+          JSON.stringify(urls)
         );
       } catch (error) {
         // Silently fail - filters will remain in memory
@@ -168,6 +174,14 @@ function NetworkModalInner({
     setFilter((prev) => ({ ...prev, searchText: text }));
   };
 
+  useEffect(() => {
+    if (isSearchActive) {
+      requestAnimationFrame(() => {
+        searchInputRef.current?.focus();
+      });
+    }
+  }, [isSearchActive]);
+
   // Filter events based on ignored patterns
   const filteredEvents = useMemo(() => {
     if (ignoredDomains.size === 0 && ignoredUrls.size === 0) return events;
@@ -182,7 +196,7 @@ function NetworkModalInner({
           const hostname = urlObj.hostname.toLowerCase();
           if (
             Array.from(ignoredDomains).some((domain) =>
-              hostname.includes(domain.toLowerCase()),
+              hostname.includes(domain.toLowerCase())
             )
           ) {
             return false;
@@ -196,7 +210,7 @@ function NetworkModalInner({
       if (ignoredUrls.size > 0) {
         if (
           Array.from(ignoredUrls).some((pattern) =>
-            url.includes(pattern.toLowerCase()),
+            url.includes(pattern.toLowerCase())
           )
         ) {
           return false;
@@ -227,23 +241,76 @@ function NetworkModalInner({
             onPress={() => setShowFilterView(false)}
             color={theme.colors.text}
           />
-          <Text
-            style={[
-              styles.headerTitle,
-              {
-                color: theme.colors.text,
-                fontFamily:
-                  theme.name === "cyberpunk" ? "monospace" : undefined,
-                fontSize: theme.name === "cyberpunk" ? 14 : 14,
-                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-                textTransform:
-                  theme.name === "cyberpunk" ? "uppercase" : undefined,
-              },
-            ]}
-          >
-            {theme.name === "cyberpunk" ? "// FILTERS" : "Filters"}
-          </Text>
+
+          {/* Shared navbar style like React Query modal */}
+          <View style={styles.tabNavigationContainer}>
+            <TouchableOpacity
+              onPress={() => setFilterViewTab("filters")}
+              style={[
+                styles.tabButton,
+                filterViewTab === "filters"
+                  ? styles.tabButtonActive
+                  : styles.tabButtonInactive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  filterViewTab === "filters"
+                    ? styles.tabButtonTextActive
+                    : styles.tabButtonTextInactive,
+                ]}
+              >
+                Filters
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setFilterViewTab("domains")}
+              style={[
+                styles.tabButton,
+                filterViewTab === "domains"
+                  ? styles.tabButtonActive
+                  : styles.tabButtonInactive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  filterViewTab === "domains"
+                    ? styles.tabButtonTextActive
+                    : styles.tabButtonTextInactive,
+                ]}
+              >
+                Domains
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setFilterViewTab("urls")}
+              style={[
+                styles.tabButton,
+                filterViewTab === "urls"
+                  ? styles.tabButtonActive
+                  : styles.tabButtonInactive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  filterViewTab === "urls"
+                    ? styles.tabButtonTextActive
+                    : styles.tabButtonTextInactive,
+                ]}
+              >
+                URLs
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ marginLeft: "auto" }}>
+            <CloseButton onPress={onClose} />
+          </View>
         </View>
       );
     }
@@ -268,10 +335,11 @@ function NetworkModalInner({
               },
             ]}
           >
-            {theme.name === "cyberpunk"
-              ? "// REQUEST DETAILS"
-              : "Request Details"}
+            Request Details
           </Text>
+          <View style={{ marginLeft: "auto" }}>
+            <CloseButton onPress={onClose} />
+          </View>
         </View>
       );
     }
@@ -282,44 +350,113 @@ function NetworkModalInner({
           <BackButton onPress={onBack} color={theme.colors.text} />
         ) : null}
 
-        <View style={styles.headerStats}>
-          <Text
-            style={[
-              styles.headerStatsText,
-              {
-                color: theme.colors.text,
-                fontFamily:
-                  theme.name === "cyberpunk" ? "monospace" : undefined,
-                fontSize: theme.name === "cyberpunk" ? 11 : 12,
-                letterSpacing: theme.name === "cyberpunk" ? 0.5 : undefined,
-              },
-            ]}
-          >
-            {filteredEvents.length}{" "}
-            {filteredEvents.length === 1 ? "REQUEST" : "REQUESTS"}
-          </Text>
-          {events.length - filteredEvents.length > 0 ? (
-            <Text
-              style={[
-                styles.headerFilteredText,
-                {
-                  color: gameUIColors.warning,
-                  fontFamily:
-                    theme.name === "cyberpunk" ? "monospace" : undefined,
-                  fontSize: theme.name === "cyberpunk" ? 10 : 11,
-                },
-              ]}
-            >
-              ({events.length - filteredEvents.length} HIDDEN)
-            </Text>
-          ) : null}
+        {/* Center area: search or compact chips */}
+        <View style={styles.headerCenterArea}>
+          {isSearchActive ? (
+            <View style={styles.headerSearchContainer}>
+              <Search size={14} color={gameUIColors.secondary} />
+              <TextInput
+                ref={searchInputRef}
+                style={styles.headerSearchInput}
+                placeholder="Search URL, method, error..."
+                placeholderTextColor={gameUIColors.muted}
+                value={searchText}
+                onChangeText={handleSearch}
+                onSubmitEditing={() => setIsSearchActive(false)}
+                onBlur={() => setIsSearchActive(false)}
+                sentry-label="ignore network search header"
+                accessibilityLabel="Search network requests"
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="search"
+              />
+              {searchText.length > 0 ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleSearch("");
+                    setIsSearchActive(false);
+                  }}
+                  sentry-label="ignore clear search header"
+                  style={styles.headerSearchClear}
+                >
+                  <X size={14} color={gameUIColors.secondary} />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          ) : (
+            <View style={styles.headerChipRow}>
+              <TouchableOpacity
+                style={[
+                  styles.headerChip,
+                  filter.status === "success" && styles.headerChipActive,
+                ]}
+                onPress={() =>
+                  setFilter({
+                    ...filter,
+                    status: filter.status === "success" ? undefined : "success",
+                  })
+                }
+              >
+                <CheckCircle size={12} color={gameUIColors.success} />
+                <Text style={[styles.headerChipValue, { color: gameUIColors.success }]}>
+                  {stats.successfulRequests}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.headerChip,
+                  filter.status === "error" && styles.headerChipActive,
+                ]}
+                onPress={() =>
+                  setFilter({
+                    ...filter,
+                    status: filter.status === "error" ? undefined : "error",
+                  })
+                }
+              >
+                <XCircle size={12} color={gameUIColors.error} />
+                <Text style={[styles.headerChipValue, { color: gameUIColors.error }]}>
+                  {stats.failedRequests}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.headerChip,
+                  filter.status === "pending" && styles.headerChipActive,
+                ]}
+                onPress={() =>
+                  setFilter({
+                    ...filter,
+                    status: filter.status === "pending" ? undefined : "pending",
+                  })
+                }
+              >
+                <Clock size={12} color={gameUIColors.warning} />
+                <Text style={[styles.headerChipValue, { color: gameUIColors.warning }]}>
+                  {stats.pendingRequests}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Action buttons in header */}
         <View style={styles.headerActions}>
           <TouchableOpacity
+            sentry-label="ignore open search"
+            onPress={() => setIsSearchActive(true)}
+            style={styles.headerActionButton}
+          >
+            <Search size={14} color={gameUIColors.secondary} />
+          </TouchableOpacity>
+          <TouchableOpacity
             sentry-label="ignore filter"
-            onPress={() => setShowFilterView(true)}
+            onPress={() => {
+              setFilterViewTab("filters");
+              setShowFilterView(true);
+            }}
             style={[
               styles.headerActionButton,
               (filter.status || filter.method || filter.contentType) &&
@@ -344,7 +481,10 @@ function NetworkModalInner({
               isEnabled ? styles.startButton : styles.stopButton,
             ]}
           >
-            <Power size={14} color={isEnabled ? gameUIColors.success : gameUIColors.error} />
+            <Power
+              size={14}
+              color={isEnabled ? gameUIColors.success : gameUIColors.error}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -355,9 +495,12 @@ function NetworkModalInner({
           >
             <Trash2
               size={14}
-              color={events.length > 0 ? gameUIColors.muted : gameUIColors.blackTint3}
+              color={
+                events.length > 0 ? gameUIColors.muted : gameUIColors.blackTint3
+              }
             />
           </TouchableOpacity>
+          <CloseButton onPress={onClose} />
         </View>
       </View>
     );
@@ -466,6 +609,7 @@ function NetworkModalInner({
             onClose={() => setShowFilterView(false)}
             ignoredDomains={ignoredDomains}
             ignoredUrls={ignoredUrls}
+            activeTab={filterViewTab}
             onToggleDomain={(domain) => {
               const newDomains = new Set(ignoredDomains);
               if (newDomains.has(domain)) {
@@ -497,66 +641,6 @@ function NetworkModalInner({
           />
         ) : (
           <>
-            {renderSearchBar()}
-
-            {/* Compact stats bar - clickable for quick filtering */}
-            <View style={styles.statsBar}>
-              <TouchableOpacity
-                style={[
-                  styles.statChip,
-                  filter.status === "success" && styles.statChipActive,
-                ]}
-                onPress={() =>
-                  setFilter({
-                    ...filter,
-                    status: filter.status === "success" ? undefined : "success",
-                  })
-                }
-              >
-                <CheckCircle size={12} color={gameUIColors.success} />
-                <Text style={[styles.statValue, { color: gameUIColors.success }]}>
-                  {stats.successfulRequests}
-                </Text>
-                <Text style={styles.statLabel}>OK</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.statChip,
-                  filter.status === "error" && styles.statChipActive,
-                ]}
-                onPress={() =>
-                  setFilter({
-                    ...filter,
-                    status: filter.status === "error" ? undefined : "error",
-                  })
-                }
-              >
-                <XCircle size={12} color={gameUIColors.error} />
-                <Text style={[styles.statValue, { color: gameUIColors.error }]}>
-                  {stats.failedRequests}
-                </Text>
-                <Text style={styles.statLabel}>ERR</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.statChip,
-                  filter.status === "pending" && styles.statChipActive,
-                ]}
-                onPress={() =>
-                  setFilter({
-                    ...filter,
-                    status: filter.status === "pending" ? undefined : "pending",
-                  })
-                }
-              >
-                <Clock size={12} color={gameUIColors.warning} />
-                <Text style={[styles.statValue, { color: gameUIColors.warning }]}>
-                  {stats.pendingRequests}
-                </Text>
-                <Text style={styles.statLabel}>WAIT</Text>
-              </TouchableOpacity>
-            </View>
-
             {!isEnabled ? (
               <View style={styles.disabledBanner}>
                 <Power size={14} color={gameUIColors.warning} />
@@ -615,13 +699,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   headerStats: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: gameUIColors.blackTint1,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    display: "none",
   },
   headerStatsText: {
     fontSize: 12,
@@ -640,6 +718,56 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: 4,
   },
+  headerCenterArea: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  headerSearchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: gameUIColors.blackTint2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: gameUIColors.border,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  headerSearchInput: {
+    flex: 1,
+    color: gameUIColors.primaryLight,
+    fontSize: 13,
+    marginLeft: 6,
+    paddingVertical: 2,
+  },
+  headerSearchClear: {
+    marginLeft: 6,
+    padding: 4,
+  },
+  headerChipRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  headerChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: gameUIColors.blackTint3,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: gameUIColors.border,
+  },
+  headerChipActive: {
+    backgroundColor: `${gameUIColors.network}26`,
+    borderColor: `${gameUIColors.network}66`,
+  },
+  headerChipValue: {
+    fontSize: 12,
+    fontWeight: "700",
+    fontFamily: "monospace",
+  },
   headerActionButton: {
     width: 28,
     height: 28,
@@ -649,6 +777,49 @@ const styles = StyleSheet.create({
     borderColor: gameUIColors.border,
     alignItems: "center",
     justifyContent: "center",
+  },
+  // Shared navbar styles (matching React Query modal)
+  tabNavigationContainer: {
+    flexDirection: "row",
+    backgroundColor: gameUIColors.panel,
+    borderRadius: 6,
+    padding: 2,
+    borderWidth: 1,
+    borderColor: gameUIColors.border + "40",
+    justifyContent: "space-evenly",
+    flex: 1,
+    marginLeft: 8,
+    marginRight: 8,
+  },
+  tabButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    marginHorizontal: 1,
+  },
+  tabButtonActive: {
+    backgroundColor: gameUIColors.info + "20",
+    borderWidth: 1,
+    borderColor: gameUIColors.info + "40",
+  },
+  tabButtonInactive: {
+    backgroundColor: "transparent",
+  },
+  tabButtonText: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    fontFamily: "monospace",
+    textTransform: "uppercase",
+  },
+  tabButtonTextActive: {
+    color: gameUIColors.info,
+  },
+  tabButtonTextInactive: {
+    color: gameUIColors.muted,
   },
   startButton: {
     backgroundColor: `${gameUIColors.success}1A`,
@@ -674,33 +845,12 @@ const styles = StyleSheet.create({
   },
   // Search bar - minimal design with theme colors
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: gameUIColors.blackTint2,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: gameUIColors.border,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginHorizontal: 12,
-    marginTop: 8,
-    marginBottom: 8,
+    display: "none",
   },
-  searchInput: {
-    flex: 1,
-    color: gameUIColors.primaryLight,
-    fontSize: 13,
-    marginLeft: 6,
-  },
+  searchInput: {},
   // Stats bar - minimal design
   statsBar: {
-    flexDirection: "row",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    gap: 12,
-    backgroundColor: gameUIColors.blackTint1,
-    borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border,
+    display: "none",
   },
   statChip: {
     flexDirection: "row",

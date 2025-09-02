@@ -449,13 +449,13 @@ export function ClaudeGridMenu({
       icon: isWifiEnabled ? (
         <Wifi size={18} color={gameUIColors.network} />
       ) : (
-        <WifiOff size={18} color={gameUIColors.muted} />
+        <WifiOff size={18} color={gameUIColors.error} />
       ),
       label: isWifiEnabled ? "WIFI" : "OFFLINE",
       sublabel: isWifiEnabled ? "CONNECTED" : "DISABLED",
-      primaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
-      secondaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
-      accentColor: isWifiEnabled ? gameUIColors.network : gameUIColors.muted,
+      primaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
+      secondaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
+      accentColor: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
     },
     {
       onPress: onNetworkPress || (() => {}),
@@ -766,12 +766,7 @@ export function ClaudeGridMenu({
                   >
                     <View style={styles.glitchContent}>
                       {menuItem.icon}
-                      <Text
-                        style={[
-                          styles.glitchText,
-                          { color: menuItem.primaryColor },
-                        ]}
-                      >
+                      <Text style={[styles.glitchText, { color: gameUIColors.primary } ]}>
                         {"_"}
                         {menuItem.label}
                         {"_"}
@@ -834,33 +829,18 @@ export function ClaudeGridMenu({
 
                       {/* Matrix-style text labels */}
                       <View style={styles.labelContainer}>
-                        <Text
-                          style={[
-                            styles.label,
-                            { color: menuItem.primaryColor },
-                          ]}
-                        >
-                          {menuItem.label}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.sublabel,
-                            { color: menuItem.accentColor },
-                          ]}
-                        >
-                          {menuItem.sublabel}
-                        </Text>
+                      <Text style={[styles.label, { color: gameUIColors.primary }] }>
+                        {menuItem.label}
+                      </Text>
+                      <Text style={[styles.sublabel, { color: gameUIColors.secondary } ]}>
+                        {menuItem.sublabel}
+                      </Text>
                       </View>
                     </View>
 
                     {/* Data stream effect */}
                     <View style={styles.dataStream}>
-                      <Text
-                        style={[
-                          styles.dataStreamText,
-                          { color: `${menuItem.primaryColor}40` },
-                        ]}
-                      >
+                      <Text style={[styles.dataStreamText, { color: `${gameUIColors.primary}40` } ]}>
                         {"010101"}
                       </Text>
                     </View>

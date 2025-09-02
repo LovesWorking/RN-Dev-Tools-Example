@@ -41,6 +41,7 @@ export function MutationEditorModal({
       activeTab="mutations"
       onTabChange={onTabChange}
       onBack={() => onMutationSelect(undefined)}
+      onClose={onClose}
     />
   );
 

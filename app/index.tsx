@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import {
   StyleSheet,
   ScrollView,
@@ -8,6 +8,7 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
+  Switch,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -31,6 +32,7 @@ import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase"
 import { StorageDiffTest } from "@/components/StorageDiffTest";
 // import { AutoDiffTest } from "@/components/AutoDiffTest";
 import { DiffThemeShowcase } from "@/rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffThemeShowcase";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Import PureModalExample for testing
 // import PureModalExample from "@/rn-better-dev-tools/src/components/modals/PureModal/PureModalExample";
@@ -48,6 +50,667 @@ export default function TestScreen() {
   // return <DiffThemeShowcase />;
   // return <PureModalExample />;
   return <PokemonScreen />;
+}
+
+// ---------------------------------------------------------------------------
+// DevTools Filter Buttons Variations Showcase
+// ---------------------------------------------------------------------------
+
+type ToolKey = "query" | "env" | "sentry" | "storage" | "wifi" | "network";
+
+const TOOL_META: Record<
+  ToolKey,
+  { title: string; desc: string; color: string }
+> = {
+  query: {
+    title: "QUERY",
+    desc: "React Query inspector",
+    color: gameUIColors.query,
+  },
+  env: {
+    title: "ENV",
+    desc: "Environment variables debugger",
+    color: gameUIColors.env,
+  },
+  sentry: {
+    title: "SENTRY",
+    desc: "Sentry events viewer",
+    color: gameUIColors.debug,
+  },
+  storage: {
+    title: "STORAGE",
+    desc: "AsyncStorage browser",
+    color: gameUIColors.storage,
+  },
+  wifi: {
+    title: "WIFI",
+    desc: "RQ online toggle",
+    color: gameUIColors.network,
+  },
+  network: {
+    title: "NETWORK",
+    desc: "Network request logger",
+    color: gameUIColors.network,
+  },
+};
+
+interface CardVariantProps {
+  label: string;
+  desc: string;
+  color: string;
+  variant: number; // 0 = original, 1..10 = new styles
+}
+
+const ToolCardVariant = memo(function ToolCardVariant({
+  label,
+  desc,
+  color,
+  variant,
+}: CardVariantProps) {
+  const [enabled, setEnabled] = useState(true);
+
+  // base shared styles
+  const BaseLeftAccent = (
+    <View
+      style={{
+        width: 5,
+        height: 28,
+        borderRadius: 3,
+        marginRight: 12,
+        backgroundColor: color,
+        shadowColor: color,
+        shadowOpacity: 0.6,
+        shadowOffset: { width: 0, height: 0 },
+        shadowRadius: 6,
+      }}
+    />
+  );
+
+  const Title = (
+    <Text
+      style={{
+        color: "#DCE7FF",
+        fontSize: 13,
+        fontWeight: "800",
+        letterSpacing: 0.8,
+      }}
+    >
+      {label}
+    </Text>
+  );
+
+  const Subtitle = (
+    <Text style={{ color: "#93A3C7", fontSize: 11 }}>{desc}</Text>
+  );
+
+  const Toggle = (
+    <Switch
+      value={enabled}
+      onValueChange={setEnabled}
+      thumbColor={enabled ? color : "#4B566B"}
+      trackColor={{ false: "#2A3244", true: `${color}40` }}
+      ios_backgroundColor="#2A3244"
+    />
+  );
+
+  // Completely different toggle styles for variety
+  const PillToggle = (
+    <TouchableOpacity
+      onPress={() => setEnabled(!enabled)}
+      activeOpacity={0.8}
+      style={{
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 999,
+        backgroundColor: enabled ? `${color}33` : "#1b2334",
+        borderWidth: 1,
+        borderColor: enabled ? `${color}88` : "#2a3550",
+      }}
+    >
+      <Text
+        style={{
+          color: enabled ? color : "#8CA2C8",
+          fontWeight: "700",
+          fontSize: 11,
+        }}
+      >
+        {enabled ? "ON" : "OFF"}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const RadioToggle = (
+    <TouchableOpacity
+      onPress={() => setEnabled(!enabled)}
+      activeOpacity={0.8}
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: enabled ? color : "#415172",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {enabled ? (
+        <View
+          style={{
+            width: 12,
+            height: 12,
+            borderRadius: 6,
+            backgroundColor: color,
+          }}
+        />
+      ) : null}
+    </TouchableOpacity>
+  );
+
+  const CheckboxToggle = (
+    <TouchableOpacity
+      onPress={() => setEnabled(!enabled)}
+      activeOpacity={0.8}
+      style={{
+        width: 26,
+        height: 26,
+        borderRadius: 6,
+        borderWidth: 2,
+        borderColor: enabled ? color : "#415172",
+        backgroundColor: enabled ? `${color}22` : "transparent",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {enabled ? <Ionicons name="checkmark" size={16} color={color} /> : null}
+    </TouchableOpacity>
+  );
+
+  // container by variant
+  const container = (() => {
+    switch (variant) {
+      case 0: // Original-like baseline
+        return (
+          <View
+            style={{
+              borderRadius: 12,
+              overflow: "hidden",
+              backgroundColor: "#121827",
+              borderWidth: 1,
+              borderColor: "#2A344A",
+              padding: 14,
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {BaseLeftAccent}
+              <View style={{ flex: 1 }}>
+                {Title}
+                {Subtitle}
+              </View>
+              {Toggle}
+            </View>
+          </View>
+        );
+      case 1: // Compact chip row with icon + chevron
+        return (
+          <View
+            style={{
+              borderRadius: 999,
+              paddingVertical: 10,
+              paddingHorizontal: 14,
+              backgroundColor: "#0F172A",
+              borderWidth: 1,
+              borderColor: "#25324A",
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            >
+              <View
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  backgroundColor: `${color}26`,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderWidth: 1,
+                  borderColor: `${color}66`,
+                }}
+              >
+                <Ionicons name="flash" size={16} color={color} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: "#E6EEFF", fontWeight: "800" }}>
+                  {label}
+                </Text>
+                <Text
+                  style={{ color: "#7F91B2", fontSize: 11 }}
+                  numberOfLines={1}
+                >
+                  {desc}
+                </Text>
+              </View>
+              {PillToggle}
+              <Ionicons name="chevron-forward" size={18} color="#7F91B2" />
+            </View>
+          </View>
+        );
+      case 2: // Large gradient tile with big icon and pill toggle
+        return (
+          <LinearGradient
+            colors={["#0B1222", "#0F1931"]}
+            style={{
+              borderRadius: 18,
+              padding: 16,
+              borderWidth: 1,
+              borderColor: `${color}3d`,
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+            >
+              <View
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: `${color}26`,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderWidth: 1,
+                  borderColor: `${color}66`,
+                }}
+              >
+                <Ionicons name="layers" size={20} color={color} />
+              </View>
+              <View style={{ flex: 1 }}>
+                {Title}
+                {Subtitle}
+              </View>
+              {PillToggle}
+            </View>
+          </LinearGradient>
+        );
+      case 3: // Soft gradient tile
+        return (
+          <View
+            style={{
+              borderRadius: 14,
+              backgroundColor: "#0B1329",
+              borderWidth: 1,
+              borderColor: `${color}55`,
+              padding: 14,
+            }}
+          >
+            {/* Cut corners */}
+            <View
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                width: 16,
+                height: 16,
+                backgroundColor: "#0B1329",
+                transform: [{ rotate: "45deg" }],
+                marginRight: -8,
+                marginTop: -8,
+                borderColor: `${color}66`,
+                borderRightWidth: 1,
+                borderTopWidth: 1,
+              }}
+            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {BaseLeftAccent}
+              <View style={{ flex: 1 }}>
+                {Title}
+                {Subtitle}
+              </View>
+              {RadioToggle}
+            </View>
+          </View>
+        );
+      case 4: // Dashed wireframe + glow corners
+        return (
+          <View
+            style={{
+              borderRadius: 12,
+              padding: 14,
+              backgroundColor: "#0C1222",
+              borderWidth: 1,
+              borderColor: `${color}44`,
+            }}
+          >
+            {/* Ticket notches */}
+            <View
+              style={{
+                position: "absolute",
+                top: 12,
+                left: -8,
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: "#020617",
+              }}
+            />
+            <View
+              style={{
+                position: "absolute",
+                bottom: 12,
+                right: -8,
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: "#020617",
+              }}
+            />
+            <View
+              style={{
+                position: "absolute",
+                top: 6,
+                right: 6,
+                left: 6,
+                bottom: 6,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderStyle: "dashed",
+                borderColor: `${color}66`,
+              }}
+            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {BaseLeftAccent}
+              <View style={{ flex: 1 }}>
+                {Title}
+                {Subtitle}
+              </View>
+              {CheckboxToggle}
+            </View>
+          </View>
+        );
+      case 5: // Minimal outline, compact
+        return (
+          <View
+            style={{
+              borderRadius: 10,
+              paddingVertical: 12,
+              paddingHorizontal: 14,
+              backgroundColor: "#0B1120",
+              borderWidth: 1,
+              borderColor: "#1F2A44",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons
+                name="code-slash"
+                size={18}
+                color={color}
+                style={{ marginRight: 10 }}
+              />
+              <View style={{ flex: 1 }}>
+                {Title}
+                {Subtitle}
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#7F91B2" />
+            </View>
+            <View style={{ marginTop: 10, alignItems: "flex-end" }}>
+              {PillToggle}
+            </View>
+          </View>
+        );
+      case 6: // Split gradient background
+        return (
+          <View
+            style={{
+              borderRadius: 14,
+              overflow: "hidden",
+              borderWidth: 1,
+              borderColor: `${color}33`,
+              flexDirection: "row",
+            }}
+          >
+            <LinearGradient
+              colors={[`${color}33`, `${color}11`]}
+              style={{ width: 80 }}
+            />
+            <View style={{ flex: 1, padding: 14 }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View
+                  style={{
+                    width: 8,
+                    height: 34,
+                    borderRadius: 6,
+                    marginRight: 12,
+                    backgroundColor: `${color}AA`,
+                  }}
+                />
+                <View style={{ flex: 1 }}>
+                  {Title}
+                  {Subtitle}
+                </View>
+                {RadioToggle}
+              </View>
+            </View>
+          </View>
+        );
+      case 7: // Holographic sheen overlay
+        return (
+          <View
+            style={{
+              borderRadius: 16,
+              padding: 14,
+              backgroundColor: "#0D1224",
+              borderWidth: 1,
+              borderColor: "#20304F",
+            }}
+          >
+            <LinearGradient
+              colors={["#FFFFFF08", "#00FFFF06", "#FF00FF06"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                borderRadius: 16,
+              }}
+            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  backgroundColor: `${color}22`,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: 10,
+                }}
+              >
+                <Ionicons name="construct" size={18} color={color} />
+              </View>
+              <View style={{ flex: 1, alignItems: "flex-start" }}>
+                {Title}
+                {Subtitle}
+              </View>
+            </View>
+            <View style={{ marginTop: 12, alignItems: "flex-end" }}>
+              {PillToggle}
+            </View>
+          </View>
+        );
+      case 8: // Elevated card with top accent line
+        return (
+          <View
+            style={{
+              borderRadius: 12,
+              padding: 14,
+              backgroundColor: "#0B1120",
+              borderWidth: 1,
+              borderColor: "#21304A",
+              shadowColor: color,
+              shadowOpacity: 0.5,
+              shadowOffset: { width: 0, height: 8 },
+              shadowRadius: 18,
+            }}
+          >
+            <View
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                height: 3,
+                backgroundColor: color,
+                opacity: 0.6,
+                borderTopLeftRadius: 12,
+                borderTopRightRadius: 12,
+              }}
+            />
+            <View
+              style={{
+                position: "absolute",
+                right: 12,
+                top: 12,
+                transform: [{ rotate: "-20deg" }],
+              }}
+            >
+              <View
+                style={{
+                  width: 40,
+                  height: 6,
+                  backgroundColor: `${color}55`,
+                  borderRadius: 3,
+                }}
+              />
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  width: 6,
+                  height: 24,
+                  borderRadius: 4,
+                  marginRight: 10,
+                  backgroundColor: color,
+                }}
+              />
+              <View style={{ flex: 1 }}>
+                {Title}
+                {Subtitle}
+              </View>
+              {RadioToggle}
+            </View>
+          </View>
+        );
+      case 9: // Frosted glass tile
+        return (
+          <View style={{ borderRadius: 16, overflow: "hidden" }}>
+            <BlurView intensity={24} tint="dark" style={{}}>
+              <View
+                style={{
+                  padding: 14,
+                  backgroundColor: "rgba(16,22,36,0.65)",
+                  borderWidth: 1,
+                  borderColor: `${color}33`,
+                }}
+              >
+                <View
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 2,
+                    backgroundColor: color,
+                    opacity: 0.3,
+                  }}
+                />
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons
+                    name="cloud-outline"
+                    size={18}
+                    color={color}
+                    style={{ marginRight: 10 }}
+                  />
+                  <View style={{ flex: 1 }}>
+                    {Title}
+                    {Subtitle}
+                  </View>
+                  {CheckboxToggle}
+                </View>
+              </View>
+            </BlurView>
+          </View>
+        );
+      case 10: // Compact pill row
+        return (
+          <View
+            style={{
+              borderRadius: 999,
+              paddingVertical: 10,
+              paddingHorizontal: 14,
+              backgroundColor: "#0E1629",
+              borderWidth: 1,
+              borderColor: `${color}44`,
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: color,
+                  marginRight: 10,
+                }}
+              />
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "baseline",
+                  gap: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#DCE7FF",
+                    fontSize: 13,
+                    fontWeight: "800",
+                    letterSpacing: 0.6,
+                  }}
+                >
+                  {label}
+                </Text>
+                <Text style={{ color: "#93A3C7", fontSize: 11 }}>{desc}</Text>
+              </View>
+              {PillToggle}
+            </View>
+          </View>
+        );
+      default:
+        return null;
+    }
+  })();
+
+  return container;
+});
+
+function VariantRow({ title, variant }: { title: string; variant: number }) {
+  const m = TOOL_META.query; // Showcase using QUERY tool for consistency
+  return (
+    <View style={{ marginBottom: 12 }}>
+      <Text style={{ color: "#8EA2C8", fontSize: 12, marginBottom: 6 }}>
+        {title}
+      </Text>
+      <ToolCardVariant
+        label={m.title}
+        desc={m.desc}
+        color={m.color}
+        variant={variant}
+      />
+    </View>
+  );
 }
 
 // Original PokemonScreen component
@@ -419,11 +1082,10 @@ function PokemonScreen() {
           },
         ]}
       >
-        {/* Diff Theme Showcase - All theme variations */}
-        <DiffThemeShowcase />
+        {/* === DevTools Filter Buttons Variations Showcase === */}
 
-        {/* Storage Diff Test Component */}
-        <StorageDiffTest />
+        {/* <ReactNativeShapesShowcase />
+        <IconShowcase /> */}
 
         {/* Icon Variations Gallery */}
         {/* <IconVariationsGallery /> */}
@@ -715,8 +1377,6 @@ function PokemonScreen() {
             />
           ))}
         </View>
-        <ReactNativeShapesShowcase />
-        <IconShowcase />
       </ScrollView>
     </View>
   );

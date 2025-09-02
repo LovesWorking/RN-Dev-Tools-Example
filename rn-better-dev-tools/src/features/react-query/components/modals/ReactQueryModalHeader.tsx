@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Query, Mutation } from "@tanstack/react-query";
 import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 
 interface ReactQueryModalHeaderProps {
   selectedQuery?: Query;
@@ -9,6 +10,7 @@ interface ReactQueryModalHeaderProps {
   activeTab: "queries" | "mutations";
   onTabChange: (tab: "queries" | "mutations") => void;
   onBack: () => void;
+  onClose?: () => void;
 }
 
 export function ReactQueryModalHeader({
@@ -17,6 +19,7 @@ export function ReactQueryModalHeader({
   activeTab,
   onTabChange,
   onBack,
+  onClose,
 }: ReactQueryModalHeaderProps) {
   // Simple function to get query display text
   const getQueryText = (query: Query) => {
@@ -62,6 +65,7 @@ export function ReactQueryModalHeader({
           <Text style={styles.queryText} numberOfLines={1}>
             {getItemText(selectedQuery ?? selectedMutation!)}
           </Text>
+          {!!onClose && <CloseButton onPress={onClose} />}
         </View>
       ) : (
         <View style={styles.browserView}>
@@ -111,6 +115,7 @@ export function ReactQueryModalHeader({
               </Text>
             </TouchableOpacity>
           </View>
+          {!!onClose && <CloseButton onPress={onClose} />}
         </View>
       )}
     </View>
@@ -127,18 +132,21 @@ const styles = StyleSheet.create({
   detailsView: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     width: "100%",
     gap: 8,
   },
 
   browserView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "stretch",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
   },
 
   tabNavigationContainer: {
+    flex: 1,
     flexDirection: "row",
     backgroundColor: gameUIColors.panel,
     borderRadius: 6,

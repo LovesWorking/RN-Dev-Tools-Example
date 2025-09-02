@@ -31,7 +31,7 @@ const defaultTheme = {
   storage: "#BA68C8", // Purple/Magenta for storage (was yellow)
   query: "#00B8E6", // Cyan for query
   debug: "#FF5252", // Red for debug
-  network: "#9D4EDD", // Purple for network
+  network: "#4AFF9F", // Green for network to match connectivity theme
 
   // Data Types - Varied colors for syntax highlighting
   dataTypes: {

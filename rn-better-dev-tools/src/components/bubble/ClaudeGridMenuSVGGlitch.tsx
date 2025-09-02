@@ -22,6 +22,7 @@ import {
   WifiOff,
   X,
 } from "rn-better-dev-tools/icons";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface MagneticGridMenuProps {
   onQueryPress: () => void;
@@ -96,70 +97,70 @@ export function ClaudeGridMenuSVGGlitch({
         ),
         label: "QUERY",
         sublabel: "DATABASE",
-        primaryColor: "#FF006E",
-        secondaryColor: "#FF4081",
-        accentColor: "#FF80AB",
-        glitchColor1: "#00FFFF",
-        glitchColor2: "#FFFF00",
+        primaryColor: gameUIColors.query,
+        secondaryColor: gameUIColors.query,
+        accentColor: gameUIColors.query,
+        glitchColor1: gameUIColors.info,
+        glitchColor2: gameUIColors.warning,
       },
       {
         onPress: onEnvPress,
-        icon: <Server size={18} color="#00FFFF" />,
+        icon: <Server size={18} color={gameUIColors.env} />,
         label: "ENV",
         sublabel: "SYSTEM",
-        primaryColor: "#00FFFF",
-        secondaryColor: "#00E5FF",
-        accentColor: "#84FFFF",
-        glitchColor1: "#FF00FF",
-        glitchColor2: "#00FF00",
+        primaryColor: gameUIColors.env,
+        secondaryColor: gameUIColors.env,
+        accentColor: gameUIColors.env,
+        glitchColor1: gameUIColors.optional,
+        glitchColor2: gameUIColors.success,
       },
       {
         onPress: onSentryPress,
-        icon: <Bug size={18} color="#FF1744" />,
+        icon: <Bug size={18} color={gameUIColors.debug} />,
         label: "SENTRY",
         sublabel: "DEBUG",
-        primaryColor: "#FF1744",
-        secondaryColor: "#FF5252",
-        accentColor: "#FF8A80",
-        glitchColor1: "#00FFFF",
-        glitchColor2: "#FFFF00",
+        primaryColor: gameUIColors.debug,
+        secondaryColor: gameUIColors.debug,
+        accentColor: gameUIColors.debug,
+        glitchColor1: gameUIColors.info,
+        glitchColor2: gameUIColors.warning,
       },
       {
         onPress: onStoragePress,
-        icon: <Database size={18} color="#00FF88" />,
+        icon: <Database size={18} color={gameUIColors.storage} />,
         label: "STORAGE",
         sublabel: "MEMORY",
-        primaryColor: "#00FF88",
-        secondaryColor: "#00E676",
-        accentColor: "#69F0AE",
-        glitchColor1: "#FF00FF",
-        glitchColor2: "#00FFFF",
+        primaryColor: gameUIColors.storage,
+        secondaryColor: gameUIColors.storage,
+        accentColor: gameUIColors.storage,
+        glitchColor1: gameUIColors.optional,
+        glitchColor2: gameUIColors.info,
       },
       {
         onPress: onWifiToggle,
         icon: isWifiEnabled ? (
-          <Wifi size={18} color="#E040FB" />
+          <Wifi size={18} color={gameUIColors.network} />
         ) : (
-          <WifiOff size={18} color="#616161" />
+          <WifiOff size={18} color={gameUIColors.error} />
         ),
         label: isWifiEnabled ? "ONLINE" : "OFFLINE",
         sublabel: isWifiEnabled ? "CONNECTED" : "DISABLED",
-        primaryColor: isWifiEnabled ? "#E040FB" : "#616161",
-        secondaryColor: isWifiEnabled ? "#D500F9" : "#757575",
-        accentColor: isWifiEnabled ? "#EA80FC" : "#9E9E9E",
-        glitchColor1: "#00FFFF",
-        glitchColor2: "#FF00FF",
+        primaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
+        secondaryColor: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
+        accentColor: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
+        glitchColor1: gameUIColors.info,
+        glitchColor2: gameUIColors.optional,
       },
       {
         onPress: onClose,
-        icon: <X size={18} color="#9E9E9E" />,
+        icon: <X size={18} color={gameUIColors.muted} />,
         label: "EXIT",
         sublabel: "CLOSE",
-        primaryColor: "#424242",
-        secondaryColor: "#616161",
-        accentColor: "#757575",
-        glitchColor1: "#00FFFF",
-        glitchColor2: "#00FF00",
+        primaryColor: gameUIColors.secondary,
+        secondaryColor: gameUIColors.secondary,
+        accentColor: gameUIColors.secondary,
+        glitchColor1: gameUIColors.info,
+        glitchColor2: gameUIColors.success,
       },
     ],
     [
@@ -745,22 +746,12 @@ export function ClaudeGridMenuSVGGlitch({
               <Text
                 style={[
                   styles.label,
-                  {
-                    color: menuItem.primaryColor,
-                    textShadowColor: menuItem.primaryColor,
-                  },
+                  { color: gameUIColors.primary, textShadowColor: gameUIColors.primary },
                 ]}
               >
                 {scrambledText ? scrambledText.label : menuItem.label}
               </Text>
-              <Text
-                style={[
-                  styles.sublabel,
-                  {
-                    color: `${menuItem.primaryColor}99`,
-                  },
-                ]}
-              >
+              <Text style={[styles.sublabel, { color: gameUIColors.secondary } ]}>
                 {scrambledText ? scrambledText.sublabel : menuItem.sublabel}
               </Text>
             </View>
