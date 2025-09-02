@@ -183,6 +183,15 @@ export function StorageModalWithTabs({
     }
   }, [isListening]);
 
+  // Format precise time like HH:MM:SS.mmm
+  const formatTimeWithMs = useCallback((date: Date) => {
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    const ms = String(date.getMilliseconds()).padStart(3, "0");
+    return `${hours}:${minutes}:${seconds}.${ms}`;
+  }, []);
+
   const handleClearEvents = useCallback(() => {
     setEvents([]);
     setSelectedConversationKey(null);
@@ -619,6 +628,15 @@ export function StorageModalWithTabs({
               {selectedConversation.key}
             </Text>
           </View>
+          {/* Last updated timestamp under the key */}
+          <View style={styles.keyMetaRow}>
+            <Text style={styles.keyMetaTime}>
+              {formatTimeWithMs(selectedConversation.lastEvent.timestamp)}
+            </Text>
+            <Text style={styles.keyMetaRelative}>
+              ({formatRelativeTime(selectedConversation.lastEvent.timestamp)})
+            </Text>
+          </View>
           <StorageEventDetailContent
             conversation={selectedConversation}
             activeTab={detailTab}
@@ -674,15 +692,13 @@ export function StorageModalWithTabs({
     );
   };
 
-  const footerNode = selectedConversation && selectedConversation.events.length > 1
-    ? (
-        <StorageEventDetailFooter
-          conversation={selectedConversation}
-          selectedEventIndex={selectedEventIndex}
-          onEventIndexChange={setSelectedEventIndex}
-        />
-      )
-    : null;
+  const footerNode = selectedConversation ? (
+    <StorageEventDetailFooter
+      conversation={selectedConversation}
+      selectedEventIndex={selectedEventIndex}
+      onEventIndexChange={setSelectedEventIndex}
+    />
+  ) : null;
 
   return (
     <ClaudeModal60FPSClean
@@ -970,5 +986,27 @@ const styles = StyleSheet.create({
     color: gameUIColors.storage,
     fontFamily: "monospace",
     letterSpacing: 0.5,
+  },
+
+  keyMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    paddingBottom: 8,
+    backgroundColor: gameUIColors.panel + "40",
+    borderBottomWidth: 1,
+    borderBottomColor: gameUIColors.border + "10",
+  },
+  keyMetaTime: {
+    color: gameUIColors.primary,
+    fontSize: 12,
+    fontFamily: "monospace",
+  },
+  keyMetaRelative: {
+    color: gameUIColors.secondary,
+    fontSize: 12,
+    fontFamily: "monospace",
   },
 });

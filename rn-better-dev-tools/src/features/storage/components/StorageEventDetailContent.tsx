@@ -1,8 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { useEffect, useState, useCallback } from "react";
 import {
   ChevronLeft,
   ChevronRight,
   AlertCircle,
+  X,
 } from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
@@ -10,6 +12,7 @@ import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { ThemedSplitView } from "./DiffViewer/modes/ThemedSplitView";
 import { diffThemes } from "./DiffViewer/themes/diffThemes";
+import { computeLineDiff, DiffType } from "../utils/lineDiff";
 
 interface StorageKeyConversation {
   key: string;
@@ -43,6 +46,11 @@ export function StorageEventDetailContent({
   onEventIndexChange = () => {},
   disableInternalFooter = false,
 }: StorageEventDetailContentProps) {
+  // Compare-any-two state for Diff tab
+  const [leftIndex, setLeftIndex] = useState<number>(Math.max(0, selectedEventIndex - 1));
+  const [rightIndex, setRightIndex] = useState<number>(selectedEventIndex);
+  const [isLeftPickerOpen, setIsLeftPickerOpen] = useState(false);
+  const [isRightPickerOpen, setIsRightPickerOpen] = useState(false);
   const parseValue = (value: unknown): unknown => {
     if (value === null || value === undefined) return value;
     if (typeof value === "string") {
@@ -108,6 +116,37 @@ export function StorageEventDetailContent({
   );
   const totalEvents = navigationItems.length;
 
+  // Keep compare indices synced to selection
+  useEffect(() => {
+    const newRight = Math.min(totalEvents - 1, Math.max(0, selectedEventIndex));
+    const newLeft = Math.max(0, Math.min(newRight - 1, selectedEventIndex - 1));
+    setLeftIndex(newLeft);
+    setRightIndex(newRight);
+  }, [selectedEventIndex, totalEvents]);
+
+  // Precise time HH:MM:SS.mmm
+  const formatTimeWithMs = useCallback((date: Date): string => {
+    const h = String(date.getHours()).padStart(2, "0");
+    const m = String(date.getMinutes()).padStart(2, "0");
+    const s = String(date.getSeconds()).padStart(2, "0");
+    const ms = String(date.getMilliseconds()).padStart(3, "0");
+    return `${h}:${m}:${s}.${ms}`;
+  }, []);
+
+  const bumpLeft = (delta: number) => {
+    if (totalEvents < 2) return;
+    let next = Math.max(0, Math.min(totalEvents - 2, leftIndex + delta));
+    if (next >= rightIndex) next = Math.max(0, rightIndex - 1);
+    setLeftIndex(next);
+  };
+
+  const bumpRight = (delta: number) => {
+    if (totalEvents < 2) return;
+    let next = Math.max(1, Math.min(totalEvents - 1, rightIndex + delta));
+    if (next <= leftIndex) next = Math.min(totalEvents - 1, leftIndex + 1);
+    setRightIndex(next);
+  };
+
   // Render current value tab
   const renderCurrentValue = () => {
     const selectedEvent = navigationItems[selectedEventIndex];
@@ -133,20 +172,85 @@ export function StorageEventDetailContent({
       );
     }
 
-    const selectedEvent = navigationItems[selectedEventIndex];
-    const previousEvent =
-      selectedEventIndex > 0 ? navigationItems[selectedEventIndex - 1] : null;
-
-    const currentValue = selectedEvent?.data?.value;
-    const previousValue = previousEvent?.data?.value ?? null;
+    const leftEvent = navigationItems[Math.max(0, Math.min(totalEvents - 1, leftIndex))];
+    const rightEvent = navigationItems[Math.max(0, Math.min(totalEvents - 1, rightIndex))];
+    const previousValue = leftEvent?.data?.value ?? null;
+    const currentValue = rightEvent?.data?.value;
 
     return (
       <View style={styles.fullPageSection}>
+        {/* Compare picker row */}
+        {totalEvents > 0 && (
+          <View style={styles.compareBar}>
+            {/* PREV side */}
+            <View style={styles.compareSide}>
+              <Text style={[styles.compareLabel, { color: gameUIColors.optional }]}>PREV</Text>
+              <View style={styles.compareControls}>
+                <TouchableOpacity
+                  onPress={() => bumpLeft(-1)}
+                  disabled={leftIndex <= 0}
+                  style={[styles.compareBtn, leftIndex <= 0 && styles.compareBtnDisabled]}
+                >
+                  <ChevronLeft size={14} color={leftIndex <= 0 ? gameUIColors.muted : gameUIColors.secondary} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.compareMeta}
+                  onPress={() => setIsLeftPickerOpen(true)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.compareIndex}>#{leftIndex + 1} / {totalEvents}</Text>
+                  <Text style={styles.compareTime}>{formatTimeWithMs(leftEvent.timestamp)}</Text>
+                  <Text style={styles.compareRelative}>({formatRelativeTime(leftEvent.timestamp)})</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => bumpLeft(1)}
+                  disabled={leftIndex >= rightIndex - 1}
+                  style={[styles.compareBtn, leftIndex >= rightIndex - 1 && styles.compareBtnDisabled]}
+                >
+                  <ChevronRight size={14} color={leftIndex >= rightIndex - 1 ? gameUIColors.muted : gameUIColors.secondary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.compareDivider} />
+
+            {/* CUR side */}
+            <View style={styles.compareSide}>
+              <Text style={[styles.compareLabel, { color: gameUIColors.success }]}>CUR</Text>
+              <View style={styles.compareControls}>
+                <TouchableOpacity
+                  onPress={() => bumpRight(-1)}
+                  disabled={rightIndex <= leftIndex + 1}
+                  style={[styles.compareBtn, rightIndex <= leftIndex + 1 && styles.compareBtnDisabled]}
+                >
+                  <ChevronLeft size={14} color={rightIndex <= leftIndex + 1 ? gameUIColors.muted : gameUIColors.secondary} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.compareMeta}
+                  onPress={() => setIsRightPickerOpen(true)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.compareIndex}>#{rightIndex + 1} / {totalEvents}</Text>
+                  <Text style={styles.compareTime}>{formatTimeWithMs(rightEvent.timestamp)}</Text>
+                  <Text style={styles.compareRelative}>({formatRelativeTime(rightEvent.timestamp)})</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => bumpRight(1)}
+                  disabled={rightIndex >= totalEvents - 1}
+                  style={[styles.compareBtn, rightIndex >= totalEvents - 1 && styles.compareBtnDisabled]}
+                >
+                  <ChevronRight size={14} color={rightIndex >= totalEvents - 1 ? gameUIColors.muted : gameUIColors.secondary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+
         <ThemedSplitView
           oldValue={parseValue(previousValue)}
           newValue={parseValue(currentValue)}
           differences={[]}
-          theme={diffThemes.gitClassic}
+          theme={diffThemes.devToolsDefault}
           options={{
             hideLineNumbers: false,
             disableWordDiff: false,
@@ -175,6 +279,85 @@ export function StorageEventDetailContent({
         {activeTab === "current" && renderCurrentValue()}
         {activeTab === "diff" && renderDiff()}
       </View>
+
+      {(isLeftPickerOpen || isRightPickerOpen) && (
+        <View style={styles.pickerOverlay}>
+          <TouchableOpacity
+            style={styles.pickerBackdrop}
+            activeOpacity={1}
+            onPress={() => {
+              setIsLeftPickerOpen(false);
+              setIsRightPickerOpen(false);
+            }}
+          />
+          <View style={styles.pickerCard}>
+            <View style={styles.pickerHeader}>
+              <Text style={styles.pickerTitle}>
+                Select {isLeftPickerOpen ? 'PREV' : 'CUR'} Event
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsLeftPickerOpen(false);
+                  setIsRightPickerOpen(false);
+                }}
+                style={styles.pickerClose}
+                accessibilityLabel="Close event picker"
+              >
+                <X size={16} color={gameUIColors.secondary} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.pickerDivider} />
+            
+            <ScrollView
+              style={styles.pickerScroll}
+              contentContainerStyle={styles.pickerList}
+              showsVerticalScrollIndicator
+              nestedScrollEnabled
+            >
+              {navigationItems.map((item, idx) => {
+                const disabled = isLeftPickerOpen ? idx >= rightIndex : idx <= leftIndex;
+                return (
+                  <TouchableOpacity
+                    key={idx}
+                    disabled={disabled}
+                    onPress={() => {
+                      if (isLeftPickerOpen) {
+                        setLeftIndex(Math.min(idx, rightIndex - 1));
+                        setIsLeftPickerOpen(false);
+                      } else {
+                        setRightIndex(Math.max(idx, leftIndex + 1));
+                        setIsRightPickerOpen(false);
+                      }
+                    }}
+                    style={[styles.pickerItem, disabled && styles.pickerItemDisabled]}
+                  >
+                    <Text style={styles.pickerIndex}>#{idx + 1}</Text>
+                    <Text style={styles.pickerTime}>{formatTimeWithMs(item.timestamp)}</Text>
+                    <Text style={styles.pickerRelative}>({formatRelativeTime(item.timestamp)})</Text>
+                    {(() => {
+                      const targetOld = isLeftPickerOpen ? item : navigationItems[leftIndex];
+                      const targetNew = isLeftPickerOpen ? navigationItems[rightIndex] : item;
+                      const oldVal = parseValue(targetOld.data?.value);
+                      const newVal = parseValue(targetNew.data?.value);
+                      const diffs = computeLineDiff(oldVal, newVal, { compareMethod: 'words', disableWordDiff: false, showDiffOnly: false, contextLines: 0 });
+                      const added = diffs.filter(d => d.type === DiffType.ADDED).length;
+                      const removed = diffs.filter(d => d.type === DiffType.REMOVED).length;
+                      const modified = diffs.filter(d => d.type === DiffType.MODIFIED).length;
+                      return (
+                        <View style={styles.pickerCounts}>
+                          <Text style={[styles.pickerCountText, { color: diffThemes.devToolsDefault.summaryAddedText }]}>+{added}</Text>
+                          <Text style={[styles.pickerCountText, { color: diffThemes.devToolsDefault.summaryRemovedText }]}>-{removed}</Text>
+                          <Text style={[styles.pickerCountText, { color: diffThemes.devToolsDefault.summaryModifiedText }]}>~{modified}</Text>
+                        </View>
+                      );
+                    })()}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </View>
+      )}
 
       {/* Bottom Navigation - Fixed at bottom */}
       {totalEvents > 1 && !disableInternalFooter && (
@@ -450,5 +633,164 @@ const styles = StyleSheet.create({
     color: gameUIColors.secondary,
     fontFamily: "monospace",
     marginTop: 2,
+  },
+  // Compare picker styles
+  compareBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: gameUIColors.panel + "40",
+    borderWidth: 1,
+    borderColor: gameUIColors.border + "20",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    marginBottom: 8,
+    gap: 8,
+  },
+  compareSide: {
+    flex: 1,
+  },
+  compareLabel: {
+    fontSize: 10,
+    fontFamily: "monospace",
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    marginBottom: 2,
+  },
+  compareControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  compareBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    backgroundColor: gameUIColors.blackTint2,
+    borderWidth: 1,
+    borderColor: gameUIColors.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  compareBtnDisabled: {
+    opacity: 0.4,
+  },
+  compareMeta: {
+    flex: 1,
+  },
+  compareTime: {
+    fontSize: 11,
+    color: gameUIColors.primary,
+    fontFamily: "monospace",
+  },
+  compareIndex: {
+    fontSize: 10,
+    color: gameUIColors.secondary,
+    fontFamily: "monospace",
+  },
+  compareRelative: {
+    fontSize: 10,
+    color: gameUIColors.secondary,
+    fontFamily: "monospace",
+  },
+  compareDivider: {
+    width: 1,
+    height: 34,
+    backgroundColor: gameUIColors.border + "40",
+  },
+  pickerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pickerBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  pickerCard: {
+    width: '86%',
+    maxHeight: 320,
+    backgroundColor: gameUIColors.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: gameUIColors.border + '60',
+    padding: 12,
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  pickerClose: {
+    padding: 6,
+    borderRadius: 6,
+    backgroundColor: gameUIColors.blackTint2,
+    borderWidth: 1,
+    borderColor: gameUIColors.border,
+  },
+  pickerDivider: {
+    height: 1,
+    backgroundColor: gameUIColors.border + '40',
+    marginVertical: 8,
+  },
+  pickerScroll: {
+    maxHeight: 260,
+  },
+  pickerTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: gameUIColors.primary,
+    fontFamily: 'monospace',
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  pickerList: {
+    gap: 4,
+  },
+  pickerItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    backgroundColor: gameUIColors.blackTint2,
+    borderWidth: 1,
+    borderColor: gameUIColors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  pickerItemDisabled: {
+    opacity: 0.4,
+  },
+  pickerIndex: {
+    fontSize: 10,
+    color: gameUIColors.secondary,
+    fontFamily: 'monospace',
+    width: 40,
+  },
+  pickerTime: {
+    fontSize: 11,
+    color: gameUIColors.primary,
+    fontFamily: 'monospace',
+    flex: 1,
+  },
+  pickerRelative: {
+    fontSize: 10,
+    color: gameUIColors.secondary,
+    fontFamily: 'monospace',
+  },
+  pickerCounts: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginLeft: 'auto',
+  },
+  pickerCountText: {
+    fontSize: 10,
+    fontFamily: 'monospace',
+    fontWeight: '700',
   },
 });
