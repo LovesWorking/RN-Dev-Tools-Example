@@ -107,7 +107,7 @@ export function DevToolsThemeProvider({
         const savedTheme = await SafeStorage.getItem(THEME_STORAGE_KEY);
         if (
           savedTheme &&
-          (savedTheme === "cyberpunk" || savedTheme === "dark")
+          (savedTheme === "cyberpunk" || savedTheme === "dark" || savedTheme === "light")
         ) {
           setThemeName(savedTheme as ThemeName);
           setThemeState(getTheme(savedTheme as ThemeName));
@@ -143,10 +143,12 @@ export function DevToolsThemeProvider({
     setThemeState(getTheme(newThemeName));
   };
 
-  // Toggle between themes
+  // Toggle between themes (cycle: cyberpunk -> dark -> light -> cyberpunk)
   const toggleTheme = () => {
-    const newTheme = themeName === "cyberpunk" ? "dark" : "cyberpunk";
-    setTheme(newTheme);
+    const order: ThemeName[] = ["cyberpunk", "dark", "light"];
+    const idx = order.indexOf(themeName);
+    const next = order[(idx + 1) % order.length];
+    setTheme(next);
   };
 
   const value: DevToolsThemeContextType = {

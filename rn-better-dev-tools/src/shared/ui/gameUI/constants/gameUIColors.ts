@@ -241,6 +241,64 @@ const orangeTheme = {
   },
 };
 
+// Bootstrap-inspired Light Theme
+const lightTheme = {
+  // Base colors / surfaces
+  border: "#dee2e6",
+  blackTint1: "#ffffff",
+  blackTint2: "#ffffff",
+  blackTint3: "#f8f9fa",
+
+  // Status Colors (Bootstrap palette)
+  success: "#198754", // green
+  warning: "#ffc107", // yellow
+  error: "#dc3545", // red
+  info: "#0dcaf0", // cyan
+  critical: "#6610f2", // indigo/purple accent
+  optional: "#6c757d", // secondary
+
+  // Tool Colors
+  env: "#198754", // success
+  storage: "#6f42c1", // purple
+  query: "#0d6efd", // primary
+  debug: "#dc3545", // danger
+  network: "#20c997", // teal
+
+  // Data Types
+  dataTypes: {
+    object: "#0d6efd", // primary blue
+    array: "#20c997", // teal
+    string: "#198754", // green
+    number: "#fd7e14", // orange
+    boolean: "#6f42c1", // purple
+    function: "#6610f2", // indigo
+    undefined: "#6c757d", // secondary gray
+    null: "#dc3545", // red
+  },
+
+  // Text
+  secondary: "#495057",
+  muted: "#6c757d",
+
+  // Neon (subtle in light mode)
+  neonGlow: {
+    primary: "#6ea8fe",
+    secondary: "#6edff6",
+    tertiary: "#75b798",
+  },
+
+  // Override surfaces/text for light mode
+  background: "#f8f9fa",
+  panel: "#ffffff",
+  backdrop: "rgba(0, 0, 0, 0.4)",
+  buttonBackground: "#ffffff",
+  pureBlack: "#000000",
+
+  // Primary text colors for light bg
+  primary: "#212529",
+  primaryLight: "#495057",
+};
+
 // ============================================
 // THEME SELECTION - Just change this one line!
 // ============================================
@@ -256,18 +314,18 @@ const activeTheme = defaultTheme; // DEFAULT - Mixed colors (original)
 // ============================================
 
 export const gameUIColors = {
-  // Fixed backgrounds (same for all themes)
+  // Defaults (dark-ish) which can be overridden by theme spreads
   background: "rgba(8, 12, 21, 0.98)",
   panel: "rgba(16, 22, 35, 0.98)",
   backdrop: "rgba(0, 0, 0, 0.85)",
   buttonBackground: "rgba(12, 16, 26, 0.9)",
   pureBlack: "#000000",
 
-  // Fixed text colors (same for all themes)
+  // Default text colors for dark background
   primary: "#FFFFFF",
   primaryLight: "#F1F5F9",
 
-  // Theme-specific colors
+  // Theme-specific colors (later spread overrides defaults when present)
   ...activeTheme,
 } as const;
 
