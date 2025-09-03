@@ -3,7 +3,7 @@ import { ChevronRight } from "rn-better-dev-tools/icons";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import { ListItem } from "../../shared/ui/components";
-import { StatusBadge, TypeBadge } from "../../shared/ui/components/Badge";
+import { StatusBadge } from "../../shared/ui/components/Badge";
 
 import { formatTimestamp, getTypeColor, getTypeIcon } from "./utils";
 

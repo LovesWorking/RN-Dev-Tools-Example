@@ -18,7 +18,6 @@ import {
   GameUICompactStats,
   gameUIColors,
   GAME_UI_ALERT_STATES,
-  useGameUIAlertState,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface NetworkIgnoreFilterViewProps {

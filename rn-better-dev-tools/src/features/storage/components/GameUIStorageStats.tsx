@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Animated } from "react-native";
 import {
   Database,
-  HardDrive,
   Shield,
   AlertCircle,
   CheckCircle2,

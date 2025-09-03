@@ -3,7 +3,6 @@
 // =============================================================================
 
 import type { SentryEventEntry } from "./types";
-import { SentryEventType, SentryEventLevel } from "./types";
 import {
   LogType,
   LogLevel,

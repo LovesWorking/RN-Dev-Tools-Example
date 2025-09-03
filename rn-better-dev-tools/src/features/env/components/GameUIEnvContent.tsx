@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import {
   AlertCircle,

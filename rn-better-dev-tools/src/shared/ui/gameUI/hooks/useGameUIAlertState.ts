@@ -6,7 +6,6 @@ import {
   AlertCircle,
   AlertOctagon,
   Activity,
-  Database,
   HelpCircle,
 } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../constants/gameUIColors";

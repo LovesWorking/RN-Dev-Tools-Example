@@ -8,7 +8,6 @@ import type {
   SentryEvent,
   SpanJSON,
   FetchBreadcrumbHint,
-  XhrBreadcrumbHint,
 } from "../types";
 
 interface EventListener {

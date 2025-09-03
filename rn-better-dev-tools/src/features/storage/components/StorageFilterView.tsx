@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { Filter, Plus, Check, X } from "rn-better-dev-tools/icons";
+import { Filter, Plus } from "rn-better-dev-tools/icons";
 import { useEffect } from "react";
 import {
   GameUIStatusHeader,

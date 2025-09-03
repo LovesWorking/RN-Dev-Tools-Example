@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { GitBranch, Minus, Plus, Edit3 } from "rn-better-dev-tools/icons";
-import { objectDiff, type DiffItem } from "../utils/objectDiff";
 
 interface CompactDiffViewerProps {
   oldValue: unknown;

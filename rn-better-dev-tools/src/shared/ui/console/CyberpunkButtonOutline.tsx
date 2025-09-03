@@ -9,9 +9,6 @@ import Svg, {
   Path,
   G,
   Line,
-  Rect,
-  Circle,
-  Polygon,
   LinearGradient,
   Stop,
 } from "react-native-svg";

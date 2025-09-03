@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import type { ReactNode, CSSProperties } from "react";
+import type { ReactNode } from "react";
 
 // Base ListItem container component
 interface ListItemProps {

@@ -5,10 +5,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-  FlatList,
   ViewStyle,
-  TextStyle,
-  TextInputProps,
 } from "react-native";
 import { Search, X, Filter, Clock } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";

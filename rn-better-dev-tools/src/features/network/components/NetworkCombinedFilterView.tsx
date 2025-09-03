@@ -4,24 +4,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  TextInput,
 } from "react-native";
 import {
   Filter,
-  X,
   Plus,
-  Check,
   Globe,
   Link,
-  Activity,
 } from "rn-better-dev-tools/icons";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   GameUIStatusHeader,
   GameUICompactStats,
   gameUIColors,
   GAME_UI_ALERT_STATES,
-  useGameUIAlertState,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
   FilterSection,

@@ -5,8 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ViewStyle,
-  TextStyle,
 } from "react-native";
 import { LucideIcon } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";

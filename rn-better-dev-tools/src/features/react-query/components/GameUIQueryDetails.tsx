@@ -16,7 +16,6 @@ import {
 
 // Import shared Game UI components
 import {
-  GameUICollapsibleSection,
   gameUIColors,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";

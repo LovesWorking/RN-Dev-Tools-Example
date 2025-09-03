@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   XCircle,
   Eye,
-  HardDrive,
   Database,
   Shield,
 } from "rn-better-dev-tools/icons";

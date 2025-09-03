@@ -7,9 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   ViewStyle,
-  TextStyle,
 } from "react-native";
-import { Search, Copy, Edit3, Check, X } from "rn-better-dev-tools/icons";
+import { Search, Edit3, Check, X } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";
 import { CopyButton } from "./CopyButton";
 

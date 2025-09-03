@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Pressable,
   Animated,
-  Easing,
 } from "react-native";
 import {
   AlertCircle,

@@ -13,7 +13,6 @@ import {
   addListener,
   AsyncStorageEvent,
   isListening as checkIsListening,
-  getListenerCount,
 } from "../utils/AsyncStorageListener";
 
 // AsyncStorage will be loaded lazily

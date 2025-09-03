@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
-  ScrollView,
   PanResponder,
   FlatList,
 } from "react-native";

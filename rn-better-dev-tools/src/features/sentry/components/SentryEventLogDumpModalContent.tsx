@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
   PanResponder,
   FlatList,
 } from "react-native";

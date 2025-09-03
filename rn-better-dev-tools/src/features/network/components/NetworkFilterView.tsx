@@ -15,7 +15,6 @@ import {
 } from "@/rn-better-dev-tools/src/shared/ui/components/FilterComponents";
 import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
 import {
-  X,
   CheckCircle,
   XCircle,
   Clock,
@@ -28,7 +27,6 @@ import {
   Filter,
   Link,
   Plus,
-  Check,
 } from "rn-better-dev-tools/icons";
 import type { NetworkEvent } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";

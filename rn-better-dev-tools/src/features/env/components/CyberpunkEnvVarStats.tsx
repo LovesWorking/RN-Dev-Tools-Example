@@ -3,7 +3,6 @@ import { StyleSheet, View, Text, Animated } from "react-native";
 import {
   AlertCircle,
   CheckCircle2,
-  Eye,
   XCircle,
   Zap,
   Server,
