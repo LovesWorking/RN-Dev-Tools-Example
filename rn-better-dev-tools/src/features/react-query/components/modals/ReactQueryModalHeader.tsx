@@ -1,8 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Query, Mutation } from "@tanstack/react-query";
-import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 
 interface ReactQueryModalHeaderProps {
   selectedQuery?: Query;
@@ -51,154 +49,34 @@ export function ReactQueryModalHeader({
     }
   };
 
+  const tabs = [
+    { key: "queries" as const, label: "Queries" },
+    { key: "mutations" as const, label: "Mutations" },
+  ];
+
+  // Show details view when an item is selected
+  if (selectedQuery || selectedMutation) {
+    return (
+      <ModalHeader>
+        <ModalHeader.Navigation onBack={onBack} onClose={onClose} />
+        <ModalHeader.Content 
+          title={getItemText(selectedQuery ?? selectedMutation!)} 
+        />
+      </ModalHeader>
+    );
+  }
+
+  // Show browser view with tabs when no item is selected
   return (
-    <View style={styles.container}>
-      {selectedQuery || selectedMutation ? (
-        <View style={styles.detailsView}>
-          <BackButton
-            onPress={onBack}
-            color={gameUIColors.primary}
-            size={16}
-            accessibilityLabel="Back to list"
-            accessibilityHint="Return to list view"
-          />
-          <Text style={styles.queryText} numberOfLines={1}>
-            {getItemText(selectedQuery ?? selectedMutation!)}
-          </Text>
-          {!!onClose && <CloseButton onPress={onClose} />}
-        </View>
-      ) : (
-        <View style={styles.browserView}>
-          <View style={styles.tabNavigationContainer}>
-            <TouchableOpacity
-              sentry-label="ignore user interaction"
-              accessibilityLabel="Queries"
-              accessibilityHint="View queries"
-              onPress={() => onTabChange("queries")}
-              style={[
-                styles.tabButton,
-                activeTab === "queries"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  activeTab === "queries"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                Queries
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              sentry-label="ignore user interaction"
-              onPress={() => onTabChange("mutations")}
-              style={[
-                styles.tabButton,
-                activeTab === "mutations"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  activeTab === "mutations"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                Mutations
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {!!onClose && <CloseButton onPress={onClose} />}
-        </View>
-      )}
-    </View>
+    <ModalHeader>
+      <ModalHeader.Content title="" noMargin>
+        <TabSelector
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(tab) => onTabChange(tab as "queries" | "mutations")}
+        />
+      </ModalHeader.Content>
+      {onClose && <ModalHeader.Actions onClose={onClose} />}
+    </ModalHeader>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 12,
-  },
-
-  detailsView: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    gap: 8,
-  },
-
-  browserView: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-
-  tabNavigationContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 6,
-    padding: 2,
-    borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
-    justifyContent: "space-evenly",
-  },
-
-  tabButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 4,
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    marginHorizontal: 1,
-  },
-
-  tabButtonActive: {
-    backgroundColor: gameUIColors.info + "20",
-    borderWidth: 1,
-    borderColor: gameUIColors.info + "40",
-  },
-
-  tabButtonInactive: {
-    backgroundColor: "transparent",
-  },
-
-  tabButtonText: {
-    fontSize: 12,
-    fontWeight: "600",
-    letterSpacing: 0.5,
-    fontFamily: "monospace",
-    textTransform: "uppercase",
-  },
-
-  tabButtonTextActive: {
-    color: gameUIColors.info,
-  },
-
-  tabButtonTextInactive: {
-    color: gameUIColors.muted,
-  },
-
-  queryText: {
-    flex: 1,
-    color: gameUIColors.primary,
-    fontSize: 12,
-    fontWeight: "600",
-    fontFamily: "monospace",
-    paddingHorizontal: 4,
-    letterSpacing: 0.5,
-  },
-});

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
-import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import {
@@ -316,25 +316,21 @@ export function StorageEventDetailModal({
   };
 
   const renderHeaderContent = () => (
-    <View style={styles.headerContainer}>
-      <BackButton onPress={onBack} />
-      <View style={styles.headerInfo}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          Key Overview
-        </Text>
-        {event?.data?.key && (
-          <Text style={styles.headerSubtitle} numberOfLines={1}>
-            {event.data.key}
-          </Text>
-        )}
-      </View>
-      <ToolbarCopyButton
-        value={getAllData()}
-        buttonStyle={styles.copyButton}
-        onCopySuccess={() => Alert.alert("Copied", "All storage data copied to clipboard")}
-        onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+    <ModalHeader>
+      <ModalHeader.Navigation onBack={onBack} />
+      <ModalHeader.Content 
+        title="Key Overview"
+        subtitle={event?.data?.key}
       />
-    </View>
+      <ModalHeader.Actions onClose={onClose}>
+        <ToolbarCopyButton
+          value={getAllData()}
+          buttonStyle={styles.copyButton}
+          onCopySuccess={() => Alert.alert("Copied", "All storage data copied to clipboard")}
+          onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+        />
+      </ModalHeader.Actions>
+    </ModalHeader>
   );
 
   if (!visible || !event) return null;
@@ -788,14 +784,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#171717",
   },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    gap: 8,
-    minHeight: 32,
-    paddingLeft: 4,
-  },
   copyButton: {
     width: 28,
     height: 28,
@@ -810,19 +798,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  headerInfo: {
-    flex: 1,
-  },
-  headerTitle: {
-    color: "#E5E7EB",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  headerSubtitle: {
-    color: "#6B7280",
-    fontSize: 11,
-    marginTop: 2,
   },
   section: {
     marginBottom: 16,

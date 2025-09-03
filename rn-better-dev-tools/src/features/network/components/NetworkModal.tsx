@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
-  ScrollView,
 } from "react-native";
 import {
   Globe,
@@ -18,13 +17,12 @@ import {
   XCircle,
   Clock,
   X,
-  Link,
 } from "rn-better-dev-tools/icons";
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
-import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
@@ -63,7 +61,6 @@ function NetworkModalInner({
   onBack,
   enableSharedModalDimensions = false,
 }: NetworkModalProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const theme = useTheme();
   const {
     events,
@@ -74,6 +71,10 @@ function NetworkModalInner({
     isEnabled,
     toggleInterception,
   } = useNetworkEvents();
+
+  const handleModeChange = useCallback((_mode: ModalMode) => {
+    // Mode changes handled by ClaudeModal60FPSClean
+  }, []);
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
@@ -87,10 +88,6 @@ function NetworkModalInner({
   const [ignoredUrls, setIgnoredUrls] = useState<Set<string>>(new Set());
   const flatListRef = useRef<FlatList<NetworkEvent>>(null);
   const hasLoadedFilters = useRef(false);
-
-  const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
-  }, []);
 
   // Load persisted filters on mount
   useEffect(() => {
@@ -234,124 +231,47 @@ function NetworkModalInner({
 
   // Compact header with actions (like Sentry/Storage modals)
   const renderHeaderContent = () => {
+    // Filter view header with tabs
     if (showFilterView) {
+      const filterTabs = [
+        { key: "filters" as const, label: "Filters" },
+        { key: "domains" as const, label: "Domains" },
+        { key: "urls" as const, label: "URLs" },
+      ];
+
       return (
-        <View style={styles.headerContainer}>
-          <BackButton
-            onPress={() => setShowFilterView(false)}
-            color={theme.colors.text}
-          />
-
-          {/* Shared navbar style like React Query modal */}
-          <View style={styles.tabNavigationContainer}>
-            <TouchableOpacity
-              onPress={() => setFilterViewTab("filters")}
-              style={[
-                styles.tabButton,
-                filterViewTab === "filters"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  filterViewTab === "filters"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                Filters
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setFilterViewTab("domains")}
-              style={[
-                styles.tabButton,
-                filterViewTab === "domains"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  filterViewTab === "domains"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                Domains
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setFilterViewTab("urls")}
-              style={[
-                styles.tabButton,
-                filterViewTab === "urls"
-                  ? styles.tabButtonActive
-                  : styles.tabButtonInactive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  filterViewTab === "urls"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                URLs
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ marginLeft: "auto" }}>
-            <CloseButton onPress={onClose} />
-          </View>
-        </View>
+        <ModalHeader>
+          <ModalHeader.Navigation onBack={() => setShowFilterView(false)} />
+          <ModalHeader.Content title="" noMargin>
+            <TabSelector
+              tabs={filterTabs}
+              activeTab={filterViewTab}
+              onTabChange={(tab) =>
+                setFilterViewTab(tab as "filters" | "domains" | "urls")
+              }
+            />
+          </ModalHeader.Content>
+          <ModalHeader.Actions onClose={onClose} />
+        </ModalHeader>
       );
     }
 
-    // Don't show main header action buttons when viewing event details
+    // Event detail view header
     if (selectedEvent) {
       return (
-        <View style={styles.headerContainer}>
-          <BackButton onPress={handleBack} color={theme.colors.text} />
-          <Text
-            style={[
-              styles.headerTitle,
-              {
-                color: theme.colors.text,
-                fontFamily:
-                  theme.name === "cyberpunk" ? "monospace" : undefined,
-                fontSize: theme.name === "cyberpunk" ? 14 : 14,
-                fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-                letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-                textTransform:
-                  theme.name === "cyberpunk" ? "uppercase" : undefined,
-              },
-            ]}
-          >
-            Request Details
-          </Text>
-          <View style={{ marginLeft: "auto" }}>
-            <CloseButton onPress={onClose} />
-          </View>
-        </View>
+        <ModalHeader>
+          <ModalHeader.Navigation onBack={handleBack} />
+          <ModalHeader.Content title="Request Details" centered />
+          <ModalHeader.Actions onClose={onClose} />
+        </ModalHeader>
       );
     }
 
+    // Main list view header with search and filters
     return (
-      <View style={styles.headerContainer}>
-        {onBack ? (
-          <BackButton onPress={onBack} color={theme.colors.text} />
-        ) : null}
-
-        {/* Center area: search or compact chips */}
-        <View style={styles.headerCenterArea}>
+      <ModalHeader>
+        {onBack && <ModalHeader.Navigation onBack={onBack} />}
+        <ModalHeader.Content title="">
           {isSearchActive ? (
             <View style={styles.headerSearchContainer}>
               <Search size={14} color={gameUIColors.secondary} />
@@ -398,7 +318,12 @@ function NetworkModalInner({
                 }
               >
                 <CheckCircle size={12} color={gameUIColors.success} />
-                <Text style={[styles.headerChipValue, { color: gameUIColors.success }]}>
+                <Text
+                  style={[
+                    styles.headerChipValue,
+                    { color: gameUIColors.success },
+                  ]}
+                >
                   {stats.successfulRequests}
                 </Text>
               </TouchableOpacity>
@@ -416,7 +341,12 @@ function NetworkModalInner({
                 }
               >
                 <XCircle size={12} color={gameUIColors.error} />
-                <Text style={[styles.headerChipValue, { color: gameUIColors.error }]}>
+                <Text
+                  style={[
+                    styles.headerChipValue,
+                    { color: gameUIColors.error },
+                  ]}
+                >
                   {stats.failedRequests}
                 </Text>
               </TouchableOpacity>
@@ -434,16 +364,19 @@ function NetworkModalInner({
                 }
               >
                 <Clock size={12} color={gameUIColors.warning} />
-                <Text style={[styles.headerChipValue, { color: gameUIColors.warning }]}>
+                <Text
+                  style={[
+                    styles.headerChipValue,
+                    { color: gameUIColors.warning },
+                  ]}
+                >
                   {stats.pendingRequests}
                 </Text>
               </TouchableOpacity>
             </View>
           )}
-        </View>
-
-        {/* Action buttons in header */}
-        <View style={styles.headerActions}>
+        </ModalHeader.Content>
+        <ModalHeader.Actions onClose={onClose}>
           <TouchableOpacity
             sentry-label="ignore open search"
             onPress={() => setIsSearchActive(true)}
@@ -500,9 +433,8 @@ function NetworkModalInner({
               }
             />
           </TouchableOpacity>
-          <CloseButton onPress={onClose} />
-        </View>
-      </View>
+        </ModalHeader.Actions>
+      </ModalHeader>
     );
   };
 
@@ -537,24 +469,24 @@ function NetworkModalInner({
 
   if (!visible) return null;
 
-  // Show detail view if an event is selected
-  if (selectedEvent) {
-    return (
-      <ClaudeModal60FPSClean
-        visible={visible}
-        onClose={onClose}
-        persistenceKey={persistenceKey}
-        header={{
-          showToggleButton: true,
-          customContent: renderHeaderContent(),
-        }}
-        onModeChange={handleModeChange}
-        enablePersistence={true}
-        initialMode="bottomSheet"
-        enableGlitchEffects={theme.name === "cyberpunk"}
-        styles={{}}
-      >
-        <View style={styles.container}>
+  return (
+    <ClaudeModal60FPSClean
+      visible={visible}
+      onClose={onClose}
+      persistenceKey={persistenceKey}
+      header={{
+        showToggleButton: true,
+        customContent: renderHeaderContent(),
+      }}
+      onModeChange={handleModeChange}
+      enablePersistence={true}
+      initialMode="bottomSheet"
+      enableGlitchEffects={theme.name === "cyberpunk"}
+      styles={{}}
+    >
+      <View style={styles.container}>
+        {/* Show detail view if event is selected */}
+        {selectedEvent ? (
           <NetworkEventDetailView
             event={selectedEvent}
             onBack={handleBack}
@@ -579,37 +511,15 @@ function NetworkModalInner({
               setIgnoredUrls(newUrls);
             }}
           />
-        </View>
-      </ClaudeModal60FPSClean>
-    );
-  }
-
-  return (
-    <ClaudeModal60FPSClean
-      visible={visible}
-      onClose={onClose}
-      persistenceKey={persistenceKey}
-      header={{
-        showToggleButton: true,
-        customContent: renderHeaderContent(),
-      }}
-      onModeChange={handleModeChange}
-      enablePersistence={true}
-      initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
-      styles={{}}
-    >
-      <View style={styles.container}>
-        {/* Show filter view if active */}
-        {showFilterView ? (
+        ) : showFilterView ? (
           <NetworkFilterView
             events={events}
             filter={filter}
             onFilterChange={setFilter}
             onClose={() => setShowFilterView(false)}
+            activeTab={filterViewTab}
             ignoredDomains={ignoredDomains}
             ignoredUrls={ignoredUrls}
-            activeTab={filterViewTab}
             onToggleDomain={(domain) => {
               const newDomains = new Set(ignoredDomains);
               if (newDomains.has(domain)) {

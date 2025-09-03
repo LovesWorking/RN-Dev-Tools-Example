@@ -3,9 +3,8 @@ import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { SentryLogsContent } from "./SentryLogsSection";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
+import { TouchableOpacity, StyleSheet } from "react-native";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import {
   ConsoleTransportEntry,
   LogType,
@@ -90,110 +89,6 @@ export function SentryLogsModal({
     clearSentryEvents();
   };
 
-  const renderHeaderContent = () => {
-    // Show minimal header for detail/filter views
-    if (selectedEntry || showFilterView) {
-      return (
-        <View
-          style={styles.headerContainer}
-          sentry-label="ignore devtools sentry modal header"
-        >
-          <BackButton
-            onPress={handleBackPress}
-            color={gameUIColors.primary}
-            size={16}
-            sentry-label="ignore devtools sentry modal back button"
-          />
-          <Text
-            style={styles.headerTitle}
-            numberOfLines={1}
-            sentry-label="ignore devtools sentry modal header text"
-          >
-            {selectedEntry ? "Event Details" : "Filters"}
-          </Text>
-          <View style={{ marginLeft: "auto" }}>
-            <CloseButton onPress={onClose} />
-          </View>
-        </View>
-      );
-    }
-
-    // Main list view - show full action bar
-    return (
-      <View
-        style={styles.headerContainer}
-        sentry-label="ignore devtools sentry modal header"
-      >
-        {onBack && (
-          <BackButton
-            onPress={handleBackPress}
-            color={gameUIColors.primary}
-            size={16}
-            sentry-label="ignore devtools sentry modal back button"
-          />
-        )}
-        <Text
-          style={styles.eventCount}
-          sentry-label="ignore devtools sentry event count"
-        >
-          {filteredEntries.length} of {totalCount}
-          {(selectedTypes.size > 0 || selectedLevels.size > 0) && " (filtered)"}
-        </Text>
-        <View style={styles.headerActions}>
-          <TouchableOpacity
-            sentry-label="ignore devtools sentry filter open"
-            onPress={() => setShowFilterView(true)}
-            style={[
-              styles.iconButton,
-              (selectedTypes.size > 0 || selectedLevels.size > 0) &&
-                styles.activeFilterButton,
-            ]}
-            accessibilityLabel="Open filters"
-          >
-            <Filter
-              size={16}
-              color={
-                selectedTypes.size > 0 || selectedLevels.size > 0
-                  ? gameUIColors.optional
-                  : gameUIColors.secondary
-              }
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            sentry-label="ignore devtools sentry pause logging"
-            onPress={() => setIsLoggingEnabled(!isLoggingEnabled)}
-            style={[styles.iconButton, isLoggingEnabled && styles.activeButton]}
-            accessibilityLabel={
-              isLoggingEnabled ? "Pause logging" : "Resume logging"
-            }
-          >
-            {isLoggingEnabled ? (
-              <Pause size={16} color={gameUIColors.success} />
-            ) : (
-              <Play size={16} color={gameUIColors.success} />
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
-            sentry-label="ignore devtools sentry generate test events"
-            onPress={generateTestLogs}
-            style={styles.iconButton}
-            accessibilityLabel="Generate test Sentry events"
-          >
-            <FlaskConical size={16} color={gameUIColors.info} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            sentry-label="ignore devtools sentry clear events"
-            onPress={clearLogs}
-            style={styles.iconButton}
-            accessibilityLabel="Clear Sentry events"
-          >
-            <Trash size={16} color={gameUIColors.error} />
-          </TouchableOpacity>
-          <CloseButton onPress={onClose} />
-        </View>
-      </View>
-    );
-  };
 
   const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
@@ -206,7 +101,71 @@ export function SentryLogsModal({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: renderHeaderContent(),
+        customContent: (selectedEntry || showFilterView) ? (
+          <ModalHeader>
+            <ModalHeader.Navigation onBack={handleBackPress} onClose={onClose} />
+            <ModalHeader.Content title={selectedEntry ? "Event Details" : "Filters"} />
+          </ModalHeader>
+        ) : (
+          <ModalHeader>
+            {onBack && <ModalHeader.Navigation onBack={handleBackPress} />}
+            <ModalHeader.Content 
+              title="Sentry Events"
+              subtitle={`${filteredEntries.length} of ${totalCount}${(selectedTypes.size > 0 || selectedLevels.size > 0) ? " (filtered)" : ""}`}
+            />
+            <ModalHeader.Actions onClose={onClose}>
+              <TouchableOpacity
+                sentry-label="ignore devtools sentry filter open"
+                onPress={() => setShowFilterView(true)}
+                style={[
+                  styles.iconButton,
+                  (selectedTypes.size > 0 || selectedLevels.size > 0) &&
+                    styles.activeFilterButton,
+                ]}
+                accessibilityLabel="Open filters"
+              >
+                <Filter
+                  size={16}
+                  color={
+                    selectedTypes.size > 0 || selectedLevels.size > 0
+                      ? gameUIColors.optional
+                      : gameUIColors.secondary
+                  }
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                sentry-label="ignore devtools sentry pause logging"
+                onPress={() => setIsLoggingEnabled(!isLoggingEnabled)}
+                style={[styles.iconButton, isLoggingEnabled && styles.activeButton]}
+                accessibilityLabel={
+                  isLoggingEnabled ? "Pause logging" : "Resume logging"
+                }
+              >
+                {isLoggingEnabled ? (
+                  <Pause size={16} color={gameUIColors.success} />
+                ) : (
+                  <Play size={16} color={gameUIColors.success} />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                sentry-label="ignore devtools sentry generate test events"
+                onPress={generateTestLogs}
+                style={styles.iconButton}
+                accessibilityLabel="Generate test Sentry events"
+              >
+                <FlaskConical size={16} color={gameUIColors.info} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                sentry-label="ignore devtools sentry clear events"
+                onPress={clearLogs}
+                style={styles.iconButton}
+                accessibilityLabel="Clear Sentry events"
+              >
+                <Trash size={16} color={gameUIColors.error} />
+              </TouchableOpacity>
+            </ModalHeader.Actions>
+          </ModalHeader>
+        ),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}
@@ -250,36 +209,6 @@ export function SentryLogsModal({
 }
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    gap: 8,
-    minHeight: 32,
-  },
-  headerTitle: {
-    color: gameUIColors.primary,
-    fontSize: 14,
-    fontWeight: "600",
-    flex: 1,
-    marginLeft: 8,
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-  eventCount: {
-    color: gameUIColors.secondary,
-    fontSize: 12,
-    fontWeight: "600",
-    marginLeft: 4,
-    fontFamily: "monospace",
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginLeft: "auto",
-  },
   iconButton: {
     padding: 6,
     borderRadius: 6,

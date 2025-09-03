@@ -3,14 +3,11 @@ import ClaudeModal60FPSClean, {
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
-import { View, Text } from "react-native";
-import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { FileCode } from "rn-better-dev-tools/icons";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 
 interface EnvVarsModalProps {
   visible: boolean;
@@ -33,123 +30,13 @@ export function EnvVarsModal({
   onBack,
   enableSharedModalDimensions = false,
 }: EnvVarsModalProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const theme = useTheme();
 
-  const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
+  const handleModeChange = useCallback((_mode: ModalMode) => {
+    // Mode changes handled by ClaudeModal60FPSClean
   }, []);
 
   if (!visible) return null;
-
-  const renderHeaderContent = () => (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        flex: 1,
-        gap: 12,
-        minHeight: 32,
-        paddingLeft: 12,
-      }}
-    >
-      {onBack && <BackButton onPress={onBack} color={theme.colors.text} />}
-      <View
-        style={{
-          width: 32,
-          height: 32,
-          backgroundColor:
-            theme.name === "cyberpunk"
-              ? `${theme.colors.envColor}15`
-              : gameUIColors.success + "1A",
-          borderRadius: theme.name === "cyberpunk" ? 8 : 16,
-          borderWidth: theme.name === "cyberpunk" ? 1 : 0,
-          borderColor:
-            theme.name === "cyberpunk"
-              ? `${theme.colors.envColor}40`
-              : undefined,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <FileCode size={18} color={theme.colors.envColor} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text
-          style={{
-            color: theme.colors.text,
-            fontSize: theme.name === "cyberpunk" ? 14 : 14,
-            fontWeight: theme.name === "cyberpunk" ? "700" : "500",
-            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
-            letterSpacing: theme.name === "cyberpunk" ? 1 : undefined,
-            textTransform: theme.name === "cyberpunk" ? "uppercase" : undefined,
-          }}
-          numberOfLines={1}
-        >
-          {theme.name === "cyberpunk"
-            ? "ENV CONFIG INSPECTOR"
-            : "Environment Variables"}
-        </Text>
-        <Text
-          style={{
-            color:
-              theme.name === "cyberpunk"
-                ? theme.colors.textSecondary
-                : gameUIColors.secondary,
-            fontSize: 10,
-            fontFamily: theme.name === "cyberpunk" ? "monospace" : undefined,
-            marginTop: 2,
-            opacity: 0.8,
-          }}
-          numberOfLines={1}
-        >
-          {theme.name === "cyberpunk"
-            ? "VALIDATE & DEBUG ENV VARS"
-            : "View and validate env configuration"}
-        </Text>
-      </View>
-      <View style={{ marginLeft: "auto", marginRight: 8 }}>
-        <CloseButton onPress={onClose} />
-      </View>
-      {theme.name === "cyberpunk" && (
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 3,
-            marginRight: 8,
-          }}
-        >
-          <View
-            style={{
-              width: 3,
-              height: 3,
-              borderRadius: 1.5,
-              backgroundColor: theme.colors.envColor,
-              opacity: 0.8,
-            }}
-          />
-          <View
-            style={{
-              width: 3,
-              height: 3,
-              borderRadius: 1.5,
-              backgroundColor: theme.colors.envColor,
-              opacity: 0.5,
-            }}
-          />
-          <View
-            style={{
-              width: 3,
-              height: 3,
-              borderRadius: 1.5,
-              backgroundColor: theme.colors.envColor,
-              opacity: 0.3,
-            }}
-          />
-        </View>
-      )}
-    </View>
-  );
 
   const storagePrefix = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
@@ -161,7 +48,17 @@ export function EnvVarsModal({
       onClose={onClose}
       persistenceKey={storagePrefix}
       header={{
-        customContent: renderHeaderContent(),
+        customContent: (
+          <ModalHeader>
+            <ModalHeader.Navigation onBack={onBack} />
+            <ModalHeader.Content
+              title="Environment"
+              subtitle={`${requiredEnvVars.length} variables`}
+              centered
+            />
+            <ModalHeader.Actions onClose={onClose} />
+          </ModalHeader>
+        ),
         showToggleButton: true,
       }}
       onModeChange={handleModeChange}

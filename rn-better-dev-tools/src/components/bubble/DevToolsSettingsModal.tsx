@@ -28,6 +28,8 @@ import ClaudeModal60FPSClean, {
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 
 const STORAGE_KEY = "@rn_better_dev_tools_settings";
 
@@ -87,7 +89,6 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
   const [settings, setSettings] = useState<DevToolsSettings>(
     initialSettings || defaultSettings
   );
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [activeTab, setActiveTab] = useState<"dial" | "floating">("dial");
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -168,9 +169,8 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
   };
 
   // Modal is fixed to bottom sheet mode
-  const handleModeChange = useCallback((mode: ModalMode) => {
-    // Keep it as bottom sheet only
-    setModalMode("bottomSheet");
+  const handleModeChange = useCallback((_mode: ModalMode) => {
+    // Mode changes handled by ClaudeModal60FPSClean
   }, []);
 
   const getToolColor = (tool: string): string => {
@@ -310,59 +310,6 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     );
   };
 
-  // Custom header matching React Query modal style - tabs with close button
-  const renderHeaderContent = () => (
-    <View style={styles.headerContainer}>
-      <View style={styles.tabNavigationContainer}>
-        <TouchableOpacity
-          onPress={() => setActiveTab("dial")}
-          style={[
-            styles.tabButton,
-            activeTab === "dial"
-              ? styles.tabButtonActive
-              : styles.tabButtonInactive,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabButtonText,
-              activeTab === "dial"
-                ? styles.tabButtonTextActive
-                : styles.tabButtonTextInactive,
-            ]}
-          >
-            DIAL MENU
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setActiveTab("floating")}
-          style={[
-            styles.tabButton,
-            activeTab === "floating"
-              ? styles.tabButtonActive
-              : styles.tabButtonInactive,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabButtonText,
-              activeTab === "floating"
-                ? styles.tabButtonTextActive
-                : styles.tabButtonTextInactive,
-            ]}
-          >
-            FLOATING
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Close button on the right, outside the tabs */}
-      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Text style={styles.closeButtonText}>✕</Text>
-      </TouchableOpacity>
-    </View>
-  );
 
   const renderContent = () => (
     <View style={styles.container}>
@@ -409,7 +356,21 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
       onClose={onClose}
       header={{
         showToggleButton: false, // Hide toggle button since we're using bottom sheet only
-        customContent: renderHeaderContent(),
+        customContent: (
+          <ModalHeader>
+            <ModalHeader.Content title="" noMargin>
+              <TabSelector
+                tabs={[
+                  { key: "dial", label: "DIAL MENU" },
+                  { key: "floating", label: "FLOATING" },
+                ]}
+                activeTab={activeTab}
+                onTabChange={(tab) => setActiveTab(tab as "dial" | "floating")}
+              />
+            </ModalHeader.Content>
+            <ModalHeader.Actions onClose={onClose} />
+          </ModalHeader>
+        ),
       }}
       initialMode="bottomSheet"
       onModeChange={handleModeChange}

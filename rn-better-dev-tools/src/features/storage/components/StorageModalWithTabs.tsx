@@ -2,10 +2,10 @@ import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
-import { BackButton } from "@/rn-better-dev-tools/src/shared/ui/components/BackButton";
-import { CloseButton } from "@/rn-better-dev-tools/src/shared/ui/components/CloseButton";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
+import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import {
   Text,
   View,
@@ -20,7 +20,6 @@ import {
   Play,
   Trash2,
   Filter,
-  Activity,
 } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -73,7 +72,6 @@ export function StorageModalWithTabs({
   enableSharedModalDimensions = false,
   requiredStorageKeys = [],
 }: StorageModalWithTabsProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [activeTab, setActiveTab] = useState<TabType>("browser");
   const theme = useTheme();
 
@@ -94,8 +92,8 @@ export function StorageModalWithTabs({
   const hasLoadedTabState = useRef(false);
   const hasLoadedMonitoringState = useRef(false);
 
-  const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
+  const handleModeChange = useCallback((_mode: ModalMode) => {
+    // Mode changes handled by ClaudeModal60FPSClean
   }, []);
 
   // Timer removed - using useTickEveryMinute hook instead
@@ -482,219 +480,6 @@ export function StorageModalWithTabs({
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.storage.modal();
 
-  const renderHeaderContent = () => {
-    // Show filters
-    if (showFilters) {
-      return (
-        <View style={styles.headerContainer}>
-          <BackButton
-            onPress={() => setShowFilters(false)}
-            color={gameUIColors.primary}
-            size={16}
-          />
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            Filters
-          </Text>
-          <View style={{ marginLeft: "auto" }}>
-            <CloseButton onPress={onClose} />
-          </View>
-        </View>
-      );
-    }
-
-    // Show detail view with tabs
-    if (selectedConversation) {
-      return (
-        <View style={styles.headerContainer}>
-          <BackButton
-            onPress={() => {
-              setSelectedConversationKey(null);
-              setSelectedEventIndex(0);
-              setDetailTab("current");
-            }}
-            color={gameUIColors.primary}
-            size={16}
-          />
-
-          <View style={styles.tabNavigationContainer}>
-            <TouchableOpacity
-              onPress={() => setDetailTab("current")}
-              style={[
-                styles.tabButton,
-                detailTab === "current" && styles.tabButtonActive,
-              ]}
-            >
-              <Database
-                size={12}
-                color={
-                  detailTab === "current"
-                    ? gameUIColors.info
-                    : gameUIColors.secondary
-                }
-              />
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  detailTab === "current"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                Current Value
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setDetailTab("diff")}
-              style={[
-                styles.tabButton,
-                detailTab === "diff" && styles.tabButtonActive,
-              ]}
-            >
-              <Activity
-                size={12}
-                color={
-                  detailTab === "diff"
-                    ? gameUIColors.warning
-                    : gameUIColors.secondary
-                }
-              />
-              <Text
-                style={[
-                  styles.tabButtonText,
-                  detailTab === "diff"
-                    ? styles.tabButtonTextActive
-                    : styles.tabButtonTextInactive,
-                ]}
-              >
-                Diff
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginLeft: "auto" }}>
-            <CloseButton onPress={onClose} />
-          </View>
-        </View>
-      );
-    }
-
-    // Main header with tabs
-    return (
-      <View style={styles.headerContainer}>
-        {onBack && (
-          <BackButton onPress={onBack} color={gameUIColors.primary} size={16} />
-        )}
-
-        <View style={styles.tabNavigationContainer}>
-          <TouchableOpacity
-            onPress={() => setActiveTab("browser")}
-            style={[
-              styles.tabButton,
-              activeTab === "browser"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive,
-            ]}
-          >
-            <HardDrive
-              size={14}
-              color={
-                activeTab === "browser"
-                  ? gameUIColors.storage
-                  : gameUIColors.secondary
-              }
-            />
-            <Text
-              style={[
-                styles.tabButtonText,
-                activeTab === "browser"
-                  ? styles.tabButtonTextActive
-                  : styles.tabButtonTextInactive,
-              ]}
-            >
-              Storage
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setActiveTab("events")}
-            style={[
-              styles.tabButton,
-              activeTab === "events"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive,
-            ]}
-          >
-            <Activity
-              size={14}
-              color={
-                activeTab === "events"
-                  ? gameUIColors.storage
-                  : gameUIColors.secondary
-              }
-            />
-            <Text
-              style={[
-                styles.tabButtonText,
-                activeTab === "events"
-                  ? styles.tabButtonTextActive
-                  : styles.tabButtonTextInactive,
-              ]}
-            >
-              Events
-            </Text>
-            {events.length > 0 && activeTab !== "events" && (
-              <View style={styles.eventBadge}>
-                <Text style={styles.eventBadgeText}>{events.length}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        {/* Action buttons for Events tab */}
-        {activeTab === "events" && !showFilters && !selectedConversation && (
-          <View style={styles.actionButtons}>
-            <TouchableOpacity
-              onPress={handleToggleFilters}
-              style={[
-                styles.iconButton,
-                ignoredPatterns.size > 0 && styles.activeFilterButton,
-              ]}
-            >
-              <Filter
-                size={14}
-                color={
-                  ignoredPatterns.size > 0
-                    ? gameUIColors.optional
-                    : gameUIColors.secondary
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleToggleListening}
-              style={[styles.iconButton, isListening && styles.activeButton]}
-            >
-              {isListening ? (
-                <Pause size={14} color={gameUIColors.success} />
-              ) : (
-                <Play size={14} color={gameUIColors.success} />
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleClearEvents}
-              style={styles.iconButton}
-            >
-              <Trash2 size={14} color={gameUIColors.error} />
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* Always show a close button on the far right */}
-        <View style={{ marginLeft: "auto" }}>
-          <CloseButton onPress={onClose} />
-        </View>
-      </View>
-    );
-  };
 
   const renderContent = () => {
     if (activeTab === "browser") {
@@ -796,7 +581,100 @@ export function StorageModalWithTabs({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: renderHeaderContent(),
+        customContent: showFilters ? (
+          <ModalHeader>
+            <ModalHeader.Navigation
+              onBack={() => setShowFilters(false)}
+              onClose={onClose}
+            />
+            <ModalHeader.Content title="Filters" />
+          </ModalHeader>
+        ) : selectedConversation ? (
+          <ModalHeader>
+            <ModalHeader.Navigation
+              onBack={() => {
+                setSelectedConversationKey(null);
+                setSelectedEventIndex(0);
+                setDetailTab("current");
+              }}
+              onClose={onClose}
+            />
+            <ModalHeader.Content title="" noMargin>
+              <TabSelector
+                tabs={[
+                  {
+                    key: "current",
+                    label: "Current Value",
+                  },
+                  {
+                    key: "diff",
+                    label: "Diff",
+                  },
+                ]}
+                activeTab={detailTab}
+                onTabChange={(tab) => setDetailTab(tab as "current" | "diff")}
+              />
+            </ModalHeader.Content>
+          </ModalHeader>
+        ) : (
+          <ModalHeader>
+            {onBack && <ModalHeader.Navigation onBack={onBack} />}
+            <ModalHeader.Content title="" noMargin>
+              <TabSelector
+                tabs={[
+                  {
+                    key: "browser",
+                    label: "Storage",
+                  },
+                  {
+                    key: "events",
+                    label: `Events${events.length > 0 && activeTab !== "events" ? ` (${events.length})` : ""}`,
+                  },
+                ]}
+                activeTab={activeTab}
+                onTabChange={(tab) => setActiveTab(tab as TabType)}
+              />
+            </ModalHeader.Content>
+            <ModalHeader.Actions onClose={onClose}>
+              {activeTab === "events" && (
+                <>
+                  <TouchableOpacity
+                    onPress={handleToggleFilters}
+                    style={[
+                      styles.iconButton,
+                      ignoredPatterns.size > 0 && styles.activeFilterButton,
+                    ]}
+                  >
+                    <Filter
+                      size={14}
+                      color={
+                        ignoredPatterns.size > 0
+                          ? gameUIColors.optional
+                          : gameUIColors.secondary
+                      }
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleToggleListening}
+                    style={[styles.iconButton, isListening && styles.activeButton]}
+                  >
+                    {isListening ? (
+                      <Pause size={14} color={gameUIColors.success} />
+                    ) : (
+                      <Play size={14} color={gameUIColors.success} />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleClearEvents}
+                    style={styles.iconButton}
+                  >
+                    <Trash2 size={14} color={gameUIColors.error} />
+                  </TouchableOpacity>
+                </>
+              )}
+            </ModalHeader.Actions>
+          </ModalHeader>
+        ),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}
@@ -812,97 +690,6 @@ export function StorageModalWithTabs({
 }
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flex: 1,
-    paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-
-  headerTitle: {
-    color: gameUIColors.primary,
-    fontSize: 14,
-    fontWeight: "600",
-    flex: 1,
-    marginLeft: 8,
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-
-  tabNavigationContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 6,
-    padding: 2,
-    borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
-    height: 32,
-    alignItems: "center",
-  },
-
-  tabButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 4,
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    marginHorizontal: 1,
-    flexDirection: "row",
-    gap: 4,
-  },
-
-  tabButtonActive: {
-    backgroundColor: gameUIColors.storage + "20",
-    borderWidth: 1,
-    borderColor: gameUIColors.storage + "40",
-  },
-
-  tabButtonInactive: {
-    backgroundColor: "transparent",
-  },
-
-  tabButtonText: {
-    fontSize: 12,
-    fontWeight: "600",
-    letterSpacing: 0.5,
-    fontFamily: "monospace",
-    textTransform: "uppercase",
-    color: gameUIColors.secondary, // Default color
-  },
-
-  tabButtonTextActive: {
-    color: gameUIColors.primary,
-  },
-
-  tabButtonTextInactive: {
-    color: gameUIColors.secondary,
-  },
-
-  eventBadge: {
-    backgroundColor: gameUIColors.error + "20",
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    borderRadius: 8,
-    minWidth: 16,
-    alignItems: "center",
-  },
-
-  eventBadgeText: {
-    color: gameUIColors.error,
-    fontSize: 10,
-    fontWeight: "600",
-    fontFamily: "monospace",
-  },
-
-  actionButtons: {
-    flexDirection: "row",
-    gap: 6,
-  },
-
   iconButton: {
     padding: 6,
     borderRadius: 6,
