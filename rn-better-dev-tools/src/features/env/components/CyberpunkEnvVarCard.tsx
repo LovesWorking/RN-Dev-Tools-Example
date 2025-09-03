@@ -1,11 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Animated,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
 import {
   AlertCircle,
   CheckCircle2,
@@ -104,12 +98,10 @@ export function CyberpunkEnvVarCard({
   const StatusIcon = config.icon;
   const hasValue = envVar.value !== undefined && envVar.value !== null;
   const hasExpectedValue = envVar.expectedValue !== undefined;
-  const hasExpectedType = envVar.expectedType !== undefined;
   const hasDescription = envVar.description !== undefined;
 
   // Animation values
   const glowIntensity = useRef(new Animated.Value(0.3)).current;
-  const borderGlow = useRef(new Animated.Value(0)).current;
   const glitchX = useRef(new Animated.Value(0)).current;
   const glitchY = useRef(new Animated.Value(0)).current;
   const glitchOpacity = useRef(new Animated.Value(0)).current;

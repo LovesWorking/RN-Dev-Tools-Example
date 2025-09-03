@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { Mutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
+import { Mutation , useQueryClient } from "@tanstack/react-query";
 
 interface ActionButtonConfig {
   label: string;

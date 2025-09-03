@@ -90,6 +90,7 @@ const defaultTheme = {
   },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cyanTheme = {
   // Base colors
   border: "#00B8E666",
@@ -137,7 +138,7 @@ const cyanTheme = {
     tertiary: "#4DD0ED",
   },
 };
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const pinkTheme = {
   // Base colors
   border: "#FF69B466",
@@ -184,6 +185,7 @@ const pinkTheme = {
   },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const greenTheme = {
   // Base colors
   border: "#00E67366",
@@ -230,6 +232,7 @@ const greenTheme = {
   },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const orangeTheme = {
   // Base colors
   border: "#FF8C0066",
@@ -277,6 +280,7 @@ const orangeTheme = {
 };
 
 // Bootstrap-inspired Light Theme
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const lightTheme = {
   // Base colors / surfaces
   border: "#dee2e6",

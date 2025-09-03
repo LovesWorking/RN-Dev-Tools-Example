@@ -12,6 +12,9 @@ import {
 } from "./sentryClientProvider";
 import type { SentryEventEntry } from "./types";
 import { SentryEventType, SentryEventLevel } from "./types";
+
+// Import the reactive store instead of creating a local one
+import { reactiveSentryEventStore as eventStore } from "./sentryEventStore";
 export { SentryEventEntry, SentryEventType, SentryEventLevel } from "./types";
 
 interface SentryClient extends Record<string, unknown> {
@@ -59,9 +62,6 @@ type SentryEnvelopeItemHeader = {
 
 type SentryEnvelopeItem = [SentryEnvelopeItemHeader, unknown];
 type SentryEnvelope = [SentryEnvelopeHeader, SentryEnvelopeItem[]];
-
-// Import the reactive store instead of creating a local one
-import { reactiveSentryEventStore as eventStore } from "./sentryEventStore";
 
 // =============================================================================
 // UTILITY FUNCTIONS

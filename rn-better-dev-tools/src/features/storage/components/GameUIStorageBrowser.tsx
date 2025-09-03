@@ -93,305 +93,130 @@ export function GameUIStorageBrowser({
   const [optionalSectionExpanded, setOptionalSectionExpanded] = useState(false);
   const [devToolsSectionExpanded, setDevToolsSectionExpanded] = useState(false);
 
-  // Dev test mode state
-  const [devTestMode, setDevTestMode] = useState<string | null>(null);
-
   // Get all storage queries from cache
   const allQueries = queryClient.getQueryCache().getAll();
   const storageQueriesData = allQueries.filter((query) =>
-    isStorageQuery(query.queryKey),
+    isStorageQuery(query.queryKey)
   );
-
-  // Generate mock storage data for dev test mode
-  const getMockStorageData = () => {
-    switch (devTestMode) {
-      case "SUCCESS":
-        return [
-          {
-            key: "user_token",
-            value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-            type: "secure",
-          },
-          {
-            key: "user_preferences",
-            value: { theme: "dark", notifications: true },
-            type: "mmkv",
-          },
-          { key: "app_version", value: "1.2.3", type: "async" },
-          { key: "last_sync", value: "2024-01-20T10:30:00Z", type: "async" },
-          {
-            key: "cache_data",
-            value: { items: 150, size: "2.5MB" },
-            type: "mmkv",
-          },
-          { key: "user_id", value: "usr_abc123", type: "secure" },
-          { key: "onboarding_complete", value: true, type: "async" },
-          {
-            key: "api_endpoint",
-            value: "https://api.example.com",
-            type: "async",
-          },
-        ];
-      case "PARTIAL_FAILURE":
-        return [
-          { key: "user_token", value: undefined, type: "secure" }, // Missing required
-          { key: "user_preferences", value: "dark", type: "mmkv" }, // Wrong type
-          { key: "app_version", value: "1.2.3", type: "async" },
-          { key: "last_sync", value: "yesterday", type: "async" }, // Wrong format
-        ];
-      case "CRITICAL_FAILURE":
-        return [{ key: "onboarding_complete", value: false, type: "async" }];
-      case "TYPE_ERRORS":
-        return [
-          { key: "user_token", value: 12345, type: "secure" }, // Should be string
-          { key: "user_preferences", value: "preferences", type: "mmkv" }, // Should be object
-          { key: "onboarding_complete", value: "yes", type: "async" }, // Should be boolean
-          { key: "cache_data", value: true, type: "mmkv" }, // Should be object
-        ];
-      case "VALUE_ERRORS":
-        return [
-          { key: "user_token", value: "invalid_token", type: "secure" },
-          { key: "api_endpoint", value: "not-a-url", type: "async" },
-          { key: "user_id", value: "", type: "secure" }, // Empty value
-          { key: "app_version", value: "v1.2.3.4.5", type: "async" }, // Invalid format
-        ];
-      case "EMPTY":
-        return [];
-      default:
-        return null;
-    }
-  };
 
   // Process storage keys into StorageKeyInfo format
   const { storageKeys, devToolKeys, stats } = useMemo(() => {
     const keyInfoMap = new Map<string, StorageKeyInfo>();
     const devToolKeyInfoMap = new Map<string, StorageKeyInfo>();
 
-    // Use mock data if in dev test mode
-    const mockData = getMockStorageData();
+    // Normal processing - use actual storage queries
+    storageQueriesData.forEach((query) => {
+      const storageType = getStorageType(query.queryKey);
+      if (!storageType) return;
 
-    // Define mock required keys for test mode
-    const testRequiredKeys = devTestMode
-      ? [
-          {
-            key: "user_token",
-            expectedType: "string",
-            storageType: "secure" as StorageType,
-            description: "Authentication token",
-          },
-          {
-            key: "user_preferences",
-            expectedType: "object",
-            storageType: "mmkv" as StorageType,
-            description: "User settings",
-          },
-          {
-            key: "app_version",
-            expectedType: "string",
-            storageType: "async" as StorageType,
-            description: "Current app version",
-          },
-          {
-            key: "user_id",
-            expectedType: "string",
-            storageType: "secure" as StorageType,
-            description: "Unique user identifier",
-          },
-        ]
-      : requiredStorageKeys;
+      const cleanKey = getCleanStorageKey(query.queryKey);
+      const value = query.state.data;
 
-    if (mockData) {
-      // Process mock data
-      mockData.forEach(({ key, value, type }) => {
-        const requiredConfig = testRequiredKeys.find(
-          (req) => typeof req === "object" && req.key === key,
-        );
+      // Check if this is a dev tool key
+      if (isDevToolsStorageKey(cleanKey)) {
+        const devKeyInfo: StorageKeyInfo = {
+          key: cleanKey,
+          value,
+          storageType,
+          status: "optional_present",
+          category: "optional",
+          description: "Dev Tools internal storage key",
+        };
+        devToolKeyInfoMap.set(cleanKey, devKeyInfo);
+        return;
+      }
 
-        let status: StorageKeyInfo["status"] = "optional_present";
+      // Check if this is a required key
+      const requiredConfig = requiredStorageKeys.find((req) => {
+        if (typeof req === "string") return req === cleanKey;
+        return req.key === cleanKey;
+      });
 
-        if (requiredConfig) {
-          if (value === undefined || value === null) {
-            status = "required_missing";
-          } else if (
-            typeof requiredConfig === "object" &&
-            "expectedType" in requiredConfig
-          ) {
-            const actualType =
-              value === null
-                ? "null"
-                : Array.isArray(value)
-                  ? "array"
-                  : typeof value;
-            status =
-              actualType === requiredConfig.expectedType
-                ? "required_present"
-                : "required_wrong_type";
-          } else {
-            status = "required_present";
-          }
+      let status: StorageKeyInfo["status"] = "optional_present";
+
+      if (requiredConfig) {
+        if (value === undefined || value === null) {
+          status = "required_missing";
+        } else if (
+          typeof requiredConfig === "object" &&
+          "expectedValue" in requiredConfig
+        ) {
+          status =
+            value === requiredConfig.expectedValue
+              ? "required_present"
+              : "required_wrong_value";
+        } else if (
+          typeof requiredConfig === "object" &&
+          "expectedType" in requiredConfig
+        ) {
+          const actualType = value === null ? "null" : typeof value;
+          status =
+            actualType.toLowerCase() ===
+            requiredConfig.expectedType.toLowerCase()
+              ? "required_present"
+              : "required_wrong_type";
+        } else {
+          status = "required_present";
+        }
+      }
+
+      const keyInfo: StorageKeyInfo = {
+        key: cleanKey,
+        value,
+        storageType,
+        status,
+        category: requiredConfig ? "required" : "optional",
+        ...(typeof requiredConfig === "object" &&
+          "expectedValue" in requiredConfig && {
+            expectedValue: requiredConfig.expectedValue,
+          }),
+        ...(typeof requiredConfig === "object" &&
+          "expectedType" in requiredConfig && {
+            expectedType: requiredConfig.expectedType,
+          }),
+        ...(typeof requiredConfig === "object" &&
+          "description" in requiredConfig && {
+            description: requiredConfig.description,
+          }),
+      };
+
+      keyInfoMap.set(cleanKey, keyInfo);
+    });
+
+    // Process required storage keys that weren't found in actual storage
+    requiredStorageKeys.forEach((req) => {
+      const key = typeof req === "string" ? req : req.key;
+
+      if (!keyInfoMap.has(key)) {
+        let storageType: StorageType = "async";
+
+        if (typeof req === "object" && "storageType" in req) {
+          storageType = req.storageType;
         }
 
         const keyInfo: StorageKeyInfo = {
           key,
-          value,
-          storageType: type as StorageType,
-          status,
-          category: requiredConfig ? "required" : "optional",
-          ...(requiredConfig &&
-            typeof requiredConfig === "object" &&
-            "description" in requiredConfig && {
-              description: requiredConfig.description,
+          value: undefined,
+          storageType,
+          status: "required_missing",
+          category: "required",
+          ...(typeof req === "object" &&
+            "expectedValue" in req && {
+              expectedValue: req.expectedValue,
             }),
-          ...(requiredConfig &&
-            typeof requiredConfig === "object" &&
-            "expectedType" in requiredConfig && {
-              expectedType: requiredConfig.expectedType,
+          ...(typeof req === "object" &&
+            "expectedType" in req && {
+              expectedType: req.expectedType,
+            }),
+          ...(typeof req === "object" &&
+            "description" in req && {
+              description: req.description,
             }),
         };
 
         keyInfoMap.set(key, keyInfo);
-      });
-
-      // Add missing required keys
-      testRequiredKeys.forEach((req) => {
-        const key = typeof req === "string" ? req : req.key;
-        if (!keyInfoMap.has(key)) {
-          const keyInfo: StorageKeyInfo = {
-            key,
-            value: undefined,
-            storageType:
-              typeof req === "object" && "storageType" in req
-                ? req.storageType
-                : "async",
-            status: "required_missing",
-            category: "required",
-            ...(typeof req === "object" &&
-              "description" in req && {
-                description: req.description,
-              }),
-            ...(typeof req === "object" &&
-              "expectedType" in req && {
-                expectedType: req.expectedType,
-              }),
-          };
-          keyInfoMap.set(key, keyInfo);
-        }
-      });
-    } else {
-      // Normal processing - use actual storage queries
-      storageQueriesData.forEach((query) => {
-        const storageType = getStorageType(query.queryKey);
-        if (!storageType) return;
-
-        const cleanKey = getCleanStorageKey(query.queryKey);
-        const value = query.state.data;
-
-        // Check if this is a dev tool key
-        if (isDevToolsStorageKey(cleanKey)) {
-          const devKeyInfo: StorageKeyInfo = {
-            key: cleanKey,
-            value,
-            storageType,
-            status: "optional_present",
-            category: "optional",
-            description: "Dev Tools internal storage key",
-          };
-          devToolKeyInfoMap.set(cleanKey, devKeyInfo);
-          return;
-        }
-
-        // Check if this is a required key
-        const requiredConfig = requiredStorageKeys.find((req) => {
-          if (typeof req === "string") return req === cleanKey;
-          return req.key === cleanKey;
-        });
-
-        let status: StorageKeyInfo["status"] = "optional_present";
-
-        if (requiredConfig) {
-          if (value === undefined || value === null) {
-            status = "required_missing";
-          } else if (
-            typeof requiredConfig === "object" &&
-            "expectedValue" in requiredConfig
-          ) {
-            status =
-              value === requiredConfig.expectedValue
-                ? "required_present"
-                : "required_wrong_value";
-          } else if (
-            typeof requiredConfig === "object" &&
-            "expectedType" in requiredConfig
-          ) {
-            const actualType = value === null ? "null" : typeof value;
-            status =
-              actualType.toLowerCase() ===
-              requiredConfig.expectedType.toLowerCase()
-                ? "required_present"
-                : "required_wrong_type";
-          } else {
-            status = "required_present";
-          }
-        }
-
-        const keyInfo: StorageKeyInfo = {
-          key: cleanKey,
-          value,
-          storageType,
-          status,
-          category: requiredConfig ? "required" : "optional",
-          ...(typeof requiredConfig === "object" &&
-            "expectedValue" in requiredConfig && {
-              expectedValue: requiredConfig.expectedValue,
-            }),
-          ...(typeof requiredConfig === "object" &&
-            "expectedType" in requiredConfig && {
-              expectedType: requiredConfig.expectedType,
-            }),
-          ...(typeof requiredConfig === "object" &&
-            "description" in requiredConfig && {
-              description: requiredConfig.description,
-            }),
-        };
-
-        keyInfoMap.set(cleanKey, keyInfo);
-      });
-
-      // Process required storage keys that weren't found in actual storage
-      requiredStorageKeys.forEach((req) => {
-        const key = typeof req === "string" ? req : req.key;
-
-        if (!keyInfoMap.has(key)) {
-          let storageType: StorageType = "async";
-
-          if (typeof req === "object" && "storageType" in req) {
-            storageType = req.storageType;
-          }
-
-          const keyInfo: StorageKeyInfo = {
-            key,
-            value: undefined,
-            storageType,
-            status: "required_missing",
-            category: "required",
-            ...(typeof req === "object" &&
-              "expectedValue" in req && {
-                expectedValue: req.expectedValue,
-              }),
-            ...(typeof req === "object" &&
-              "expectedType" in req && {
-                expectedType: req.expectedType,
-              }),
-            ...(typeof req === "object" &&
-              "description" in req && {
-                description: req.description,
-              }),
-          };
-
-          keyInfoMap.set(key, keyInfo);
-        }
-      });
-    }
+      }
+    });
 
     // Calculate stats
     const keys = Array.from(keyInfoMap.values());
@@ -414,7 +239,7 @@ export function GameUIStorageBrowser({
     const devKeys = Array.from(devToolKeyInfoMap.values());
 
     return { storageKeys: keys, devToolKeys: devKeys, stats: storageStats };
-  }, [storageQueriesData, requiredStorageKeys, devTestMode]);
+  }, [storageQueriesData, requiredStorageKeys]);
 
   // Group storage keys by status
   const requiredKeys = storageKeys.filter((k) => k.category === "required");
@@ -423,7 +248,7 @@ export function GameUIStorageBrowser({
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
     stats,
-    STORAGE_ALERT_STATES,
+    STORAGE_ALERT_STATES
   );
 
   // Copy to clipboard helper
@@ -446,8 +271,8 @@ export function GameUIStorageBrowser({
           keyItem.status === "required_missing"
             ? "missing"
             : keyItem.status === "required_wrong_type"
-              ? "wrong_type"
-              : "wrong_value",
+            ? "wrong_type"
+            : "wrong_value",
         value: keyItem.value,
         expectedType: keyItem.expectedType,
         expectedValue: keyItem.expectedValue as string,
@@ -456,8 +281,8 @@ export function GameUIStorageBrowser({
           keyItem.status === "required_missing"
             ? `Store key: await AsyncStorage.setItem('${keyItem.key}', 'value')`
             : keyItem.status === "required_wrong_type"
-              ? `Update to ${keyItem.expectedType} type for key: ${keyItem.key}`
-              : `Check valid values for key: ${keyItem.key}`,
+            ? `Update to ${keyItem.expectedType} type for key: ${keyItem.key}`
+            : `Check valid values for key: ${keyItem.key}`,
       }));
   }, [requiredKeys]);
 
@@ -510,7 +335,7 @@ export function GameUIStorageBrowser({
         pulseDelay: 800,
       },
     ],
-    [stats],
+    [stats]
   );
 
   // Calculate health percentage
@@ -518,22 +343,22 @@ export function GameUIStorageBrowser({
     stats.requiredCount > 0
       ? Math.round((stats.presentRequiredCount / stats.requiredCount) * 100)
       : stats.totalCount > 0
-        ? 100
-        : 0;
+      ? 100
+      : 0;
 
   const healthStatus =
     healthPercentage >= 90
       ? "OPTIMAL"
       : healthPercentage >= 70
-        ? "WARNING"
-        : "CRITICAL";
+      ? "WARNING"
+      : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
       ? gameUIColors.success
       : healthPercentage >= 70
-        ? gameUIColors.warning
-        : gameUIColors.error;
+      ? gameUIColors.warning
+      : gameUIColors.error;
 
   // Handle clear all storage
   const handleClearAll = useCallback(async () => {
@@ -557,7 +382,7 @@ export function GameUIStorageBrowser({
             }
           },
         },
-      ],
+      ]
     );
   }, [queryClient]);
 
@@ -578,13 +403,10 @@ export function GameUIStorageBrowser({
 
   // Handle export
   const handleExport = useCallback(async () => {
-    const exportData = storageKeys.reduce(
-      (acc, keyInfo) => {
-        acc[keyInfo.key] = keyInfo.value;
-        return acc;
-      },
-      {} as Record<string, unknown>,
-    );
+    const exportData = storageKeys.reduce((acc, keyInfo) => {
+      acc[keyInfo.key] = keyInfo.value;
+      return acc;
+    }, {} as Record<string, unknown>);
 
     const serialized = JSON.stringify(exportData, null, 2);
     await copyToClipboard(serialized, "Storage data");

@@ -39,7 +39,6 @@ import {
 } from "../utils/sentryEventListeners";
 
 // Stable constants to prevent re-creation on every render [[memory:4875251]]
-const ESTIMATED_ITEM_SIZE = 120;
 const END_REACHED_THRESHOLD = 0.8;
 const MAINTAIN_VISIBLE_CONTENT_POSITION = {
   minIndexForVisible: 0,
@@ -57,7 +56,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
 const createRenderSentryEventItem = (
   selectEntryRef: MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
-  >,
+  >
 ) => {
   return ({ item }: { item: ConsoleTransportEntry }) => (
     <SentryEventLogEntryItem
@@ -81,7 +80,7 @@ function SentryEventLogDumpModalContentInner({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: () => false,
       // Let FlatList handle all touch events
-    }),
+    })
   ).current;
 
   const [selectedEntry, setSelectedEntry] =
@@ -90,7 +89,7 @@ function SentryEventLogDumpModalContentInner({
   const [entries, setEntries] = useState<ConsoleTransportEntry[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(new Set());
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
-    new Set(),
+    new Set()
   );
   const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
   // Function to calculate entries
@@ -103,19 +102,19 @@ function SentryEventLogDumpModalContentInner({
       (acc: ConsoleTransportEntry[], entry: ConsoleTransportEntry) => {
         if (
           !acc.some(
-            (existing: ConsoleTransportEntry) => existing.id === entry.id,
+            (existing: ConsoleTransportEntry) => existing.id === entry.id
           )
         ) {
           acc.push(entry);
         }
         return acc;
       },
-      [] as ConsoleTransportEntry[],
+      [] as ConsoleTransportEntry[]
     );
 
     return uniqueEntries.sort(
       (a: ConsoleTransportEntry, b: ConsoleTransportEntry) =>
-        b.timestamp - a.timestamp,
+        b.timestamp - a.timestamp
     );
   };
 
@@ -128,7 +127,7 @@ function SentryEventLogDumpModalContentInner({
   const selectEntryRef = useRef<(entry: ConsoleTransportEntry) => void>(
     (entry: ConsoleTransportEntry) => {
       setSelectedEntry(entry);
-    },
+    }
   );
   selectEntryRef.current = (entry: ConsoleTransportEntry) => {
     setSelectedEntry(entry);
@@ -137,7 +136,7 @@ function SentryEventLogDumpModalContentInner({
   // Create stable renderItem once per component lifecycle [[memory:4875251]]
   const renderSentryEventItem = useMemo(
     () => createRenderSentryEventItem(selectEntryRef),
-    [],
+    []
   );
 
   const goBackToList = () => {
@@ -474,7 +473,7 @@ const styles = StyleSheet.create({
 
 // Export wrapper component with TickProvider
 export function SentryEventLogDumpModalContent(
-  props: SentryEventLogDumpModalContentProps,
+  props: SentryEventLogDumpModalContentProps
 ) {
   return (
     <TickProvider>

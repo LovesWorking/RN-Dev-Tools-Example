@@ -1,4 +1,5 @@
-import { View, StyleSheet } from "react-native";
+import { Fragment } from "react";
+import { View } from "react-native";
 import { gameUIColors } from "../src/shared/ui/gameUI/constants/gameUIColors";
 
 interface IconProps {
@@ -3339,17 +3340,3 @@ export const Edit3 = ({
 // Type export for icon component props
 export type { IconProps };
 export type LucideIcon = ComponentType<IconProps>;
-
-const styles = StyleSheet.create({
-  cone: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 25,
-    borderLeftColor: "transparent",
-    borderRightWidth: 25,
-    borderRightColor: "transparent",
-    borderTopWidth: 50,
-    borderTopColor: "#059669",
-    borderRadius: 25,
-  },
-});

@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { Query, useQueryClient } from "@tanstack/react-query";
 import ActionButton from "./ActionButton";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";

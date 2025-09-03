@@ -10,8 +10,8 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
-  Loader2,
-  PauseCircle,
+  RefreshCwIcon,
+  PauseIcon,
 } from "rn-better-dev-tools/icons";
 
 // Import shared Game UI components
@@ -47,12 +47,16 @@ export function GameUIQueryDetails({
         case "stale":
           return { label: "STALE", color: gameUIColors.warning, icon: Clock };
         case "fetching":
-          return { label: "FETCHING", color: gameUIColors.info, icon: Loader2 };
+          return {
+            label: "FETCHING",
+            color: gameUIColors.info,
+            icon: RefreshCwIcon,
+          };
         case "paused":
           return {
             label: "PAUSED",
             color: gameUIColors.storage,
-            icon: PauseCircle,
+            icon: PauseIcon,
           };
         case "inactive":
           return {
@@ -72,7 +76,7 @@ export function GameUIQueryDetails({
         return {
           label: "PAUSED",
           color: gameUIColors.storage,
-          icon: PauseCircle,
+          icon: PauseIcon,
         };
       }
       switch (mutation.state.status) {
@@ -85,7 +89,11 @@ export function GameUIQueryDetails({
         case "error":
           return { label: "ERROR", color: gameUIColors.error, icon: XCircle };
         case "pending":
-          return { label: "PENDING", color: gameUIColors.info, icon: Loader2 };
+          return {
+            label: "PENDING",
+            color: gameUIColors.info,
+            icon: RefreshCwIcon,
+          };
         default:
           return { label: "IDLE", color: gameUIColors.muted, icon: Activity };
       }

@@ -1,3 +1,4 @@
+import { useMemo, useCallback } from "react";
 import { View, StyleSheet, Text, ScrollView, ViewStyle } from "react-native";
 import { Query } from "@tanstack/react-query";
 import QueryRow from "./QueryRow";
@@ -32,7 +33,7 @@ export default function QueryBrowser({
       return allQueries;
     }
 
-    return allQueries.filter((query) => {
+    return allQueries.filter((query: Query) => {
       const status = getQueryStatusLabel(query);
       return status === activeFilter;
     });
@@ -50,7 +51,7 @@ export default function QueryBrowser({
       }
       onQuerySelect(query);
     },
-    [selectedQuery?.queryHash, onQuerySelect],
+    [selectedQuery?.queryHash, onQuerySelect]
   );
 
   if (filteredQueries.length === 0) {

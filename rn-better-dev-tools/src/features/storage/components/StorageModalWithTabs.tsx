@@ -536,7 +536,7 @@ export function StorageModalWithTabs({
     if (conversations.length === 0) {
       return (
         <View style={styles.emptyState}>
-          <Database size={48} color={gameUIColors.muted} noBackground={true} />
+          <Database size={48} color={gameUIColors.muted} />
           <Text style={styles.emptyTitle}>
             {isListening ? "No storage events yet" : "Event listener is paused"}
           </Text>

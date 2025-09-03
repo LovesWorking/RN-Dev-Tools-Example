@@ -88,7 +88,7 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
             duration: 1500,
             useNativeDriver: true,
           }),
-        ]),
+        ])
       ).start();
     } else {
       Animated.timing(statusPulse, {
@@ -113,15 +113,15 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
     healthPercentage >= 90
       ? "OPTIMAL"
       : healthPercentage >= 70
-        ? "WARNING"
-        : "CRITICAL";
+      ? "WARNING"
+      : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
       ? gameColors.online
       : healthPercentage >= 70
-        ? gameColors.warning
-        : gameColors.error;
+      ? gameColors.warning
+      : gameColors.error;
 
   // If no variables at all, show minimal UI
   if (totalCount === 0) {
@@ -224,10 +224,6 @@ export function CyberpunkEnvVarStats({ stats }: CyberpunkEnvVarStatsProps) {
           if (!isActive) return null;
 
           const IconComponent = item.icon;
-          const isError =
-            item.key === "missing" ||
-            item.key === "wrongValue" ||
-            item.key === "wrongType";
 
           return (
             <Animated.View

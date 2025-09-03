@@ -52,18 +52,15 @@ export function StorageActions({
 
   const handleCopyFull = async () => {
     try {
-      const storageData = storageKeys.reduce(
-        (acc, keyInfo) => {
-          acc[keyInfo.key] = {
-            value: keyInfo.value,
-            type: keyInfo.storageType,
-            status: keyInfo.status,
-            category: keyInfo.category,
-          };
-          return acc;
-        },
-        {} as Record<string, unknown>,
-      );
+      const storageData = storageKeys.reduce((acc, keyInfo) => {
+        acc[keyInfo.key] = {
+          value: keyInfo.value,
+          type: keyInfo.storageType,
+          status: keyInfo.status,
+          category: keyInfo.category,
+        };
+        return acc;
+      }, {} as Record<string, unknown>);
 
       const serialized = superjson.stringify(storageData);
       const success = await copyToClipboard(serialized);
@@ -82,13 +79,10 @@ export function StorageActions({
 
   const handleCopySimple = async () => {
     try {
-      const simpleData = storageKeys.reduce(
-        (acc, keyInfo) => {
-          acc[keyInfo.key] = keyInfo.value;
-          return acc;
-        },
-        {} as Record<string, unknown>,
-      );
+      const simpleData = storageKeys.reduce((acc, keyInfo) => {
+        acc[keyInfo.key] = keyInfo.value;
+        return acc;
+      }, {} as Record<string, unknown>);
 
       const serialized = superjson.stringify(simpleData);
       const success = await copyToClipboard(serialized);
@@ -144,7 +138,7 @@ export function StorageActions({
         "Success",
         "All storage cleared including dev tools settings.",
         [{ text: "OK" }],
-        { cancelable: true },
+        { cancelable: true }
       );
     } catch (error) {
       console.error("Failed to clear all storage:", error);

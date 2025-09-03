@@ -65,7 +65,7 @@ export function CyberpunkConsoleSection({
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: false,
         }),
-      ]),
+      ])
     ).start();
 
     // Random glitch effect with varying delays per item
@@ -373,15 +373,6 @@ export function CyberpunkConsoleSection({
   };
 
   const rgb = hexToRgb(accentColor);
-
-  // Create interpolated values for border animation
-  const borderAlpha = borderGlow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [
-      0.2 + isPressedRef.current * 0.3,
-      0.6 + isPressedRef.current * 0.3,
-    ],
-  });
 
   const shadowOpacityValue = glowIntensity.interpolate({
     inputRange: [0, 1],

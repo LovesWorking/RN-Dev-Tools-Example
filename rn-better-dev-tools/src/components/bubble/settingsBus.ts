@@ -7,8 +7,8 @@ class SimpleEventBus<T = any> {
     this.listeners.forEach((l) => {
       try {
         l(payload);
-      } catch (_e) {
-        // no-op - @typescript-eslint/no-unused-vars
+      } catch (e) {
+        console.error("Error emitting event:", e);
       }
     });
   }

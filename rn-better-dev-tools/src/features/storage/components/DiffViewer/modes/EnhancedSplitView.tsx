@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
   computeLineDiff,
@@ -12,8 +12,6 @@ import {
   DiffComputeOptions,
 } from "../../../utils/lineDiff";
 import { DiffOptions } from "../DiffOptionsPanel";
-
-const { width: screenWidth } = Dimensions.get("window");
 
 interface EnhancedSplitViewProps {
   oldValue: any;
@@ -69,7 +67,7 @@ export function EnhancedSplitView({
     content: string | WordDiff[] | undefined,
     type: DiffType,
     marker: string,
-    isEmpty: boolean = false,
+    isEmpty: boolean = false
   ) => {
     if (isEmpty) {
       return (
@@ -146,7 +144,7 @@ export function EnhancedSplitView({
   const renderDiffRow = (
     diff: LineDiffInfo,
     idx: number,
-    diffs: LineDiffInfo[],
+    diffs: LineDiffInfo[]
   ) => {
     const isRemoved = diff.type === DiffType.REMOVED;
     const isAdded = diff.type === DiffType.ADDED;
@@ -168,14 +166,14 @@ export function EnhancedSplitView({
                   diff.leftLineNumber,
                   diff.leftContent,
                   isModified ? DiffType.REMOVED : diff.type,
-                  isRemoved || isModified ? "-" : " ",
+                  isRemoved || isModified ? "-" : " "
                 )
               : renderLineSide(
                   undefined,
                   undefined,
                   DiffType.DEFAULT,
                   " ",
-                  true,
+                  true
                 )}
           </View>
 
@@ -189,14 +187,14 @@ export function EnhancedSplitView({
                   diff.rightLineNumber,
                   diff.rightContent,
                   isModified ? DiffType.ADDED : diff.type,
-                  isAdded || isModified ? "+" : " ",
+                  isAdded || isModified ? "+" : " "
                 )
               : renderLineSide(
                   undefined,
                   undefined,
                   DiffType.DEFAULT,
                   " ",
-                  true,
+                  true
                 )}
           </View>
         </View>

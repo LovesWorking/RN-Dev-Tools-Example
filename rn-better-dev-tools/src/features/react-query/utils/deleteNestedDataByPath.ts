@@ -7,7 +7,7 @@
  */
 export const deleteNestedDataByPath = (
   oldData: unknown,
-  deletePath: Array<string>,
+  deletePath: string[],
 ): unknown => {
   if (oldData instanceof Map) {
     const newData = new Map(oldData);

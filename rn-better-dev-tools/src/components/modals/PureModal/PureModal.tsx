@@ -111,7 +111,7 @@ interface PureModalProps {
   mode?: ModalMode;
 
   // Bottom sheet specific
-  snapPoints?: Array<number | string>;
+  snapPoints?: (number | string)[];
   initialSnapIndex?: number;
   enablePanDownToClose?: boolean;
   enableOverDrag?: boolean;

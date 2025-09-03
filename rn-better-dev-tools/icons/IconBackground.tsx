@@ -18,7 +18,38 @@ const STARS = [
   { x: 0.85, y: 0.9, size: 1.2, opacity: 0.4 },
 ];
 
-const VARIANT_DATA = {
+interface CircuitVariant {
+  lines: { x: number; width: number; height: number; opacity: number }[];
+  nodes: { x: number; y: number }[];
+}
+
+interface NodesVariant {
+  nodes: { x: number; y: number }[];
+}
+
+interface GridVariant {
+  lines: number[];
+}
+
+interface MatrixVariant {
+  lines: number[];
+  rain: number[];
+}
+
+interface GlitchVariant {
+  lines: number[];
+  scan: number[];
+}
+
+type VariantData = {
+  circuit: CircuitVariant;
+  nodes: NodesVariant;
+  grid: GridVariant;
+  matrix: MatrixVariant;
+  glitch: GlitchVariant;
+};
+
+const VARIANT_DATA: VariantData = {
   circuit: {
     lines: [
       { x: 0.5, width: 0.5, height: 0.9, opacity: 0.15 },
@@ -92,9 +123,10 @@ export const IconBackground: FC<IconBackgroundProps> = ({
     if (!data) return null;
 
     if (variant === "circuit") {
+      const circuitData = data as CircuitVariant;
       return (
         <>
-          {data.lines?.map((line, i) => (
+          {circuitData.lines.map((line, i) => (
             <View
               key={`line-${i}`}
               style={
@@ -110,7 +142,7 @@ export const IconBackground: FC<IconBackgroundProps> = ({
               }
             />
           ))}
-          {data.nodes?.map((node, i) => (
+          {circuitData.nodes.map((node, i) => (
             <View
               key={`node-${i}`}
               style={
@@ -132,9 +164,10 @@ export const IconBackground: FC<IconBackgroundProps> = ({
     }
 
     if (variant === "nodes") {
+      const nodesData = data as NodesVariant;
       return (
         <>
-          {data.nodes?.map((node, i) => (
+          {nodesData.nodes.map((node, i) => (
             <Fragment key={`node-${i}`}>
               <View
                 style={
@@ -170,9 +203,10 @@ export const IconBackground: FC<IconBackgroundProps> = ({
     }
 
     if (variant === "grid" || variant === "matrix") {
+      const gridData = data as GridVariant | MatrixVariant;
       return (
         <>
-          {data.lines?.map((pos, i) => (
+          {gridData.lines.map((pos, i) => (
             <Fragment key={`grid-${i}`}>
               <View
                 style={
@@ -207,9 +241,10 @@ export const IconBackground: FC<IconBackgroundProps> = ({
     }
 
     if (variant === "glitch") {
+      const glitchData = data as GlitchVariant;
       return (
         <>
-          {data.lines?.map((y, i) => (
+          {glitchData.lines.map((y, i) => (
             <View
               key={`glitch-${i}`}
               style={
@@ -225,7 +260,7 @@ export const IconBackground: FC<IconBackgroundProps> = ({
               }
             />
           ))}
-          {data.scan?.map((y, i) => (
+          {glitchData.scan.map((y, i) => (
             <View
               key={`scan-${i}`}
               style={

@@ -213,11 +213,11 @@ DetailView.StatusBar = function StatusBar({
 };
 
 interface TimelineProps {
-  items: Array<{
+  items: {
     label: string;
     value: string;
     status?: "success" | "error" | "pending";
-  }>;
+  }[];
   style?: any;
 }
 

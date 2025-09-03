@@ -203,7 +203,7 @@ function filterDiffWithContext(
   }
 
   // Build ranges to include
-  const ranges: Array<[number, number]> = [];
+  const ranges: [number, number][] = [];
   let currentStart = Math.max(0, changedIndices[0] - contextLines);
   let currentEnd = Math.min(diffs.length - 1, changedIndices[0] + contextLines);
 

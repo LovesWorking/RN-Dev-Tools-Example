@@ -48,11 +48,11 @@ export interface SentryEvent {
   breadcrumbs?: SentryBreadcrumb[];
   fingerprint?: string[];
   exception?: {
-    values?: Array<{
+    values?: {
       type?: string;
       value?: string;
       stacktrace?: unknown;
-    }>;
+    }[];
   };
   [key: string]: unknown;
 }

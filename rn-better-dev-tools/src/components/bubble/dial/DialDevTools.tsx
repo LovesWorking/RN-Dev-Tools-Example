@@ -71,7 +71,7 @@ const DialDevTools: FC<DialDevToolsProps> = ({
   const { settings: hookSettings, refreshSettings } = useDevToolsSettings();
   // Initialize with external settings if provided, otherwise use hook settings
   const [localSettings, setLocalSettings] = useState(
-    externalSettings || hookSettings,
+    externalSettings || hookSettings
   );
 
   // Always use localSettings (which can be updated by the modal)
@@ -325,7 +325,7 @@ const DialDevTools: FC<DialDevToolsProps> = ({
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
-        ]),
+        ])
       );
       pulseAnimationRef.current.start();
     };
@@ -347,7 +347,7 @@ const DialDevTools: FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Gentle breathing effect for center button
@@ -365,7 +365,7 @@ const DialDevTools: FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Circuit traces fade in

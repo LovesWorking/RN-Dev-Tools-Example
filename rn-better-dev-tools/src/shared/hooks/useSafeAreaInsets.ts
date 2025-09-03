@@ -83,16 +83,17 @@ let hasNativePackage = false;
 let SafeAreaContextModule: any = null;
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   SafeAreaContextModule = require("react-native-safe-area-context");
   if (SafeAreaContextModule?.useSafeAreaInsets) {
     hasNativePackage = true;
     console.log(
-      "✅ react-native-safe-area-context package found - using native implementation",
+      "✅ react-native-safe-area-context package found - using native implementation"
     );
   }
 } catch {
   console.warn(
-    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation",
+    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation"
   );
 }
 
@@ -103,14 +104,14 @@ const useNativeSafeAreaInsets = hasNativePackage
 
 // Main hook with automatic fallback
 export const useSafeAreaInsets = (
-  options: SafeAreaInsetsOptions = {},
+  options: SafeAreaInsetsOptions = {}
 ): SafeAreaInsets => {
   // Always call the native hook unconditionally (returns null if not available)
   const nativeInsets = useNativeSafeAreaInsets();
 
   // Fallback state for pure JS implementation
   const [fallbackInsets, setFallbackInsets] = useState<SafeAreaInsets>(() =>
-    getPureJSSafeAreaInsets(),
+    getPureJSSafeAreaInsets()
   );
 
   useEffect(() => {
@@ -171,6 +172,7 @@ export const SafeAreaConfig = {
   // Check if npm package is available
   hasNativeSupport: (): boolean => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       require("react-native-safe-area-context");
       return true;
     } catch {

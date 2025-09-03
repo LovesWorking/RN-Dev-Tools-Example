@@ -30,26 +30,6 @@ export function SwipeIndicator({
   canSwipeLeft = true,
   canSwipeRight = true,
 }: SwipeIndicatorProps) {
-  /* Utility function for indicator style */
-  const buildIndicatorStyle = (progress: number) => {
-    const width = MIN_WIDTH + (MAX_WIDTH - MIN_WIDTH) * progress;
-    const popOutProgress = Math.max(
-      0,
-      (progress - POP_OUT_START) / (1 - POP_OUT_START),
-    );
-    const scale = 1 + (POP_OUT_SCALE - 1) * popOutProgress; // 1 → POP_OUT_SCALE
-
-    return {
-      width,
-      height: INDICATOR_HEIGHT,
-      borderRadius: INDICATOR_HEIGHT / 2,
-      backgroundColor: "rgba(255,255,255,0.9)",
-      justifyContent: "center",
-      alignItems: "center",
-      transform: [{ scale }],
-    } as const;
-  };
-
   /* ---------------- LEFT EDGE (Back) ---------------- */
   const leftProgress = useMemo(() => {
     return translationX.interpolate({

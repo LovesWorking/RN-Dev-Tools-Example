@@ -1,5 +1,5 @@
 import { Mutation } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useState , useRef } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
@@ -8,7 +8,6 @@ import ClaudeModal60FPSClean, {
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View, Animated, PanResponder } from "react-native";
-import { useRef } from "react";
 import { SwipeIndicator } from "./SwipeIndicator";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";

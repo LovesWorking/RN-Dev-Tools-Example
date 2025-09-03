@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from "react";
 import { View, StyleSheet } from "react-native";
 import { Mutation } from "@tanstack/react-query";
 import MutationsList from "./query-browser/MutationsList";
@@ -15,9 +16,9 @@ export function MutationBrowserMode({
   activeFilter,
 }: MutationBrowserModeProps) {
   // Convert function to Dispatch compatible format
-  const handleMutationSelect: Dispatch<
-    SetStateAction<Mutation | undefined>
-  > = (action) => {
+  const handleMutationSelect: Dispatch<SetStateAction<Mutation | undefined>> = (
+    action: SetStateAction<Mutation | undefined>
+  ) => {
     if (typeof action === "function") {
       onMutationSelect(action(selectedMutation));
     } else {

@@ -141,19 +141,19 @@ export function validateEnvVars(
   requiredVars: RequiredEnvVar[],
 ): {
   isValid: boolean;
-  errors: Array<{
+  errors: {
     key: string;
     issue: "missing" | "wrong_type" | "wrong_value";
     expected?: string | EnvVarType;
     actual?: unknown;
-  }>;
+  }[];
 } {
-  const errors: Array<{
+  const errors: {
     key: string;
     issue: "missing" | "wrong_type" | "wrong_value";
     expected?: string | EnvVarType;
     actual?: unknown;
-  }> = [];
+  }[] = [];
 
   for (const requiredVar of requiredVars) {
     const key = typeof requiredVar === "string" ? requiredVar : requiredVar.key;

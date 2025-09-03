@@ -253,7 +253,7 @@ export class SentryLogger {
    * Extract metadata from Sentry data
    */
   private getSentryMetadata(data: SentryEventData): Record<string, unknown> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { message, level, type, ...metadata } = data;
     return metadata;
   }

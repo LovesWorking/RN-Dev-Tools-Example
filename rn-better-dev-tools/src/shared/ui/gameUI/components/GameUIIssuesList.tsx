@@ -165,7 +165,7 @@ export function GameUIIssuesList({
                         { color: gameUIColors.warning },
                       ]}
                     >
-                      "{String(issue.value)}"
+                      {`"${String(issue.value)}"`}
                     </Text>
                   </View>
                 )}
@@ -193,7 +193,7 @@ export function GameUIIssuesList({
                         { color: gameUIColors.success },
                       ]}
                     >
-                      "{issue.expectedValue}"
+                      {`"${issue.expectedValue}"`}
                     </Text>
                   </View>
                 )}

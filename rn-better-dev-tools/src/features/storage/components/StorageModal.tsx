@@ -1,10 +1,9 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import ClaudeModal60FPSClean, {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
-import { HardDrive } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
@@ -24,11 +23,10 @@ export function StorageModal({
   enableSharedModalDimensions = false,
   requiredStorageKeys = [],
 }: StorageModalProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
+    console.log("mode", mode);
   }, []);
 
   if (!visible) return null;

@@ -16,6 +16,7 @@ let userProvidedGetClient: (() => SentryClient | null) | null = null;
 // Try to load real Sentry SDK if available
 try {
   // This will be resolved at build time by Metro
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const sentry = require("@sentry/react-native");
   if (sentry && sentry.getClient) {
     realSentryGetClient = sentry.getClient;
@@ -30,7 +31,7 @@ try {
  * Configure a custom client provider
  */
 export function configureSentryClient(
-  getClientFn: () => SentryClient | null,
+  getClientFn: () => SentryClient | null
 ): void {
   userProvidedGetClient = getClientFn;
 }

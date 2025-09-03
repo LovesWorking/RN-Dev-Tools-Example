@@ -38,8 +38,6 @@ export function DataInspector({
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState("");
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
-
   const formatData = () => {
     if (syntax === "json") {
       try {
@@ -75,6 +73,7 @@ export function DataInspector({
         const newData = syntax === "json" ? JSON.parse(editedData) : editedData;
         onEdit?.(newData);
         setIsEditing(false);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         // Show error somehow
       }

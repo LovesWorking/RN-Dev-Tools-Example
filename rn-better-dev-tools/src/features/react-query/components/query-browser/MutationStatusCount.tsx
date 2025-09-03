@@ -1,8 +1,7 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet , GestureResponderEvent, ScrollView } from "react-native";
 import QueryStatus from "./QueryStatus";
 import { useMutationStatusCounts } from "../../hooks/useQueryStatusCounts";
 import { useRef, useState } from "react";
-import { GestureResponderEvent, ScrollView } from "react-native";
 
 interface MutationStatusCountProps {
   activeFilter?: string | null;

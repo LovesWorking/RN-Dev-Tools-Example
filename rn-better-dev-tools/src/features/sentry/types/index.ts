@@ -57,9 +57,9 @@ export type SpanAttributeValue =
   | string
   | number
   | boolean
-  | Array<null | undefined | string>
-  | Array<null | undefined | number>
-  | Array<null | undefined | boolean>;
+  | (null | undefined | string)[]
+  | (null | undefined | number)[]
+  | (null | undefined | boolean)[];
 
 export type SpanAttributes = Partial<{
   "sentry.origin": string;

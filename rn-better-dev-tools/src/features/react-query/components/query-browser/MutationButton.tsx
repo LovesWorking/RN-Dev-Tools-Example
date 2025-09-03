@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { Mutation } from "@tanstack/react-query";
 import { View, StyleSheet } from "react-native";
 import { CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
@@ -22,9 +23,7 @@ const getMutationText = (mutation: Mutation) => {
 
 interface Props {
   mutation: Mutation;
-  setSelectedMutation: Dispatch<
-    SetStateAction<Mutation | undefined>
-  >;
+  setSelectedMutation: Dispatch<SetStateAction<Mutation | undefined>>;
   selected: Mutation | undefined;
 }
 export default function MutationButton({

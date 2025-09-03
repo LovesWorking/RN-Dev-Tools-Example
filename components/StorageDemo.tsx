@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import { StyleSheet, TouchableOpacity, TextInput, Alert } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -16,7 +16,7 @@ interface StorageItemProps {
   color: string;
 }
 
-const StorageItem: React.FC<StorageItemProps> = ({
+const StorageItem: FC<StorageItemProps> = ({
   storageType,
   storageKey,
   title,
@@ -64,7 +64,7 @@ const StorageItem: React.FC<StorageItemProps> = ({
   );
 };
 
-const StorageInputCard: React.FC = () => {
+const StorageInputCard: FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [selectedStorage, setSelectedStorage] = useState<
     "mmkv" | "async" | "secure"
@@ -293,7 +293,7 @@ const StorageInputCard: React.FC = () => {
   );
 };
 
-export const StorageDemo: React.FC = () => {
+export const StorageDemo: FC = () => {
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.sectionTitle}>Storage Demo</ThemedText>

@@ -38,7 +38,7 @@ export interface AsyncStorageEvent {
     key?: string;
     value?: string;
     keys?: string[];
-    pairs?: Array<[string, string]>;
+    pairs?: [string, string][];
   };
 }
 
@@ -295,7 +295,7 @@ class AsyncStorageListener {
         this.emit({
           action: "multiSet",
           timestamp: new Date(),
-          data: { pairs: filteredPairs as Array<[string, string]> },
+          data: { pairs: filteredPairs as [string, string][] },
         });
       } else {
         console.log(`[AsyncStorageListener] All keys in multiSet are ignored`);
@@ -346,7 +346,7 @@ class AsyncStorageListener {
           this.emit({
             action: "multiMerge",
             timestamp: new Date(),
-            data: { pairs: filteredPairs as Array<[string, string]> },
+            data: { pairs: filteredPairs as [string, string][] },
           });
         } else {
           console.log(

@@ -1,10 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  PanResponder,
-  FlatList,
-} from "react-native";
+import { StyleSheet, View, PanResponder, FlatList } from "react-native";
 
 import {
   ConsoleTransportEntry,
@@ -23,7 +18,6 @@ import { SentryFilterModal } from "./SentryFilterModal";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Stable constants to prevent re-creation on every render [[memory:4875251]]
-const ESTIMATED_ITEM_SIZE = 44; // Reduced for compact cards
 const END_REACHED_THRESHOLD = 0.8;
 const MAINTAIN_VISIBLE_CONTENT_POSITION = {
   minIndexForVisible: 0,
@@ -41,7 +35,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
 const createRenderSentryEventItem = (
   selectEntryRef: MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
-  >,
+  >
 ) => {
   return ({ item }: { item: ConsoleTransportEntry }) => (
     <SentryEventLogEntryItem
@@ -60,7 +54,6 @@ interface SentryLogsDetailContentProps {
   selectedLevels?: Set<LogLevel>;
   onToggleTypeFilter?: (type: LogType) => void;
   onToggleLevelFilter?: (level: LogLevel) => void;
-  isLoggingEnabled?: boolean;
 }
 
 /**
@@ -76,7 +69,6 @@ function SentryLogsDetailContentInner({
   selectedLevels: externalSelectedLevels,
   onToggleTypeFilter: externalToggleTypeFilter,
   onToggleLevelFilter: externalToggleLevelFilter,
-  isLoggingEnabled: externalIsLoggingEnabled,
 }: SentryLogsDetailContentProps) {
   // Create a simple PanResponder for handling gestures with FlatList
   // This helps with Android FlatList integration with modal
@@ -85,21 +77,19 @@ function SentryLogsDetailContentInner({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: () => false,
       // Let FlatList handle all touch events
-    }),
+    })
   ).current;
 
   // Use props if provided, otherwise use local state
   const [localSelectedTypes, setLocalSelectedTypes] = useState<Set<LogType>>(
-    new Set(),
+    new Set()
   );
   const [localSelectedLevels, setLocalSelectedLevels] = useState<Set<LogLevel>>(
-    new Set(),
+    new Set()
   );
-  const [_localIsLoggingEnabled, _setLocalIsLoggingEnabled] = useState(true);
 
   const selectedTypes = externalSelectedTypes ?? localSelectedTypes;
   const selectedLevels = externalSelectedLevels ?? localSelectedLevels;
-  const _isLoggingEnabled = externalIsLoggingEnabled ?? _localIsLoggingEnabled;
 
   const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
 
@@ -116,7 +106,7 @@ function SentryLogsDetailContentInner({
   const selectEntryRef = useRef<(entry: ConsoleTransportEntry) => void>(
     (entry: ConsoleTransportEntry) => {
       onSelectEntry(entry);
-    },
+    }
   );
   selectEntryRef.current = (entry: ConsoleTransportEntry) => {
     onSelectEntry(entry);
@@ -125,7 +115,7 @@ function SentryLogsDetailContentInner({
   // Create stable renderItem once [[memory:4875251]]
   const renderSentryEventItem = useMemo(
     () => createRenderSentryEventItem(selectEntryRef),
-    [],
+    []
   );
 
   const goBackToList = () => {

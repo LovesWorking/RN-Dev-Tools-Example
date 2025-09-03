@@ -76,7 +76,6 @@ export function StorageEventDetailModal({
   ignoredPatterns = new Set(),
   onTogglePattern = () => {},
 }: StorageEventDetailModalProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [keyStats, setKeyStats] = useState<KeyStats | null>(null);
   const [showValueChanges, setShowValueChanges] = useState(true);
   const [showOperationHistory, setShowOperationHistory] = useState(true);
@@ -85,7 +84,7 @@ export function StorageEventDetailModal({
   const insets = useSafeAreaInsets();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
+    console.log("mode", mode);
   }, []);
 
   // Force re-render every 10 seconds for relative times
@@ -200,8 +199,8 @@ export function StorageEventDetailModal({
       parsed === null
         ? "null"
         : parsed === undefined
-          ? "undefined"
-          : typeof parsed;
+        ? "undefined"
+        : typeof parsed;
 
     if (type === "boolean") {
       const isTrue = parsed === true;
@@ -683,7 +682,7 @@ export function StorageEventDetailModal({
                   onCopySuccess={() =>
                     Alert.alert(
                       "Copied",
-                      "Operation history copied to clipboard",
+                      "Operation history copied to clipboard"
                     )
                   }
                   onCopyError={() =>
@@ -757,7 +756,7 @@ export function StorageEventDetailModal({
           (() => {
             const key = event.data.key;
             const isKeyIgnored = Array.from(ignoredPatterns).some((pattern) =>
-              key.includes(pattern),
+              key.includes(pattern)
             );
 
             return (

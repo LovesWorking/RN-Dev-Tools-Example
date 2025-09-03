@@ -112,11 +112,11 @@ export function formatEventMessage(entry: ConsoleTransportEntry): string {
  * Extract touch event details
  */
 export interface TouchEventDetails {
-  componentPath: Array<{
+  componentPath: {
     name: string;
     label?: string;
     file?: string;
-  }>;
+  }[];
   route?: string;
   timestamp: number;
   customizable: {
@@ -150,7 +150,7 @@ export function extractTouchEventDetails(
  * Looks for components with file extensions like .tsx, .jsx, .js, .ts
  */
 export function extractComponentFileFromPath(
-  path: Array<{ name: string; label?: string; file?: string }> | undefined,
+  path: { name: string; label?: string; file?: string }[] | undefined,
 ): string | null {
   if (!path || !Array.isArray(path)) return null;
 
@@ -311,11 +311,11 @@ export interface PerformanceEventDetails {
   duration?: number;
   status?: string;
   measurements?: Record<string, { value: number; unit: string }>;
-  spans?: Array<{
+  spans?: {
     op: string;
     description: string;
     duration?: number;
-  }>;
+  }[];
   appStart?: {
     type: "cold" | "warm";
     duration: number;

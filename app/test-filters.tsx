@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { View, StyleSheet, SafeAreaView, Text } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import QueryStatusCount from "@/rn-better-dev-tools/src/features/react-query/components/query-browser/QueryStatusCount";
@@ -7,8 +7,8 @@ import MutationStatusCount from "@/rn-better-dev-tools/src/features/react-query/
 const queryClient = new QueryClient();
 
 export default function TestFilters() {
-  const [queryFilter, setQueryFilter] = React.useState<string | null>(null);
-  const [mutationFilter, setMutationFilter] = React.useState<string | null>(
+  const [queryFilter, setQueryFilter] = useState<string | null>(null);
+  const [mutationFilter, setMutationFilter] = useState<string | null>(
     null,
   );
 

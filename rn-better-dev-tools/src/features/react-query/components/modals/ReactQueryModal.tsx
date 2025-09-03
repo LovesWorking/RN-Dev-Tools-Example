@@ -42,9 +42,6 @@ export function ReactQueryModal({
   onTabChange,
   enableSharedModalDimensions = false,
 }: ReactQueryModalProps) {
-  const selectedQuery = useGetQueryByQueryKey(selectedQueryKey);
-  const selectedMutation = useGetMutationById(selectedMutationId);
-
   // Check if we have a key/id even if the query/mutation hasn't been found yet
   const inDetail = !!selectedQueryKey || !!selectedMutationId;
   const isQueryMode = activeTab === "queries";

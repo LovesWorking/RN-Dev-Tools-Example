@@ -396,7 +396,7 @@ const darkColors: ThemeColors = {
   modalToggleButton: "#E5E7EB",
   modalToggleButtonBg: "rgba(156, 163, 175, 0.1)",
 };
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const darkStyles: ThemeStyles = {
   modal: {
     backgroundColor: darkColors.backgroundModal,
@@ -489,7 +489,7 @@ export const getTheme = (_themeName: ThemeName): Theme => {
 // Helper function to get section color based on theme
 export const getSectionColor = (
   theme: Theme,
-  section: "query" | "env" | "sentry" | "storage" | "network" | "settings",
+  section: "query" | "env" | "sentry" | "storage" | "network" | "settings"
 ): string => {
   const colorMap = {
     query: theme.colors.queryColor,

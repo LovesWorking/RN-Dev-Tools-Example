@@ -1,4 +1,4 @@
-import React from "react";
+import { FC, ReactNode } from "react";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { QueryClient } from "@tanstack/react-query";
 import { useSyncQueriesExternal } from "react-query-external-sync";
@@ -8,14 +8,14 @@ import { Platform } from "react-native";
 import { asyncStoragePersister } from "@/src/storage/queryPersister";
 
 interface QueryClientWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
   queryClient: QueryClient;
 }
 
-export function QueryClientWrapper({
+export const QueryClientWrapper: FC<QueryClientWrapperProps> = ({
   children,
   queryClient,
-}: QueryClientWrapperProps) {
+}) => {
   // Unified storage queries and external sync - all in one hook!
   useSyncQueriesExternal({
     queryClient,

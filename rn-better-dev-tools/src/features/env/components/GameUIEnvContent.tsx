@@ -58,67 +58,11 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
   const [issuesSectionExpanded, setIssuesSectionExpanded] = useState(true);
   const [requiredSectionExpanded, setRequiredSectionExpanded] = useState(true);
   const [optionalSectionExpanded, setOptionalSectionExpanded] = useState(false);
-  const [devTestMode, setDevTestMode] = useState<string | null>(null);
 
   // Auto-collect environment variables
   const envResults = useDynamicEnv();
 
   const autoCollectedEnvVars = useMemo(() => {
-    // Dev test mode mock data
-    if (devTestMode) {
-      switch (devTestMode) {
-        case "SUCCESS":
-          return {
-            EXPO_PUBLIC_API_URL: "https://api.example.com",
-            EXPO_PUBLIC_API_KEY: "sk_test_1234567890",
-            EXPO_PUBLIC_ENVIRONMENT: "production",
-            EXPO_PUBLIC_DEBUG_MODE: "false",
-            EXPO_PUBLIC_CACHE_TTL: "3600",
-            EXPO_PUBLIC_MAX_RETRIES: "3",
-            EXPO_PUBLIC_TIMEOUT: "30000",
-            EXPO_PUBLIC_FEATURE_FLAG_A: "true",
-            EXPO_PUBLIC_FEATURE_FLAG_B: "false",
-            EXPO_PUBLIC_LOG_LEVEL: "info",
-          };
-        case "PARTIAL_FAILURE":
-          return {
-            EXPO_PUBLIC_API_URL: "https://api.example.com",
-            EXPO_PUBLIC_API_KEY: "invalid_key_format",
-            EXPO_PUBLIC_ENVIRONMENT: "dev",
-            EXPO_PUBLIC_DEBUG_MODE: "yes", // Wrong type
-            EXPO_PUBLIC_TIMEOUT: "thirty", // Wrong type
-          };
-        case "CRITICAL_FAILURE":
-          return {
-            EXPO_PUBLIC_LOG_LEVEL: "debug",
-            EXPO_PUBLIC_FEATURE_FLAG_A: "true",
-          };
-        case "EMPTY":
-          return {};
-        case "TYPE_ERRORS":
-          return {
-            EXPO_PUBLIC_API_URL: "12345", // Should be URL
-            EXPO_PUBLIC_API_KEY: "sk_test_1234567890",
-            EXPO_PUBLIC_ENVIRONMENT: "production",
-            EXPO_PUBLIC_DEBUG_MODE: "yes", // Should be boolean
-            EXPO_PUBLIC_CACHE_TTL: "one hour", // Should be number
-            EXPO_PUBLIC_MAX_RETRIES: "three", // Should be number
-            EXPO_PUBLIC_TIMEOUT: "thirty seconds", // Should be number
-          };
-        case "VALUE_ERRORS":
-          return {
-            EXPO_PUBLIC_API_URL: "https://api.example.com",
-            EXPO_PUBLIC_API_KEY: "wrong_prefix_1234567890", // Wrong prefix
-            EXPO_PUBLIC_ENVIRONMENT: "staging", // Not allowed value
-            EXPO_PUBLIC_DEBUG_MODE: "false",
-            EXPO_PUBLIC_LOG_LEVEL: "verbose", // Invalid log level
-            EXPO_PUBLIC_MAX_RETRIES: "-1", // Invalid negative
-          };
-        default:
-          break;
-      }
-    }
-
     // Normal operation
     const envVars: Record<string, string> = {};
     envResults.forEach(({ key, data }) => {
@@ -127,11 +71,11 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       }
     });
     return envVars;
-  }, [envResults, devTestMode]);
+  }, [envResults]);
 
   // Process and categorize environment variables
   const { requiredVars, optionalVars } = useMemo(() => {
-    const mockRequiredVars = devTestMode
+    const mockRequiredVars = requiredEnvVars
       ? ([
           {
             key: "EXPO_PUBLIC_API_URL",
@@ -174,11 +118,11 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       : requiredEnvVars;
 
     return processEnvVars(autoCollectedEnvVars, mockRequiredVars);
-  }, [autoCollectedEnvVars, requiredEnvVars, devTestMode]);
+  }, [autoCollectedEnvVars, requiredEnvVars]);
 
   // Calculate statistics
   const stats = useMemo(() => {
-    if (devTestMode === "EMPTY") {
+    if (requiredEnvVars === undefined) {
       return {
         totalCount: 0,
         requiredCount: 0,
@@ -190,12 +134,12 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       };
     }
     return calculateStats(requiredVars, optionalVars, autoCollectedEnvVars);
-  }, [requiredVars, optionalVars, autoCollectedEnvVars, devTestMode]);
+  }, [requiredVars, optionalVars, autoCollectedEnvVars]);
 
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
     stats,
-    ENV_ALERT_STATES,
+    ENV_ALERT_STATES
   );
 
   // Transform issues for GameUIIssuesList
@@ -208,8 +152,8 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
           varItem.status === "required_missing"
             ? "missing"
             : varItem.status === "required_wrong_type"
-              ? "wrong_type"
-              : "wrong_value",
+            ? "wrong_type"
+            : "wrong_value",
         value: varItem.value,
         expectedType: varItem.expectedType,
         expectedValue: varItem.expectedValue as string,
@@ -218,8 +162,8 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
           varItem.status === "required_missing"
             ? `Add to .env: ${varItem.key}=your_value_here`
             : varItem.status === "required_wrong_type"
-              ? `Update type to ${varItem.expectedType} in .env file`
-              : `Check valid values for ${varItem.key}`,
+            ? `Update type to ${varItem.expectedType} in .env file`
+            : `Check valid values for ${varItem.key}`,
       }));
   }, [requiredVars]);
 
@@ -272,7 +216,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
         pulseDelay: 800,
       },
     ],
-    [stats],
+    [stats]
   );
 
   // Calculate health percentage
@@ -281,7 +225,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       ? Math.round(
           (stats.presentRequiredCount /
             (stats.totalCount - stats.optionalCount)) *
-            100,
+            100
         )
       : 0;
 
@@ -289,15 +233,15 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
     healthPercentage >= 90
       ? "OPTIMAL"
       : healthPercentage >= 70
-        ? "WARNING"
-        : "CRITICAL";
+      ? "WARNING"
+      : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
       ? gameUIColors.success
       : healthPercentage >= 70
-        ? gameUIColors.warning
-        : gameUIColors.error;
+      ? gameUIColors.warning
+      : gameUIColors.error;
 
   return (
     <ScrollView

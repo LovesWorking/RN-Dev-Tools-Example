@@ -44,19 +44,18 @@ export function SentryLogsModal({
   onBack,
   enableSharedModalDimensions = false,
 }: SentryLogsModalProps) {
-  const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
   const [selectedEntry, setSelectedEntry] =
     useState<ConsoleTransportEntry | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(new Set());
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
-    new Set(),
+    new Set()
   );
   const [isLoggingEnabled, setIsLoggingEnabled] = useState(true);
   const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
-    setModalMode(mode);
+    console.log("handleModeChange", mode);
   }, []);
 
   // Get event counts
@@ -116,7 +115,11 @@ export function SentryLogsModal({
               {onBack && <ModalHeader.Navigation onBack={handleBackPress} />}
               <ModalHeader.Content
                 title="Sentry Events"
-                subtitle={`${filteredEntries.length} of ${totalCount}${selectedTypes.size > 0 || selectedLevels.size > 0 ? " (filtered)" : ""}`}
+                subtitle={`${filteredEntries.length} of ${totalCount}${
+                  selectedTypes.size > 0 || selectedLevels.size > 0
+                    ? " (filtered)"
+                    : ""
+                }`}
               />
               <ModalHeader.Actions onClose={onClose}>
                 <TouchableOpacity

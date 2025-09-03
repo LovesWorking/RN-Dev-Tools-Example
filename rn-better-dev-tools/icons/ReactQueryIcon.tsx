@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { View, ViewStyle } from "react-native";
 import { IconBackground } from "./IconBackground";
 

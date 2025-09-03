@@ -16,13 +16,6 @@ export function SideBySideDiffView({
   differences,
   debugMode,
 }: SideBySideDiffViewProps) {
-  // Create a map of paths that have changes for highlighting
-  const changedPaths = new Set(
-    differences.map((diff) => {
-      return diff.path.length === 0 ? "root" : diff.path.join(".");
-    }),
-  );
-
   return (
     <View style={[styles.container, debugMode && styles.debugSideBySide]}>
       {debugMode && <Text style={styles.debugLabel}>SIDE-BY-SIDE MODE</Text>}

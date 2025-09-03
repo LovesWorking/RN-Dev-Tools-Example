@@ -4,7 +4,7 @@ import { deleteNestedDataByPath } from "../deleteNestedDataByPath";
 interface Props {
   queryClient: QueryClient;
   activeQuery: Query;
-  dataPath: Array<string> | undefined;
+  dataPath: string[] | undefined;
 }
 export default function deleteItem({
   activeQuery,

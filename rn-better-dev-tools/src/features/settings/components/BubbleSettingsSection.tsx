@@ -11,6 +11,8 @@ import { useState, useEffect } from "react";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 import { useDevToolsTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
+import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
+
 // AsyncStorage will be loaded lazily
 type AsyncStorageType = {
   getItem: (key: string) => Promise<string | null>;
@@ -36,8 +38,6 @@ const loadAsyncStorage = async () => {
 
   return asyncStorageLoadPromise;
 };
-
-import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 
 const STORAGE_KEY = devToolsStorageKeys.bubble.settings();
 const USER_PREFERENCES_KEY = devToolsStorageKeys.bubble.userPreferences();

@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -10,7 +10,7 @@ interface EnvItemProps {
   isPublic: boolean;
 }
 
-const EnvItem: React.FC<EnvItemProps> = ({ name, value, isPublic }) => {
+const EnvItem: FC<EnvItemProps> = ({ name, value, isPublic }) => {
   return (
     <ThemedView
       style={[
@@ -41,7 +41,7 @@ const EnvItem: React.FC<EnvItemProps> = ({ name, value, isPublic }) => {
   );
 };
 
-export const EnvDemo: React.FC = () => {
+export const EnvDemo: FC = () => {
   // Get all environment variables that start with EXPO_PUBLIC_
   const publicEnvVars = Object.entries(process.env)
     .filter(([key]) => key.startsWith("EXPO_PUBLIC_"))

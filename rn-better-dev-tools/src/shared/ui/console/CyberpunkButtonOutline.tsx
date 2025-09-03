@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef } from "react";
 import { View, ViewStyle, Pressable, Animated } from "react-native";
 import Svg, {
   Defs,

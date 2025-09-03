@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, ReactNode } from "react";
 import {
   View,
   Text,
@@ -39,9 +39,7 @@ export function CollapsibleSection({
   onToggle,
 }: CollapsibleSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const rotateAnim = useRef(
-    new Animated.Value(defaultOpen ? 1 : 0),
-  ).current;
+  const rotateAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
 
   const toggle = () => {
     const newState = !isOpen;

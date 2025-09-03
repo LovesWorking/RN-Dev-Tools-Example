@@ -101,7 +101,7 @@ function NetworkModalInner({
 
         // Load ignored domains
         const storedDomains = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredDomains(),
+          devToolsStorageKeys.network.ignoredDomains()
         );
         if (storedDomains) {
           const domains = JSON.parse(storedDomains) as string[];
@@ -110,7 +110,7 @@ function NetworkModalInner({
 
         // Load ignored URLs
         const storedUrls = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredUrls(),
+          devToolsStorageKeys.network.ignoredUrls()
         );
         if (storedUrls) {
           const urls = JSON.parse(storedUrls) as string[];
@@ -118,6 +118,7 @@ function NetworkModalInner({
         }
 
         hasLoadedFilters.current = true;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_error) {
         // Silently fail - filters will use defaults
       }
@@ -140,15 +141,16 @@ function NetworkModalInner({
         const domains = Array.from(ignoredDomains);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredDomains(),
-          JSON.stringify(domains),
+          JSON.stringify(domains)
         );
 
         // Save ignored URLs
         const urls = Array.from(ignoredUrls);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredUrls(),
-          JSON.stringify(urls),
+          JSON.stringify(urls)
         );
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_error) {
         // Silently fail - filters will remain in memory
       }
@@ -193,7 +195,7 @@ function NetworkModalInner({
           const hostname = urlObj.hostname.toLowerCase();
           if (
             Array.from(ignoredDomains).some((domain) =>
-              hostname.includes(domain.toLowerCase()),
+              hostname.includes(domain.toLowerCase())
             )
           ) {
             return false;
@@ -207,7 +209,7 @@ function NetworkModalInner({
       if (ignoredUrls.size > 0) {
         if (
           Array.from(ignoredUrls).some((pattern) =>
-            url.includes(pattern.toLowerCase()),
+            url.includes(pattern.toLowerCase())
           )
         ) {
           return false;
@@ -219,7 +221,6 @@ function NetworkModalInner({
   }, [events, ignoredDomains, ignoredUrls]);
 
   // FlatList optimization - only keep what's needed for FlatList performance
-  const ESTIMATED_ITEM_SIZE = 52;
   const keyExtractor = (item: NetworkEvent) => item.id;
 
   // Keep renderItem memoized for FlatList performance (justified by FlatList docs)
@@ -437,31 +438,6 @@ function NetworkModalInner({
       </ModalHeader>
     );
   };
-
-  const renderSearchBar = () => (
-    <View style={styles.searchContainer}>
-      <Search size={14} color={gameUIColors.secondary} />
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search URL, method, error..."
-        placeholderTextColor={gameUIColors.muted}
-        value={searchText}
-        onChangeText={handleSearch}
-        sentry-label="ignore network search"
-        accessibilityLabel="Search network requests"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      {searchText.length > 0 ? (
-        <TouchableOpacity
-          onPress={() => handleSearch("")}
-          sentry-label="ignore clear search"
-        >
-          <X size={16} color={gameUIColors.secondary} />
-        </TouchableOpacity>
-      ) : null}
-    </View>
-  );
 
   const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()

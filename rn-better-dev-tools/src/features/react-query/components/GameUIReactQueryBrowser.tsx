@@ -19,8 +19,9 @@ import QueryBrowser from "./query-browser/QueryBrowser";
 import MutationsList from "./query-browser/MutationsList";
 import useAllQueries from "../hooks/useAllQueries";
 import useAllMutations from "../hooks/useAllMutations";
-import useQueryStatusCounts from "../hooks/useQueryStatusCounts";
-import { useMutationStatusCounts } from "../hooks/useQueryStatusCounts";
+import useQueryStatusCounts, {
+  useMutationStatusCounts,
+} from "../hooks/useQueryStatusCounts";
 
 // Custom alert states for React Query
 const REACT_QUERY_ALERT_STATES = {
@@ -78,12 +79,11 @@ export function GameUIReactQueryBrowser({
     const totalQueries = queries.length;
     const totalMutations = mutations.length;
     const errorQueries = queries.filter(
-      (q) => q.state.status === "error",
+      (q) => q.state.status === "error"
     ).length;
     const errorMutations = mutations.filter(
-      (m) => m.state.status === "error",
+      (m) => m.state.status === "error"
     ).length;
-    const staleQueries = queryStats.stale;
 
     return {
       totalCount: totalQueries + totalMutations,
@@ -99,7 +99,7 @@ export function GameUIReactQueryBrowser({
   // Use alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
     overallStats,
-    REACT_QUERY_ALERT_STATES,
+    REACT_QUERY_ALERT_STATES
   );
 
   return (

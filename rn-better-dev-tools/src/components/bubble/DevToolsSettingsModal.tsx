@@ -84,7 +84,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   initialSettings,
 }) => {
   const [settings, setSettings] = useState<DevToolsSettings>(
-    initialSettings || defaultSettings,
+    initialSettings || defaultSettings
   );
   const [activeTab, setActiveTab] = useState<"dial" | "floating">("dial");
   const theme = useTheme();
@@ -133,7 +133,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
 
   const toggleDialTool = (tool: keyof DevToolsSettings["dialTools"]) => {
     const currentEnabled = Object.values(settings.dialTools).filter(
-      (v) => v,
+      (v) => v
     ).length;
     const isCurrentlyEnabled = settings.dialTools[tool];
 
@@ -153,7 +153,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   };
 
   const toggleFloatingTool = (
-    tool: keyof DevToolsSettings["floatingTools"],
+    tool: keyof DevToolsSettings["floatingTools"]
   ) => {
     const newSettings = {
       ...settings,
@@ -201,7 +201,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
     keyName: string,
     value: boolean,
     disabled: boolean,
-    onToggle: () => void,
+    onToggle: () => void
   ) => {
     const color = getToolColor(keyName);
     const getToolIcon = (tool: string) => {
@@ -353,14 +353,14 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
           <View style={styles.section}>
             {(() => {
               const enabledCount = Object.values(settings.dialTools).filter(
-                (v) => v,
+                (v) => v
               ).length;
               const isAtLimit = enabledCount >= 6;
 
               return Object.entries(settings.dialTools).map(([key, value]) => {
                 const isDisabled = !value && isAtLimit;
                 return renderToolCard(key, value, isDisabled, () =>
-                  toggleDialTool(key as keyof DevToolsSettings["dialTools"]),
+                  toggleDialTool(key as keyof DevToolsSettings["dialTools"])
                 );
               });
             })()}
@@ -370,9 +370,9 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
             {Object.entries(settings.floatingTools).map(([key, value]) =>
               renderToolCard(key, value, false, () =>
                 toggleFloatingTool(
-                  key as keyof DevToolsSettings["floatingTools"],
-                ),
-              ),
+                  key as keyof DevToolsSettings["floatingTools"]
+                )
+              )
             )}
           </View>
         )}
@@ -423,7 +423,6 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
 // Hook to use settings
 export const useDevToolsSettings = () => {
   const [settings, setSettings] = useState<DevToolsSettings>(defaultSettings);
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   const loadSettings = useCallback(async () => {
     try {
@@ -456,7 +455,6 @@ export const useDevToolsSettings = () => {
       try {
         if (payload) {
           setSettings(payload);
-          setLastRefresh(Date.now());
         }
       } catch {}
     });
@@ -467,7 +465,6 @@ export const useDevToolsSettings = () => {
 
   // Refresh settings when component using this hook becomes visible
   const refreshSettings = useCallback(() => {
-    setLastRefresh(Date.now());
     loadSettings();
   }, [loadSettings]);
 

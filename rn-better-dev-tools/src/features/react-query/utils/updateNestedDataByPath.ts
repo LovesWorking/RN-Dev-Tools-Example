@@ -9,7 +9,7 @@ import { JsonValue } from "../types/types";
  */
 export const updateNestedDataByPath = (
   oldData: JsonValue,
-  updatePath: Array<string>,
+  updatePath: string[],
   value: JsonValue,
 ): JsonValue => {
   if (updatePath.length === 0) {
