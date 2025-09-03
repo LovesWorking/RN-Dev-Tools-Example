@@ -105,10 +105,7 @@ export function DevToolsThemeProvider({
     const loadThemePreference = async () => {
       try {
         const savedTheme = await SafeStorage.getItem(THEME_STORAGE_KEY);
-        if (
-          savedTheme &&
-          (savedTheme === "cyberpunk" || savedTheme === "dark" || savedTheme === "light")
-        ) {
+        if (savedTheme && savedTheme === "cyberpunk") {
           setThemeName(savedTheme as ThemeName);
           setThemeState(getTheme(savedTheme as ThemeName));
         }
@@ -143,12 +140,9 @@ export function DevToolsThemeProvider({
     setThemeState(getTheme(newThemeName));
   };
 
-  // Toggle between themes (cycle: cyberpunk -> dark -> cyberpunk)
+  // Toggle does nothing (single theme retained for minimal package)
   const toggleTheme = () => {
-    const order: ThemeName[] = ["cyberpunk", "dark"];
-    const idx = order.indexOf(themeName);
-    const next = order[(idx + 1) % order.length];
-    setTheme(next);
+    setTheme("cyberpunk");
   };
 
   const value: DevToolsThemeContextType = {

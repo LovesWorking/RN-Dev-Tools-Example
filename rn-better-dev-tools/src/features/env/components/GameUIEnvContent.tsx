@@ -392,9 +392,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
         />
       </GameUICollapsibleSection>
 
-      <Text style={styles.techFooter}>
-        // EXPO_PUBLIC_* NAMESPACE REQUIRED FOR RN ACCESS
-      </Text>
+      <Text style={styles.techFooter}>EXPO_PUBLIC_* NAMESPACE REQUIRED FOR RN ACCESS</Text>
 
       {/* Dev Test Mode removed - test component no longer needed */}
     </ScrollView>

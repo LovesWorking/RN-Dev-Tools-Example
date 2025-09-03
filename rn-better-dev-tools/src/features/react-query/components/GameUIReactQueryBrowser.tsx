@@ -201,7 +201,7 @@ export function GameUIReactQueryBrowser({
       )}
 
       {/* Tech Footer */}
-      <Text style={styles.techFooter}>// TANSTACK REACT QUERY DEVTOOLS</Text>
+      <Text style={styles.techFooter}>TANSTACK REACT QUERY DEVTOOLS</Text>
     </ScrollView>
   );
 }

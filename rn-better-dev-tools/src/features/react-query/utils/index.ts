@@ -1,11 +1,11 @@
-// Action utilities
-export * from "./actions/invalidate";
-export * from "./actions/refetch";
-export * from "./actions/reset";
-export * from "./actions/remove";
-export * from "./actions/deleteItem";
-export * from "./actions/triggerError";
-export * from "./actions/triggerLoading";
+// Action utilities (map default exports to named for consistency)
+export { default as invalidate } from "./actions/invalidate";
+export { default as refetch } from "./actions/refetch";
+export { default as reset } from "./actions/reset";
+export { default as remove } from "./actions/remove";
+export { default as deleteItem } from "./actions/deleteItem";
+export { default as triggerError } from "./actions/triggerError";
+export { default as triggerLoading } from "./actions/triggerLoading";
 
 // Query status utilities
 export * from "./getQueryStatusLabel";

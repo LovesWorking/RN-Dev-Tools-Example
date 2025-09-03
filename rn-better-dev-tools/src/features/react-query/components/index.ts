@@ -9,26 +9,8 @@ export * from "./modals/QueryBrowserFooter";
 export * from "./modals/MutationBrowserFooter";
 export * from "./modals/SwipeIndicator";
 
-// Query browser components
-export * from "./query-browser/Explorer";
-export * from "./query-browser/QueryBrowser";
-export * from "./query-browser/QueryDetails";
-export * from "./query-browser/QueryInformation";
-export * from "./query-browser/QueryActions";
-export * from "./query-browser/QueryRow";
-export * from "./query-browser/QueryStatus";
-export * from "./query-browser/QueryStatusCount";
-export * from "./query-browser/QueryDetailsChip";
-export * from "./query-browser/MutationsList";
-export * from "./query-browser/MutationDetails";
-export * from "./query-browser/MutationInformation";
-export * from "./query-browser/MutationButton";
-export * from "./query-browser/MutationStatusCount";
-export * from "./query-browser/MutationDetailsChips";
-export * from "./query-browser/ActionButton";
-export * from "./query-browser/ClearCacheButton";
-export * from "./query-browser/NetworkToggleButton";
-export * from "./query-browser/StorageStatusCount";
+// Query browser components (via barrel that maps defaults to named)
+export * from "./query-browser";
 
 // Shared components
 export * from "./shared/VirtualizedDataExplorer";

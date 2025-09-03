@@ -179,7 +179,7 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
           <Text style={styles.emptyIcon}>📦</Text>
           <Text style={styles.emptyTitle}>NO DATA STORED</Text>
           <Text style={styles.emptySubtitle}>
-            Your app hasn't saved any data yet
+            Your app has not saved any data yet
           </Text>
         </View>
       </View>

@@ -3,11 +3,10 @@ export { StorageSection } from "./components/StorageSection";
 export { StorageModal } from "./components/StorageModal";
 export { StorageModalWithTabs } from "./components/StorageModalWithTabs";
 export { StorageKeyCard } from "./components/StorageKeyCard";
-export { StorageKeyStatsSection as StorageKeyStats } from "./components/StorageKeyStats";
+export { StorageKeyStatsSection } from "./components/StorageKeyStats";
 export { StorageKeySection } from "./components/StorageKeySection";
 export { StorageBrowserMode } from "./components/StorageBrowserMode";
 export { StorageEventsSection } from "./components/StorageEventsSection";
-export { StorageEventsModal } from "./components/StorageEventsModal";
 export { StorageEventDetailModal } from "./components/StorageEventDetailModal";
 
 // Storage types

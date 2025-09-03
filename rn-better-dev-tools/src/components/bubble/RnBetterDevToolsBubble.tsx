@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
@@ -13,7 +13,6 @@ import {
   RequiredStorageKey,
 } from "@/rn-better-dev-tools/src/features/storage";
 import { NetworkModal } from "@/rn-better-dev-tools/src/features/network";
-// import { SentryLogsModal } from "@/rn-better-dev-tools/src/features/sentry/components/SentryLogsModal"; // Temporarily disabled - causing import errors
 
 import { FloatingTools, type UserRole, UserStatus } from "./floatingTools";
 import { ErrorBoundary } from "@/rn-better-dev-tools/src/shared/ui/components/ErrorBoundary";
@@ -23,10 +22,7 @@ import {
   useWifiState,
 } from "@/rn-better-dev-tools/src/features/react-query";
 // DevToolsSectionListModal removed - using Dial2 directly
-import { ClaudeGridMenu } from "./ClaudeGridMenu";
-import { ClaudeGridMenuSVGGlitch } from "./ClaudeGridMenuSVGGlitch";
 import DialDevTools from "./dial/DialDevTools";
-import Dial2 from "./dial/Dial2";
 import { useDevToolsSettings } from "./DevToolsSettingsModal";
 import {
   ReactQueryIcon,
@@ -56,7 +52,6 @@ interface RnBetterDevToolsBubbleProps {
   hideEnvButton?: boolean;
   hideSentryButton?: boolean;
   hideStorageButton?: boolean;
-  onOpenPerformanceTest?: () => void;
   requiredStorageKeys?: RequiredStorageKey[];
   hideUserStatus?: boolean;
 }
@@ -75,7 +70,6 @@ export function RnBetterDevToolsBubble({
   hideEnvButton,
   hideSentryButton,
   hideStorageButton,
-  onOpenPerformanceTest,
 }: RnBetterDevToolsBubbleProps) {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
   const { settings: devToolsSettings, refreshSettings } = useDevToolsSettings();
@@ -83,18 +77,8 @@ export function RnBetterDevToolsBubble({
   // Use persisted WiFi state
   const { isOnline: isWifiEnabled, handleWifiToggle } = useWifiState();
 
-  // Menu type selection
-  type MenuType = "claude" | "dial" | "dial2";
-  const [menuType] = useState<MenuType>("dial");
+  // Using the default Dial menu exclusively
 
-  // Get screen dimensions
-  const { height: screenHeight } = Dimensions.get("window");
-
-  // Store the button position (approximate position of floating tools)
-  const [buttonPosition] = useState({
-    x: 44, // Distance from right edge
-    y: screenHeight - 708, // Distance from bottom
-  });
   // Info: Show how props and user settings interact
   useEffect(() => {
     const propsProvided = [
@@ -253,57 +237,34 @@ export function RnBetterDevToolsBubble({
         </View>
 
         {/* Floating Dev Tools Menu - Multiple menu types */}
-        {showFloatingMenu &&
-          (() => {
-            const menuProps = {
-              buttonPosition,
-              onQueryPress: () => {
-                setShowFloatingMenu(false);
-                handleQueryPress();
-              },
-              onEnvPress: () => {
-                setShowFloatingMenu(false);
-                handleEnvPress();
-              },
-              onSentryPress: () => {
-                // Disabled - Sentry modal has import issues
-                setShowFloatingMenu(false);
-                // handleSentryPress(); // Don't open the modal
-              },
-              onStoragePress: () => {
-                setShowFloatingMenu(false);
-                handleStoragePress();
-              },
-              onPerformancePress: () => {
-                setShowFloatingMenu(false);
-                if (onOpenPerformanceTest) {
-                  onOpenPerformanceTest();
-                }
-              },
-              onWifiToggle: handleWifiToggle,
-              onNetworkPress: () => {
-                setShowFloatingMenu(false);
-                handleNetworkPress();
-              },
-              onClose: () => {
-                setShowFloatingMenu(false);
-              },
-              isWifiEnabled,
-              environment,
-              settings: devToolsSettings,
-            };
-
-            switch (menuType) {
-              case "claude":
-                return <ClaudeGridMenuSVGGlitch {...menuProps} />;
-              case "dial":
-                return <DialDevTools {...menuProps} />;
-              case "dial2":
-                return <Dial2 {...menuProps} />;
-              default:
-                return <ClaudeGridMenu {...menuProps} />;
-            }
-          })()}
+        {showFloatingMenu && (
+          <DialDevTools
+            onQueryPress={() => {
+              setShowFloatingMenu(false);
+              handleQueryPress();
+            }}
+            onEnvPress={() => {
+              setShowFloatingMenu(false);
+              handleEnvPress();
+            }}
+            onSentryPress={() => {
+              // Disabled - Sentry modal has import issues
+              setShowFloatingMenu(false);
+            }}
+            onStoragePress={() => {
+              setShowFloatingMenu(false);
+              handleStoragePress();
+            }}
+            onWifiToggle={handleWifiToggle}
+            onNetworkPress={() => {
+              setShowFloatingMenu(false);
+              handleNetworkPress();
+            }}
+            onClose={() => setShowFloatingMenu(false)}
+            isWifiEnabled={isWifiEnabled}
+            settings={devToolsSettings}
+          />
+        )}
 
         {/* Floating Data Editor Modal - Auto-opens if restored state indicates it was open */}
         <ReactQueryModal

@@ -60,7 +60,6 @@ export { ReactQuerySection } from "./components/ReactQuerySection";
 
 // Re-export hooks
 export * from "./hooks";
-export { useReactQueryState, useModalManager } from "./hooks";
 
 // Re-export utilities
 export * from "./utils";

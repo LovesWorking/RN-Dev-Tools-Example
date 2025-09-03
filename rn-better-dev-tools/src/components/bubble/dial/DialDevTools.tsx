@@ -28,7 +28,7 @@ import {
   useDevToolsSettings,
 } from "../DevToolsSettingsModal";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
 const BUTTON_SIZE = 80; // Fixed button size
 

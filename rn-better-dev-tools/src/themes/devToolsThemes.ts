@@ -472,31 +472,18 @@ const darkStyles: ThemeStyles = {
   },
 };
 
-export const darkTheme: Theme = {
-  name: "dark",
-  colors: darkColors,
-  styles: darkStyles,
-  animations: {
-    glitchEnabled: false,
-    pulseEnabled: false,
-    scanlineEnabled: false,
-    borderGlowEnabled: false,
-  },
-};
-
 // ============================================================================
 // Theme Utilities
 // ============================================================================
 
-export type ThemeName = "cyberpunk" | "dark";
+export type ThemeName = "cyberpunk";
 
 export const themes: Record<ThemeName, Theme> = {
   cyberpunk: cyberpunkTheme,
-  dark: darkTheme,
 };
 
-export const getTheme = (themeName: ThemeName): Theme => {
-  return themes[themeName] || cyberpunkTheme;
+export const getTheme = (_themeName: ThemeName): Theme => {
+  return cyberpunkTheme;
 };
 
 // Helper function to get section color based on theme

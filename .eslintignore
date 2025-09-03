@@ -1,0 +1,10 @@
+node_modules
+.yalc
+android
+ios
+dist
+build
+.expo
+.expo-router
+web-build
+**/*.d.ts
