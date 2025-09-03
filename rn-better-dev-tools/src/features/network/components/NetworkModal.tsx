@@ -18,9 +18,10 @@ import {
   Clock,
   X,
 } from "rn-better-dev-tools/icons";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
@@ -73,7 +74,7 @@ function NetworkModalInner({
   } = useNetworkEvents();
 
   const handleModeChange = useCallback((_mode: ModalMode) => {
-    // Mode changes handled by ClaudeModal60FPSClean
+    // Mode changes handled by JsModal
   }, []);
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
@@ -446,7 +447,7 @@ function NetworkModalInner({
   if (!visible) return null;
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -558,7 +559,7 @@ function NetworkModalInner({
           </>
         )}
       </View>
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }
 

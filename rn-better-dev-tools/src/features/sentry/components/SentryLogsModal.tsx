@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { SentryLogsContent } from "./SentryLogsSection";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
@@ -93,7 +94,7 @@ export function SentryLogsModal({
     : devToolsStorageKeys.sentry.modal();
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -215,7 +216,7 @@ export function SentryLogsModal({
         }}
         isLoggingEnabled={isLoggingEnabled}
       />
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }
 

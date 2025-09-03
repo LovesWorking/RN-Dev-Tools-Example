@@ -1,7 +1,8 @@
 import { Mutation } from "@tanstack/react-query";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { MutationEditorMode } from "../MutationEditorMode";
@@ -52,7 +53,7 @@ export function MutationEditorModal({
   if (!visible || !selectedMutation) return null;
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -70,6 +71,6 @@ export function MutationEditorModal({
         selectedMutation={selectedMutation}
         isFloatingMode={modalMode === "floating"}
       />
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }

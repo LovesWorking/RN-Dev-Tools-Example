@@ -198,6 +198,3 @@ export const useSafeAreaFrame = () => {
 
 // Export the pure JS implementation directly for compatibility
 export const getSafeAreaInsets = getPureJSSafeAreaInsets;
-
-// Default export
-export default useSafeAreaInsets;

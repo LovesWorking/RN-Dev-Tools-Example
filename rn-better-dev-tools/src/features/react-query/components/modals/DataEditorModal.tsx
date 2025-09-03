@@ -1,6 +1,6 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import { ClaudeModal60FPSClean } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
-import type { ModalMode } from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+import { JsModal } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
+import type { ModalMode } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { DataEditorMode, DataEditorActionsFooter } from "../DataEditorMode";
@@ -62,7 +62,7 @@ export function DataEditorModal({
   );
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -83,6 +83,6 @@ export function DataEditorModal({
         isFloatingMode={modalMode === "floating"}
         disableInternalFooter={true}
       />
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }

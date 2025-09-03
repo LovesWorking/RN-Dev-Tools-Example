@@ -53,7 +53,7 @@ interface DialDevToolsProps {
   autoOpenSettings?: boolean;
 }
 
-const DialDevTools: FC<DialDevToolsProps> = ({
+export const DialDevTools: FC<DialDevToolsProps> = ({
   onQueryPress,
   onEnvPress,
   onSentryPress,
@@ -615,8 +615,6 @@ const DialDevTools: FC<DialDevToolsProps> = ({
     </View>
   );
 };
-
-export default DialDevTools;
 
 // Get themed colors based on the global theme accent
 const themedDialColors = getThemedDialColors(THEME_ACCENT);

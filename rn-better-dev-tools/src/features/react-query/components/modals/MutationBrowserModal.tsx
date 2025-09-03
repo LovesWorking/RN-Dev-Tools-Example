@@ -3,9 +3,10 @@ import { useCallback, useState , useRef } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View, Animated, PanResponder } from "react-native";
 import { SwipeIndicator } from "./SwipeIndicator";
@@ -129,7 +130,7 @@ export function MutationBrowserModal({
   );
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -159,6 +160,6 @@ export function MutationBrowserModal({
           />
         </View>
       </View>
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }

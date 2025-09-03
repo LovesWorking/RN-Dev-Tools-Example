@@ -1,7 +1,8 @@
 import { useCallback } from "react";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
@@ -36,7 +37,7 @@ export function StorageModal({
     : devToolsStorageKeys.storage.modal();
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -65,6 +66,6 @@ export function StorageModal({
         onQuerySelect={() => {}}
         requiredStorageKeys={requiredStorageKeys}
       />
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }

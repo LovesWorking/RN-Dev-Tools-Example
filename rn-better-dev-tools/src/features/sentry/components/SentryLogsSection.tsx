@@ -69,7 +69,6 @@ export function SentryLogsContent({
       selectedLevels={selectedLevels}
       onToggleTypeFilter={onToggleTypeFilter}
       onToggleLevelFilter={onToggleLevelFilter}
-      isLoggingEnabled={isLoggingEnabled}
     />
   );
 }

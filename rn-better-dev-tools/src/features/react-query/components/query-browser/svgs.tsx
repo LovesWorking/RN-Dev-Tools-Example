@@ -23,7 +23,7 @@ import Svg, {
   Polygon,
   Pattern,
 } from "react-native-svg";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
 export function Trash() {
   return (

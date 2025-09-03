@@ -13,7 +13,7 @@ import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/t
 import { VirtualizedDataExplorer } from "../react-query/components/shared/VirtualizedDataExplorer";
 
 import { formatTimestamp, getTypeColor, getTypeIcon } from "./utils";
-import useSafeAreaInsets from "../../shared/hooks/useSafeAreaInsets";
+import { useSafeAreaInsets } from "../../shared/hooks/useSafeAreaInsets";
 
 // Fullscreen data explorer modal
 const DataExplorerModal = ({

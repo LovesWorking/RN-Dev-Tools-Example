@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
@@ -93,7 +94,7 @@ export function StorageModalWithTabs({
   const hasLoadedMonitoringState = useRef(false);
 
   const handleModeChange = useCallback((_mode: ModalMode) => {
-    // Mode changes handled by ClaudeModal60FPSClean
+    // Mode changes handled by JsModal
   }, []);
 
   // Timer removed - using useTickEveryMinute hook instead
@@ -574,7 +575,7 @@ export function StorageModalWithTabs({
   ) : null;
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -687,7 +688,7 @@ export function StorageModalWithTabs({
       footerHeight={footerNode ? 68 : 0}
     >
       {renderContent()}
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }
 

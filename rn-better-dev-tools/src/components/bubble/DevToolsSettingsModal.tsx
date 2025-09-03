@@ -19,9 +19,10 @@ import {
 } from "rn-better-dev-tools/icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { settingsBus } from "./settingsBus";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
@@ -167,7 +168,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
 
   // Modal is fixed to bottom sheet mode
   const handleModeChange = useCallback((_mode: ModalMode) => {
-    // Mode changes handled by ClaudeModal60FPSClean
+    // Mode changes handled by JsModal
   }, []);
 
   const getToolColor = (tool: string): string => {
@@ -381,7 +382,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   );
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       header={{
@@ -416,7 +417,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
       enableGlitchEffects={theme.name === "cyberpunk"}
     >
       {renderContent()}
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 };
 

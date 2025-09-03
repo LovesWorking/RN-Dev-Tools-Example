@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { RefreshCw, Copy, Trash2 } from "rn-better-dev-tools/icons";
 import { useState, useCallback } from "react";
-import superjson from "superjson";
+import { stringify } from "superjson";
 import { StorageKeyInfo } from "../types";
 import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
 import { clearAllStorageIncludingDevTools } from "../utils/clearAllStorage";
@@ -62,7 +62,7 @@ export function StorageActions({
         return acc;
       }, {} as Record<string, unknown>);
 
-      const serialized = superjson.stringify(storageData);
+      const serialized = stringify(storageData);
       const success = await copyToClipboard(serialized);
 
       if (success) {
@@ -84,7 +84,7 @@ export function StorageActions({
         return acc;
       }, {} as Record<string, unknown>);
 
-      const serialized = superjson.stringify(simpleData);
+      const serialized = stringify(simpleData);
       const success = await copyToClipboard(serialized);
 
       if (success) {

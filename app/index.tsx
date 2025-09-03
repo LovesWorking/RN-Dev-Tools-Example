@@ -668,7 +668,13 @@ function PokemonScreen() {
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
           <View
-            style={{ width: width - 60, height: 430, position: "relative" }}
+            style={{ 
+              width: width - 60, 
+              height: 430, 
+              position: "relative",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
           >
             {pokemonStack
               .slice(currentIndex, currentIndex + 3)

@@ -1,5 +1,5 @@
 /**
- * ClaudeModal60FPSClean - Ultra-optimized for true 60FPS performance
+ * JsModal - Ultra-optimized for true 60FPS performance
  *
  * Achieves 60FPS by following the principles from the dial menu:
  * 1. ALWAYS use native driver (useNativeDriver: true)
@@ -112,7 +112,7 @@ interface CustomStyles {
   content?: any;
 }
 
-interface ClaudeModalProps {
+interface JsModalProps {
   visible: boolean;
   onClose: () => void;
   children: ReactNode;
@@ -327,7 +327,7 @@ const ModalHeader = memo(function ModalHeader({
 // ============================================================================
 // MAIN COMPONENT - Optimized for 60FPS with transforms and interpolation
 // ============================================================================
-export const ClaudeModal60FPSClean: FC<ClaudeModalProps> = ({
+const JsModalComponent: FC<JsModalProps> = ({
   visible,
   onClose,
   children,
@@ -1373,4 +1373,4 @@ const footerStyles = StyleSheet.create({
 // ============================================================================
 // EXPORT - Memoized modal component for optimal performance
 // ============================================================================
-export default memo(ClaudeModal60FPSClean);
+export const JsModal = memo(JsModalComponent);

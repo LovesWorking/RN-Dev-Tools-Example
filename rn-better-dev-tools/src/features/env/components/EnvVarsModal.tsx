@@ -1,6 +1,7 @@
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
@@ -32,7 +33,7 @@ export function EnvVarsModal({
   const theme = useTheme();
 
   const handleModeChange = useCallback((_mode: ModalMode) => {
-    // Mode changes handled by ClaudeModal60FPSClean
+    // Mode changes handled by JsModal
   }, []);
 
   if (!visible) return null;
@@ -42,7 +43,7 @@ export function EnvVarsModal({
     : devToolsStorageKeys.env.modal();
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -67,6 +68,6 @@ export function EnvVarsModal({
       styles={{}}
     >
       <EnvVarsDetailContent requiredEnvVars={requiredEnvVars} />
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }

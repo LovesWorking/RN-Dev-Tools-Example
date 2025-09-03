@@ -1,7 +1,8 @@
 import { Query, QueryKey } from "@tanstack/react-query";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { QueryBrowserMode } from "../QueryBrowserMode";
@@ -76,7 +77,7 @@ export function QueryBrowserModal({
   );
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={storagePrefix}
@@ -99,6 +100,6 @@ export function QueryBrowserModal({
           activeFilter={activeFilter}
         />
       </View>
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }

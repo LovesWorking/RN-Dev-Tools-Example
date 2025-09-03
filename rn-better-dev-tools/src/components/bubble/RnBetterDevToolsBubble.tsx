@@ -27,7 +27,7 @@ import {
   useWifiState,
 } from "@/rn-better-dev-tools/src/features/react-query";
 // DevToolsSectionListModal removed - using Dial2 directly
-import DialDevTools from "./dial/DialDevTools";
+import { DialDevTools } from "./dial/DialDevTools";
 import { useDevToolsSettings } from "./DevToolsSettingsModal";
 import {
   ReactQueryIcon,

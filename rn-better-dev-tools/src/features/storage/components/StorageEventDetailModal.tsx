@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import ClaudeModal60FPSClean, {
+import {
+  JsModal,
   type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/claudeModal/ClaudeModal60FPSClean";
+} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
@@ -341,7 +342,7 @@ export function StorageEventDetailModal({
   const latestEvent = keyStats?.latestEvent || event;
 
   return (
-    <ClaudeModal60FPSClean
+    <JsModal
       visible={visible}
       onClose={onClose}
       persistenceKey={persistenceKey}
@@ -799,7 +800,7 @@ export function StorageEventDetailModal({
             );
           })()}
       </ScrollView>
-    </ClaudeModal60FPSClean>
+    </JsModal>
   );
 }
 
