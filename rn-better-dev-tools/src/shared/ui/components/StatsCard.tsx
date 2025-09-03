@@ -1,10 +1,9 @@
-import React from "react";
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import { LucideIcon } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";
 
 interface StatsCardProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
   title?: string;
 }
@@ -19,7 +18,7 @@ export function StatsCard({ children, style, title }: StatsCardProps) {
 }
 
 interface GridProps {
-  children: React.ReactNode;
+  children: ReactNode;
   columns?: 2 | 3 | 4;
   style?: ViewStyle;
 }
@@ -111,7 +110,7 @@ StatsCard.Item = function Item({
 };
 
 interface RowProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 
@@ -129,7 +128,7 @@ StatsCard.Divider = function Divider({ style }: DividerProps) {
 
 interface SectionProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 

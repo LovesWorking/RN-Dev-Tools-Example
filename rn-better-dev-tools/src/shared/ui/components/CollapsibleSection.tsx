@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -13,9 +13,9 @@ import { gameUIColors } from "../gameUI";
 
 interface CollapsibleSectionProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   icon?: LucideIcon;
-  badge?: string | number | React.ReactNode;
+  badge?: string | number | ReactNode;
   defaultOpen?: boolean;
   variant?: "bordered" | "plain" | "card";
   style?: ViewStyle;
@@ -39,7 +39,7 @@ export function CollapsibleSection({
   onToggle,
 }: CollapsibleSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const rotateAnim = React.useRef(
+  const rotateAnim = useRef(
     new Animated.Value(defaultOpen ? 1 : 0),
   ).current;
 
@@ -113,7 +113,7 @@ export function CollapsibleSection({
 
 interface SimpleProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   defaultOpen?: boolean;
 }
 
@@ -132,7 +132,7 @@ CollapsibleSection.Simple = function Simple({
 interface WithIconProps {
   title: string;
   icon: LucideIcon;
-  children: React.ReactNode;
+  children: ReactNode;
   defaultOpen?: boolean;
   badge?: string | number;
 }

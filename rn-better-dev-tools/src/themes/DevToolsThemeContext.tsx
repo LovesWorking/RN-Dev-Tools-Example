@@ -9,12 +9,13 @@
  * - Type-safe theme access
  */
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
   useEffect,
   ReactNode,
+  ComponentType,
 } from "react";
 import { Theme, ThemeName, getTheme } from "./devToolsThemes";
 
@@ -215,8 +216,8 @@ export function useThemeAnimations() {
 // ============================================================================
 
 export function withDevToolsTheme<P extends object>(
-  Component: React.ComponentType<P & { theme: Theme }>,
-): React.ComponentType<P> {
+  Component: ComponentType<P & { theme: Theme }>,
+): ComponentType<P> {
   return function ThemedComponent(props: P) {
     const { theme } = useDevToolsTheme();
     return <Component {...props} theme={theme} />;

@@ -1,4 +1,3 @@
-import React from "react";
 import { View, StyleSheet } from "react-native";
 import { gameUIColors } from "../src/shared/ui/gameUI/constants/gameUIColors";
 
@@ -963,7 +962,7 @@ export const BugIcon = ({
 
         {/* Legs - 6 total */}
         {[0, 1, 2].map((index) => (
-          <React.Fragment key={index}>
+          <Fragment key={index}>
             {/* Left leg */}
             <View
               style={{
@@ -988,7 +987,7 @@ export const BugIcon = ({
                 transform: [{ rotate: "45deg" }],
               }}
             />
-          </React.Fragment>
+          </Fragment>
         ))}
       </View>
     </View>
@@ -3339,7 +3338,7 @@ export const Edit3 = ({
 
 // Type export for icon component props
 export type { IconProps };
-export type LucideIcon = React.ComponentType<IconProps>;
+export type LucideIcon = ComponentType<IconProps>;
 
 const styles = StyleSheet.create({
   cone: {

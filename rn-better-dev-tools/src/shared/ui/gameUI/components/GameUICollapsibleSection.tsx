@@ -1,4 +1,4 @@
-import React from "react";
+import { ComponentType, ReactNode } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,7 +13,7 @@ import { gameUIColors } from "../constants/gameUIColors";
 
 export interface GameUICollapsibleSectionProps {
   // Icon component from lucide-react-native
-  icon: React.ComponentType<{ size: number; color: string }>;
+  icon: ComponentType<{ size: number; color: string }>;
   // Color for icon and count badge
   iconColor: string;
   // Section title (uppercase, monospace)
@@ -27,7 +27,7 @@ export interface GameUICollapsibleSectionProps {
   // Toggle callback
   onToggle: () => void;
   // Section content
-  children: React.ReactNode;
+  children: ReactNode;
   // Optional style overrides
   style?: ViewStyle;
   // Optional title style override

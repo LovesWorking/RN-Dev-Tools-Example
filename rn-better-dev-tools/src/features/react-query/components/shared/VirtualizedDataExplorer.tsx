@@ -1,11 +1,14 @@
 import { JsonValue } from "../../types/types";
 
-import React, {
+import {
   useState,
   useMemo,
   useCallback,
   useRef,
   useEffect,
+  memo,
+  FC,
+  ReactElement,
 } from "react";
 import {
   Text,
@@ -350,14 +353,14 @@ const ExpanderComponent = ({
   );
 };
 ExpanderComponent.displayName = "Expander";
-const Expander = React.memo(ExpanderComponent);
+const Expander = memo(ExpanderComponent);
 
 // Type legend component to replace inline type indicators
 const TypeLegendComponent = ({
   visibleTypes,
 }: {
   visibleTypes: string[];
-}): React.ReactElement => {
+}): ReactElement => {
   const uniqueTypes = Array.from(new Set(visibleTypes)).slice(0, 8); // Limit to 8 most common types
 
   return (
@@ -386,7 +389,7 @@ const TypeLegendComponent = ({
   );
 };
 TypeLegendComponent.displayName = "TypeLegend";
-const TypeLegend = React.memo(TypeLegendComponent);
+const TypeLegend = memo(TypeLegendComponent);
 
 // Optimized data flattening with chunked processing to prevent UI blocking [[memory:4875251]]
 const useDataFlattening = (
@@ -876,7 +879,7 @@ const VirtualizedItemComponent = ({
 }: {
   item: FlatDataItem;
   onToggleExpanded: (id: string) => void;
-}): React.ReactElement => {
+}): ReactElement => {
   const [isPressed, setIsPressed] = useState(false);
   const [showFullKey, setShowFullKey] = useState(false);
 
@@ -1013,7 +1016,7 @@ const VirtualizedItemComponent = ({
   );
 };
 VirtualizedItemComponent.displayName = "VirtualizedItem";
-const VirtualizedItem = React.memo(VirtualizedItemComponent);
+const VirtualizedItem = memo(VirtualizedItemComponent);
 
 // Main virtualized data explorer component
 interface VirtualizedDataExplorerProps {
@@ -1025,7 +1028,7 @@ interface VirtualizedDataExplorerProps {
   initialExpanded?: boolean; // When true, auto-expands the first level of data
 }
 
-export const VirtualizedDataExplorer: React.FC<
+export const VirtualizedDataExplorer: FC<
   VirtualizedDataExplorerProps
 > = ({
   title,

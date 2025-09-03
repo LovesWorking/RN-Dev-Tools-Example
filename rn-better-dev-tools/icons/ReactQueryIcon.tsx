@@ -1,4 +1,3 @@
-import React from "react";
 import { View, ViewStyle } from "react-native";
 import { IconBackground } from "./IconBackground";
 
@@ -28,7 +27,7 @@ const ORBITAL_DOTS = [
   { x: 0.5, y: 0.8 },
 ];
 
-export const ReactQueryIcon: React.FC<ReactQueryIconProps> = ({
+export const ReactQueryIcon: FC<ReactQueryIconProps> = ({
   size = 24,
   color,
   glowColor,

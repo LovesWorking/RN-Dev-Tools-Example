@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, TextStyle } from "react-native";
 import { gameUIColors } from "../gameUI";
 

@@ -1,14 +1,14 @@
-import React from "react";
+import { Fragment, FC, ReactNode } from "react";
 import { View, ViewStyle } from "react-native";
 
 interface IconBackgroundProps {
   size: number;
   glowColor: string;
   variant?: "circuit" | "matrix" | "glitch" | "nodes" | "grid";
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-export const IconBackground: React.FC<IconBackgroundProps> = ({
+export const IconBackground: FC<IconBackgroundProps> = ({
   size,
   glowColor,
   variant = "circuit",
@@ -159,7 +159,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
               { x: 0.2, y: 0.8 },
               { x: 0.8, y: 0.8 },
             ].map((node, i) => (
-              <React.Fragment key={`node-${i}`}>
+              <Fragment key={`node-${i}`}>
                 {/* Node connection line */}
                 <View
                   style={
@@ -190,7 +190,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
                     } as ViewStyle
                   }
                 />
-              </React.Fragment>
+              </Fragment>
             ))}
           </>
         );
@@ -200,7 +200,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
           <>
             {/* Background grid */}
             {[0.2, 0.35, 0.5, 0.65, 0.8].map((pos, i) => (
-              <React.Fragment key={`grid-${i}`}>
+              <Fragment key={`grid-${i}`}>
                 {/* Vertical lines */}
                 <View
                   style={
@@ -229,7 +229,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
                     } as ViewStyle
                   }
                 />
-              </React.Fragment>
+              </Fragment>
             ))}
 
             {/* Grid intersection points */}
@@ -260,7 +260,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
           <>
             {/* Matrix grid background */}
             {[0.2, 0.35, 0.5, 0.65, 0.8].map((pos, i) => (
-              <React.Fragment key={`matrix-${i}`}>
+              <Fragment key={`matrix-${i}`}>
                 {/* Vertical lines */}
                 <View
                   style={
@@ -289,7 +289,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
                     } as ViewStyle
                   }
                 />
-              </React.Fragment>
+              </Fragment>
             ))}
 
             {/* Matrix code rain effect */}

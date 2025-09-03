@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {

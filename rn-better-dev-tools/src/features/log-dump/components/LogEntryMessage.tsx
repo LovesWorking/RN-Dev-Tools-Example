@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { StyleSheet, Text } from "react-native";
 
 interface LogEntryMessageProps {
@@ -6,7 +6,7 @@ interface LogEntryMessageProps {
 }
 
 // Memoized leaf component for text rendering performance [[memory:4875251]]
-export const LogEntryMessage = React.memo<LogEntryMessageProps>(
+export const LogEntryMessage = memo<LogEntryMessageProps>(
   ({ message }) => {
     return (
       <Text style={styles.message} numberOfLines={3}>

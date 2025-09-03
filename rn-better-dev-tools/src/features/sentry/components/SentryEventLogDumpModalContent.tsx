@@ -55,7 +55,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
 
 // Stable renderItem function using ref pattern to avoid recreating FlatList items [[memory:4875251]]
 const createRenderSentryEventItem = (
-  selectEntryRef: React.MutableRefObject<
+  selectEntryRef: MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
   >,
 ) => {

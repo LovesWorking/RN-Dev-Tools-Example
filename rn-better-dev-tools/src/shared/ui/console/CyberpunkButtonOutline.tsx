@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import { View, ViewStyle, Pressable, Animated } from "react-native";
 import Svg, {
   Defs,
@@ -29,8 +29,8 @@ export function CyberpunkButtonOutline({
   index = 0,
 }: CyberpunkButtonOutlineProps) {
   const [isPressed, setIsPressed] = useState(false);
-  const animatedScale = React.useRef(new Animated.Value(1)).current;
-  const animatedOpacity = React.useRef(new Animated.Value(1)).current;
+  const animatedScale = useRef(new Animated.Value(1)).current;
+  const animatedOpacity = useRef(new Animated.Value(1)).current;
 
   // Use a slightly lighter/adjusted version of the accent color for secondary elements
   const getSecondaryColor = () => {

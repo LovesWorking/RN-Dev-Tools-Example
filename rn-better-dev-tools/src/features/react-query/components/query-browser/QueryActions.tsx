@@ -11,7 +11,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface Props {
-  setSelectedQuery: React.Dispatch<React.SetStateAction<Query | undefined>>;
+  setSelectedQuery: Dispatch<SetStateAction<Query | undefined>>;
   query: Query | undefined;
 }
 export default function QueryActions({ query, setSelectedQuery }: Props) {

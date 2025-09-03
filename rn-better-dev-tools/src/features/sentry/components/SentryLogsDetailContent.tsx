@@ -39,7 +39,7 @@ const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
 
 // Stable renderItem function using ref pattern [[memory:4875251]]
 const createRenderSentryEventItem = (
-  selectEntryRef: React.MutableRefObject<
+  selectEntryRef: MutableRefObject<
     ((entry: ConsoleTransportEntry) => void) | undefined
   >,
 ) => {

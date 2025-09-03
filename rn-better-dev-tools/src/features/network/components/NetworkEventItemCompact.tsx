@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import {
   ChevronRight,
@@ -113,7 +113,7 @@ function SizeIndicators({
 }
 
 // Compact network event item following Sentry pattern
-export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
+export const NetworkEventItemCompact = memo<NetworkEventItemCompactProps>(
   ({ event, onPress }) => {
     const tick = useTickEveryMinute();
     const statusColor = getStatusColor(event.status, event.error);

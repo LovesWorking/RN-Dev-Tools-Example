@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef, ComponentType } from "react";
 import { Animated, Easing } from "react-native";
 import {
   CheckCircle,
@@ -19,7 +19,7 @@ export type AlertStateType =
   | "EMPTY";
 
 export interface AlertStateConfig {
-  icon: React.ComponentType<{ size: number; color: string }>;
+  icon: ComponentType<{ size: number; color: string }>;
   color: string;
   label: string;
   subtitle: string;

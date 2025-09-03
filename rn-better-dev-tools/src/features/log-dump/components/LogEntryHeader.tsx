@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ChevronRight } from "rn-better-dev-tools/icons";
 
@@ -13,7 +13,7 @@ interface LogEntryHeaderProps {
 }
 
 // Memoized leaf component for header rendering performance [[memory:4875251]]
-export const LogEntryHeader = React.memo<LogEntryHeaderProps>(({ entry }) => {
+export const LogEntryHeader = memo<LogEntryHeaderProps>(({ entry }) => {
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>

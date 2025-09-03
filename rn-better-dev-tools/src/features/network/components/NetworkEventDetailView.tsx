@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -41,10 +41,10 @@ interface NetworkEventDetailViewProps {
 }
 
 // Component for collapsible sections matching Sentry style
-const CollapsibleSection: React.FC<{
+const CollapsibleSection: FC<{
   title: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
+  icon?: ReactNode;
+  children: ReactNode;
   defaultOpen?: boolean;
 }> = ({ title, icon, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -74,7 +74,7 @@ const CollapsibleSection: React.FC<{
 };
 
 // URL breakdown component matching Sentry style
-const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
+const UrlBreakdown: FC<{ url: string }> = ({ url }) => {
   const parseUrl = (urlString: string) => {
     try {
       const urlObj = new URL(urlString);

@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { StyleSheet, Text } from "react-native";
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import { formatEventMessage } from "../utils/eventParsers";
@@ -8,7 +8,7 @@ interface SentryEventMessageProps {
 }
 
 // Memoized component for Sentry event messages with smart formatting
-export const SentryEventMessage = React.memo<SentryEventMessageProps>(
+export const SentryEventMessage = memo<SentryEventMessageProps>(
   ({ entry }) => {
     const message = formatEventMessage(entry);
 

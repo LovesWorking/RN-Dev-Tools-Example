@@ -7,8 +7,8 @@ class SimpleEventBus<T = any> {
     this.listeners.forEach((l) => {
       try {
         l(payload);
-      } catch (e) {
-        // no-op
+      } catch (_e) {
+        // no-op - @typescript-eslint/no-unused-vars
       }
     });
   }

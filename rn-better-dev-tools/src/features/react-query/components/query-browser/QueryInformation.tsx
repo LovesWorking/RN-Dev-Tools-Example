@@ -5,7 +5,7 @@ import DataExplorer from "./Explorer";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 
 interface Props {
-  setSelectedQuery: React.Dispatch<React.SetStateAction<Query | undefined>>;
+  setSelectedQuery: Dispatch<SetStateAction<Query | undefined>>;
   selectedQuery: Query | undefined;
 }
 export default function QueryInformation({

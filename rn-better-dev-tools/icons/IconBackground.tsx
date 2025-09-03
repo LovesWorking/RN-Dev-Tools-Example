@@ -1,11 +1,11 @@
-import React from "react";
+import { Fragment, FC, ReactNode } from "react";
 import { View, ViewStyle } from "react-native";
 
 interface IconBackgroundProps {
   size: number;
   glowColor: string;
   variant?: "circuit" | "matrix" | "glitch" | "nodes" | "grid";
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 // Consolidated star data
@@ -57,7 +57,7 @@ const VARIANT_DATA = {
   },
 };
 
-export const IconBackground: React.FC<IconBackgroundProps> = ({
+export const IconBackground: FC<IconBackgroundProps> = ({
   size,
   glowColor,
   variant = "circuit",
@@ -135,7 +135,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
       return (
         <>
           {data.nodes?.map((node, i) => (
-            <React.Fragment key={`node-${i}`}>
+            <Fragment key={`node-${i}`}>
               <View
                 style={
                   {
@@ -163,7 +163,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
                   } as ViewStyle
                 }
               />
-            </React.Fragment>
+            </Fragment>
           ))}
         </>
       );
@@ -173,7 +173,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
       return (
         <>
           {data.lines?.map((pos, i) => (
-            <React.Fragment key={`grid-${i}`}>
+            <Fragment key={`grid-${i}`}>
               <View
                 style={
                   {
@@ -200,7 +200,7 @@ export const IconBackground: React.FC<IconBackgroundProps> = ({
                   } as ViewStyle
                 }
               />
-            </React.Fragment>
+            </Fragment>
           ))}
         </>
       );

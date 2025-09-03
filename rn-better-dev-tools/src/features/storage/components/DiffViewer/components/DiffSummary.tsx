@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, StyleSheet, ViewStyle } from "react-native";
 import type { DiffTheme } from "../themes/diffThemes";
 

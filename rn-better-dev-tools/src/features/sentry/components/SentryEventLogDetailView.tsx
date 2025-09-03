@@ -6,7 +6,6 @@ import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/t
 import { DetailHeader } from "@/rn-better-dev-tools/src/features/log-dump/components/DetailHeader";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Stable constants to prevent re-creation [[memory:4875251]] [[memory:4875251]]
 const MAX_EXPLORER_DEPTH = 15; // Reduced for better performance with large datasets

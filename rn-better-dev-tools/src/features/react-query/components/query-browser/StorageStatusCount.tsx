@@ -28,7 +28,7 @@ const allStorageTypes: StorageType[] = ["mmkv", "async", "secure"];
  * - Decompose by Responsibility: Dedicated component for storage type filtering
  * - No unnecessary memoization - simple toggle state management [[memory:4875074]]
  */
-const StorageStatusCount: React.FC<StorageStatusCountProps> = ({
+const StorageStatusCount: FC<StorageStatusCountProps> = ({
   activeStorageTypes = new Set(allStorageTypes),
   onStorageTypesChange,
   counts,

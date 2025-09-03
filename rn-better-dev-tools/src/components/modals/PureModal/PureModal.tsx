@@ -10,7 +10,7 @@
  * - Platform optimizations
  */
 
-import React, {
+import {
   useState,
   useRef,
   useEffect,
@@ -98,14 +98,14 @@ interface HeaderConfig {
   title?: string;
   subtitle?: string;
   showToggleButton?: boolean;
-  customContent?: React.ReactNode;
+  customContent?: ReactNode;
   hideCloseButton?: boolean;
 }
 
 interface PureModalProps {
   visible: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 
   // Mode
   mode?: ModalMode;
@@ -547,7 +547,7 @@ const ModalHeader = memo(function ModalHeader({
 // MAIN COMPONENT
 // ============================================================================
 
-export const PureModal: React.FC<PureModalProps> = ({
+export const PureModal: FC<PureModalProps> = ({
   visible,
   onClose,
   children,

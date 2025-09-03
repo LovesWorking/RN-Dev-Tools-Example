@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { Query, Mutation } from "@tanstack/react-query";
 import {

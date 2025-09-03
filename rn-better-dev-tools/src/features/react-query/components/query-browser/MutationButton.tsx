@@ -22,8 +22,8 @@ const getMutationText = (mutation: Mutation) => {
 
 interface Props {
   mutation: Mutation;
-  setSelectedMutation: React.Dispatch<
-    React.SetStateAction<Mutation | undefined>
+  setSelectedMutation: Dispatch<
+    SetStateAction<Mutation | undefined>
   >;
   selected: Mutation | undefined;
 }

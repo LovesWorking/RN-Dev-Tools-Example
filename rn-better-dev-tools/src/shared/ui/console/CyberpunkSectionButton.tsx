@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import type { LucideIcon } from "rn-better-dev-tools/icons";
 import { ChevronRight } from "rn-better-dev-tools/icons";

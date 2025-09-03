@@ -1,5 +1,4 @@
-import React from "react";
-
+import { memo } from "react";
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import { EventListItem } from "../../../shared/ui/components";
 
@@ -12,7 +11,7 @@ interface SentryEventLogEntryItemProps {
   onSelectEntry: (entry: ConsoleTransportEntry) => void;
 }
 
-export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
+export const SentryEventLogEntryItem = memo<SentryEventLogEntryItemProps>(
   ({ entry, onSelectEntry }) => {
     return (
       <EventListItem onPress={() => onSelectEntry(entry)}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -34,7 +34,7 @@ const BUTTON_SIZE = 80; // Fixed button size
 
 export type IconType = {
   name: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   color: string;
   onPress: () => void;
 };
@@ -53,7 +53,7 @@ interface DialDevToolsProps {
   autoOpenSettings?: boolean;
 }
 
-const DialDevTools: React.FC<DialDevToolsProps> = ({
+const DialDevTools: FC<DialDevToolsProps> = ({
   onQueryPress,
   onEnvPress,
   onSentryPress,
@@ -66,11 +66,11 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   settings: externalSettings,
   autoOpenSettings = false,
 }) => {
-  const [selectedIcon, setSelectedIcon] = React.useState(-1);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = React.useState(false);
+  const [selectedIcon, setSelectedIcon] = useState(-1);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const { settings: hookSettings, refreshSettings } = useDevToolsSettings();
   // Initialize with external settings if provided, otherwise use hook settings
-  const [localSettings, setLocalSettings] = React.useState(
+  const [localSettings, setLocalSettings] = useState(
     externalSettings || hookSettings,
   );
 
@@ -78,21 +78,21 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const settings = localSettings;
 
   // Update local settings when external settings change
-  React.useEffect(() => {
+  useEffect(() => {
     if (externalSettings) {
       setLocalSettings(externalSettings);
     }
   }, [externalSettings]);
 
   // Update local settings when hook settings change (if no external settings)
-  React.useEffect(() => {
+  useEffect(() => {
     if (!externalSettings) {
       setLocalSettings(hookSettings);
     }
   }, [hookSettings, externalSettings]);
 
   // Auto-open settings modal when prop is true
-  React.useEffect(() => {
+  useEffect(() => {
     if (autoOpenSettings && !isSettingsModalOpen) {
       setIsSettingsModalOpen(true);
     }

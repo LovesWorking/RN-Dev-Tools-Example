@@ -1,4 +1,4 @@
-import React from "react";
+import { ComponentType } from "react";
 import { LayoutChangeEvent, Text, View } from "react-native";
 import { FlaskConical, TestTube2, Bug, Zap } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
@@ -13,7 +13,7 @@ interface EnvironmentIndicatorProps {
 interface EnvironmentConfig {
   label: string;
   backgroundColor: string;
-  icon: React.ComponentType<any>;
+  icon: ComponentType<any>;
   isLocal: boolean;
 }
 

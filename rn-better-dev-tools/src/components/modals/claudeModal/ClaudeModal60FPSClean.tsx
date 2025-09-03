@@ -10,13 +10,16 @@
  * Structure follows SRP with each function doing ONE thing only.
  */
 
-import React, {
+import {
   useState,
   useRef,
   useEffect,
   useMemo,
   useCallback,
   memo,
+  isValidElement,
+  cloneElement,
+  ReactElement,
 } from "react";
 import {
   View,
@@ -27,7 +30,6 @@ import {
   Animated,
   ScrollView,
   Text,
-  FlatList,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
@@ -101,7 +103,7 @@ interface HeaderConfig {
   title?: string;
   subtitle?: string;
   showToggleButton?: boolean;
-  customContent?: React.ReactNode;
+  customContent?: ReactNode;
   hideCloseButton?: boolean;
 }
 
@@ -113,7 +115,7 @@ interface CustomStyles {
 interface ClaudeModalProps {
   visible: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
   header?: HeaderConfig;
   styles?: CustomStyles;
   minHeight?: number;
@@ -127,7 +129,7 @@ interface ClaudeModalProps {
   enableGlitchEffects?: boolean;
   initialFloatingPosition?: { x?: number; y?: number }; // Initial position for floating mode
   // New: Optional sticky footer rendered outside internal ScrollView
-  footer?: React.ReactNode;
+  footer?: ReactNode;
   footerHeight?: number; // Used to pad ScrollView content bottom
 }
 
@@ -315,14 +317,14 @@ const ModalHeader = memo(function ModalHeader({
     // Check if the custom content is a complete header replacement (like CyberpunkModalHeader)
     // by checking if it's a React element with specific props
     const isCompleteReplacement =
-      React.isValidElement(header.customContent) &&
+      isValidElement(header.customContent) &&
       typeof header.customContent.type === "function" &&
       header.customContent.type.name === "CyberpunkModalHeader";
 
     if (isCompleteReplacement) {
       // Clone the element and pass the necessary props
-      return React.cloneElement(
-        header.customContent as React.ReactElement<any>,
+      return cloneElement(
+        header.customContent as ReactElement<any>,
         {
           onToggleMode,
           onClose,
@@ -382,7 +384,7 @@ const ModalHeader = memo(function ModalHeader({
 // ============================================================================
 // MAIN COMPONENT - Optimized for 60FPS with transforms and interpolation
 // ============================================================================
-export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
+export const ClaudeModal60FPSClean: FC<ClaudeModalProps> = ({
   visible,
   onClose,
   children,

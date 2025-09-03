@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
@@ -131,7 +130,7 @@ export function StructureDiffView({
   const renderNode = (
     node: StructureNode,
     depth: number = 0,
-  ): React.ReactNode => {
+  ): ReactNode => {
     const indent = depth * 16;
     const hasChildren = node.children.size > 0;
 

@@ -13,7 +13,7 @@ interface QueryStatusCountProps {
   onFilterChange?: (filter: string | null) => void;
 }
 
-const QueryStatusCount: React.FC<QueryStatusCountProps> = ({
+const QueryStatusCount: FC<QueryStatusCountProps> = ({
   activeFilter,
   onFilterChange,
 }) => {

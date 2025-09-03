@@ -1,4 +1,3 @@
-import React from "react";
 import {
   View,
   Text,
@@ -20,7 +19,7 @@ interface QueryStatusProps {
 
 type ColorName = "green" | "yellow" | "gray" | "blue" | "purple" | "red";
 
-const QueryStatus: React.FC<QueryStatusProps> = ({
+const QueryStatus: FC<QueryStatusProps> = ({
   label,
   color,
   count,

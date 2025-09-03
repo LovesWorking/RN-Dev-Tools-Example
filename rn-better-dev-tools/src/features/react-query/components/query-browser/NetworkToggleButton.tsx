@@ -6,7 +6,7 @@ interface NetworkToggleButtonProps {
   onToggle: () => void;
 }
 
-const NetworkToggleButton: React.FC<NetworkToggleButtonProps> = ({
+const NetworkToggleButton: FC<NetworkToggleButtonProps> = ({
   isOffline,
   onToggle,
 }) => {

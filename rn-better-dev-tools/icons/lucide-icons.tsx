@@ -1,4 +1,4 @@
-import React from "react";
+import { ComponentType } from "react";
 import { View } from "react-native";
 // Import all complex icons from original that don't have optimized versions
 import * as OriginalIcons from "./lucide-icons-original-full";
@@ -1862,4 +1862,4 @@ export const UserIcon = OriginalIcons.UserIcon;
 
 // Export types
 export type { IconProps };
-export type LucideIcon = React.ComponentType<IconProps>;
+export type LucideIcon = ComponentType<IconProps>;

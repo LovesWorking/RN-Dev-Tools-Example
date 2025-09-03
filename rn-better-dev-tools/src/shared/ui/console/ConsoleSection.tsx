@@ -13,7 +13,7 @@ interface ConsoleSectionProps {
   iconColor: string;
   iconBackgroundColor: string;
   onPress: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 /**

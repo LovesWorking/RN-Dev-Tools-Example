@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import type { DiffItem } from "../../../utils/objectDiff";

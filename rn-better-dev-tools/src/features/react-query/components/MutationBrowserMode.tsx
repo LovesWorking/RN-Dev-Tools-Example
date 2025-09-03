@@ -14,9 +14,9 @@ export function MutationBrowserMode({
   onMutationSelect,
   activeFilter,
 }: MutationBrowserModeProps) {
-  // Convert function to React.Dispatch compatible format
-  const handleMutationSelect: React.Dispatch<
-    React.SetStateAction<Mutation | undefined>
+  // Convert function to Dispatch compatible format
+  const handleMutationSelect: Dispatch<
+    SetStateAction<Mutation | undefined>
   > = (action) => {
     if (typeof action === "function") {
       onMutationSelect(action(selectedMutation));

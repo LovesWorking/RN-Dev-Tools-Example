@@ -9,7 +9,7 @@ interface MutationStatusCountProps {
   onFilterChange?: (filter: string | null) => void;
 }
 
-const MutationStatusCount: React.FC<MutationStatusCountProps> = ({
+const MutationStatusCount: FC<MutationStatusCountProps> = ({
   activeFilter,
   onFilterChange,
 }) => {

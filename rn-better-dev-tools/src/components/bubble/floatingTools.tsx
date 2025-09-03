@@ -7,6 +7,7 @@ import {
   createContext,
   useCallback,
   Children,
+  ReactNode,
 } from "react";
 import {
   Animated,
@@ -15,8 +16,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Platform,
-  StatusBar,
   type ViewStyle,
   type TextStyle,
 } from "react-native";
@@ -390,9 +389,9 @@ export function UserStatus({
 // Helpers
 // =============================
 function interleaveWithDividers(
-  childrenArray: React.ReactNode[],
-): React.ReactNode[] {
-  const result: React.ReactNode[] = [];
+  childrenArray: ReactNode[],
+): ReactNode[] {
+  const result: ReactNode[] = [];
   childrenArray.forEach((child, index) => {
     if (child == null || child === false) return;
     result.push(child);
@@ -407,7 +406,7 @@ function interleaveWithDividers(
 // =============================
 export type FloatingToolsProps = {
   enablePositionPersistence?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export function FloatingTools({

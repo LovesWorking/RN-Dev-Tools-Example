@@ -11,7 +11,7 @@ import {
 const { width: screenWidth } = Dimensions.get("window");
 
 interface GalaxyButtonProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onPress: () => void;
   style?: ViewStyle;
 }

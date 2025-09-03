@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
@@ -154,7 +154,7 @@ export function EnhancedSplitView({
     const isDefault = diff.type === DiffType.DEFAULT;
 
     return (
-      <React.Fragment key={idx}>
+      <Fragment key={idx}>
         {shouldShowSeparator(idx, diffs) && (
           <View style={styles.separator}>
             <Text style={styles.separatorText}>• • •</Text>
@@ -200,7 +200,7 @@ export function EnhancedSplitView({
                 )}
           </View>
         </View>
-      </React.Fragment>
+      </Fragment>
     );
   };
 

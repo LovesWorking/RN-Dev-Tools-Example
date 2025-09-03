@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Switch,
   Dimensions,
 } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import {
   ReactQueryIcon,
@@ -80,7 +77,7 @@ const defaultSettings: DevToolsSettings = {
   },
 };
 
-export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
+export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   visible,
   onClose,
   onSettingsChange,

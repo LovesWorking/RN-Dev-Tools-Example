@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { ChevronRight } from "rn-better-dev-tools/icons";
 
@@ -21,7 +21,7 @@ interface SentryEventLogEntryItemProps {
 }
 
 // Compact version of the event card - single line layout [[memory:4875251]]
-export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
+export const SentryEventLogEntryItem = memo<SentryEventLogEntryItemProps>(
   ({ entry, onSelectEntry }) => {
     const tick = useTickEveryMinute();
     const IconComponent = getTypeIcon(entry.type);

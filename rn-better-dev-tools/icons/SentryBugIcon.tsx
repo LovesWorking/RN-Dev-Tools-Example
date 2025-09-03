@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment, FC } from "react";
 import { View, ViewStyle } from "react-native";
 import { IconBackground } from "./IconBackground";
 
@@ -30,7 +30,7 @@ const LEGS = [
   { y: 0.7, side: "right", rotation: 20 },
 ];
 
-export const SentryBugIcon: React.FC<SentryBugIconProps> = ({
+export const SentryBugIcon: FC<SentryBugIconProps> = ({
   size = 24,
   color,
   glowColor,
@@ -115,7 +115,7 @@ export const SentryBugIcon: React.FC<SentryBugIconProps> = ({
 
       {/* Simplified antennae */}
       {[-15, 15].map((rotation, i) => (
-        <React.Fragment key={`antenna-${i}`}>
+        <Fragment key={`antenna-${i}`}>
           <View
             style={
               {
@@ -144,7 +144,7 @@ export const SentryBugIcon: React.FC<SentryBugIconProps> = ({
               } as ViewStyle
             }
           />
-        </React.Fragment>
+        </Fragment>
       ))}
 
       {/* Single center dot */}

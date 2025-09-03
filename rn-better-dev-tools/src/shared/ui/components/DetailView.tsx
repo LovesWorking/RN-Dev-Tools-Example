@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode, useState } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import { ModalHeader } from "./ModalHeader";
 import { CopyButton } from "./CopyButton";
 
 interface DetailViewProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: any;
 }
 
@@ -25,7 +25,7 @@ interface HeaderProps {
   subtitle?: string;
   onClose?: () => void;
   onBack?: () => void;
-  actions?: React.ReactNode;
+  actions?: ReactNode;
 }
 
 DetailView.Header = function Header({
@@ -47,7 +47,7 @@ DetailView.Header = function Header({
 interface SectionProps {
   title: string;
   icon?: LucideIcon;
-  children: React.ReactNode;
+  children: ReactNode;
   defaultOpen?: boolean;
   collapsible?: boolean;
   style?: any;
@@ -63,7 +63,7 @@ DetailView.Section = function Section({
   style,
   badge,
 }: SectionProps) {
-  const [isOpen, setIsOpen] = React.useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   if (!collapsible) {
     return (
@@ -105,7 +105,7 @@ DetailView.Section = function Section({
 
 interface RowProps {
   label: string;
-  value?: string | number | React.ReactNode;
+  value?: string | number | ReactNode;
   copyable?: boolean;
   style?: any;
   labelStyle?: any;
@@ -239,7 +239,7 @@ DetailView.Timeline = function Timeline({ items, style }: TimelineProps) {
 };
 
 interface ContentProps {
-  children: React.ReactNode;
+  children: ReactNode;
   scrollable?: boolean;
   style?: any;
 }

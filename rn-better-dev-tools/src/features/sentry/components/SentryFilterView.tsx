@@ -1,3 +1,4 @@
+import { ComponentType } from "react";
 import {
   View,
   Text,
@@ -92,7 +93,7 @@ export function SentryFilterView({
     count: number,
     isSelected: boolean,
     onPress: () => void,
-    Icon?: React.ComponentType<{ size?: number; color?: string }>,
+    Icon?: ComponentType<{ size?: number; color?: string }>,
     color?: string,
   ) => (
     <TouchableOpacity

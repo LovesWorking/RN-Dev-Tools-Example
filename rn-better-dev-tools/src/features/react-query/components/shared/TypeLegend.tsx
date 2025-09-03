@@ -34,7 +34,7 @@ export const getTypeColor = (type: string): string => {
  * - Decompose by Responsibility: Single purpose type filtering UI
  * - Extract Reusable Logic: Shared between Sentry logs and storage views
  */
-export const TypeLegend: React.FC<TypeLegendProps> = ({
+export const TypeLegend: FC<TypeLegendProps> = ({
   types,
   activeFilter,
   onFilterChange,

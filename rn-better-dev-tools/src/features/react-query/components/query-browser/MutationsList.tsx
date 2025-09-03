@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -17,8 +17,8 @@ import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface Props {
   selectedMutation: Mutation | undefined;
-  setSelectedMutation: React.Dispatch<
-    React.SetStateAction<Mutation | undefined>
+  setSelectedMutation: Dispatch<
+    SetStateAction<Mutation | undefined>
   >;
   activeFilter?: string | null;
   hideInfoPanel?: boolean;
@@ -42,7 +42,7 @@ export default function MutationsList({
   };
 
   // Filter mutations based on active filter
-  const filteredMutations = React.useMemo(() => {
+  const filteredMutations = useMemo(() => {
     if (!activeFilter) {
       return allmutations;
     }

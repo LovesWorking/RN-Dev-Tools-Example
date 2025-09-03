@@ -72,7 +72,7 @@ const storageTypeData = [
     key: "mmkv",
     label: "MMKV",
     description: "High-performance key-value storage",
-    icon: HardDrive,
+    icon: Database,
   },
   {
     key: "async",

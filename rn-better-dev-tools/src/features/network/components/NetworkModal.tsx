@@ -118,7 +118,7 @@ function NetworkModalInner({
         }
 
         hasLoadedFilters.current = true;
-      } catch (error) {
+      } catch (_error) {
         // Silently fail - filters will use defaults
       }
     };
@@ -149,7 +149,7 @@ function NetworkModalInner({
           devToolsStorageKeys.network.ignoredUrls(),
           JSON.stringify(urls),
         );
-      } catch (error) {
+      } catch (_error) {
         // Silently fail - filters will remain in memory
       }
     };

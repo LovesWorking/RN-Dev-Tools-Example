@@ -1,4 +1,3 @@
-import React from "react";
 import { View, ViewStyle } from "react-native";
 import { IconBackground } from "./IconBackground";
 
@@ -32,7 +31,7 @@ const SCREEN_DOTS = [
   { x: 0.5, y: 0.7 },
 ];
 
-export const EnvLaptopIcon: React.FC<EnvLaptopIconProps> = ({
+export const EnvLaptopIcon: FC<EnvLaptopIconProps> = ({
   size = 24,
   color,
   glowColor,

@@ -1,14 +1,10 @@
-import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
   Settings,
-  Eye,
-  EyeOff,
   Hash,
   FileText,
   Filter,
-  Layers,
 } from "rn-better-dev-tools/icons";
 
 export type DiffCompareMethod = "chars" | "words" | "lines" | "trimmedLines";

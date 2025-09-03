@@ -27,7 +27,7 @@ interface QueryRowProps {
   onSelect: (query: Query) => void;
 }
 
-const QueryRow: React.FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
+const QueryRow: FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
   const status = getQueryStatusLabel(query);
   const observerCount = query.getObserversCount();
   const isDisabled = query.isDisabled();

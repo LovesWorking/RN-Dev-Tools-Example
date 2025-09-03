@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, Text, View, ViewStyle, Animated } from "react-native";
 import { gameUIColors } from "../constants/gameUIColors";
 import type { AlertStateConfig } from "../hooks/useGameUIAlertState";

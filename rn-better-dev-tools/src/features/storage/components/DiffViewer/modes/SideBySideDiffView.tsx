@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { DataViewer } from "../../../../react-query/components/shared/DataViewer";

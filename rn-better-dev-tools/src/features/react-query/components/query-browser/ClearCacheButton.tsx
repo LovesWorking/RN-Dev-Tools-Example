@@ -8,7 +8,7 @@ interface ClearCacheButtonProps {
   disabled?: boolean;
 }
 
-const ClearCacheButton: React.FC<ClearCacheButtonProps> = ({
+const ClearCacheButton: FC<ClearCacheButtonProps> = ({
   type,
   onClear,
   disabled = false,

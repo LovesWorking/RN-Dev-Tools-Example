@@ -17,6 +17,13 @@ module.exports = defineConfig([
     ],
     rules: {
       "react/display-name": "off",
+      "no-restricted-imports": ["error", {
+        "patterns": [{
+          "group": ["react"],
+          "importNames": ["default"],
+          "message": "Do not import React. The new JSX transform doesn't require it."
+        }]
+      }],
     },
   },
   {

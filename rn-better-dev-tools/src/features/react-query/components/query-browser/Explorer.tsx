@@ -1,9 +1,10 @@
-import React, {
+import {
   useState,
   useMemo,
   useCallback,
   useRef,
   useEffect,
+  memo,
 } from "react";
 import { JsonValue } from "../../types/types";
 import { Query, QueryKey, useQueryClient } from "@tanstack/react-query";
@@ -35,7 +36,7 @@ const chunkArray = <T extends { label: string; value: JsonValue }>(
   return result;
 };
 // Memoized Expander component for performance [[memory:4875251]]
-const Expander = React.memo(
+const Expander = memo(
   ({
     expanded,
     isFocused = false,
@@ -79,7 +80,7 @@ const Expander = React.memo(
 );
 Expander.displayName = "Expander";
 // Local wrapper for the shared CopyButton to maintain backward compatibility
-const CopyButton = React.memo(
+const CopyButton = memo(
   ({ value, isFocused = false }: { value: JsonValue; isFocused?: boolean }) => {
     return (
       <SharedCopyButton
@@ -97,7 +98,7 @@ const CopyButton = React.memo(
 CopyButton.displayName = "CopyButton";
 
 // Memoized DeleteItemButton component [[memory:4875251]]
-const DeleteItemButton = React.memo(
+const DeleteItemButton = memo(
   ({
     dataPath,
     activeQuery,
@@ -144,7 +145,7 @@ const DeleteItemButton = React.memo(
 );
 DeleteItemButton.displayName = "DeleteItemButton";
 // Memoized ClearArrayButton component [[memory:4875251]]
-const ClearArrayButton = React.memo(
+const ClearArrayButton = memo(
   ({
     dataPath,
     activeQuery,
@@ -191,7 +192,7 @@ const ClearArrayButton = React.memo(
 );
 ClearArrayButton.displayName = "ClearArrayButton";
 // Memoized ToggleValueButton with pre-computed styles [[memory:4875251]]
-const ToggleValueButton = React.memo(
+const ToggleValueButton = memo(
   ({
     dataPath,
     activeQuery,

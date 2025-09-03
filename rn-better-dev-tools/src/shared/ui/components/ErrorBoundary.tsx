@@ -1,4 +1,4 @@
-import { Component, ReactNode } from "react";
+import { Component, ReactNode, ErrorInfo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AlertTriangle, RefreshCw } from "rn-better-dev-tools/icons";
 
@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("RnBetterDevToolsBubble Error:", error, errorInfo);
   }
 

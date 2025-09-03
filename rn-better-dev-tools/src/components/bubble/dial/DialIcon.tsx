@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useRef } from "react";
 import {
   StyleSheet,
   Pressable,
@@ -25,7 +25,7 @@ type Props = {
   totalIcons: number;
 };
 
-export const DialIcon: React.FC<Props> = ({
+export const DialIcon: FC<Props> = ({
   index,
   icon,
   iconsProgress,

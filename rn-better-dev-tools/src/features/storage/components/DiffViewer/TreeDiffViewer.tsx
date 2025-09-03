@@ -1,4 +1,3 @@
-import React from "react";
 import { View, StyleSheet } from "react-native";
 import TreeDiffViewerComponent from "@/dif-viewer/TreeDiffViewer";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";

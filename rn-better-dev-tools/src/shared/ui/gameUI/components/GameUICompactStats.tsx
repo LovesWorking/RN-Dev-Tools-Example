@@ -1,4 +1,4 @@
-import React from "react";
+import { ComponentType, Fragment } from "react";
 import { StyleSheet, Text, View, ViewStyle, Animated } from "react-native";
 import { gameUIColors } from "../constants/gameUIColors";
 
@@ -6,7 +6,7 @@ export interface StatCardConfig {
   key: string;
   label: string;
   subtitle: string;
-  icon: React.ComponentType<{ size: number; color: string }>;
+  icon: ComponentType<{ size: number; color: string }>;
   color: string;
   value: number;
   showBar?: boolean;
@@ -182,7 +182,7 @@ export function GameUICompactStats({
       {bottomStats && bottomStats.length > 0 && (
         <View style={styles.bottomBar}>
           {bottomStats.map((stat, index) => (
-            <React.Fragment key={stat.label}>
+            <Fragment key={stat.label}>
               <View style={styles.bottomStat}>
                 <Text style={styles.bottomStatLabel}>{stat.label}</Text>
                 <Text
@@ -197,7 +197,7 @@ export function GameUICompactStats({
               {index < bottomStats.length - 1 && (
                 <View style={styles.bottomDivider} />
               )}
-            </React.Fragment>
+            </Fragment>
           ))}
         </View>
       )}

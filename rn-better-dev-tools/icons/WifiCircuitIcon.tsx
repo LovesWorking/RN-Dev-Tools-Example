@@ -1,4 +1,3 @@
-import React from "react";
 import { View, ViewStyle } from "react-native";
 import { IconBackground } from "./IconBackground";
 
@@ -37,7 +36,7 @@ const DOTS = [
   { x: 0.5, y: 0.3, minStrength: 4 },
 ];
 
-export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
+export const WifiCircuitIcon: FC<WifiIconProps> = ({
   size = 24,
   color,
   glowColor,
@@ -167,6 +166,6 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
 };
 
 export const WifiIcon = WifiCircuitIcon;
-export const WifiOffIcon: React.FC<WifiIconProps> = (props) => (
+export const WifiOffIcon: FC<WifiIconProps> = (props) => (
   <WifiCircuitIcon {...props} strength={4} showSlash />
 );

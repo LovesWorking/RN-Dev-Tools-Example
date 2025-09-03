@@ -88,7 +88,7 @@ interface SentryEventDetailViewProps {
 }
 
 // Component for displaying URL breakdown
-const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
+const UrlBreakdown: FC<{ url: string }> = ({ url }) => {
   const urlParts = parseUrl(url);
 
   if (!urlParts) {
@@ -134,10 +134,10 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
 };
 
 // Component for collapsible sections
-const CollapsibleSection: React.FC<{
+const CollapsibleSection: FC<{
   title: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
+  icon?: ReactNode;
+  children: ReactNode;
   defaultOpen?: boolean;
 }> = ({ title, icon, children, defaultOpen = true }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -165,7 +165,7 @@ const CollapsibleSection: React.FC<{
 };
 
 // Component for editable field indicator
-const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({
+const EditableIndicator: FC<{ field: string; editable: boolean }> = ({
   field,
   editable,
 }) => (
@@ -186,7 +186,7 @@ const EditableIndicator: React.FC<{ field: string; editable: boolean }> = ({
 );
 
 // Enhanced HTTP request display
-const HttpRequestDetails: React.FC<{ request: HttpRequestInfo }> = ({
+const HttpRequestDetails: FC<{ request: HttpRequestInfo }> = ({
   request,
 }) => {
   const status = formatHttpStatusDetail(request.statusCode);

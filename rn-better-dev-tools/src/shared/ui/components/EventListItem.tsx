@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode, createContext } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 import { gameUIColors } from "../gameUI";
 
 interface EventListItemProps extends TouchableOpacityProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 
@@ -19,7 +19,7 @@ interface EventListItemContextValue {
   isPressed?: boolean;
 }
 
-const EventListItemContext = React.createContext<EventListItemContextValue>({});
+const EventListItemContext = createContext<EventListItemContextValue>({});
 
 export function EventListItem({
   children,
@@ -80,7 +80,7 @@ EventListItem.Status = function Status({
 };
 
 interface MainProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 
@@ -89,7 +89,7 @@ EventListItem.Main = function Main({ children, style }: MainProps) {
 };
 
 interface TitleProps {
-  children: React.ReactNode;
+  children: ReactNode;
   numberOfLines?: number;
   style?: TextStyle;
 }
@@ -107,7 +107,7 @@ EventListItem.Title = function Title({
 };
 
 interface DescriptionProps {
-  children: React.ReactNode;
+  children: ReactNode;
   numberOfLines?: number;
   style?: TextStyle;
 }
@@ -125,7 +125,7 @@ EventListItem.Description = function Description({
 };
 
 interface MetadataProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 
@@ -191,7 +191,7 @@ EventListItem.Size = function Size({ bytes, style }: SizeProps) {
 };
 
 interface BadgeProps {
-  children: React.ReactNode;
+  children: ReactNode;
   color?: string;
   style?: ViewStyle;
 }
@@ -211,7 +211,7 @@ EventListItem.Badge = function Badge({ children, color, style }: BadgeProps) {
 };
 
 interface HeaderProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 
@@ -220,7 +220,7 @@ EventListItem.Header = function Header({ children, style }: HeaderProps) {
 };
 
 interface FooterProps {
-  children: React.ReactNode;
+  children: ReactNode;
   style?: ViewStyle;
 }
 

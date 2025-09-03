@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 import {
   computeLineDiff,
@@ -203,7 +203,7 @@ export function ThemedSplitView({
     const isDefault = diff.type === DiffType.DEFAULT;
 
     return (
-      <React.Fragment key={idx}>
+      <Fragment key={idx}>
         {shouldShowSeparator(idx, diffs) && (
           <View style={dynamicStyles.separator}>
             <Text style={dynamicStyles.separatorText}>• • •</Text>
@@ -249,7 +249,7 @@ export function ThemedSplitView({
                 )}
           </View>
         </View>
-      </React.Fragment>
+      </Fragment>
     );
   };
 

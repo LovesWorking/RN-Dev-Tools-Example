@@ -22,7 +22,7 @@ interface DataViewerProps {
  * - Prefer Composition over Configuration: Uses existing components
  * - Extract Reusable Logic: Shared between storage and Sentry views
  */
-export const DataViewer: React.FC<DataViewerProps> = ({
+export const DataViewer: FC<DataViewerProps> = ({
   title,
   data,
   maxDepth = 10,

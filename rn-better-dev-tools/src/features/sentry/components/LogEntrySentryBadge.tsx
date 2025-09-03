@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { Metadata } from "@/rn-better-dev-tools/src/shared/logger/types";
@@ -9,7 +9,7 @@ interface LogEntrySentryBadgeProps {
 }
 
 // Memoized leaf component for badge rendering performance [[memory:4875251]]
-export const LogEntrySentryBadge = React.memo<LogEntrySentryBadgeProps>(
+export const LogEntrySentryBadge = memo<LogEntrySentryBadgeProps>(
   ({ metadata }) => {
     // Only show the sentry event type, not the redundant source
     // This fixes the "Span • span" issue by showing only "Span"

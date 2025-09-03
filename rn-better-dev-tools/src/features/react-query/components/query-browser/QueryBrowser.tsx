@@ -1,4 +1,3 @@
-import React from "react";
 import { View, StyleSheet, Text, ScrollView, ViewStyle } from "react-native";
 import { Query } from "@tanstack/react-query";
 import QueryRow from "./QueryRow";
@@ -28,7 +27,7 @@ export default function QueryBrowser({
   const allQueries = externalQueries ?? internalQueries;
 
   // Filter queries based on active filter - same logic as working implementation
-  const filteredQueries = React.useMemo(() => {
+  const filteredQueries = useMemo(() => {
     if (!activeFilter) {
       return allQueries;
     }
@@ -40,7 +39,7 @@ export default function QueryBrowser({
   }, [allQueries, activeFilter]);
 
   // Function to handle query selection with stable comparison
-  const handleQuerySelect = React.useCallback(
+  const handleQuerySelect = useCallback(
     (query: Query) => {
       // Compare queries by their queryKey and queryHash for stable selection
       const isCurrentlySelected = selectedQuery?.queryHash === query.queryHash;

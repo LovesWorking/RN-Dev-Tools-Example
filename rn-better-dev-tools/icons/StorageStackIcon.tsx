@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment, FC } from "react";
 import { View, ViewStyle } from "react-native";
 import { IconBackground } from "./IconBackground";
 
@@ -27,7 +27,7 @@ const CYLINDERS = [
   { y: 0.65, opacity: 0.7 },
 ];
 
-export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
+export const StorageStackIcon: FC<StorageStackIconProps> = ({
   size = 24,
   color,
   glowColor,
@@ -43,7 +43,7 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
   const activeGlow = glowColor || preset.glow;
 
   const renderCylinder = (y: number, opacity: number, index: number) => (
-    <React.Fragment key={`cylinder-${index}`}>
+    <Fragment key={`cylinder-${index}`}>
       {/* Single shadow/glow per cylinder */}
       <View
         style={
@@ -109,7 +109,7 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
           } as ViewStyle
         }
       />
-    </React.Fragment>
+    </Fragment>
   );
 
   const iconContent = (

@@ -6,7 +6,6 @@ import { RequiredEnvVar } from "../types";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useCallback } from "react";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
-import { FileCode } from "rn-better-dev-tools/icons";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 
 interface EnvVarsModalProps {
