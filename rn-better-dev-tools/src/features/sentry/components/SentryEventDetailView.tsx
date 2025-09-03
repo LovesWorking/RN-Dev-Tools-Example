@@ -35,6 +35,7 @@ import {
   Zap,
 } from "rn-better-dev-tools/icons";
 import { InlineCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import {
   extractHttpDataFromSentryEvent,
   HttpRequestInfo,
@@ -1078,75 +1079,16 @@ export function SentryEventDetailView({
       </View>
 
       {/* Tab navigation */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          sentry-label="ignore details tab"
-          onPress={() => setActiveTab("details")}
-          style={[styles.tab, activeTab === "details" && styles.activeTab]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "details" && styles.activeTabText,
-            ]}
-          >
-            Details
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          sentry-label="ignore insights tab"
-          onPress={() => setActiveTab("insights")}
-          style={[styles.tab, activeTab === "insights" && styles.activeTab]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "insights" && styles.activeTabText,
-            ]}
-          >
-            Insights
-          </Text>
-          {insights.length > 0 && (
-            <View style={styles.tabBadge}>
-              <Text style={styles.tabBadgeText}>{insights.length}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          sentry-label="ignore raw data tab"
-          onPress={() => setActiveTab("rawData")}
-          style={[styles.tab, activeTab === "rawData" && styles.activeTab]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "rawData" && styles.activeTabText,
-            ]}
-          >
-            Raw Data
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          sentry-label="ignore device context tab"
-          onPress={() => setActiveTab("deviceContext")}
-          style={[
-            styles.tab,
-            activeTab === "deviceContext" && styles.activeTab,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "deviceContext" && styles.activeTabText,
-            ]}
-          >
-            Context
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TabSelector
+        tabs={[
+          { key: "details", label: "Details" },
+          { key: "insights", label: "Insights" },
+          { key: "rawData", label: "Raw Data" },
+          { key: "deviceContext", label: "Context" }
+        ]}
+        activeTab={activeTab}
+        onTabChange={(tabId) => setActiveTab(tabId as TabType)}
+      />
 
       {/* Tab content */}
       <View style={styles.contentContainer}>{renderTabContent()}</View>
@@ -1231,47 +1173,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     marginTop: 4,
-  },
-  tabsContainer: {
-    flexDirection: "row",
-    backgroundColor: gameUIColors.panel,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    gap: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "40",
-  },
-  tab: {
-    paddingVertical: 6,
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  activeTab: {
-    borderBottomColor: gameUIColors.optional,
-  },
-  tabText: {
-    color: gameUIColors.secondary,
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  activeTabText: {
-    color: gameUIColors.primary,
-  },
-  tabBadge: {
-    backgroundColor: gameUIColors.warning + "33",
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    borderRadius: 8,
-    minWidth: 16,
-    alignItems: "center",
-  },
-  tabBadgeText: {
-    color: gameUIColors.primary,
-    fontSize: 10,
-    fontWeight: "600",
   },
   contentContainer: {
     flex: 1,

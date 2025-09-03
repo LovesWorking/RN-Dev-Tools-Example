@@ -13,6 +13,8 @@ import {
   RequiredStorageKey,
 } from "@/rn-better-dev-tools/src/features/storage";
 import { NetworkModal } from "@/rn-better-dev-tools/src/features/network";
+import { SentryLogsModal, setupSentryEventListeners } from "@/rn-better-dev-tools/src/features/sentry";
+import { useSentrySubtitle } from "@/rn-better-dev-tools/src/features/sentry/hooks/useSentrySubtitle";
 
 import { FloatingTools, type UserRole, UserStatus } from "./floatingTools";
 import { ErrorBoundary } from "@/rn-better-dev-tools/src/shared/ui/components/ErrorBoundary";
@@ -108,8 +110,16 @@ export function RnBetterDevToolsBubble({
     hideStorageButton,
   ]);
 
-  // const { getSentrySubtitle } = useSentrySubtitle();
+  const { getSentrySubtitle } = useSentrySubtitle();
   const envVarsSubtitle = useEnvVarsSubtitle(requiredEnvVars);
+  
+  // Initialize Sentry event listeners on mount
+  useEffect(() => {
+    const success = setupSentryEventListeners();
+    if (success) {
+      console.log("✅ Sentry event listeners initialized for dev tools");
+    }
+  }, []);
 
   // Modal management hook with persistence - extracted from main component logic
   const {
@@ -117,6 +127,7 @@ export function RnBetterDevToolsBubble({
     isEnvModalOpen,
     isStorageModalOpen,
     isNetworkModalOpen,
+    isSentryModalOpen,
     selectedQueryKey,
     activeFilter,
     activeTab,
@@ -126,11 +137,13 @@ export function RnBetterDevToolsBubble({
     handleEnvModalDismiss,
     handleStorageModalDismiss,
     handleNetworkModalDismiss,
+    handleSentryModalDismiss,
     handleQuerySelect,
     handleQueryPress,
     handleEnvPress,
     handleStoragePress,
     handleNetworkPress,
+    handleSentryPress,
     handleTabChange,
     handleMutationSelect,
   } = useModalManager();
@@ -143,7 +156,7 @@ export function RnBetterDevToolsBubble({
     isModalOpen ||
     // isDebugModalOpen || // Not used anymore - we use showFloatingMenu instead
     isEnvModalOpen ||
-    // isSentryModalOpen || // Disabled - Sentry modal causing import issues
+    isSentryModalOpen ||
     isStorageModalOpen ||
     isNetworkModalOpen;
 
@@ -248,8 +261,8 @@ export function RnBetterDevToolsBubble({
               handleEnvPress();
             }}
             onSentryPress={() => {
-              // Disabled - Sentry modal has import issues
               setShowFloatingMenu(false);
+              handleSentryPress();
             }}
             onStoragePress={() => {
               setShowFloatingMenu(false);
@@ -294,14 +307,14 @@ export function RnBetterDevToolsBubble({
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
 
-        {/* Sentry Events Modal - Temporarily disabled due to import issues */}
-        {/* <SentryLogsModal
+        {/* Sentry Events Modal */}
+        <SentryLogsModal
           key="sentry-logs-modal"
           visible={isSentryModalOpen}
           onClose={handleSentryModalDismiss}
-          getSentrySubtitle={() => "Sentry subtitle"}
+          getSentrySubtitle={getSentrySubtitle}
           enableSharedModalDimensions={enableSharedModalDimensions}
-        /> */}
+        />
 
         {/* Storage Browser Modal with Tabs - Auto-opens if restored state indicates it was open */}
         <StorageModalWithTabs

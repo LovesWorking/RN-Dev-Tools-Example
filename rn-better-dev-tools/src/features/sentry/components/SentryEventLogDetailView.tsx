@@ -5,6 +5,8 @@ import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/t
 
 import { DetailHeader } from "@/rn-better-dev-tools/src/features/log-dump/components/DetailHeader";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Stable constants to prevent re-creation [[memory:4875251]] [[memory:4875251]]
 const MAX_EXPLORER_DEPTH = 15; // Reduced for better performance with large datasets
@@ -98,98 +100,16 @@ export const SentryEventLogDetailView = ({
       <DetailHeader entry={entry} onBack={onBack} />
 
       {/* Tab navigation */}
-      <View
-        style={styles.tabsContainer}
-        sentry-label="ignore devtools sentry event tabs container"
-      >
-        <TouchableOpacity
-          accessibilityLabel="Message"
-          accessibilityHint="View message"
-          sentry-label="ignore devtools sentry tab message button"
-          onPress={() => setActiveTab("message")}
-          style={[
-            styles.tab,
-            activeTab === "message" ? styles.activeTab : styles.inactiveTab,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "message"
-                ? styles.activeTabText
-                : styles.inactiveTabText,
-            ]}
-          >
-            Message
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          accessibilityLabel="Event Data"
-          accessibilityHint="View event data"
-          sentry-label="ignore devtools sentry tab event data button"
-          onPress={() => setActiveTab("eventData")}
-          style={[
-            styles.tab,
-            activeTab === "eventData" ? styles.activeTab : styles.inactiveTab,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "eventData"
-                ? styles.activeTabText
-                : styles.inactiveTabText,
-            ]}
-          >
-            Event Data
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          accessibilityLabel="Raw Data"
-          accessibilityHint="View raw data"
-          sentry-label="ignore devtools sentry tab raw data button"
-          onPress={() => setActiveTab("rawData")}
-          style={[
-            styles.tab,
-            activeTab === "rawData" ? styles.activeTab : styles.inactiveTab,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "rawData"
-                ? styles.activeTabText
-                : styles.inactiveTabText,
-            ]}
-          >
-            Raw Data
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          accessibilityLabel="Debug"
-          accessibilityHint="View debug info"
-          sentry-label="ignore devtools sentry tab debug button"
-          onPress={() => setActiveTab("debugInfo")}
-          style={[
-            styles.tab,
-            activeTab === "debugInfo" ? styles.activeTab : styles.inactiveTab,
-          ]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "debugInfo"
-                ? styles.activeTabText
-                : styles.inactiveTabText,
-            ]}
-          >
-            Debug
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TabSelector
+        tabs={[
+          { key: "message", label: "Message" },
+          { key: "eventData", label: "Event Data" },
+          { key: "rawData", label: "Raw Data" },
+          { key: "debugInfo", label: "Debug" }
+        ]}
+        activeTab={activeTab}
+        onTabChange={(tabId) => setActiveTab(tabId as TabType)}
+      />
 
       {/* Tab content */}
       <View
@@ -205,39 +125,6 @@ export const SentryEventLogDetailView = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  // Tab navigation styles (based on React Query dev tools)
-  tabsContainer: {
-    flexDirection: "row",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.08)",
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  activeTab: {
-    backgroundColor: "rgba(139, 92, 246, 0.1)", // purple-400 with opacity
-    borderBottomWidth: 2,
-    borderBottomColor: "#8B5CF6", // purple-400
-  },
-  inactiveTab: {
-    backgroundColor: "transparent",
-  },
-  tabText: {
-    fontSize: 12,
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  activeTabText: {
-    color: "#8B5CF6", // purple-400
-  },
-  inactiveTabText: {
-    color: "#9CA3AF", // gray-400
   },
   // Tab content
   tabContent: {

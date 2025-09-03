@@ -5,25 +5,13 @@ import type {
   FetchBreadcrumbHint,
   XhrBreadcrumbHint,
 } from "../types";
+import { getSentryClient, configureSentryClient as configureSentryClientProvider, isUsingMockClient } from "./sentryClientProvider";
+import type { SentryEventEntry } from "./types";
+import { SentryEventType, SentryEventLevel } from "./types";
+export { SentryEventEntry, SentryEventType, SentryEventLevel } from "./types";
 
 interface SentryClient extends Record<string, unknown> {
   on?: (event: string, callback: (arg: unknown) => unknown) => void;
-}
-
-// Safe import for optional Sentry dependency
-let getSentryClient: (() => SentryClient | null) | null = null;
-let userProvidedGetClient: (() => SentryClient | null) | null = null;
-
-try {
-  // Dynamic import to avoid bundling if not installed
-  import("@sentry/react-native").then(
-    (sentry: { getClient: () => SentryClient }) => {
-      getSentryClient = sentry.getClient;
-    },
-  );
-} catch {
-  // Sentry not installed - will gracefully degrade
-  getSentryClient = null;
 }
 
 /**
@@ -34,56 +22,9 @@ try {
 export function configureSentryClient(
   getClientFn: () => SentryClient | null,
 ): void {
-  userProvidedGetClient = getClientFn;
+  configureSentryClientProvider(getClientFn);
 }
 
-// =============================================================================
-// TYPE DEFINITIONS
-// =============================================================================
-
-/**
- * Sentry event entry stored in memory for admin display
- */
-export type SentryEventEntry = {
-  id: string;
-  timestamp: number;
-  source: "envelope" | "span" | "transaction" | "breadcrumb" | "native";
-  eventType: SentryEventType;
-  level: SentryEventLevel;
-  message: string;
-  data: Record<string, unknown>;
-  rawData: unknown;
-};
-
-/**
- * Event types for categorization
- */
-export enum SentryEventType {
-  Error = "Error",
-  Transaction = "Transaction",
-  Span = "Span",
-  Session = "Session",
-  UserFeedback = "User Feedback",
-  Profile = "Profile",
-  Replay = "Replay",
-  Attachment = "Attachment",
-  ClientReport = "Client Report",
-  Log = "Log",
-  Breadcrumb = "Breadcrumb",
-  Native = "Native",
-  Unknown = "Unknown",
-}
-
-/**
- * Event levels for severity
- */
-export enum SentryEventLevel {
-  Debug = "debug",
-  Info = "info",
-  Warning = "warning",
-  Error = "error",
-  Fatal = "fatal",
-}
 
 // Sentry envelope types - confirmed from codebase analysis
 type SentryEnvelopeHeader = {
@@ -280,17 +221,7 @@ export class SentryEventLogger {
     }
 
     try {
-      // Use user-provided client function or auto-detected one
-      const clientGetter = userProvidedGetClient || getSentryClient;
-
-      if (!clientGetter) {
-        console.warn(
-          "Sentry SDK not available - event logging disabled. Either install @sentry/react-native or use configureSentryClient()",
-        );
-        return false;
-      }
-
-      const client = clientGetter();
+      const client = getSentryClient();
 
       if (!client) {
         console.warn("Sentry client not available for event logging");
@@ -617,7 +548,11 @@ export const sentryEventLogger = new SentryEventLogger();
  * Setup Sentry event listeners (convenience function)
  */
 export function setupSentryEventListeners(): boolean {
-  return sentryEventLogger.setup();
+  const result = sentryEventLogger.setup();
+  if (result && isUsingMockClient()) {
+    console.log("📦 Sentry event logger using mock client");
+  }
+  return result;
 }
 
 /**

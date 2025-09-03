@@ -2,7 +2,8 @@
 // REACTIVE SENTRY EVENT STORE
 // =============================================================================
 
-import { SentryEventEntry } from "./sentryEventListeners";
+import type { SentryEventEntry } from "./types";
+import { SentryEventType, SentryEventLevel } from "./types";
 import {
   LogType,
   LogLevel,

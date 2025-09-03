@@ -9,6 +9,11 @@ import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import {
+  ListItem,
+  StatusBadge,
+  TypeBadge,
+} from "@/rn-better-dev-tools/src/shared/ui/components";
 
 // Stable constants moved to module scope to prevent re-renders
 const HIT_SLOP = { top: 6, bottom: 6, left: 6, right: 6 };
@@ -93,48 +98,16 @@ export function EnvVarCard({ envVar, isExpanded, onToggle }: EnvVarCardProps) {
   const hasDescription = envVar.description !== undefined;
 
   return (
-    <View style={[styles.envVarCard, { borderColor: config.borderColor }]}>
-      <TouchableOpacity
-        accessibilityLabel="Env var card"
-        accessibilityHint="View env var card"
-        sentry-label={`ignore env var card ${envVar.key}`}
-        accessibilityRole="button"
-        style={styles.cardHeader}
-        onPress={onToggle}
-      >
-        <View style={styles.cardHeaderLeft}>
-          <View
-            style={[styles.iconContainer, { backgroundColor: config.bgColor }]}
-          >
-            <StatusIcon size={14} color={config.color} />
-          </View>
-          <View style={styles.cardHeaderInfo}>
-            <Text style={styles.envVarKey}>{envVar.key}</Text>
-            {hasDescription && (
-              <Text style={styles.envVarDescription}>{envVar.description}</Text>
-            )}
-            <View style={styles.cardHeaderMeta}>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: config.bgColor },
-                ]}
-              >
-                <Text style={[styles.statusText, { color: config.labelColor }]}>
-                  {config.label}
-                </Text>
-              </View>
-              {hasValue && (
-                <View style={styles.valueBadge}>
-                  <Text style={styles.valueText}>
-                    {getEnvVarType(envVar.value)}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
+    <ListItem onPress={onToggle} style={{ borderColor: config.borderColor }}>
+      <ListItem.Header>
+        <View
+          style={[styles.iconContainer, { backgroundColor: config.bgColor }]}
+        >
+          <StatusIcon size={14} color={config.color} />
         </View>
-        <View style={styles.cardHeaderRight}>
+        <StatusBadge status={config.label} />
+        {hasValue && <TypeBadge type={getEnvVarType(envVar.value)} />}
+        <ListItem.Actions>
           <TouchableOpacity
             accessibilityLabel="Expand"
             accessibilityHint="Expand env var card"
@@ -146,11 +119,18 @@ export function EnvVarCard({ envVar, isExpanded, onToggle }: EnvVarCardProps) {
           >
             <Eye size={12} color={gameUIColors.secondary} />
           </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+        </ListItem.Actions>
+      </ListItem.Header>
+
+      <ListItem.Content>
+        <ListItem.Title>{envVar.key}</ListItem.Title>
+        {hasDescription && (
+          <ListItem.Subtitle>{envVar.description}</ListItem.Subtitle>
+        )}
+      </ListItem.Content>
 
       {isExpanded && hasValue && (
-        <View style={styles.cardBody}>
+        <ListItem.Footer style={styles.expandedContent}>
           <View style={styles.valueContainer}>
             <Text style={styles.valueLabel}>Current Value:</Text>
             <View style={styles.valueBox}>
@@ -184,11 +164,11 @@ export function EnvVarCard({ envVar, isExpanded, onToggle }: EnvVarCardProps) {
               </Text>
             </View>
           )}
-        </View>
+        </ListItem.Footer>
       )}
 
       {isExpanded && !hasValue && (
-        <View style={styles.cardBody}>
+        <ListItem.Footer style={styles.expandedContent}>
           <View style={styles.emptyValueContainer}>
             <AlertCircle size={16} color={gameUIColors.warning} />
             <Text style={styles.emptyValueText}>
@@ -206,86 +186,24 @@ export function EnvVarCard({ envVar, isExpanded, onToggle }: EnvVarCardProps) {
               </View>
             </View>
           )}
-        </View>
+        </ListItem.Footer>
       )}
-    </View>
+    </ListItem>
   );
 }
 
 const styles = StyleSheet.create({
-  envVarCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    borderRadius: 8,
-    borderWidth: 1,
-    overflow: "hidden",
-  },
-  cardHeader: {
-    padding: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    minWidth: 0,
-  },
   iconContainer: {
     padding: 6,
     borderRadius: 6,
-    marginRight: 10,
-  },
-  cardHeaderInfo: {
-    flex: 1,
-    minWidth: 0,
-    gap: 4,
-  },
-  envVarKey: {
-    color: gameUIColors.primary,
-    fontWeight: "500",
-    fontSize: 12,
-  },
-  envVarDescription: {
-    color: gameUIColors.secondary,
-    fontSize: 10,
-    marginTop: 2,
-  },
-  cardHeaderMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  statusBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  statusText: {
-    fontSize: 9,
-    fontWeight: "600",
-    letterSpacing: 0.5,
-  },
-  valueBadge: {
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 3,
-  },
-  valueText: {
-    fontSize: 8,
-    color: gameUIColors.secondary,
-    fontWeight: "500",
-  },
-  cardHeaderRight: {
-    marginLeft: 8,
   },
   actionButton: {
     padding: 4,
     borderRadius: 4,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
-  cardBody: {
+  expandedContent: {
+    flexDirection: "column",
     borderTopWidth: 1,
     borderTopColor: "rgba(255, 255, 255, 0.05)",
     padding: 12,

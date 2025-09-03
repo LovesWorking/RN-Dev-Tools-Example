@@ -46,7 +46,9 @@ const defaultTheme = {
   },
 
   // Text
+  text: "#FFFFFF",
   secondary: "#B8BFC9",
+  tertiary: "#9CA3AF",
   muted: "#7A8599",
 
   // Neon - Multi-color glow effects
@@ -123,7 +125,9 @@ const cyanTheme = {
   },
 
   // Text
+  text: "#FFFFFF",
   secondary: "#B8BFC9",
+  tertiary: "#9CA3AF",
   muted: "#7A8599",
 
   // Neon

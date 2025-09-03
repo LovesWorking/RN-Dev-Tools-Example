@@ -229,7 +229,7 @@ export function StorageKeyStatsSection({ stats }: StorageKeyStatsProps) {
                 totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : "0";
               const IconComponent = item.icon;
               const storageColor = getStorageTypeHexColor(
-                item.key as StorageType,
+                item.key as StorageType
               );
 
               return (
