@@ -36,7 +36,9 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
   noBackground = true,
 }) => {
   const scale = noBackground ? size / 24 : size / 26;
-  const preset = ColorPresets[colorPreset as keyof typeof ColorPresets] || ColorPresets.yellow;
+  const preset =
+    ColorPresets[colorPreset as keyof typeof ColorPresets] ||
+    ColorPresets.yellow;
   const activeColor = color || preset.color;
   const activeGlow = glowColor || preset.glow;
 
@@ -44,60 +46,68 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
     <React.Fragment key={`cylinder-${index}`}>
       {/* Single shadow/glow per cylinder */}
       <View
-        style={{
-          position: "absolute",
-          width: 18 * scale,
-          height: 8 * scale,
-          borderRadius: 4 * scale,
-          backgroundColor: activeGlow,
-          left: size / 2 - 9 * scale,
-          top: y * size - scale,
-          opacity: 0.1,
-        } as ViewStyle}
+        style={
+          {
+            position: "absolute",
+            width: 18 * scale,
+            height: 8 * scale,
+            borderRadius: 4 * scale,
+            backgroundColor: activeGlow,
+            left: size / 2 - 9 * scale,
+            top: y * size - scale,
+            opacity: 0.1,
+          } as ViewStyle
+        }
       />
 
       {/* Main cylinder body */}
       <View
-        style={{
-          position: "absolute",
-          width: 16 * scale,
-          height: 6 * scale,
-          borderRadius: 3 * scale,
-          backgroundColor: activeColor,
-          left: size / 2 - 8 * scale,
-          top: y * size,
-          opacity,
-        } as ViewStyle}
+        style={
+          {
+            position: "absolute",
+            width: 16 * scale,
+            height: 6 * scale,
+            borderRadius: 3 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 8 * scale,
+            top: y * size,
+            opacity,
+          } as ViewStyle
+        }
       />
 
       {/* Top surface highlight */}
       <View
-        style={{
-          position: "absolute",
-          width: 14 * scale,
-          height: 2 * scale,
-          borderRadius: 1 * scale,
-          backgroundColor: "#fff",
-          left: size / 2 - 7 * scale,
-          top: y * size + 0.5 * scale,
-          opacity: 0.15,
-        } as ViewStyle}
+        style={
+          {
+            position: "absolute",
+            width: 14 * scale,
+            height: 2 * scale,
+            borderRadius: 1 * scale,
+            backgroundColor: "#fff",
+            left: size / 2 - 7 * scale,
+            top: y * size + 0.5 * scale,
+            opacity: 0.15,
+          } as ViewStyle
+        }
       />
 
       {/* Edge glow */}
       <View
-        style={{
-          position: "absolute",
-          width: 16 * scale,
-          height: 6 * scale,
-          borderRadius: 3 * scale,
-          borderWidth: 0.5 * scale,
-          borderColor: activeGlow,
-          backgroundColor: "transparent",
-          left: size / 2 - 8 * scale,
-          top: y * size,
-          opacity: 0.3,
-        } as ViewStyle}
+        style={
+          {
+            position: "absolute",
+            width: 16 * scale,
+            height: 6 * scale,
+            borderRadius: 3 * scale,
+            borderWidth: 0.5 * scale,
+            borderColor: activeGlow,
+            backgroundColor: "transparent",
+            left: size / 2 - 8 * scale,
+            top: y * size,
+            opacity: 0.3,
+          } as ViewStyle
+        }
       />
     </React.Fragment>
   );
@@ -105,23 +115,25 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
   const iconContent = (
     <>
       {/* Render all cylinders with loop */}
-      {CYLINDERS.map(({ y, opacity }, index) => 
-        renderCylinder(y, opacity, index)
+      {CYLINDERS.map(({ y, opacity }, index) =>
+        renderCylinder(y, opacity, index),
       )}
 
       {/* Simplified connection lines */}
       {[0.35, 0.55].map((y, i) => (
         <View
           key={`connection-${i}`}
-          style={{
-            position: "absolute",
-            width: 0.5 * scale,
-            height: 6 * scale,
-            backgroundColor: activeGlow,
-            left: size / 2 - 0.25 * scale,
-            top: y * size,
-            opacity: 0.3,
-          } as ViewStyle}
+          style={
+            {
+              position: "absolute",
+              width: 0.5 * scale,
+              height: 6 * scale,
+              backgroundColor: activeGlow,
+              left: size / 2 - 0.25 * scale,
+              top: y * size,
+              opacity: 0.3,
+            } as ViewStyle
+          }
         />
       ))}
 
@@ -129,16 +141,18 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
       {[0.25, 0.45, 0.65].map((y, i) => (
         <View
           key={`dot-${i}`}
-          style={{
-            position: "absolute",
-            width: 1 * scale,
-            height: 1 * scale,
-            borderRadius: 0.5 * scale,
-            backgroundColor: activeGlow,
-            left: size / 2 - 0.5 * scale,
-            top: y * size + 2.5 * scale,
-            opacity: 0.6,
-          } as ViewStyle}
+          style={
+            {
+              position: "absolute",
+              width: 1 * scale,
+              height: 1 * scale,
+              borderRadius: 0.5 * scale,
+              backgroundColor: activeGlow,
+              left: size / 2 - 0.5 * scale,
+              top: y * size + 2.5 * scale,
+              opacity: 0.6,
+            } as ViewStyle
+          }
         />
       ))}
     </>
@@ -146,13 +160,17 @@ export const StorageStackIcon: React.FC<StorageStackIconProps> = ({
 
   if (noBackground) {
     return (
-      <View style={{
-        width: size,
-        height: size,
-        position: "relative",
-        alignItems: "center",
-        justifyContent: "center",
-      } as ViewStyle}>
+      <View
+        style={
+          {
+            width: size,
+            height: size,
+            position: "relative",
+            alignItems: "center",
+            justifyContent: "center",
+          } as ViewStyle
+        }
+      >
         {iconContent}
       </View>
     );

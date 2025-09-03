@@ -87,7 +87,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
       {/* Color Variations Section */}
       <Text style={styles.sectionTitle}>COLOR VARIATIONS</Text>
-      
+
       <View style={styles.colorGrid}>
         {/* ENV with different colors */}
         <View style={styles.iconCard}>
@@ -142,7 +142,7 @@ const CyberpunkIconGallery: React.FC = () => {
 
       {/* Size Variations */}
       <Text style={styles.sectionTitle}>SIZE VARIATIONS</Text>
-      
+
       <View style={styles.sizeGrid}>
         <View style={styles.iconCard}>
           <View style={styles.iconContainer}>

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  ViewStyle,
-} from "react-native";
+import { View, StyleSheet, Text, ScrollView, ViewStyle } from "react-native";
 import { Query } from "@tanstack/react-query";
 import QueryRow from "./QueryRow";
 import useAllQueries from "../../hooks/useAllQueries";
@@ -20,7 +14,6 @@ interface Props {
   contentContainerStyle?: ViewStyle;
   queries?: Query[]; // Optional external queries to override useAllQueries
 }
-
 
 export default function QueryBrowser({
   selectedQuery,

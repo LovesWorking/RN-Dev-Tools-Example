@@ -10,12 +10,15 @@ Get RN Better Dev Tools running in your React Native app in under 5 minutes.
 ```bash
 npm i rn-better-dev-tools
 ```
+
 ```bash
 pnpm add rn-better-dev-tools
 ```
+
 ```bash
 yarn add rn-better-dev-tools
 ```
+
 ```bash
 bun add rn-better-dev-tools
 ```
@@ -24,27 +27,29 @@ bun add rn-better-dev-tools
 
 Add the dev tools bubble to your app's root component:
 
-[//]: # 'QuickSetup'
-```tsx
-import React from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RnBetterDevToolsBubble } from 'rn-better-dev-tools'
+[//]: # "QuickSetup"
 
-const queryClient = new QueryClient()
+```tsx
+import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RnBetterDevToolsBubble 
+      <RnBetterDevToolsBubble
         queryClient={queryClient}
         environment="development"
       />
       {/* Your app components */}
     </QueryClientProvider>
-  )
+  );
 }
 ```
-[//]: # 'QuickSetup'
+
+[//]: # "QuickSetup"
 
 ## That's It!
 
@@ -61,35 +66,39 @@ Run your app and you'll see a floating bubble on the right side of your screen. 
 
 Tell the dev tools which environment variables your app needs:
 
-[//]: # 'RequiredEnvVars'
+[//]: # "RequiredEnvVars"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   requiredEnvVars={[
-    { key: 'EXPO_PUBLIC_API_URL', description: 'Backend API endpoint' },
-    { key: 'EXPO_PUBLIC_APP_ENV', description: 'Current environment' }
+    { key: "EXPO_PUBLIC_API_URL", description: "Backend API endpoint" },
+    { key: "EXPO_PUBLIC_APP_ENV", description: "Current environment" },
   ]}
 />
 ```
-[//]: # 'RequiredEnvVars'
+
+[//]: # "RequiredEnvVars"
 
 ### Required Storage Keys
 
 Monitor critical storage keys:
 
-[//]: # 'RequiredStorageKeys'
+[//]: # "RequiredStorageKeys"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   requiredStorageKeys={[
-    { key: 'user_token', type: 'secure', description: 'Auth token' },
-    { key: 'app_settings', type: 'async', description: 'User preferences' }
+    { key: "user_token", type: "secure", description: "Auth token" },
+    { key: "app_settings", type: "async", description: "User preferences" },
   ]}
 />
 ```
-[//]: # 'RequiredStorageKeys'
+
+[//]: # "RequiredStorageKeys"
 
 ## Common Patterns
 
@@ -97,47 +106,52 @@ Monitor critical storage keys:
 
 Ensure the tools only appear in development:
 
-[//]: # 'DevOnlySetup'
+[//]: # "DevOnlySetup"
+
 ```tsx
-import { RnBetterDevToolsBubble } from 'rn-better-dev-tools'
+import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
 
 export default function App() {
   return (
     <>
       {__DEV__ && (
-        <RnBetterDevToolsBubble 
+        <RnBetterDevToolsBubble
           queryClient={queryClient}
           environment="development"
         />
       )}
       {/* Your app */}
     </>
-  )
+  );
 }
 ```
-[//]: # 'DevOnlySetup'
+
+[//]: # "DevOnlySetup"
 
 ### With User Roles
 
 Display different debugging capabilities based on user type:
 
-[//]: # 'UserRoles'
+[//]: # "UserRoles"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
-  userRole={user.isAdmin ? 'admin' : 'user'}
+  userRole={user.isAdmin ? "admin" : "user"}
 />
 ```
-[//]: # 'UserRoles'
+
+[//]: # "UserRoles"
 
 ## Using the Tools
 
 ### Opening the Menu
 
 Tap any of the menu buttons on the floating bubble:
+
 - **G** - Game-style UI menu
-- **C** - Claude-themed menu  
+- **C** - Claude-themed menu
 - **D** - Dial menu interface
 
 ### React Query Tools

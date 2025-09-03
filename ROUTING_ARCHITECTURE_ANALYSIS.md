@@ -3,6 +3,7 @@
 ## Current Routing Structure
 
 ### File Structure Overview
+
 ```
 app/
   _layout.tsx          # Root layout with Stack navigator
@@ -16,6 +17,7 @@ app/
 ### Current Implementation Details
 
 #### 1. Root Layout (`app/_layout.tsx`)
+
 - **Navigator Type**: Basic Stack navigator
 - **Features**:
   - Custom theme provider (DevToolsThemeProvider)
@@ -27,6 +29,7 @@ app/
   - Headers hidden globally
 
 #### 2. Main Screen (`app/index.tsx`)
+
 - **Type**: Single monolithic screen
 - **Features**:
   - Pokemon card swipe interface
@@ -35,6 +38,7 @@ app/
   - No user context or authentication
 
 #### 3. Error Handling (`app/+not-found.tsx`)
+
 - Basic 404 screen with link back to home
 - Uses themed components
 
@@ -69,6 +73,7 @@ app/
 ### 1. Implement Proper Authentication Flow
 
 #### Required Components
+
 ```typescript
 // contexts/auth.tsx
 - AuthContext with session management
@@ -79,6 +84,7 @@ app/
 ```
 
 #### Auth State Management
+
 - Use AsyncStorage or SecureStore for token persistence
 - Implement refresh token logic
 - Handle auth state loading with splash screen
@@ -87,19 +93,20 @@ app/
 ### 2. Restructure App with Route Groups
 
 #### Proposed File Structure
+
 ```
 app/
   _layout.tsx                    # Root with auth logic
   +not-found.tsx                # Global 404
   +native-intent.tsx            # Deep link handler
-  
+
   (auth)/                       # Public routes (only when logged out)
     _layout.tsx                 # Stack for auth screens
     sign-in.tsx                 # Login screen
     sign-up.tsx                 # Registration screen
     forgot-password.tsx         # Password reset
     onboarding.tsx             # Optional onboarding flow
-    
+
   (app)/                        # Protected routes (only when logged in)
     _layout.tsx                 # Tab layout for main app
     (tabs)/
@@ -121,7 +128,7 @@ app/
         index.tsx               # User profile
         settings.tsx            # App settings
         edit.tsx                # Edit profile
-    
+
     modals/                     # Modal screens
       search.tsx                # Global Pokemon search
       filters.tsx               # Filter options
@@ -131,22 +138,23 @@ app/
 ### 3. Implement Protected Routes Pattern
 
 #### Root Layout with Protection
+
 ```typescript
 // app/_layout.tsx
 export default function RootLayout() {
   const { session, isLoading } = useAuth();
-  
+
   if (isLoading) {
     return <SplashScreen />;
   }
-  
+
   return (
     <Stack>
       {/* Protected: Only when authenticated */}
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack.Protected>
-      
+
       {/* Public: Only when NOT authenticated */}
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -159,12 +167,14 @@ export default function RootLayout() {
 ### 4. Add Navigation Guards & Redirects
 
 #### Prevent Back Navigation to Auth
+
 ```typescript
 // In sign-in success handler
-router.replace('/(app)/(tabs)'); // Replace instead of push
+router.replace("/(app)/(tabs)"); // Replace instead of push
 ```
 
 #### Auto-redirect Based on Auth State
+
 ```typescript
 // Protected routes automatically redirect when guard fails
 <Stack.Protected guard={!!session}>
@@ -173,15 +183,16 @@ router.replace('/(app)/(tabs)'); // Replace instead of push
 ```
 
 #### Deep Link Handling
+
 ```typescript
 // app/+native-intent.tsx
 export async function redirectSystemPath({ path, initial }) {
   const { session } = await getAuthState();
-  
-  if (!session && path.startsWith('/(app)')) {
-    return '/sign-in';
+
+  if (!session && path.startsWith("/(app)")) {
+    return "/sign-in";
   }
-  
+
   return path;
 }
 ```
@@ -195,7 +206,7 @@ export default function AppLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: PokemonTheme.colors.primary,
-        tabBarStyle: { 
+        tabBarStyle: {
           backgroundColor: PokemonTheme.colors.darkBg,
           borderTopColor: 'rgba(255,215,0,0.2)'
         }
@@ -237,31 +248,33 @@ export default function AppLayout() {
 ### 6. Session Management Best Practices
 
 #### Secure Token Storage
+
 ```typescript
 // utils/secureStorage.ts
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 export const TokenManager = {
   async getToken() {
-    return await SecureStore.getItemAsync('authToken');
+    return await SecureStore.getItemAsync("authToken");
   },
-  
+
   async setToken(token: string) {
-    await SecureStore.setItemAsync('authToken', token);
+    await SecureStore.setItemAsync("authToken", token);
   },
-  
+
   async removeToken() {
-    await SecureStore.deleteItemAsync('authToken');
-  }
+    await SecureStore.deleteItemAsync("authToken");
+  },
 };
 ```
 
 #### Auto-logout on 401
+
 ```typescript
 // In API interceptor
 if (response.status === 401) {
   await TokenManager.removeToken();
-  router.replace('/sign-in');
+  router.replace("/sign-in");
 }
 ```
 
@@ -269,14 +282,14 @@ if (response.status === 401) {
 
 ```typescript
 // For development - persist navigation state
-import { useNavigationContainerRef } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigationContainerRef } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const NAVIGATION_STATE_KEY = 'NAVIGATION_STATE';
+const NAVIGATION_STATE_KEY = "NAVIGATION_STATE";
 
 export function useNavigationPersistence() {
   const navigationRef = useNavigationContainerRef();
-  
+
   // Save state on change
   React.useEffect(() => {
     const state = navigationRef.current?.getRootState();
@@ -290,11 +303,12 @@ export function useNavigationPersistence() {
 ### 8. Loading States & Transitions
 
 #### Splash Screen Management
+
 ```typescript
 // app/_layout.tsx
 export default function Root() {
   const [isReady, setIsReady] = useState(false);
-  
+
   useEffect(() => {
     async function prepare() {
       // Check auth state
@@ -307,9 +321,9 @@ export default function Root() {
     }
     prepare();
   }, []);
-  
+
   if (!isReady) return null;
-  
+
   return <RootNavigator />;
 }
 ```
@@ -319,24 +333,28 @@ export default function Root() {
 ## Implementation Priority
 
 ### Phase 1: Core Auth Infrastructure (Critical)
+
 1. Create auth context and hooks
 2. Add login/signup screens
 3. Implement protected routes in root layout
 4. Add secure token storage
 
 ### Phase 2: Route Restructuring (High)
+
 1. Create route groups structure
 2. Move existing screens to appropriate groups
 3. Add tab navigation for main app
 4. Implement proper back navigation
 
 ### Phase 3: Enhanced Features (Medium)
+
 1. Add profile and settings screens
 2. Implement modal presentations
 3. Add deep linking support
 4. Create onboarding flow
 
 ### Phase 4: Polish & UX (Low)
+
 1. Add loading transitions
 2. Implement navigation persistence
 3. Add gesture-based navigation
@@ -347,28 +365,33 @@ export default function Root() {
 ## Migration Steps
 
 ### Step 1: Create Auth Context
+
 ```bash
 mkdir -p contexts
 # Create contexts/auth.tsx with SessionProvider
 ```
 
 ### Step 2: Create Route Groups
+
 ```bash
 mkdir -p app/{auth,app}
 mkdir -p app/app/{tabs,modals}
 ```
 
 ### Step 3: Move Existing Screens
+
 - Move `app/index.tsx` → `app/(app)/(tabs)/(home)/index.tsx`
 - Keep `app/_layout.tsx` but add protection logic
 - Create new auth screens in `app/(auth)/`
 
 ### Step 4: Update Root Layout
+
 - Add SessionProvider wrapper
 - Implement Stack.Protected guards
 - Handle loading states
 
 ### Step 5: Test Auth Flow
+
 - Test login → redirect to app
 - Test logout → redirect to auth
 - Test back button behavior

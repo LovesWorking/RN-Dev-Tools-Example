@@ -154,22 +154,24 @@ function DataExplorer({
   const [dataVersion, setDataVersion] = useState(0);
   const prevDataRef = useRef(selectedQuery.state.data);
   const prevKeysRef = useRef<string>("");
-  
+
   useEffect(() => {
     const currentData = selectedQuery.state.data;
-    const currentKeys = currentData ? JSON.stringify(Object.keys(currentData)) : "";
+    const currentKeys = currentData
+      ? JSON.stringify(Object.keys(currentData))
+      : "";
     const prevKeys = prevKeysRef.current;
-    
+
     // Check both reference change and structural change
     if (prevDataRef.current !== currentData || prevKeys !== currentKeys) {
-      setDataVersion(v => v + 1);
+      setDataVersion((v) => v + 1);
       prevDataRef.current = currentData;
       prevKeysRef.current = currentKeys;
     }
   }, [selectedQuery.state.data]);
-  
+
   if (!visible) return null;
-  
+
   return (
     <View style={styles.dataContainer}>
       <Text style={styles.dataHeader}>Data Editor</Text>

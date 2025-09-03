@@ -8,101 +8,106 @@ title: Modal
 The main component for rendering modals in your React Native application.
 
 ```tsx
-import { Modal } from '@yourscope/react-native-pure-modal'
+import { Modal } from "@yourscope/react-native-pure-modal";
 ```
 
 ## Usage
 
-[//]: # 'Usage'
+[//]: # "Usage"
+
 ```tsx
 const MyComponent = () => {
-  const [visible, setVisible] = useState(false)
-  
+  const [visible, setVisible] = useState(false);
+
   return (
     <Modal
       visible={visible}
       onClose={() => setVisible(false)}
       mode="bottom-sheet"
-      snapPoints={['25%', '50%', '90%']}
+      snapPoints={["25%", "50%", "90%"]}
       theme={customTheme}
     >
       <YourContent />
     </Modal>
-  )
-}
+  );
+};
 ```
-[//]: # 'Usage'
+
+[//]: # "Usage"
 
 ## Props
 
 ```tsx
 interface ModalProps {
   // Core props
-  visible: boolean
-  onClose: () => void
-  children: React.ReactNode
-  
+  visible: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+
   // Mode configuration
-  mode?: 'standard' | 'bottom-sheet' | 'floating'
-  
+  mode?: "standard" | "bottom-sheet" | "floating";
+
   // Bottom sheet specific
-  snapPoints?: Array<number | string>
-  initialSnapIndex?: number
-  enablePanDownToClose?: boolean
-  enableOverDrag?: boolean
-  overDragResistanceFactor?: number
-  
+  snapPoints?: Array<number | string>;
+  initialSnapIndex?: number;
+  enablePanDownToClose?: boolean;
+  enableOverDrag?: boolean;
+  overDragResistanceFactor?: number;
+
   // Floating mode specific
-  draggable?: boolean
-  resizable?: boolean
-  initialPosition?: { x: number; y: number }
-  initialSize?: { width: number; height: number }
-  
+  draggable?: boolean;
+  resizable?: boolean;
+  initialPosition?: { x: number; y: number };
+  initialSize?: { width: number; height: number };
+
   // Appearance
-  theme?: ModalTheme
-  backdropOpacity?: number
-  customHeader?: React.ReactNode
-  showHandle?: boolean
-  
+  theme?: ModalTheme;
+  backdropOpacity?: number;
+  customHeader?: React.ReactNode;
+  showHandle?: boolean;
+
   // Behavior
-  animationType?: 'spring' | 'timing' | 'none'
-  animationConfig?: AnimationConfig
-  closeOnBackdropPress?: boolean
-  keyboardAvoidingEnabled?: boolean
-  
+  animationType?: "spring" | "timing" | "none";
+  animationConfig?: AnimationConfig;
+  closeOnBackdropPress?: boolean;
+  keyboardAvoidingEnabled?: boolean;
+
   // Persistence
-  persistenceKey?: string
-  enablePersistence?: boolean
-  storageAdapter?: StorageAdapter
-  
+  persistenceKey?: string;
+  enablePersistence?: boolean;
+  storageAdapter?: StorageAdapter;
+
   // Accessibility
-  accessible?: boolean
-  accessibilityLabel?: string
-  accessibilityHint?: string
-  accessibilityRole?: AccessibilityRole
-  
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: AccessibilityRole;
+
   // Callbacks
-  onOpen?: () => void
-  onSnapPointChange?: (index: number) => void
-  onModalStateChange?: (state: ModalState) => void
-  onDragStart?: () => void
-  onDragEnd?: (position: number) => void
+  onOpen?: () => void;
+  onSnapPointChange?: (index: number) => void;
+  onModalStateChange?: (state: ModalState) => void;
+  onDragStart?: () => void;
+  onDragEnd?: (position: number) => void;
 }
 ```
 
 ## Core Props
 
 ### `visible`
+
 - **Type:** `boolean`
 - **Required:** Yes
 - **Description:** Controls the visibility of the modal
 
 ### `onClose`
+
 - **Type:** `() => void`
 - **Required:** Yes
 - **Description:** Callback function called when the modal should close
 
 ### `children`
+
 - **Type:** `React.ReactNode`
 - **Required:** Yes
 - **Description:** The content to display inside the modal
@@ -110,6 +115,7 @@ interface ModalProps {
 ## Mode Configuration
 
 ### `mode`
+
 - **Type:** `'standard' | 'bottom-sheet' | 'floating'`
 - **Default:** `'standard'`
 - **Description:** Determines the modal presentation style
@@ -120,6 +126,7 @@ interface ModalProps {
 ## Bottom Sheet Props
 
 ### `snapPoints`
+
 - **Type:** `Array<number | string>`
 - **Default:** `['50%']`
 - **Description:** Defines the heights where the bottom sheet can snap to
@@ -128,21 +135,25 @@ interface ModalProps {
   - Example: `[200, '50%', '90%']`
 
 ### `initialSnapIndex`
+
 - **Type:** `number`
 - **Default:** `0`
 - **Description:** The initial snap point index when the modal opens
 
 ### `enablePanDownToClose`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Allow closing the modal by dragging down past the lowest snap point
 
 ### `enableOverDrag`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Enable resistance when dragging beyond boundaries
 
 ### `overDragResistanceFactor`
+
 - **Type:** `number`
 - **Default:** `2.5`
 - **Description:** Controls the resistance strength when over-dragging
@@ -150,21 +161,25 @@ interface ModalProps {
 ## Floating Mode Props
 
 ### `draggable`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Allow dragging the floating modal around the screen
 
 ### `resizable`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Enable corner handles for resizing the floating modal
 
 ### `initialPosition`
+
 - **Type:** `{ x: number; y: number }`
 - **Default:** Center of screen
 - **Description:** Starting position for floating modal
 
 ### `initialSize`
+
 - **Type:** `{ width: number; height: number }`
 - **Default:** `{ width: 380, height: 500 }`
 - **Description:** Initial dimensions for floating modal
@@ -172,52 +187,56 @@ interface ModalProps {
 ## Appearance Props
 
 ### `theme`
+
 - **Type:** `ModalTheme`
 - **Description:** Custom theme configuration
-  
+
 ```tsx
 interface ModalTheme {
   colors: {
-    background: string
-    surface: string
-    text: string
-    backdrop: string
-    handle: string
-    border: string
-    primary: string
-    error: string
-  }
+    background: string;
+    surface: string;
+    text: string;
+    backdrop: string;
+    handle: string;
+    border: string;
+    primary: string;
+    error: string;
+  };
   spacing: {
-    xs: number
-    sm: number
-    md: number
-    lg: number
-    xl: number
-  }
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+  };
   radii: {
-    sm: number
-    md: number
-    lg: number
-  }
+    sm: number;
+    md: number;
+    lg: number;
+  };
   shadows: {
-    sm: ShadowStyle
-    md: ShadowStyle
-    lg: ShadowStyle
-  }
+    sm: ShadowStyle;
+    md: ShadowStyle;
+    lg: ShadowStyle;
+  };
 }
 ```
 
 ### `backdropOpacity`
+
 - **Type:** `number`
 - **Default:** `0.5`
 - **Description:** Opacity of the backdrop overlay (0-1)
 
 ### `customHeader`
+
 - **Type:** `React.ReactNode`
 - **Default:** `undefined`
 - **Description:** Custom header component to replace the default header
 
 ### `showHandle`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Show the drag handle indicator
@@ -225,36 +244,40 @@ interface ModalTheme {
 ## Behavior Props
 
 ### `animationType`
+
 - **Type:** `'spring' | 'timing' | 'none'`
 - **Default:** Platform-specific (spring on iOS, timing on Android)
 - **Description:** Type of animation to use for modal transitions
 
 ### `animationConfig`
+
 - **Type:** `AnimationConfig`
 - **Description:** Custom animation configuration
 
 ```tsx
 interface AnimationConfig {
   // For spring animations
-  tension?: number
-  friction?: number
-  velocity?: number
-  
+  tension?: number;
+  friction?: number;
+  velocity?: number;
+
   // For timing animations
-  duration?: number
-  easing?: (value: number) => number
-  
+  duration?: number;
+  easing?: (value: number) => number;
+
   // Shared
-  useNativeDriver?: boolean
+  useNativeDriver?: boolean;
 }
 ```
 
 ### `closeOnBackdropPress`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Close modal when backdrop is pressed
 
 ### `keyboardAvoidingEnabled`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Automatically adjust modal position when keyboard appears
@@ -262,43 +285,50 @@ interface AnimationConfig {
 ## Persistence Props
 
 ### `persistenceKey`
+
 - **Type:** `string`
 - **Description:** Unique key for storing modal state
 
 ### `enablePersistence`
+
 - **Type:** `boolean`
 - **Default:** `false`
 - **Description:** Enable state persistence between app sessions
 
 ### `storageAdapter`
+
 - **Type:** `StorageAdapter`
 - **Default:** `AsyncStorage`
 - **Description:** Custom storage implementation
 
 ```tsx
 interface StorageAdapter {
-  getItem: (key: string) => Promise<string | null>
-  setItem: (key: string, value: string) => Promise<void>
-  removeItem: (key: string) => Promise<void>
+  getItem: (key: string) => Promise<string | null>;
+  setItem: (key: string, value: string) => Promise<void>;
+  removeItem: (key: string) => Promise<void>;
 }
 ```
 
 ## Accessibility Props
 
 ### `accessible`
+
 - **Type:** `boolean`
 - **Default:** `true`
 - **Description:** Enable accessibility features
 
 ### `accessibilityLabel`
+
 - **Type:** `string`
 - **Description:** Label for screen readers
 
 ### `accessibilityHint`
+
 - **Type:** `string`
 - **Description:** Hint text for screen readers
 
 ### `accessibilityRole`
+
 - **Type:** `AccessibilityRole`
 - **Default:** `'dialog'`
 - **Description:** Semantic role for accessibility
@@ -306,26 +336,31 @@ interface StorageAdapter {
 ## Callback Props
 
 ### `onOpen`
+
 - **Type:** `() => void`
 - **Description:** Called when the modal finishes opening animation
 
 ### `onSnapPointChange`
+
 - **Type:** `(index: number) => void`
 - **Description:** Called when the bottom sheet snaps to a new point
 
 ### `onModalStateChange`
+
 - **Type:** `(state: ModalState) => void`
 - **Description:** Called when modal state changes
 
 ```tsx
-type ModalState = 'closed' | 'opening' | 'open' | 'closing'
+type ModalState = "closed" | "opening" | "open" | "closing";
 ```
 
 ### `onDragStart`
+
 - **Type:** `() => void`
 - **Description:** Called when user starts dragging the modal
 
 ### `onDragEnd`
+
 - **Type:** `(position: number) => void`
 - **Description:** Called when dragging ends with final position
 
@@ -333,40 +368,42 @@ type ModalState = 'closed' | 'opening' | 'open' | 'closing'
 
 ### Basic Modal
 
-[//]: # 'BasicModal'
+[//]: # "BasicModal"
+
 ```tsx
-<Modal
-  visible={visible}
-  onClose={handleClose}
->
+<Modal visible={visible} onClose={handleClose}>
   <Text>Simple modal content</Text>
 </Modal>
 ```
-[//]: # 'BasicModal'
+
+[//]: # "BasicModal"
 
 ### Bottom Sheet with Multiple Snap Points
 
-[//]: # 'BottomSheet'
+[//]: # "BottomSheet"
+
 ```tsx
 <Modal
   visible={visible}
   onClose={handleClose}
   mode="bottom-sheet"
-  snapPoints={[100, '50%', '90%']}
+  snapPoints={[100, "50%", "90%"]}
   initialSnapIndex={1}
   enablePanDownToClose
-  onSnapPointChange={(index) => console.log('Snapped to:', index)}
+  onSnapPointChange={(index) => console.log("Snapped to:", index)}
 >
   <ScrollView>
     <Content />
   </ScrollView>
 </Modal>
 ```
-[//]: # 'BottomSheet'
+
+[//]: # "BottomSheet"
 
 ### Floating Modal with Custom Position
 
-[//]: # 'FloatingModal'
+[//]: # "FloatingModal"
+
 ```tsx
 <Modal
   visible={visible}
@@ -380,11 +417,13 @@ type ModalState = 'closed' | 'opening' | 'open' | 'closing'
   <WindowContent />
 </Modal>
 ```
-[//]: # 'FloatingModal'
+
+[//]: # "FloatingModal"
 
 ### Themed Modal
 
-[//]: # 'ThemedModal'
+[//]: # "ThemedModal"
+
 ```tsx
 const darkTheme = {
   colors: {
@@ -420,38 +459,44 @@ const darkTheme = {
   <ThemedContent />
 </Modal>
 ```
-[//]: # 'ThemedModal'
+
+[//]: # "ThemedModal"
 
 ### Persistent Modal
 
-[//]: # 'PersistentModal'
+[//]: # "PersistentModal"
+
 ```tsx
 <Modal
   visible={visible}
   onClose={handleClose}
   mode="bottom-sheet"
-  snapPoints={['25%', '50%', '90%']}
+  snapPoints={["25%", "50%", "90%"]}
   persistenceKey="user-settings-modal"
   enablePersistence
 >
   <SettingsPanel />
 </Modal>
 ```
-[//]: # 'PersistentModal'
+
+[//]: # "PersistentModal"
 
 ## Platform Differences
 
 ### iOS
+
 - Uses spring animations by default
 - Supports interactive keyboard dismissal
 - Respects safe area insets automatically
 
 ### Android
+
 - Uses timing animations by default
 - Hardware acceleration enabled
 - Elevation used for shadows
 
 ### Web (Experimental)
+
 - CSS transitions for animations
 - Mouse events for dragging
 - Keyboard navigation support
@@ -466,16 +511,19 @@ const darkTheme = {
 ## Troubleshooting
 
 ### Modal doesn't appear
+
 - Ensure `visible` prop is `true`
 - Check if modal is rendered within app hierarchy
 - Verify no conflicting `zIndex` styles
 
 ### Gestures not working
+
 - Check if gesture handlers are enabled
 - Ensure no parent components are intercepting touches
 - Verify `PanResponder` is not conflicting
 
 ### Performance issues
+
 - Profile with React DevTools
 - Check for unnecessary re-renders
 - Ensure animations use native driver

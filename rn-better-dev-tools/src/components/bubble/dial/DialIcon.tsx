@@ -44,7 +44,6 @@ export const DialIcon: React.FC<Props> = ({
   const finalX = radius * Math.cos(angle);
   const finalY = radius * Math.sin(angle);
 
-
   // Hover animation on press in/out
   const handlePressIn = () => {
     Animated.spring(scale, {
@@ -94,12 +93,12 @@ export const DialIcon: React.FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.cos(angle), Math.cos(angle + Math.PI * 2)],
-      })
+      }),
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalX - radius * Math.cos(angle + Math.PI * 2)],
-    })
+    }),
   );
 
   const translateY = Animated.add(
@@ -108,12 +107,12 @@ export const DialIcon: React.FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.sin(angle), Math.sin(angle + Math.PI * 2)],
-      })
+      }),
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalY - radius * Math.sin(angle + Math.PI * 2)],
-    })
+    }),
   );
 
   // Opacity animation
@@ -138,10 +137,9 @@ export const DialIcon: React.FC<Props> = ({
     ],
   };
 
-
   // Check if this is an empty spot
   const isEmpty = icon.icon === null;
-  
+
   return (
     <Animated.View style={[styles.view, animatedStyle]}>
       {isEmpty ? (
@@ -157,30 +155,30 @@ export const DialIcon: React.FC<Props> = ({
           style={styles.pressable}
         >
           {/* Gradient background layers for depth */}
-          <View style={[
-            styles.iconGradientBg,
-            {
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
-            }
-          ]} />
-          
+          <View
+            style={[
+              styles.iconGradientBg,
+              {
+                backgroundColor: "rgba(0, 0, 0, 0.2)",
+              },
+            ]}
+          />
+
           {/* Inner glow effect */}
-          <View style={[
-            styles.iconInnerGlow,
-            {
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-            }
-          ]} />
+          <View
+            style={[
+              styles.iconInnerGlow,
+              {
+                backgroundColor: "rgba(255, 255, 255, 0.02)",
+              },
+            ]}
+          />
 
           {/* Icon */}
-          <View style={styles.iconWrapper}>
-            {icon.icon}
-          </View>
+          <View style={styles.iconWrapper}>{icon.icon}</View>
 
           {/* Label */}
-          <Text style={styles.label}>
-            {icon.name.toUpperCase()}
-          </Text>
+          <Text style={styles.label}>{icon.name.toUpperCase()}</Text>
         </Pressable>
       )}
     </Animated.View>

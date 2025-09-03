@@ -32,7 +32,7 @@ function Navigation({ onBack, onClose, backIcon, closeIcon }: NavigationProps) {
       </>
     );
   }
-  
+
   // When only showing back button
   if (onBack && !onClose) {
     return (
@@ -41,7 +41,7 @@ function Navigation({ onBack, onClose, backIcon, closeIcon }: NavigationProps) {
       </TouchableOpacity>
     );
   }
-  
+
   // When showing both, we need to handle them separately
   // The close button will be rendered separately on the right
   if (onBack && onClose) {
@@ -51,7 +51,7 @@ function Navigation({ onBack, onClose, backIcon, closeIcon }: NavigationProps) {
       </TouchableOpacity>
     );
   }
-  
+
   return null;
 }
 
@@ -64,20 +64,43 @@ interface ContentProps {
   noMargin?: boolean;
 }
 
-function Content({ title, subtitle, children, centered, noMargin }: ContentProps) {
+function Content({
+  title,
+  subtitle,
+  children,
+  centered,
+  noMargin,
+}: ContentProps) {
   if (children) {
-    return <View style={[styles.headerContent, noMargin && styles.headerContentNoMargin]}>{children}</View>;
+    return (
+      <View
+        style={[styles.headerContent, noMargin && styles.headerContentNoMargin]}
+      >
+        {children}
+      </View>
+    );
   }
-  
+
   return (
-    <View style={[styles.headerContent, centered && styles.headerContentCentered]}>
+    <View
+      style={[styles.headerContent, centered && styles.headerContentCentered]}
+    >
       {title && (
-        <Text style={[styles.headerTitle, centered && styles.headerTitleCentered]} numberOfLines={1}>
+        <Text
+          style={[styles.headerTitle, centered && styles.headerTitleCentered]}
+          numberOfLines={1}
+        >
           {title}
         </Text>
       )}
       {subtitle && (
-        <Text style={[styles.headerSubtitle, centered && styles.headerSubtitleCentered]} numberOfLines={1}>
+        <Text
+          style={[
+            styles.headerSubtitle,
+            centered && styles.headerSubtitleCentered,
+          ]}
+          numberOfLines={1}
+        >
           {subtitle}
         </Text>
       )}

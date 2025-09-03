@@ -7,11 +7,11 @@ import {
   ViewStyle,
   TextStyle,
 } from "react-native";
-import { 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle, 
-  Clock, 
+import {
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Clock,
   Info,
   LucideIcon,
 } from "rn-better-dev-tools/icons";
@@ -31,12 +31,15 @@ interface StatusIndicatorProps {
   variant?: "dot" | "icon" | "badge" | "text";
 }
 
-const statusConfig: Record<StatusType, {
-  color: string;
-  icon: LucideIcon;
-  label: string;
-  bgColor: string;
-}> = {
+const statusConfig: Record<
+  StatusType,
+  {
+    color: string;
+    icon: LucideIcon;
+    label: string;
+    bgColor: string;
+  }
+> = {
   success: {
     color: gameUIColors.success,
     icon: CheckCircle,
@@ -82,7 +85,7 @@ export function StatusIndicator({
 }: StatusIndicatorProps) {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const config = statusConfig[status];
-  
+
   const sizeConfig = {
     small: { iconSize: 12, fontSize: 10, dotSize: 6, padding: 4 },
     medium: { iconSize: 16, fontSize: 12, dotSize: 8, padding: 6 },
@@ -107,7 +110,7 @@ export function StatusIndicator({
             duration: 600,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       );
       animation.start();
       return () => animation.stop();
@@ -123,7 +126,8 @@ export function StatusIndicator({
             width: sizes.dotSize,
             height: sizes.dotSize,
             backgroundColor: config.color,
-            transform: animated && status === "pending" ? [{ scale: pulseAnim }] : [],
+            transform:
+              animated && status === "pending" ? [{ scale: pulseAnim }] : [],
           },
           style,
         ]}
@@ -133,11 +137,13 @@ export function StatusIndicator({
 
   if (variant === "text") {
     return (
-      <Text style={[
-        styles.text,
-        { color: config.color, fontSize: sizes.fontSize },
-        labelStyle,
-      ]}>
+      <Text
+        style={[
+          styles.text,
+          { color: config.color, fontSize: sizes.fontSize },
+          labelStyle,
+        ]}
+      >
         {displayLabel}
       </Text>
     );
@@ -145,25 +151,27 @@ export function StatusIndicator({
 
   if (variant === "badge") {
     return (
-      <View style={[
-        styles.badge,
-        { 
-          backgroundColor: config.bgColor,
-          paddingHorizontal: sizes.padding,
-          paddingVertical: sizes.padding / 2,
-        },
-        style,
-      ]}>
-        {showIcon && (
-          <Icon size={sizes.iconSize} color={config.color} />
-        )}
+      <View
+        style={[
+          styles.badge,
+          {
+            backgroundColor: config.bgColor,
+            paddingHorizontal: sizes.padding,
+            paddingVertical: sizes.padding / 2,
+          },
+          style,
+        ]}
+      >
+        {showIcon && <Icon size={sizes.iconSize} color={config.color} />}
         {showLabel && (
-          <Text style={[
-            styles.badgeLabel,
-            { color: config.color, fontSize: sizes.fontSize },
-            !showIcon && { marginLeft: 0 },
-            labelStyle,
-          ]}>
+          <Text
+            style={[
+              styles.badgeLabel,
+              { color: config.color, fontSize: sizes.fontSize },
+              !showIcon && { marginLeft: 0 },
+              labelStyle,
+            ]}
+          >
             {displayLabel}
           </Text>
         )}
@@ -177,18 +185,21 @@ export function StatusIndicator({
       style={[
         styles.iconContainer,
         {
-          transform: animated && status === "pending" ? [{ scale: pulseAnim }] : [],
+          transform:
+            animated && status === "pending" ? [{ scale: pulseAnim }] : [],
         },
         style,
       ]}
     >
       <Icon size={sizes.iconSize} color={config.color} />
       {showLabel && (
-        <Text style={[
-          styles.label,
-          { color: config.color, fontSize: sizes.fontSize },
-          labelStyle,
-        ]}>
+        <Text
+          style={[
+            styles.label,
+            { color: config.color, fontSize: sizes.fontSize },
+            labelStyle,
+          ]}
+        >
           {displayLabel}
         </Text>
       )}
@@ -203,18 +214,23 @@ interface StatusDotProps {
   style?: ViewStyle;
 }
 
-StatusIndicator.Dot = function StatusDot({ 
-  status, 
-  size = 8, 
+StatusIndicator.Dot = function StatusDot({
+  status,
+  size = 8,
   animated = false,
-  style 
+  style,
 }: StatusDotProps) {
   return (
     <StatusIndicator
       status={status}
       variant="dot"
       animated={animated}
-      style={{ width: size, height: size, borderRadius: size / 2, ...(style as any) }}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        ...(style as any),
+      }}
     />
   );
 };

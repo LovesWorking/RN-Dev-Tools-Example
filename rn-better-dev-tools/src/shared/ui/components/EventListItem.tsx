@@ -21,7 +21,11 @@ interface EventListItemContextValue {
 
 const EventListItemContext = React.createContext<EventListItemContextValue>({});
 
-export function EventListItem({ children, style, ...props }: EventListItemProps) {
+export function EventListItem({
+  children,
+  style,
+  ...props
+}: EventListItemProps) {
   return (
     <TouchableOpacity
       style={[styles.container, style]}
@@ -40,7 +44,10 @@ interface StatusProps {
   size?: "small" | "medium" | "large";
 }
 
-EventListItem.Status = function Status({ status, size = "small" }: StatusProps) {
+EventListItem.Status = function Status({
+  status,
+  size = "small",
+}: StatusProps) {
   const colors = {
     success: gameUIColors.success,
     error: gameUIColors.error,
@@ -87,16 +94,13 @@ interface TitleProps {
   style?: TextStyle;
 }
 
-EventListItem.Title = function Title({ 
-  children, 
-  numberOfLines = 1, 
-  style 
+EventListItem.Title = function Title({
+  children,
+  numberOfLines = 1,
+  style,
 }: TitleProps) {
   return (
-    <Text 
-      style={[styles.title, style]} 
-      numberOfLines={numberOfLines}
-    >
+    <Text style={[styles.title, style]} numberOfLines={numberOfLines}>
       {children}
     </Text>
   );
@@ -108,16 +112,13 @@ interface DescriptionProps {
   style?: TextStyle;
 }
 
-EventListItem.Description = function Description({ 
-  children, 
+EventListItem.Description = function Description({
+  children,
   numberOfLines = 2,
-  style 
+  style,
 }: DescriptionProps) {
   return (
-    <Text 
-      style={[styles.description, style]}
-      numberOfLines={numberOfLines}
-    >
+    <Text style={[styles.description, style]} numberOfLines={numberOfLines}>
       {children}
     </Text>
   );
@@ -138,26 +139,26 @@ interface TimestampProps {
   style?: TextStyle;
 }
 
-EventListItem.Timestamp = function Timestamp({ 
-  time, 
+EventListItem.Timestamp = function Timestamp({
+  time,
   format = "relative",
-  style 
+  style,
 }: TimestampProps) {
   const formatTime = () => {
     if (format === "duration" && typeof time === "number") {
       return `${time}ms`;
     }
-    
+
     const date = new Date(time);
     if (format === "absolute") {
       return date.toLocaleTimeString();
     }
-    
+
     // Relative time
     const now = Date.now();
     const diff = now - date.getTime();
     const seconds = Math.floor(diff / 1000);
-    
+
     if (seconds < 60) return "just now";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
@@ -167,11 +168,7 @@ EventListItem.Timestamp = function Timestamp({
     return `${days}d ago`;
   };
 
-  return (
-    <Text style={[styles.timestamp, style]}>
-      {formatTime()}
-    </Text>
-  );
+  return <Text style={[styles.timestamp, style]}>{formatTime()}</Text>;
 };
 
 interface SizeProps {
@@ -190,11 +187,7 @@ EventListItem.Size = function Size({ bytes, style }: SizeProps) {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   };
 
-  return (
-    <Text style={[styles.size, style]}>
-      {formatBytes(bytes)}
-    </Text>
-  );
+  return <Text style={[styles.size, style]}>{formatBytes(bytes)}</Text>;
 };
 
 interface BadgeProps {
@@ -205,12 +198,8 @@ interface BadgeProps {
 
 EventListItem.Badge = function Badge({ children, color, style }: BadgeProps) {
   return (
-    <View 
-      style={[
-        styles.badge, 
-        color ? { backgroundColor: color } : {},
-        style
-      ]}
+    <View
+      style={[styles.badge, color ? { backgroundColor: color } : {}, style]}
     >
       {typeof children === "string" ? (
         <Text style={styles.badgeText}>{children}</Text>

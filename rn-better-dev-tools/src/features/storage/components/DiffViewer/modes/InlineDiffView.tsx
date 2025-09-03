@@ -1,9 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { gameUIColors } from '@/rn-better-dev-tools/src/shared/ui/gameUI';
-import { Plus, Minus, Edit3, ChevronDown, ChevronRight } from 'rn-better-dev-tools/icons';
-import { DataViewer } from '../../../../react-query/components/shared/DataViewer';
-import type { DiffItem } from '../../../utils/objectDiff';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import {
+  Plus,
+  Minus,
+  Edit3,
+  ChevronDown,
+  ChevronRight,
+} from "rn-better-dev-tools/icons";
+import { DataViewer } from "../../../../react-query/components/shared/DataViewer";
+import type { DiffItem } from "../../../utils/objectDiff";
 
 interface InlineDiffViewProps {
   oldValue: any;
@@ -12,11 +24,16 @@ interface InlineDiffViewProps {
   debugMode?: boolean;
 }
 
-export function InlineDiffView({ oldValue, newValue, differences, debugMode }: InlineDiffViewProps) {
+export function InlineDiffView({
+  oldValue,
+  newValue,
+  differences,
+  debugMode,
+}: InlineDiffViewProps) {
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
 
   const togglePath = (path: string) => {
-    setExpandedPaths(prev => {
+    setExpandedPaths((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(path)) {
         newSet.delete(path);
@@ -28,22 +45,24 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
   };
 
   const formatPath = (path: (string | number)[]): string => {
-    if (path.length === 0) return 'root';
-    return path.map((segment, index) => {
-      if (typeof segment === 'number') {
-        return `[${segment}]`;
-      }
-      return index === 0 ? segment : `.${segment}`;
-    }).join('');
+    if (path.length === 0) return "root";
+    return path
+      .map((segment, index) => {
+        if (typeof segment === "number") {
+          return `[${segment}]`;
+        }
+        return index === 0 ? segment : `.${segment}`;
+      })
+      .join("");
   };
 
   const getDiffIcon = (type: string) => {
     switch (type) {
-      case 'CREATE':
+      case "CREATE":
         return <Plus size={11} color={gameUIColors.success} />;
-      case 'REMOVE':
+      case "REMOVE":
         return <Minus size={11} color={gameUIColors.error} />;
-      case 'CHANGE':
+      case "CHANGE":
         return <Edit3 size={11} color={gameUIColors.warning} />;
       default:
         return null;
@@ -52,25 +71,32 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
 
   const getDiffColor = (type: string) => {
     switch (type) {
-      case 'CREATE': return gameUIColors.success;
-      case 'REMOVE': return gameUIColors.error;
-      case 'CHANGE': return gameUIColors.warning;
-      default: return gameUIColors.muted;
+      case "CREATE":
+        return gameUIColors.success;
+      case "REMOVE":
+        return gameUIColors.error;
+      case "CHANGE":
+        return gameUIColors.warning;
+      default:
+        return gameUIColors.muted;
     }
   };
 
   // Group differences by parent path for inline display
-  const groupedDiffs = differences.reduce((acc, diff) => {
-    const pathStr = formatPath(diff.path);
-    acc[pathStr] = diff;
-    return acc;
-  }, {} as Record<string, DiffItem>);
+  const groupedDiffs = differences.reduce(
+    (acc, diff) => {
+      const pathStr = formatPath(diff.path);
+      acc[pathStr] = diff;
+      return acc;
+    },
+    {} as Record<string, DiffItem>,
+  );
 
   return (
     <View style={[styles.container, debugMode && styles.debugInline]}>
       {debugMode && <Text style={styles.debugLabel}>INLINE MODE</Text>}
-      
-      <ScrollView 
+
+      <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
@@ -95,7 +121,7 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
           <Text style={styles.sectionTitle}>Change Details</Text>
           {Object.entries(groupedDiffs).map(([pathStr, diff]) => {
             const isExpanded = expandedPaths.has(pathStr);
-            
+
             return (
               <View key={pathStr} style={styles.changeItem}>
                 <TouchableOpacity
@@ -104,27 +130,43 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
                   activeOpacity={0.7}
                 >
                   <View style={styles.headerContent}>
-                    {isExpanded ? 
-                      <ChevronDown size={12} color={gameUIColors.muted} /> :
+                    {isExpanded ? (
+                      <ChevronDown size={12} color={gameUIColors.muted} />
+                    ) : (
                       <ChevronRight size={12} color={gameUIColors.muted} />
-                    }
+                    )}
                     {getDiffIcon(diff.type)}
                     <Text style={styles.path}>{pathStr}</Text>
                   </View>
-                  <View style={[styles.badge, { backgroundColor: getDiffColor(diff.type) + '15' }]}>
-                    <Text style={[styles.badgeText, { color: getDiffColor(diff.type) }]}>
-                      {diff.type === 'CREATE' ? 'NEW' : diff.type === 'REMOVE' ? 'DEL' : 'CHG'}
+                  <View
+                    style={[
+                      styles.badge,
+                      { backgroundColor: getDiffColor(diff.type) + "15" },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.badgeText,
+                        { color: getDiffColor(diff.type) },
+                      ]}
+                    >
+                      {diff.type === "CREATE"
+                        ? "NEW"
+                        : diff.type === "REMOVE"
+                          ? "DEL"
+                          : "CHG"}
                     </Text>
                   </View>
                 </TouchableOpacity>
 
                 {isExpanded && (
                   <View style={styles.expandedContent}>
-                    {diff.type === 'CHANGE' && (
+                    {diff.type === "CHANGE" && (
                       <>
                         <Text style={styles.valueLabel}>PREV:</Text>
                         <View style={styles.valueContainer}>
-                          {typeof diff.oldValue === 'object' && diff.oldValue !== null ? (
+                          {typeof diff.oldValue === "object" &&
+                          diff.oldValue !== null ? (
                             <DataViewer
                               title=""
                               data={diff.oldValue}
@@ -139,9 +181,12 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
                             </Text>
                           )}
                         </View>
-                        <Text style={[styles.valueLabel, { marginTop: 8 }]}>CUR:</Text>
+                        <Text style={[styles.valueLabel, { marginTop: 8 }]}>
+                          CUR:
+                        </Text>
                         <View style={styles.valueContainer}>
-                          {typeof diff.value === 'object' && diff.value !== null ? (
+                          {typeof diff.value === "object" &&
+                          diff.value !== null ? (
                             <DataViewer
                               title=""
                               data={diff.value}
@@ -158,11 +203,19 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
                         </View>
                       </>
                     )}
-                    {diff.type === 'CREATE' && (
+                    {diff.type === "CREATE" && (
                       <>
-                        <Text style={[styles.valueLabel, { color: gameUIColors.success }]}>ADDED:</Text>
+                        <Text
+                          style={[
+                            styles.valueLabel,
+                            { color: gameUIColors.success },
+                          ]}
+                        >
+                          ADDED:
+                        </Text>
                         <View style={styles.valueContainer}>
-                          {typeof diff.value === 'object' && diff.value !== null ? (
+                          {typeof diff.value === "object" &&
+                          diff.value !== null ? (
                             <DataViewer
                               title=""
                               data={diff.value}
@@ -179,11 +232,19 @@ export function InlineDiffView({ oldValue, newValue, differences, debugMode }: I
                         </View>
                       </>
                     )}
-                    {diff.type === 'REMOVE' && (
+                    {diff.type === "REMOVE" && (
                       <>
-                        <Text style={[styles.valueLabel, { color: gameUIColors.error }]}>REMOVED:</Text>
+                        <Text
+                          style={[
+                            styles.valueLabel,
+                            { color: gameUIColors.error },
+                          ]}
+                        >
+                          REMOVED:
+                        </Text>
                         <View style={styles.valueContainer}>
-                          {typeof diff.oldValue === 'object' && diff.oldValue !== null ? (
+                          {typeof diff.oldValue === "object" &&
+                          diff.oldValue !== null ? (
                             <DataViewer
                               title=""
                               data={diff.oldValue}
@@ -216,22 +277,22 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   debugInline: {
-    backgroundColor: 'rgba(255, 0, 255, 0.1)',
+    backgroundColor: "rgba(255, 0, 255, 0.1)",
     borderWidth: 2,
-    borderColor: 'magenta',
+    borderColor: "magenta",
   },
   debugLabel: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
-    backgroundColor: 'magenta',
-    color: 'white',
+    backgroundColor: "magenta",
+    color: "white",
     fontSize: 10,
     padding: 2,
     zIndex: 999,
   },
   scrollContainer: {
-    backgroundColor: gameUIColors.panel + '30',
+    backgroundColor: gameUIColors.panel + "30",
     borderRadius: 6,
     padding: 8,
   },
@@ -239,22 +300,22 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + '20',
+    borderBottomColor: gameUIColors.border + "20",
   },
   changesSection: {
     gap: 4,
   },
   sectionTitle: {
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: "700",
     color: gameUIColors.info,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     letterSpacing: 0.5,
     marginBottom: 8,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   dataContainer: {
-    backgroundColor: gameUIColors.background + '40',
+    backgroundColor: gameUIColors.background + "40",
     borderRadius: 4,
     padding: 8,
   },
@@ -262,24 +323,24 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   changeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: gameUIColors.background + '40',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: gameUIColors.background + "40",
     borderRadius: 4,
     paddingVertical: 6,
     paddingHorizontal: 8,
   },
   headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     flex: 1,
   },
   path: {
     fontSize: 11,
     color: gameUIColors.primaryLight,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     flex: 1,
   },
   badge: {
@@ -289,23 +350,23 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 8,
-    fontWeight: '700',
-    fontFamily: 'monospace',
+    fontWeight: "700",
+    fontFamily: "monospace",
   },
   expandedContent: {
     marginTop: 4,
     marginLeft: 24,
     padding: 8,
-    backgroundColor: gameUIColors.background + '20',
+    backgroundColor: gameUIColors.background + "20",
     borderRadius: 4,
     borderLeftWidth: 2,
-    borderLeftColor: gameUIColors.border + '30',
+    borderLeftColor: gameUIColors.border + "30",
   },
   valueLabel: {
     fontSize: 9,
     color: gameUIColors.secondary,
-    fontFamily: 'monospace',
-    fontWeight: '700',
+    fontFamily: "monospace",
+    fontWeight: "700",
     marginBottom: 4,
   },
   valueContainer: {
@@ -314,6 +375,6 @@ const styles = StyleSheet.create({
   primitiveValue: {
     fontSize: 10,
     color: gameUIColors.primary,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
 });

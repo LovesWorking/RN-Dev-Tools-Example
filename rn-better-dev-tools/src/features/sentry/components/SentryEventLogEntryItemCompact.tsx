@@ -44,10 +44,7 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
 
         {/* Middle section: Message only */}
         <View style={styles.middleSection}>
-          <Text
-            style={styles.message}
-            numberOfLines={2}
-          >
+          <Text style={styles.message} numberOfLines={2}>
             {formatEventMessage(entry)}
           </Text>
         </View>
@@ -56,8 +53,8 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
         <View style={styles.rightSection}>
           <View style={styles.rightContent}>
             {entry.metadata.sentryEventType ? (
-              <TypeBadge 
-                type={String(entry.metadata.sentryEventType)} 
+              <TypeBadge
+                type={String(entry.metadata.sentryEventType)}
                 color={gameUIColors.storage}
                 size="small"
                 style={styles.badge}

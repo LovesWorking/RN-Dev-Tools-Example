@@ -523,7 +523,7 @@ const IconVariationsGallery: React.FC = () => {
           {lucideIconList.map(({ name, Component }) => (
             <View key={name} style={styles.lucideIconGroup}>
               <Text style={styles.lucideIconName}>{name}</Text>
-              
+
               {/* Color Variations */}
               <ScrollView
                 horizontal
@@ -535,7 +535,7 @@ const IconVariationsGallery: React.FC = () => {
                   <Component size={iconSize} color={gameUIColors.primary} />
                   <Text style={styles.iconLabel}>Primary</Text>
                 </View>
-                
+
                 {/* Game UI theme colors */}
                 {gameColors.slice(0, 6).map((theme) => (
                   <View key={`${name}-${theme.name}`} style={styles.iconCard}>
@@ -543,7 +543,7 @@ const IconVariationsGallery: React.FC = () => {
                     <Text style={styles.iconLabel}>{theme.name}</Text>
                   </View>
                 ))}
-                
+
                 {/* Neon colors */}
                 {neonColors.map((neon) => (
                   <View key={`${name}-${neon.name}`} style={styles.iconCard}>

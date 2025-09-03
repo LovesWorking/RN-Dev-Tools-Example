@@ -151,7 +151,7 @@ const PRESET_SHAPES: Record<string, ShapeStyle> = {
 
 export const UniversalShapeEditor = () => {
   const [shapeStyle, setShapeStyle] = useState<ShapeStyle>(
-    PRESET_SHAPES.circle
+    PRESET_SHAPES.circle,
   );
   const [transformValues, setTransformValues] = useState<TransformValues>({
     rotate: "0deg",
@@ -207,7 +207,7 @@ export const UniversalShapeEditor = () => {
         return updated;
       });
     },
-    []
+    [],
   );
 
   // Load preset
@@ -246,7 +246,7 @@ export const UniversalShapeEditor = () => {
           }
           return acc;
         },
-        {} as ShapeStyle
+        {} as ShapeStyle,
       );
 
       switch (format) {
@@ -259,7 +259,7 @@ export const UniversalShapeEditor = () => {
         case "inline":
           output = `style={${JSON.stringify(cleanStyle, null, 2).replace(
             /"([^"]+)":/g,
-            "$1:"
+            "$1:",
           )}}`;
           break;
 
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
       Clipboard.setString(output);
       Alert.alert("Copied!", `Style copied as ${format} format`);
     },
-    [shapeStyle]
+    [shapeStyle],
   );
 
   // Render control based on type
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     label: string,
     key: keyof ShapeStyle,
     type: "number" | "color" | "select" | "switch",
-    options?: any
+    options?: any,
   ) => {
     const value = shapeStyle[key];
 
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
                       const min = options.min || 0;
                       const newVal = Math.max(
                         min,
-                        current - (options.step || 1)
+                        current - (options.step || 1),
                       );
                       updateStyle(key, newVal);
                     }}
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
                       const max = options.max || 100;
                       const newVal = Math.min(
                         max,
-                        current + (options.step || 1)
+                        current + (options.step || 1),
                       );
                       updateStyle(key, newVal);
                     }}
@@ -551,13 +551,13 @@ const styles = StyleSheet.create({
                 "Bottom Left",
                 "borderBottomLeftRadius",
                 "number",
-                { slider: true, max: 100, step: 5 }
+                { slider: true, max: 100, step: 5 },
               )}
               {renderControl(
                 "Bottom Right",
                 "borderBottomRightRadius",
                 "number",
-                { slider: true, max: 100, step: 5 }
+                { slider: true, max: 100, step: 5 },
               )}
             </>
           )}
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
                     const current = parseFloat(transformValues.rotate) || 0;
                     updateTransform(
                       "rotate",
-                      `${Math.max(-180, current - 10)}deg`
+                      `${Math.max(-180, current - 10)}deg`,
                     );
                   }}
                 >
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
                     const current = parseFloat(transformValues.rotate) || 0;
                     updateTransform(
                       "rotate",
-                      `${Math.min(180, current + 10)}deg`
+                      `${Math.min(180, current + 10)}deg`,
                     );
                   }}
                 >
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "scaleX",
-                          Math.max(0, transformValues.scaleX - 0.1)
+                          Math.max(0, transformValues.scaleX - 0.1),
                         )
                       }
                     >
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "scaleX",
-                          Math.min(3, transformValues.scaleX + 0.1)
+                          Math.min(3, transformValues.scaleX + 0.1),
                         )
                       }
                     >
@@ -708,7 +708,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "scaleY",
-                          Math.max(0, transformValues.scaleY - 0.1)
+                          Math.max(0, transformValues.scaleY - 0.1),
                         )
                       }
                     >
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "scaleY",
-                          Math.min(3, transformValues.scaleY + 0.1)
+                          Math.min(3, transformValues.scaleY + 0.1),
                         )
                       }
                     >
@@ -750,7 +750,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "translateX",
-                          Math.max(-100, transformValues.translateX - 5)
+                          Math.max(-100, transformValues.translateX - 5),
                         )
                       }
                     >
@@ -764,7 +764,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "translateX",
-                          Math.min(100, transformValues.translateX + 5)
+                          Math.min(100, transformValues.translateX + 5),
                         )
                       }
                     >
@@ -792,7 +792,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "translateY",
-                          Math.max(-100, transformValues.translateY - 5)
+                          Math.max(-100, transformValues.translateY - 5),
                         )
                       }
                     >
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
                       onPress={() =>
                         updateTransform(
                           "translateY",
-                          Math.min(100, transformValues.translateY + 5)
+                          Math.min(100, transformValues.translateY + 5),
                         )
                       }
                     >
@@ -897,7 +897,7 @@ const styles = StyleSheet.create({
               "select",
               {
                 values: ["visible", "hidden"],
-              }
+              },
             )}
           </View>
         )}

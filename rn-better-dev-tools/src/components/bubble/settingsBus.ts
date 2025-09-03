@@ -20,4 +20,3 @@ class SimpleEventBus<T = any> {
 }
 
 export const settingsBus = new SimpleEventBus<any>();
-

@@ -27,6 +27,7 @@ The network section displays real-time statistics:
 - **Response time** - Average response time
 
 Status format examples:
+
 - `Recording` - Actively capturing requests
 - `3R • 1F` - 3 requests, 1 failed
 - `Paused` - Not recording new requests
@@ -37,60 +38,68 @@ Status format examples:
 
 Standard data fetching:
 
-[//]: # 'GETRequests'
+[//]: # "GETRequests"
+
 ```tsx
-fetch('https://api.example.com/users')
-  .then(res => res.json())
-  .then(data => console.log(data))
+fetch("https://api.example.com/users")
+  .then((res) => res.json())
+  .then((data) => console.log(data));
 
 // Captured in network monitor:
 // GET /users
 // Status: 200
 // Time: 145ms
 ```
-[//]: # 'GETRequests'
+
+[//]: # "GETRequests"
 
 ### POST Requests
 
 Data submission:
 
-[//]: # 'POSTRequests'
+[//]: # "POSTRequests"
+
 ```tsx
-fetch('https://api.example.com/users', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name: 'John Doe' })
-})
+fetch("https://api.example.com/users", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: "John Doe" }),
+});
 
 // Shows request body and response
 ```
-[//]: # 'POSTRequests'
+
+[//]: # "POSTRequests"
 
 ### PUT/PATCH Requests
 
 Updates and modifications:
 
-[//]: # 'PUTPATCHRequests'
+[//]: # "PUTPATCHRequests"
+
 ```tsx
 fetch(`https://api.example.com/users/${id}`, {
-  method: 'PATCH',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ status: 'active' })
-})
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ status: "active" }),
+});
 ```
-[//]: # 'PUTPATCHRequests'
+
+[//]: # "PUTPATCHRequests"
 
 ### DELETE Requests
 
 Resource deletion:
 
-[//]: # 'DELETERequests'
+[//]: # "DELETERequests"
+
 ```tsx
 fetch(`https://api.example.com/users/${id}`, {
-  method: 'DELETE'
-})
+  method: "DELETE",
+});
 ```
-[//]: # 'DELETERequests'
+
+[//]: # "DELETERequests"
 
 ## Request Details
 
@@ -109,7 +118,8 @@ Each request displays:
 
 View all request and response headers:
 
-[//]: # 'HeadersView'
+[//]: # "HeadersView"
+
 ```tsx
 // Request Headers
 {
@@ -125,13 +135,15 @@ View all request and response headers:
   "X-Rate-Limit": "100"
 }
 ```
-[//]: # 'HeadersView'
+
+[//]: # "HeadersView"
 
 ### Request Body
 
 Inspect request payloads:
 
-[//]: # 'RequestBody'
+[//]: # "RequestBody"
+
 ```tsx
 // POST/PUT request body
 {
@@ -143,13 +155,15 @@ Inspect request payloads:
   }
 }
 ```
-[//]: # 'RequestBody'
+
+[//]: # "RequestBody"
 
 ### Response Body
 
 View formatted response data:
 
-[//]: # 'ResponseBody'
+[//]: # "ResponseBody"
+
 ```tsx
 // API response
 {
@@ -161,7 +175,8 @@ View formatted response data:
   }
 }
 ```
-[//]: # 'ResponseBody'
+
+[//]: # "ResponseBody"
 
 ## Error Tracking
 
@@ -169,7 +184,8 @@ View formatted response data:
 
 Failed requests are highlighted in red:
 
-[//]: # 'FailedRequests'
+[//]: # "FailedRequests"
+
 ```tsx
 // 4xx Client Errors
 404 Not Found
@@ -182,7 +198,8 @@ Failed requests are highlighted in red:
 502 Bad Gateway
 503 Service Unavailable
 ```
-[//]: # 'FailedRequests'
+
+[//]: # "FailedRequests"
 
 ### Error Details
 
@@ -197,15 +214,17 @@ View complete error information:
 
 Connection and timeout issues:
 
-[//]: # 'NetworkErrors'
+[//]: # "NetworkErrors"
+
 ```tsx
 // Common network errors
-"Network request failed"
-"Timeout exceeded"
-"No internet connection"
-"SSL certificate invalid"
+"Network request failed";
+"Timeout exceeded";
+"No internet connection";
+"SSL certificate invalid";
 ```
-[//]: # 'NetworkErrors'
+
+[//]: # "NetworkErrors"
 
 ## Recording Controls
 
@@ -220,6 +239,7 @@ Control when requests are captured:
 ### Auto-pause
 
 Recording automatically pauses when:
+
 - App goes to background
 - Memory threshold reached
 - Maximum requests captured (1000)
@@ -229,6 +249,7 @@ Recording automatically pauses when:
 ### Filter by Status
 
 Quick filters for request status:
+
 - **All** - Show all requests
 - **Success** - 2xx responses
 - **Client Error** - 4xx responses
@@ -238,6 +259,7 @@ Quick filters for request status:
 ### Search Requests
 
 Search by:
+
 - URL path
 - Domain name
 - Status code
@@ -247,6 +269,7 @@ Search by:
 ### Time Range
 
 Filter by time:
+
 - Last minute
 - Last 5 minutes
 - Last hour
@@ -258,7 +281,8 @@ Filter by time:
 
 Detailed timing for each request:
 
-[//]: # 'TimingBreakdown'
+[//]: # "TimingBreakdown"
+
 ```tsx
 // Request phases
 DNS Lookup: 12ms
@@ -269,11 +293,13 @@ Waiting (TTFB): 89ms
 Content Download: 34ms
 Total: 205ms
 ```
-[//]: # 'TimingBreakdown'
+
+[//]: # "TimingBreakdown"
 
 ### Response Statistics
 
 Aggregate performance data:
+
 - **Average response time**
 - **Slowest endpoint**
 - **Fastest endpoint**
@@ -284,18 +310,20 @@ Aggregate performance data:
 
 Network requests from React Query are tracked:
 
-[//]: # 'ReactQueryIntegration'
+[//]: # "ReactQueryIntegration"
+
 ```tsx
 // React Query requests appear with query key
 useQuery({
-  queryKey: ['users'],
-  queryFn: () => fetch('/api/users').then(res => res.json())
-})
+  queryKey: ["users"],
+  queryFn: () => fetch("/api/users").then((res) => res.json()),
+});
 
 // Shows in network monitor as:
 // GET /api/users [users]
 ```
-[//]: # 'ReactQueryIntegration'
+
+[//]: # "ReactQueryIntegration"
 
 ## Mock and Intercept (Planned)
 
@@ -305,7 +333,8 @@ Future capabilities:
 
 Override API responses for testing:
 
-[//]: # 'MockResponses'
+[//]: # "MockResponses"
+
 ```tsx
 // Define mock response
 {
@@ -315,11 +344,13 @@ Override API responses for testing:
   status: 200
 }
 ```
-[//]: # 'MockResponses'
+
+[//]: # "MockResponses"
 
 ### Modify Requests
 
 Edit requests before sending:
+
 - Add/remove headers
 - Modify request body
 - Change URL parameters
@@ -347,7 +378,8 @@ Edit requests before sending:
 
 Debug API integration issues:
 
-[//]: # 'APIDebugging'
+[//]: # "APIDebugging"
+
 ```tsx
 // Check if requests are being made
 // Verify correct endpoints
@@ -355,13 +387,15 @@ Debug API integration issues:
 // Validate response format
 // Identify error patterns
 ```
-[//]: # 'APIDebugging'
+
+[//]: # "APIDebugging"
 
 ### Performance Optimization
 
 Identify performance bottlenecks:
 
-[//]: # 'PerformanceOptimization'
+[//]: # "PerformanceOptimization"
+
 ```tsx
 // Find slow endpoints
 // Detect redundant requests
@@ -369,13 +403,15 @@ Identify performance bottlenecks:
 // Check caching headers
 // Monitor request frequency
 ```
-[//]: # 'PerformanceOptimization'
+
+[//]: # "PerformanceOptimization"
 
 ### Error Handling
 
 Test error scenarios:
 
-[//]: # 'ErrorHandling'
+[//]: # "ErrorHandling"
+
 ```tsx
 // Verify error handling
 // Check retry logic
@@ -383,7 +419,8 @@ Test error scenarios:
 // Validate error messages
 // Monitor error rates
 ```
-[//]: # 'ErrorHandling'
+
+[//]: # "ErrorHandling"
 
 ## Best Practices
 
@@ -391,7 +428,8 @@ Test error scenarios:
 
 Structure requests for easy debugging:
 
-[//]: # 'RequestOrganization'
+[//]: # "RequestOrganization"
+
 ```tsx
 // Use descriptive endpoints
 /api/v1/users ✓
@@ -401,13 +439,15 @@ Structure requests for easy debugging:
 /api/v2/products ✓
 /products ✗
 ```
-[//]: # 'RequestOrganization'
+
+[//]: # "RequestOrganization"
 
 ### Header Management
 
 Use consistent headers:
 
-[//]: # 'HeaderManagement'
+[//]: # "HeaderManagement"
+
 ```tsx
 // Standard headers
 {
@@ -417,13 +457,15 @@ Use consistent headers:
   'X-Request-ID': 'uuid'
 }
 ```
-[//]: # 'HeaderManagement'
+
+[//]: # "HeaderManagement"
 
 ### Error Responses
 
 Standardize error formats:
 
-[//]: # 'ErrorResponses'
+[//]: # "ErrorResponses"
+
 ```tsx
 // Consistent error structure
 {
@@ -434,13 +476,15 @@ Standardize error formats:
   }
 }
 ```
-[//]: # 'ErrorResponses'
+
+[//]: # "ErrorResponses"
 
 ## Performance Considerations
 
 ### Memory Management
 
 Network monitor limits:
+
 - Maximum 1000 requests stored
 - Old requests auto-removed
 - Large responses truncated
@@ -449,6 +493,7 @@ Network monitor limits:
 ### Impact on App
 
 Minimal performance overhead:
+
 - Async request interception
 - Lazy UI rendering
 - Dev-only implementation
@@ -479,6 +524,7 @@ Minimal performance overhead:
 ### Requests Not Appearing
 
 If requests don't show:
+
 1. Ensure recording is active
 2. Check filter settings
 3. Verify network permissions
@@ -487,6 +533,7 @@ If requests don't show:
 ### Missing Request Details
 
 For incomplete data:
+
 1. Check response size limits
 2. Verify content-type headers
 3. Look for parsing errors
@@ -502,17 +549,20 @@ For incomplete data:
 ## Roadmap
 
 ### Current
+
 ✅ Basic request capture
 ✅ Status statistics
 ⏳ Full request details view
 
 ### Next Release
+
 ⏳ Request/response body viewing
 ⏳ Header inspection
 ⏳ Search and filter
 ⏳ Export capabilities
 
 ### Future
+
 ⏳ Mock responses
 ⏳ Request modification
 ⏳ WebSocket support

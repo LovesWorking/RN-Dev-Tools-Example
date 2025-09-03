@@ -99,7 +99,7 @@ export function GameUIStorageBrowser({
   // Get all storage queries from cache
   const allQueries = queryClient.getQueryCache().getAll();
   const storageQueriesData = allQueries.filter((query) =>
-    isStorageQuery(query.queryKey)
+    isStorageQuery(query.queryKey),
   );
 
   // Generate mock storage data for dev test mode
@@ -204,7 +204,7 @@ export function GameUIStorageBrowser({
       // Process mock data
       mockData.forEach(({ key, value, type }) => {
         const requiredConfig = testRequiredKeys.find(
-          (req) => typeof req === "object" && req.key === key
+          (req) => typeof req === "object" && req.key === key,
         );
 
         let status: StorageKeyInfo["status"] = "optional_present";
@@ -220,8 +220,8 @@ export function GameUIStorageBrowser({
               value === null
                 ? "null"
                 : Array.isArray(value)
-                ? "array"
-                : typeof value;
+                  ? "array"
+                  : typeof value;
             status =
               actualType === requiredConfig.expectedType
                 ? "required_present"
@@ -423,7 +423,7 @@ export function GameUIStorageBrowser({
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
     stats,
-    STORAGE_ALERT_STATES
+    STORAGE_ALERT_STATES,
   );
 
   // Copy to clipboard helper
@@ -446,8 +446,8 @@ export function GameUIStorageBrowser({
           keyItem.status === "required_missing"
             ? "missing"
             : keyItem.status === "required_wrong_type"
-            ? "wrong_type"
-            : "wrong_value",
+              ? "wrong_type"
+              : "wrong_value",
         value: keyItem.value,
         expectedType: keyItem.expectedType,
         expectedValue: keyItem.expectedValue as string,
@@ -456,8 +456,8 @@ export function GameUIStorageBrowser({
           keyItem.status === "required_missing"
             ? `Store key: await AsyncStorage.setItem('${keyItem.key}', 'value')`
             : keyItem.status === "required_wrong_type"
-            ? `Update to ${keyItem.expectedType} type for key: ${keyItem.key}`
-            : `Check valid values for key: ${keyItem.key}`,
+              ? `Update to ${keyItem.expectedType} type for key: ${keyItem.key}`
+              : `Check valid values for key: ${keyItem.key}`,
       }));
   }, [requiredKeys]);
 
@@ -510,7 +510,7 @@ export function GameUIStorageBrowser({
         pulseDelay: 800,
       },
     ],
-    [stats]
+    [stats],
   );
 
   // Calculate health percentage
@@ -518,22 +518,22 @@ export function GameUIStorageBrowser({
     stats.requiredCount > 0
       ? Math.round((stats.presentRequiredCount / stats.requiredCount) * 100)
       : stats.totalCount > 0
-      ? 100
-      : 0;
+        ? 100
+        : 0;
 
   const healthStatus =
     healthPercentage >= 90
       ? "OPTIMAL"
       : healthPercentage >= 70
-      ? "WARNING"
-      : "CRITICAL";
+        ? "WARNING"
+        : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
       ? gameUIColors.success
       : healthPercentage >= 70
-      ? gameUIColors.warning
-      : gameUIColors.error;
+        ? gameUIColors.warning
+        : gameUIColors.error;
 
   // Handle clear all storage
   const handleClearAll = useCallback(async () => {
@@ -557,7 +557,7 @@ export function GameUIStorageBrowser({
             }
           },
         },
-      ]
+      ],
     );
   }, [queryClient]);
 
@@ -578,10 +578,13 @@ export function GameUIStorageBrowser({
 
   // Handle export
   const handleExport = useCallback(async () => {
-    const exportData = storageKeys.reduce((acc, keyInfo) => {
-      acc[keyInfo.key] = keyInfo.value;
-      return acc;
-    }, {} as Record<string, unknown>);
+    const exportData = storageKeys.reduce(
+      (acc, keyInfo) => {
+        acc[keyInfo.key] = keyInfo.value;
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
 
     const serialized = JSON.stringify(exportData, null, 2);
     await copyToClipboard(serialized, "Storage data");

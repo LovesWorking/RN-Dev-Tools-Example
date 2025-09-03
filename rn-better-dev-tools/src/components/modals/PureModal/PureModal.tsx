@@ -1,7 +1,7 @@
 /**
  * PureModal - A pure JavaScript modal with zero native dependencies
  * Achieves 60FPS performance using only React Native's Animated API
- * 
+ *
  * Features:
  * - Bottom sheet and floating modes
  * - Gesture-based resizing and dragging
@@ -106,37 +106,37 @@ interface PureModalProps {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  
+
   // Mode
   mode?: ModalMode;
-  
+
   // Bottom sheet specific
   snapPoints?: Array<number | string>;
   initialSnapIndex?: number;
   enablePanDownToClose?: boolean;
   enableOverDrag?: boolean;
   overDragResistanceFactor?: number;
-  
+
   // Floating mode specific
   draggable?: boolean;
   resizable?: boolean;
   initialPosition?: { x: number; y: number };
   initialSize?: { width: number; height: number };
-  
+
   // Appearance
   theme?: ModalTheme;
   header?: HeaderConfig;
   showHandle?: boolean;
-  
+
   // Behavior
-  animationType?: 'spring' | 'timing';
+  animationType?: "spring" | "timing";
   closeOnBackdropPress?: boolean;
-  
+
   // Persistence
   persistenceKey?: string;
   enablePersistence?: boolean;
   storageAdapter?: StorageAdapter;
-  
+
   // Callbacks
   onOpen?: () => void;
   onModeChange?: (mode: ModalMode) => void;
@@ -149,17 +149,17 @@ interface PureModalProps {
 
 const defaultTheme: ModalTheme = {
   colors: {
-    background: '#FFFFFF',
-    surface: '#F5F5F5',
-    text: '#000000',
-    textSecondary: '#666666',
-    backdrop: 'rgba(0, 0, 0, 0.5)',
-    handle: '#CCCCCC',
-    border: '#E0E0E0',
-    primary: '#007AFF',
-    error: '#FF3B30',
-    success: '#34C759',
-    muted: '#999999',
+    background: "#FFFFFF",
+    surface: "#F5F5F5",
+    text: "#000000",
+    textSecondary: "#666666",
+    backdrop: "rgba(0, 0, 0, 0.5)",
+    handle: "#CCCCCC",
+    border: "#E0E0E0",
+    primary: "#007AFF",
+    error: "#FF3B30",
+    success: "#34C759",
+    muted: "#999999",
   },
   spacing: {
     xs: 4,
@@ -175,21 +175,21 @@ const defaultTheme: ModalTheme = {
   },
   shadows: {
     sm: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 4,
     },
     md: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 8,
     },
     lg: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.2,
       shadowRadius: 16,
@@ -232,7 +232,7 @@ class ModalStorage {
   static async save(
     key: string,
     value: PersistedModalState,
-    adapter?: StorageAdapter
+    adapter?: StorageAdapter,
   ): Promise<void> {
     try {
       this.memoryCache[key] = value;
@@ -246,7 +246,7 @@ class ModalStorage {
 
   static async load(
     key: string,
-    adapter?: StorageAdapter
+    adapter?: StorageAdapter,
   ): Promise<PersistedModalState | null> {
     try {
       // Try memory cache first
@@ -365,7 +365,9 @@ const DragIndicator = memo(function DragIndicator({
         style={{
           width: 40,
           height: 4,
-          backgroundColor: isResizing ? theme.colors.success : theme.colors.handle,
+          backgroundColor: isResizing
+            ? theme.colors.success
+            : theme.colors.handle,
           borderRadius: 2,
           opacity: mode === "floating" ? 0.8 : 1,
         }}
@@ -459,34 +461,40 @@ const ModalHeader = memo(function ModalHeader({
       <View {...headerProps}>
         <DragIndicator isResizing={isResizing} mode={mode} theme={theme} />
       </View>
-      
-      <View style={{ 
-        flexDirection: "row", 
-        alignItems: "center", 
-        justifyContent: "space-between",
-        paddingHorizontal: theme.spacing.md,
-        paddingBottom: theme.spacing.sm,
-        flex: 1,
-      }}>
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: theme.spacing.md,
+          paddingBottom: theme.spacing.sm,
+          flex: 1,
+        }}
+      >
         {/* Left side - Title and subtitle (draggable in floating mode) */}
         <View style={{ flex: 1 }} {...(mode === "floating" ? headerProps : {})}>
           {header?.title && (
-            <Text style={{ 
-              fontSize: 18, 
-              fontWeight: "700", 
-              color: theme.colors.text,
-              letterSpacing: -0.3,
-            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+                color: theme.colors.text,
+                letterSpacing: -0.3,
+              }}
+            >
               {header.title}
             </Text>
           )}
           {header?.subtitle && (
-            <Text style={{ 
-              fontSize: 12, 
-              color: theme.colors.textSecondary, 
-              marginTop: 2,
-              letterSpacing: 0.2,
-            }}>
+            <Text
+              style={{
+                fontSize: 12,
+                color: theme.colors.textSecondary,
+                marginTop: 2,
+                letterSpacing: 0.2,
+              }}
+            >
               {header.subtitle}
             </Text>
           )}
@@ -580,17 +588,23 @@ export const PureModal: React.FC<PureModalProps> = ({
 
   // Animated values
   const visibilityProgress = useRef(new Animated.Value(0)).current;
-  const bottomSheetTranslateY = useRef(new Animated.Value(SCREEN.height)).current;
-  const animatedBottomPosition = useRef(new Animated.Value(DEFAULT_HEIGHT)).current;
+  const bottomSheetTranslateY = useRef(
+    new Animated.Value(SCREEN.height),
+  ).current;
+  const animatedBottomPosition = useRef(
+    new Animated.Value(DEFAULT_HEIGHT),
+  ).current;
   const floatingPosition = useRef(
     new Animated.ValueXY({
       x: dimensions.left,
       y: dimensions.top,
-    })
+    }),
   ).current;
   const floatingScale = useRef(new Animated.Value(0)).current;
   const animatedWidth = useRef(new Animated.Value(dimensions.width)).current;
-  const animatedFloatingHeight = useRef(new Animated.Value(dimensions.height)).current;
+  const animatedFloatingHeight = useRef(
+    new Animated.Value(dimensions.height),
+  ).current;
 
   // Refs
   const currentHeightRef = useRef(DEFAULT_HEIGHT);
@@ -606,7 +620,10 @@ export const PureModal: React.FC<PureModalProps> = ({
 
     let mounted = true;
     const loadState = async () => {
-      const savedState = await ModalStorage.load(persistenceKey, storageAdapter);
+      const savedState = await ModalStorage.load(
+        persistenceKey,
+        storageAdapter,
+      );
       if (mounted && savedState) {
         if (savedState.mode) {
           setCurrentMode(savedState.mode);
@@ -649,19 +666,27 @@ export const PureModal: React.FC<PureModalProps> = ({
           dimensions,
           isVisible: visible,
         },
-        storageAdapter
+        storageAdapter,
       );
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [currentMode, panelHeight, dimensions, visible, persistenceKey, enablePersistence, isStateLoaded]);
+  }, [
+    currentMode,
+    panelHeight,
+    dimensions,
+    visible,
+    persistenceKey,
+    enablePersistence,
+    isStateLoaded,
+  ]);
 
   // Mode toggle
   const toggleMode = useCallback(() => {
     const newMode = currentMode === "bottomSheet" ? "floating" : "bottomSheet";
     setCurrentMode(newMode);
     onModeChange?.(newMode);
-    
+
     // Save state after mode change
     if (enablePersistence && persistenceKey) {
       setTimeout(() => {
@@ -678,7 +703,15 @@ export const PureModal: React.FC<PureModalProps> = ({
         ModalStorage.save(persistenceKey, state, storageAdapter);
       }, 100);
     }
-  }, [currentMode, onModeChange, enablePersistence, persistenceKey, dimensions, panelHeight, storageAdapter]);
+  }, [
+    currentMode,
+    onModeChange,
+    enablePersistence,
+    persistenceKey,
+    dimensions,
+    panelHeight,
+    storageAdapter,
+  ]);
 
   // Visibility animations
   useEffect(() => {
@@ -748,7 +781,7 @@ export const PureModal: React.FC<PureModalProps> = ({
           const draggedPosition = initialPositionRef.current - gestureState.dy;
           const clampedPosition = Math.max(
             MIN_HEIGHT,
-            Math.min(draggedPosition, SCREEN.height - 100)
+            Math.min(draggedPosition, SCREEN.height - 100),
           );
           animatedBottomPosition.setValue(clampedPosition);
           currentHeightRef.current = clampedPosition;
@@ -791,15 +824,17 @@ export const PureModal: React.FC<PureModalProps> = ({
           }
         },
       }),
-    [currentMode, enablePanDownToClose]
+    [currentMode, enablePanDownToClose],
   );
 
   // Create resize handlers for corners
   const createResizeHandler = useCallback(
     (corner: "topLeft" | "topRight" | "bottomLeft" | "bottomRight") => {
       return PanResponder.create({
-        onStartShouldSetPanResponder: () => currentMode === "floating" && resizable,
-        onMoveShouldSetPanResponder: () => currentMode === "floating" && resizable,
+        onStartShouldSetPanResponder: () =>
+          currentMode === "floating" && resizable,
+        onMoveShouldSetPanResponder: () =>
+          currentMode === "floating" && resizable,
         onPanResponderGrant: () => {
           setIsResizing(true);
         },
@@ -812,24 +847,48 @@ export const PureModal: React.FC<PureModalProps> = ({
 
           switch (corner) {
             case "topLeft":
-              newWidth = Math.max(FLOATING_MIN_WIDTH, currentDims.width - gestureState.dx);
-              newHeight = Math.max(FLOATING_MIN_HEIGHT, currentDims.height - gestureState.dy);
+              newWidth = Math.max(
+                FLOATING_MIN_WIDTH,
+                currentDims.width - gestureState.dx,
+              );
+              newHeight = Math.max(
+                FLOATING_MIN_HEIGHT,
+                currentDims.height - gestureState.dy,
+              );
               newLeft = currentDims.left + (currentDims.width - newWidth);
               newTop = currentDims.top + (currentDims.height - newHeight);
               break;
             case "topRight":
-              newWidth = Math.max(FLOATING_MIN_WIDTH, currentDims.width + gestureState.dx);
-              newHeight = Math.max(FLOATING_MIN_HEIGHT, currentDims.height - gestureState.dy);
+              newWidth = Math.max(
+                FLOATING_MIN_WIDTH,
+                currentDims.width + gestureState.dx,
+              );
+              newHeight = Math.max(
+                FLOATING_MIN_HEIGHT,
+                currentDims.height - gestureState.dy,
+              );
               newTop = currentDims.top + (currentDims.height - newHeight);
               break;
             case "bottomLeft":
-              newWidth = Math.max(FLOATING_MIN_WIDTH, currentDims.width - gestureState.dx);
-              newHeight = Math.max(FLOATING_MIN_HEIGHT, currentDims.height + gestureState.dy);
+              newWidth = Math.max(
+                FLOATING_MIN_WIDTH,
+                currentDims.width - gestureState.dx,
+              );
+              newHeight = Math.max(
+                FLOATING_MIN_HEIGHT,
+                currentDims.height + gestureState.dy,
+              );
               newLeft = currentDims.left + (currentDims.width - newWidth);
               break;
             case "bottomRight":
-              newWidth = Math.max(FLOATING_MIN_WIDTH, currentDims.width + gestureState.dx);
-              newHeight = Math.max(FLOATING_MIN_HEIGHT, currentDims.height + gestureState.dy);
+              newWidth = Math.max(
+                FLOATING_MIN_WIDTH,
+                currentDims.width + gestureState.dx,
+              );
+              newHeight = Math.max(
+                FLOATING_MIN_HEIGHT,
+                currentDims.height + gestureState.dy,
+              );
               break;
           }
 
@@ -840,7 +899,7 @@ export const PureModal: React.FC<PureModalProps> = ({
             left: newLeft,
             top: newTop,
           });
-          
+
           // Update animated values
           animatedWidth.setValue(newWidth);
           animatedFloatingHeight.setValue(newHeight);
@@ -853,22 +912,27 @@ export const PureModal: React.FC<PureModalProps> = ({
         },
       });
     },
-    [currentMode, resizable, dimensions]
+    [currentMode, resizable, dimensions],
   );
 
-  const resizeHandlers = useMemo(() => ({
-    topLeft: createResizeHandler("topLeft"),
-    topRight: createResizeHandler("topRight"),
-    bottomLeft: createResizeHandler("bottomLeft"),
-    bottomRight: createResizeHandler("bottomRight"),
-  }), [createResizeHandler]);
+  const resizeHandlers = useMemo(
+    () => ({
+      topLeft: createResizeHandler("topLeft"),
+      topRight: createResizeHandler("topRight"),
+      bottomLeft: createResizeHandler("bottomLeft"),
+      bottomRight: createResizeHandler("bottomRight"),
+    }),
+    [createResizeHandler],
+  );
 
   // Floating drag pan responder
   const floatingDragPanResponder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => currentMode === "floating" && draggable,
-        onMoveShouldSetPanResponder: () => currentMode === "floating" && draggable,
+        onStartShouldSetPanResponder: () =>
+          currentMode === "floating" && draggable,
+        onMoveShouldSetPanResponder: () =>
+          currentMode === "floating" && draggable,
         onPanResponderGrant: () => {
           setIsDragging(true);
           floatingPosition.extractOffset();
@@ -884,8 +948,20 @@ export const PureModal: React.FC<PureModalProps> = ({
           floatingPosition.flattenOffset();
           const currentX = (floatingPosition.x as any).__getValue();
           const currentY = (floatingPosition.y as any).__getValue();
-          const clampedX = Math.max(0, Math.min(currentX, SCREEN.width - currentDimensionsRef.current.width));
-          const clampedY = Math.max(0, Math.min(currentY, SCREEN.height - currentDimensionsRef.current.height));
+          const clampedX = Math.max(
+            0,
+            Math.min(
+              currentX,
+              SCREEN.width - currentDimensionsRef.current.width,
+            ),
+          );
+          const clampedY = Math.max(
+            0,
+            Math.min(
+              currentY,
+              SCREEN.height - currentDimensionsRef.current.height,
+            ),
+          );
           floatingPosition.setValue({ x: clampedX, y: clampedY });
           setDimensions({
             ...currentDimensionsRef.current,
@@ -894,7 +970,7 @@ export const PureModal: React.FC<PureModalProps> = ({
           });
         },
       }),
-    [currentMode, draggable]
+    [currentMode, draggable],
   );
 
   // Update refs
@@ -924,7 +1000,10 @@ export const PureModal: React.FC<PureModalProps> = ({
             width: dimensions.width,
             height: dimensions.height,
             opacity: modalOpacity,
-            transform: [{ translateX: floatingPosition.x }, { translateY: floatingPosition.y }],
+            transform: [
+              { translateX: floatingPosition.x },
+              { translateY: floatingPosition.y },
+            ],
             backgroundColor: theme.colors.background,
             borderRadius: theme.radii.md,
             ...theme.shadows.lg,
@@ -936,7 +1015,12 @@ export const PureModal: React.FC<PureModalProps> = ({
           },
         ]}
       >
-        <View style={{ borderTopLeftRadius: theme.radii.md, borderTopRightRadius: theme.radii.md }}>
+        <View
+          style={{
+            borderTopLeftRadius: theme.radii.md,
+            borderTopRightRadius: theme.radii.md,
+          }}
+        >
           <ModalHeader
             header={header}
             onClose={onClose}
@@ -961,29 +1045,69 @@ export const PureModal: React.FC<PureModalProps> = ({
 
         {resizable && (
           <>
-            <View 
+            <View
               {...resizeHandlers.topLeft.panHandlers}
-              style={{ position: "absolute", top: 0, left: 0, width: 40, height: 40 }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 40,
+                height: 40,
+              }}
             >
-              <CornerHandle position="topLeft" isActive={isDragging || isResizing} theme={theme} />
+              <CornerHandle
+                position="topLeft"
+                isActive={isDragging || isResizing}
+                theme={theme}
+              />
             </View>
-            <View 
+            <View
               {...resizeHandlers.topRight.panHandlers}
-              style={{ position: "absolute", top: 0, right: 0, width: 40, height: 40 }}
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                width: 40,
+                height: 40,
+              }}
             >
-              <CornerHandle position="topRight" isActive={isDragging || isResizing} theme={theme} />
+              <CornerHandle
+                position="topRight"
+                isActive={isDragging || isResizing}
+                theme={theme}
+              />
             </View>
-            <View 
+            <View
               {...resizeHandlers.bottomLeft.panHandlers}
-              style={{ position: "absolute", bottom: 0, left: 0, width: 40, height: 40 }}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: 40,
+                height: 40,
+              }}
             >
-              <CornerHandle position="bottomLeft" isActive={isDragging || isResizing} theme={theme} />
+              <CornerHandle
+                position="bottomLeft"
+                isActive={isDragging || isResizing}
+                theme={theme}
+              />
             </View>
-            <View 
+            <View
               {...resizeHandlers.bottomRight.panHandlers}
-              style={{ position: "absolute", bottom: 0, right: 0, width: 40, height: 40 }}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 40,
+                height: 40,
+              }}
             >
-              <CornerHandle position="bottomRight" isActive={isDragging || isResizing} theme={theme} />
+              <CornerHandle
+                position="bottomRight"
+                isActive={isDragging || isResizing}
+                theme={theme}
+              />
             </View>
           </>
         )}
@@ -993,9 +1117,14 @@ export const PureModal: React.FC<PureModalProps> = ({
 
   // Render bottom sheet mode
   return (
-    <View style={[StyleSheet.absoluteFillObject, { zIndex: 1000 }]} pointerEvents="box-none">
+    <View
+      style={[StyleSheet.absoluteFillObject, { zIndex: 1000 }]}
+      pointerEvents="box-none"
+    >
       {/* Backdrop */}
-      <TouchableWithoutFeedback onPress={closeOnBackdropPress ? onClose : undefined}>
+      <TouchableWithoutFeedback
+        onPress={closeOnBackdropPress ? onClose : undefined}
+      >
         <Animated.View
           style={[
             StyleSheet.absoluteFillObject,

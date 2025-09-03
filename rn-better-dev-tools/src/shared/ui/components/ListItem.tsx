@@ -9,7 +9,12 @@ interface ListItemProps {
   style?: any;
 }
 
-export function ListItem({ onPress, children, disabled = false, style }: ListItemProps) {
+export function ListItem({
+  onPress,
+  children,
+  disabled = false,
+  style,
+}: ListItemProps) {
   const Container = onPress ? TouchableOpacity : View;
   const containerProps = onPress ? { onPress, disabled } : {};
 

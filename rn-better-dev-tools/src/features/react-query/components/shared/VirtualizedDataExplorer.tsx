@@ -35,7 +35,7 @@ const INDENT_STYLES = Array.from(
       container: {
         marginLeft: depth * 10, // Reduced space for tighter tree lines
       },
-    }).container
+    }).container,
 );
 
 // Enhanced type color cache using centralized theme colors [[memory:4875251]]
@@ -392,7 +392,7 @@ const TypeLegend = React.memo(TypeLegendComponent);
 const useDataFlattening = (
   data: JsonValue,
   maxDepth = 10,
-  autoExpandFirstLevel = false
+  autoExpandFirstLevel = false,
 ) => {
   const [flatData, setFlatData] = useState<FlatDataItem[]>([]);
   const flatDataMapRef = useRef<
@@ -417,7 +417,7 @@ const useDataFlattening = (
   }, [autoExpandFirstLevel, data]);
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(() =>
-    getInitialExpanded()
+    getInitialExpanded(),
   );
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -439,7 +439,7 @@ const useDataFlattening = (
       key = "root",
       depth = 0,
       parentId?: string,
-      path: string[] = []
+      path: string[] = [],
     ): FlatDataItem[] => {
       // Early termination for performance [[memory:4875251]]
       if (depth > Math.min(maxDepth, MAX_DEPTH_LIMIT)) return [];
@@ -558,8 +558,8 @@ const useDataFlattening = (
                   childKey,
                   depth + 1,
                   id,
-                  currentPath
-                )
+                  currentPath,
+                ),
               );
             }
 
@@ -576,7 +576,7 @@ const useDataFlattening = (
 
       return result;
     },
-    [maxDepth] // Only depend on maxDepth, not expandedItems
+    [maxDepth], // Only depend on maxDepth, not expandedItems
   );
 
   // Only process full data when data changes (not on expand/collapse)
@@ -635,7 +635,7 @@ const useDataFlattening = (
           "root",
           0,
           undefined,
-          []
+          [],
         );
 
         // Build the map for incremental updates
@@ -760,7 +760,7 @@ const useDataFlattening = (
                 childKey,
                 item.depth + 1,
                 itemId,
-                item.path
+                item.path,
               );
               childrenItems.push(...childItems);
             }
@@ -836,7 +836,7 @@ const useDataFlattening = (
         return prevFlatData;
       });
     },
-    [flattenDataStable]
+    [flattenDataStable],
   );
 
   const toggleExpanded = useCallback(
@@ -863,7 +863,7 @@ const useDataFlattening = (
         return newSet;
       });
     },
-    [updateFlatDataIncremental]
+    [updateFlatDataIncremental],
   );
 
   return { flatData, isProcessing, toggleExpanded };
@@ -1039,7 +1039,7 @@ export const VirtualizedDataExplorer: React.FC<
   const { flatData, isProcessing, toggleExpanded } = useDataFlattening(
     data,
     maxDepth,
-    initialExpanded
+    initialExpanded,
   );
 
   // Calculate visible types for the legend
@@ -1060,7 +1060,7 @@ export const VirtualizedDataExplorer: React.FC<
   // Calculate average item size for better FlatList performance [[memory:4875251]]
   const averageItemSize = useMemo(() => {
     const longKeyCount = flatData.filter(
-      (item) => item.key.length > LONG_KEY_THRESHOLD
+      (item) => item.key.length > LONG_KEY_THRESHOLD,
     ).length;
     const normalKeyCount = flatData.length - longKeyCount;
 

@@ -5,7 +5,11 @@ import type {
   FetchBreadcrumbHint,
   XhrBreadcrumbHint,
 } from "../types";
-import { getSentryClient, configureSentryClient as configureSentryClientProvider, isUsingMockClient } from "./sentryClientProvider";
+import {
+  getSentryClient,
+  configureSentryClient as configureSentryClientProvider,
+  isUsingMockClient,
+} from "./sentryClientProvider";
 import type { SentryEventEntry } from "./types";
 import { SentryEventType, SentryEventLevel } from "./types";
 export { SentryEventEntry, SentryEventType, SentryEventLevel } from "./types";
@@ -24,7 +28,6 @@ export function configureSentryClient(
 ): void {
   configureSentryClientProvider(getClientFn);
 }
-
 
 // Sentry envelope types - confirmed from codebase analysis
 type SentryEnvelopeHeader = {

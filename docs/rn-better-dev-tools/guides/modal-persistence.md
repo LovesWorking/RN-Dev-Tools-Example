@@ -15,7 +15,8 @@ Modal persistence ensures you never lose your debugging context. When you restar
 
 Each modal remembers if it was open:
 
-[//]: # 'OpenClosedState'
+[//]: # "OpenClosedState"
+
 ```tsx
 // If React Query modal was open when app closed
 // It reopens automatically on next launch
@@ -26,45 +27,51 @@ Each modal remembers if it was open:
 // - Storage Browser: Open/Closed
 // - Network Monitor: Open/Closed
 ```
-[//]: # 'OpenClosedState'
+
+[//]: # "OpenClosedState"
 
 ### Modal Position
 
 Draggable modal positions are saved:
 
-[//]: # 'ModalPosition'
+[//]: # "ModalPosition"
+
 ```tsx
 // Each modal saves:
 {
   x: 100,  // Horizontal position
   y: 200,  // Vertical position
-  
+
   // Position restored on reopen
 }
 ```
-[//]: # 'ModalPosition'
+
+[//]: # "ModalPosition"
 
 ### Modal Size
 
 Resizable modal dimensions persist:
 
-[//]: # 'ModalSize'
+[//]: # "ModalSize"
+
 ```tsx
 // Saved dimensions:
 {
   width: 400,   // Modal width
   height: 600,  // Modal height
-  
+
   // Size restored on reopen
 }
 ```
-[//]: # 'ModalSize'
+
+[//]: # "ModalSize"
 
 ### Active Selections
 
 Current selections within modals:
 
-[//]: # 'ActiveSelections'
+[//]: # "ActiveSelections"
+
 ```tsx
 // React Query modal remembers:
 // - Selected query key
@@ -77,7 +84,8 @@ Current selections within modals:
 // - Active filters
 // - Sort preferences
 ```
-[//]: # 'ActiveSelections'
+
+[//]: # "ActiveSelections"
 
 ## How It Works
 
@@ -85,24 +93,26 @@ Current selections within modals:
 
 Persistence uses AsyncStorage:
 
-[//]: # 'StorageMechanism'
+[//]: # "StorageMechanism"
+
 ```tsx
 // Automatically saved to:
-AsyncStorage.setItem('@devtools:modal:state', {
+AsyncStorage.setItem("@devtools:modal:state", {
   reactQuery: {
     isOpen: true,
     position: { x: 100, y: 200 },
     size: { width: 400, height: 600 },
-    selectedKey: ['todos'],
-    activeFilter: 'all'
+    selectedKey: ["todos"],
+    activeFilter: "all",
   },
   storage: {
     isOpen: false,
     // ...
-  }
-})
+  },
+});
 ```
-[//]: # 'StorageMechanism'
+
+[//]: # "StorageMechanism"
 
 ### Save Triggers
 
@@ -130,31 +140,36 @@ On app launch:
 
 Control persistence globally:
 
-[//]: # 'EnableDisablePersistence'
+[//]: # "EnableDisablePersistence"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   enableModalPersistence={true} // Default: true
 />
 ```
-[//]: # 'EnableDisablePersistence'
+
+[//]: # "EnableDisablePersistence"
 
 ### Shared Dimensions
 
 Share size across all modals:
 
-[//]: # 'SharedDimensions'
+[//]: # "SharedDimensions"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   enableSharedModalDimensions={true} // All modals use same size
 />
 ```
-[//]: # 'SharedDimensions'
+
+[//]: # "SharedDimensions"
 
 When enabled:
+
 - Resizing one modal resizes all
 - Provides consistent interface
 - Reduces adjustment time
@@ -163,24 +178,27 @@ When enabled:
 
 Clear all saved states:
 
-[//]: # 'ResetPersistence'
+[//]: # "ResetPersistence"
+
 ```tsx
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Clear all dev tools persistence
 await AsyncStorage.multiRemove([
-  '@devtools:modal:state',
-  '@devtools:bubble:position',
-  '@devtools:user:preferences'
-])
+  "@devtools:modal:state",
+  "@devtools:bubble:position",
+  "@devtools:user:preferences",
+]);
 ```
-[//]: # 'ResetPersistence'
+
+[//]: # "ResetPersistence"
 
 ## Modal-Specific Persistence
 
 ### React Query Modal
 
 Persisted data:
+
 - **Query selection** - Last viewed query
 - **Filter state** - Active status filter
 - **Tab selection** - Queries vs Mutations
@@ -190,6 +208,7 @@ Persisted data:
 ### Storage Modal
 
 Persisted data:
+
 - **Storage type** - MMKV/Async/Secure
 - **Search filters** - Key/value search
 - **Sort order** - Alphabetical/recent
@@ -198,6 +217,7 @@ Persisted data:
 ### Environment Variables Modal
 
 Persisted data:
+
 - **Filter state** - Required/optional/all
 - **Search terms** - Variable search
 - **Collapsed groups** - Variable categories
@@ -205,6 +225,7 @@ Persisted data:
 ### Network Modal
 
 Persisted data:
+
 - **Recording state** - Active/paused
 - **Filters** - Status/method filters
 - **Time range** - Selected period
@@ -216,7 +237,8 @@ Persisted data:
 
 Continue debugging without interruption:
 
-[//]: # 'SeamlessContinuation'
+[//]: # "SeamlessContinuation"
+
 ```tsx
 // Workflow:
 // 1. Open React Query modal
@@ -225,13 +247,15 @@ Continue debugging without interruption:
 // 4. Modal reopens with same query selected
 // 5. Continue debugging immediately
 ```
-[//]: # 'SeamlessContinuation'
+
+[//]: # "SeamlessContinuation"
 
 ### Quick Access Patterns
 
 Common development patterns:
 
-[//]: # 'QuickAccessPatterns'
+[//]: # "QuickAccessPatterns"
+
 ```tsx
 // Keep frequently used modals open:
 // - React Query always visible for API work
@@ -240,13 +264,15 @@ Common development patterns:
 
 // They'll be ready every time you launch
 ```
-[//]: # 'QuickAccessPatterns'
+
+[//]: # "QuickAccessPatterns"
 
 ### Layout Preservation
 
 Maintain your debugging layout:
 
-[//]: # 'LayoutPreservation'
+[//]: # "LayoutPreservation"
+
 ```tsx
 // Arrange modals once:
 // - React Query top-left
@@ -255,13 +281,15 @@ Maintain your debugging layout:
 
 // Layout restored on every launch
 ```
-[//]: # 'LayoutPreservation'
+
+[//]: # "LayoutPreservation"
 
 ## Performance Considerations
 
 ### Storage Impact
 
 Minimal storage footprint:
+
 - ~2KB per modal state
 - ~10KB total maximum
 - Automatic cleanup of old data
@@ -269,6 +297,7 @@ Minimal storage footprint:
 ### Load Time
 
 Fast restoration:
+
 - Async loading doesn't block app
 - < 50ms to restore all states
 - Progressive modal opening
@@ -276,6 +305,7 @@ Fast restoration:
 ### Memory Usage
 
 Efficient memory management:
+
 - States loaded on demand
 - Unused modal states cleared
 - No memory leaks
@@ -333,7 +363,8 @@ If state seems wrong:
 
 Optimize your setup:
 
-[//]: # 'DevelopmentWorkflow'
+[//]: # "DevelopmentWorkflow"
+
 ```tsx
 // 1. Arrange modals for your task
 // 2. Keep relevant tools open
@@ -343,34 +374,39 @@ Optimize your setup:
 //    - Crashes
 //    - Updates
 ```
-[//]: # 'DevelopmentWorkflow'
+
+[//]: # "DevelopmentWorkflow"
 
 ### Team Coordination
 
 Share layouts with team:
 
-[//]: # 'TeamCoordination'
+[//]: # "TeamCoordination"
+
 ```tsx
 // Export your layout:
-const layout = await AsyncStorage.getItem('@devtools:modal:state')
+const layout = await AsyncStorage.getItem("@devtools:modal:state");
 
 // Share with team
 // They can import for same setup
 ```
-[//]: # 'TeamCoordination'
+
+[//]: # "TeamCoordination"
 
 ### Clean State Practices
 
 Maintain clean persistence:
 
-[//]: # 'CleanStatePractices'
+[//]: # "CleanStatePractices"
+
 ```tsx
 // Periodically reset if cluttered
 // Clear before major updates
 // Reset when switching projects
 // Clean on environment changes
 ```
-[//]: # 'CleanStatePractices'
+
+[//]: # "CleanStatePractices"
 
 ## Advanced Features
 
@@ -378,7 +414,8 @@ Maintain clean persistence:
 
 Extend persistence for custom data:
 
-[//]: # 'CustomPersistence'
+[//]: # "CustomPersistence"
+
 ```tsx
 // Save custom debug state
 AsyncStorage.setItem('@devtools:custom:state', {
@@ -387,52 +424,57 @@ AsyncStorage.setItem('@devtools:custom:state', {
   customFilters: [...]
 })
 ```
-[//]: # 'CustomPersistence'
+
+[//]: # "CustomPersistence"
 
 ### State Export/Import
 
 Backup and restore setups:
 
-[//]: # 'StateExportImport'
+[//]: # "StateExportImport"
+
 ```tsx
 // Export all dev tools state
 const exportState = async () => {
-  const state = await AsyncStorage.getItem('@devtools:modal:state')
+  const state = await AsyncStorage.getItem("@devtools:modal:state");
   // Save to file or share
-}
+};
 
 // Import saved state
 const importState = async (savedState) => {
-  await AsyncStorage.setItem('@devtools:modal:state', savedState)
+  await AsyncStorage.setItem("@devtools:modal:state", savedState);
   // Restart app to apply
-}
+};
 ```
-[//]: # 'StateExportImport'
+
+[//]: # "StateExportImport"
 
 ### Conditional Persistence
 
 Persist based on conditions:
 
-[//]: # 'ConditionalPersistence'
+[//]: # "ConditionalPersistence"
+
 ```tsx
 // Only persist in development
 if (__DEV__) {
-  enablePersistence()
+  enablePersistence();
 }
 
 // Persist for specific users
 if (user.isDeveloper) {
-  enablePersistence()
+  enablePersistence();
 }
 ```
-[//]: # 'ConditionalPersistence'
+
+[//]: # "ConditionalPersistence"
 
 ## Future Enhancements
 
 ### Planned Features
 
 - **Cloud sync** - Sync across devices
-- **Profiles** - Multiple layout profiles  
+- **Profiles** - Multiple layout profiles
 - **Shortcuts** - Quick layout switches
 - **Templates** - Predefined layouts
 - **History** - Undo/redo support
@@ -449,6 +491,7 @@ if (user.isDeveloper) {
 ### Bubble Position
 
 The floating bubble also persists position:
+
 - Separate from modal persistence
 - Maintains dragged position
 - Resets on reinstall
@@ -456,6 +499,7 @@ The floating bubble also persists position:
 ### User Preferences
 
 Other persisted preferences:
+
 - Selected menu theme (G/C/D)
 - WiFi toggle state
 - Filter preferences

@@ -6,9 +6,7 @@ Enhanced developer tools for React Native applications, supporting React Query D
 
 https://github.com/user-attachments/assets/fce3cba3-b30a-409a-8f8f-db2bd28579be
 
-
 https://github.com/user-attachments/assets/24183264-fff2-4e7d-86f7-2775362cf485
-
 
 ## ✨ Features
 
@@ -38,6 +36,7 @@ https://github.com/user-attachments/assets/24183264-fff2-4e7d-86f7-2775362cf485
 - `npm run screenshot:android` captures from Android device/emulator via `adb`.
 
 Requirements:
+
 - iOS: Xcode Command Line Tools (`xcrun`) and a booted Simulator.
 - Android: Android Platform Tools (`adb`) and a connected device/emulator.
 
@@ -106,8 +105,6 @@ MIT
 ---
 
 Made with ❤️ by [LovesWorking](https://github.com/LovesWorking)
-
-
 
 ## 🚀 More
 

@@ -20,7 +20,9 @@ This document outlines a comprehensive plan to transform the ClaudeModal60FPSCle
 ## Package Architecture
 
 ### Current State Analysis
+
 The modal currently has:
+
 - ✅ 60FPS performance with native driver animations
 - ✅ Bottom sheet and floating modes
 - ✅ State persistence with AsyncStorage
@@ -33,6 +35,7 @@ The modal currently has:
 - ❌ No accessibility support
 
 ### Proposed Package Structure
+
 ```
 @yourscope/react-native-pure-modal/
 ├── src/
@@ -72,25 +75,27 @@ The modal currently has:
 ### Core Principles (TanStack-inspired)
 
 1. **Declarative Configuration**
+
    ```tsx
    // Simple, intuitive API
    const modal = useModal({
-     mode: 'bottom-sheet',
-     snapPoints: ['25%', '50%', '90%'],
-     enablePanDownToClose: true
+     mode: "bottom-sheet",
+     snapPoints: ["25%", "50%", "90%"],
+     enablePanDownToClose: true,
    });
-   
+
    modal.present(<Content />);
    modal.dismiss();
    ```
 
 2. **Progressive Disclosure**
+
    ```tsx
    // Basic usage - works out of the box
    <Modal visible={visible} onClose={onClose}>
      <Content />
    </Modal>
-   
+
    // Advanced usage - full control when needed
    <Modal
      visible={visible}
@@ -140,12 +145,14 @@ The modal currently has:
 ### 1. Decoupling & Modularity
 
 **Remove Hard Dependencies:**
+
 - Extract game UI colors to theme system
 - Replace custom hooks with internal implementations
 - Make SafeAreaInsets optional/configurable
 - Remove AsyncStorage hard dependency
 
 **Theme System:**
+
 ```tsx
 interface ModalTheme {
   colors: {
@@ -172,7 +179,7 @@ interface ModalTheme {
 // Allow theme customization
 <ModalProvider theme={customTheme}>
   <App />
-</ModalProvider>
+</ModalProvider>;
 ```
 
 ### 2. Enhanced Snap Points System
@@ -196,17 +203,18 @@ type SnapPointFunction = (context: {
 
 // Usage
 snapPoints: [
-  'min',                               // Predefined constant
-  200,                                 // Fixed height
-  '50%',                              // Percentage
-  ({ screenHeight }) => screenHeight * 0.7,  // Dynamic function
-  'max'                               // Predefined constant
-]
+  "min", // Predefined constant
+  200, // Fixed height
+  "50%", // Percentage
+  ({ screenHeight }) => screenHeight * 0.7, // Dynamic function
+  "max", // Predefined constant
+];
 ```
 
 ### 3. Gesture System Improvements
 
 **Enhanced Gesture Configuration:**
+
 ```tsx
 interface GestureConfig {
   handle: {
@@ -217,7 +225,7 @@ interface GestureConfig {
   };
   content: {
     enabled: boolean;
-    scrollBehavior: 'lock-scroll' | 'dismiss-on-scroll' | 'none';
+    scrollBehavior: "lock-scroll" | "dismiss-on-scroll" | "none";
     activateOnLongPress?: boolean;
   };
   backdrop: {
@@ -228,7 +236,7 @@ interface GestureConfig {
     enabled: boolean;
     threshold: number;
     velocity: number;
-    direction: 'down' | 'any';
+    direction: "down" | "any";
   };
 }
 ```
@@ -236,47 +244,49 @@ interface GestureConfig {
 ### 4. Animation System
 
 **Preset Animations:**
+
 ```tsx
 const animationPresets = {
   // iOS-like smooth spring
   ios: {
-    type: 'spring',
-    config: { tension: 180, friction: 22 }
+    type: "spring",
+    config: { tension: 180, friction: 22 },
   },
-  
+
   // Android material design
   android: {
-    type: 'timing',
-    config: { duration: 300, easing: Easing.out(Easing.cubic) }
+    type: "timing",
+    config: { duration: 300, easing: Easing.out(Easing.cubic) },
   },
-  
+
   // Snappy response
   snappy: {
-    type: 'spring',
-    config: { tension: 250, friction: 20 }
+    type: "spring",
+    config: { tension: 250, friction: 20 },
   },
-  
+
   // Smooth and slow
   smooth: {
-    type: 'spring',
-    config: { tension: 120, friction: 25 }
+    type: "spring",
+    config: { tension: 120, friction: 25 },
   },
-  
+
   // Custom function
   custom: (velocity: number) => ({
-    type: 'spring',
-    config: { 
-      tension: 180, 
+    type: "spring",
+    config: {
+      tension: 180,
       friction: 22,
-      velocity: velocity / 2 
-    }
-  })
+      velocity: velocity / 2,
+    },
+  }),
 };
 ```
 
 ### 5. Accessibility
 
 **Full Accessibility Support:**
+
 ```tsx
 interface AccessibilityConfig {
   // Screen reader support
@@ -284,12 +294,12 @@ interface AccessibilityConfig {
   announceOnClose?: string;
   modalAccessibilityLabel?: string;
   modalAccessibilityHint?: string;
-  
+
   // Focus management
   autoFocus?: boolean;
   restoreFocus?: boolean;
   focusTrap?: boolean;
-  
+
   // Gesture alternatives
   enableAccessibilityGestures?: boolean;
   accessibilityActions?: AccessibilityAction[];
@@ -303,11 +313,11 @@ interface AccessibilityConfig {
     autoFocus: true,
     focusTrap: true,
     accessibilityActions: [
-      { name: 'dismiss', label: 'Close modal' },
-      { name: 'expand', label: 'Expand to full screen' }
-    ]
+      { name: "dismiss", label: "Close modal" },
+      { name: "expand", label: "Expand to full screen" },
+    ],
   }}
-/>
+/>;
 ```
 
 ---
@@ -328,6 +338,7 @@ npm install @yourscope/react-native-pure-modal
 ### 2. TypeScript-First
 
 **Complete Type Safety:**
+
 ```tsx
 // Auto-completion for all props
 interface ModalProps<T = any> {
@@ -337,19 +348,20 @@ interface ModalProps<T = any> {
   onSnapPointChange?: (index: number) => void;
   onModalStateChange?: (state: ModalState) => void;
   children: React.ReactNode;
-  data?: T;  // Generic data passing
+  data?: T; // Generic data passing
 }
 
 // Discriminated unions for variants
-type ModalVariant = 
-  | { mode: 'bottom-sheet'; snapPoints: SnapPoint[] }
-  | { mode: 'floating'; position?: Position; size?: Size }
-  | { mode: 'fullscreen'; transition?: Transition };
+type ModalVariant =
+  | { mode: "bottom-sheet"; snapPoints: SnapPoint[] }
+  | { mode: "floating"; position?: Position; size?: Size }
+  | { mode: "fullscreen"; transition?: Transition };
 ```
 
 ### 3. Hooks API
 
 **Primary Hook:**
+
 ```tsx
 const {
   // Methods
@@ -358,38 +370,39 @@ const {
   snapToIndex,
   expand,
   collapse,
-  
+
   // State
   isVisible,
   isAnimating,
   currentSnapIndex,
   modalRef,
-  
+
   // Utilities
   measureContent,
-  forceUpdate
+  forceUpdate,
 } = useModal(config);
 ```
 
 **Imperative API:**
+
 ```tsx
 // Global modal management
-import { modal } from '@yourscope/react-native-pure-modal';
+import { modal } from "@yourscope/react-native-pure-modal";
 
 // Present from anywhere
 modal.show({
   component: <CustomContent />,
   options: {
-    mode: 'bottom-sheet',
-    snapPoints: ['50%', '90%']
-  }
+    mode: "bottom-sheet",
+    snapPoints: ["50%", "90%"],
+  },
 });
 
 // Dismiss with animation
 modal.hide({ animated: true });
 
 // Update current modal
-modal.update({ snapPoints: ['25%', '75%'] });
+modal.update({ snapPoints: ["25%", "75%"] });
 ```
 
 ### 4. Debug Mode
@@ -400,7 +413,7 @@ modal.update({ snapPoints: ['25%', '75%'] });
   {/* Shows performance overlay */}
   {/* Logs gesture events */}
   {/* Displays snap point indicators */}
-</ModalProvider>
+</ModalProvider>;
 
 // Performance monitoring hook
 const metrics = useModalMetrics();
@@ -420,22 +433,18 @@ console.log(metrics);
 ### 1. Getting Started Guide
 
 **Quick Start (< 1 minute):**
+
 ```tsx
-import { Modal } from '@yourscope/react-native-pure-modal';
+import { Modal } from "@yourscope/react-native-pure-modal";
 
 function App() {
   const [visible, setVisible] = useState(false);
-  
+
   return (
     <>
-      <Button onPress={() => setVisible(true)}>
-        Open Modal
-      </Button>
-      
-      <Modal 
-        visible={visible} 
-        onClose={() => setVisible(false)}
-      >
+      <Button onPress={() => setVisible(true)}>Open Modal</Button>
+
+      <Modal visible={visible} onClose={() => setVisible(false)}>
         <Text>Hello World!</Text>
       </Modal>
     </>
@@ -453,6 +462,7 @@ function App() {
 ### 3. API Reference
 
 **Comprehensive Documentation:**
+
 - Every prop documented with types
 - Code examples for each feature
 - Platform-specific notes
@@ -463,12 +473,14 @@ function App() {
 
 ```markdown
 ## Migrating from react-native-modal
+
 - No native dependencies needed
 - Similar API surface
 - Performance improvements
 - [Step-by-step guide]
 
 ## Migrating from react-native-bottom-sheet
+
 - Pure JS alternative
 - Compatible gesture system
 - [Feature comparison table]
@@ -481,23 +493,26 @@ function App() {
 ### 1. Bundle Size Optimization
 
 **Tree-Shaking Support:**
+
 ```tsx
 // Only import what you need
-import { BottomSheet } from '@yourscope/react-native-pure-modal/bottom-sheet';
-import { useModal } from '@yourscope/react-native-pure-modal/hooks';
+import { BottomSheet } from "@yourscope/react-native-pure-modal/bottom-sheet";
+import { useModal } from "@yourscope/react-native-pure-modal/hooks";
 ```
 
 **Code Splitting:**
+
 ```tsx
 // Lazy load heavy features
-const FloatingModal = lazy(() => 
-  import('@yourscope/react-native-pure-modal/floating')
+const FloatingModal = lazy(
+  () => import("@yourscope/react-native-pure-modal/floating"),
 );
 ```
 
 ### 2. Runtime Performance
 
 **Optimization Strategies:**
+
 - Worklet-compatible animations where possible
 - Memoized expensive calculations
 - Batched state updates
@@ -505,13 +520,14 @@ const FloatingModal = lazy(() =>
 - Native driver for all transforms
 
 **Performance Budget:**
+
 ```tsx
 // Enforce performance constraints
 const performanceBudget = {
-  initialRenderTime: 50,    // ms
-  animationFPS: 60,         // target FPS
-  gestureLatency: 16,       // ms
-  memoryFootprint: 5000,    // KB
+  initialRenderTime: 50, // ms
+  animationFPS: 60, // target FPS
+  gestureLatency: 16, // ms
+  memoryFootprint: 5000, // KB
 };
 ```
 
@@ -523,18 +539,18 @@ const platformOptimizations = Platform.select({
   ios: {
     useNativeSpring: true,
     enableMomentum: true,
-    shadowOptimization: 'native'
+    shadowOptimization: "native",
   },
   android: {
     useTimingAnimation: true,
     enableElevation: true,
-    renderToHardwareTextureAndroid: true
+    renderToHardwareTextureAndroid: true,
   },
   web: {
     useCSSTransitions: true,
     enableWillChange: true,
-    use3DTransform: true
-  }
+    use3DTransform: true,
+  },
 });
 ```
 
@@ -545,9 +561,10 @@ const platformOptimizations = Platform.select({
 ### 1. Testing Strategy
 
 **Unit Tests:**
+
 ```tsx
-describe('Modal', () => {
-  it('should animate to snap points correctly', () => {
+describe("Modal", () => {
+  it("should animate to snap points correctly", () => {
     const { result } = renderHook(() => useModal());
     act(() => result.current.snapToIndex(1));
     expect(result.current.currentSnapIndex).toBe(1);
@@ -556,26 +573,28 @@ describe('Modal', () => {
 ```
 
 **Integration Tests:**
+
 ```tsx
 // Gesture testing
-it('should respond to drag gestures', async () => {
+it("should respond to drag gestures", async () => {
   const { getByTestId } = render(<Modal testID="modal" />);
-  const modal = getByTestId('modal');
-  
-  fireEvent(modal, 'panGesture', { 
+  const modal = getByTestId("modal");
+
+  fireEvent(modal, "panGesture", {
     translationY: 100,
-    velocityY: 0.5 
+    velocityY: 0.5,
   });
-  
+
   await waitFor(() => {
-    expect(modal).toHaveAnimatedStyle({ 
-      transform: [{ translateY: 100 }] 
+    expect(modal).toHaveAnimatedStyle({
+      transform: [{ translateY: 100 }],
     });
   });
 });
 ```
 
 **E2E Tests:**
+
 - Detox for native testing
 - Playwright for web testing
 - Visual regression testing
@@ -583,6 +602,7 @@ it('should respond to drag gestures', async () => {
 ### 2. Quality Metrics
 
 **Code Quality:**
+
 - 100% TypeScript
 - ESLint + Prettier configured
 - Pre-commit hooks
@@ -590,6 +610,7 @@ it('should respond to drag gestures', async () => {
 - Performance benchmarks
 
 **CI/CD Pipeline:**
+
 ```yaml
 # GitHub Actions
 - Run tests on PR
@@ -610,13 +631,13 @@ interface ErrorBoundaryConfig {
 }
 
 // Built-in error boundary
-<Modal 
+<Modal
   errorBoundary={{
     fallback: ErrorFallback,
     onError: (error) => console.error(error),
-    enableRecovery: true
+    enableRecovery: true,
   }}
-/>
+/>;
 ```
 
 ---
@@ -626,6 +647,7 @@ interface ErrorBoundaryConfig {
 ### 1. Package Publishing
 
 **NPM Package:**
+
 ```json
 {
   "name": "@yourscope/react-native-pure-modal",
@@ -637,19 +659,14 @@ interface ErrorBoundaryConfig {
   "react-native": "src/index.ts",
   "files": ["src", "lib"],
   "sideEffects": false,
-  "keywords": [
-    "react-native",
-    "modal",
-    "bottom-sheet",
-    "pure-js",
-    "60fps"
-  ]
+  "keywords": ["react-native", "modal", "bottom-sheet", "pure-js", "60fps"]
 }
 ```
 
 ### 2. Documentation Site
 
 **Dedicated Documentation:**
+
 - Docusaurus or VitePress site
 - Interactive examples
 - API playground
@@ -659,6 +676,7 @@ interface ErrorBoundaryConfig {
 ### 3. Community Building
 
 **Engagement Strategy:**
+
 - Discord/Slack community
 - GitHub discussions
 - Stack Overflow presence
@@ -668,6 +686,7 @@ interface ErrorBoundaryConfig {
 ### 4. Versioning Strategy
 
 **Semantic Versioning:**
+
 - Breaking changes in major versions
 - New features in minor versions
 - Bug fixes in patch versions
@@ -678,6 +697,7 @@ interface ErrorBoundaryConfig {
 ## Implementation Roadmap
 
 ### Phase 1: Core Refactoring (Week 1-2)
+
 - [ ] Extract hard dependencies
 - [ ] Implement theme system
 - [ ] Create modular architecture
@@ -685,6 +705,7 @@ interface ErrorBoundaryConfig {
 - [ ] Build hook system
 
 ### Phase 2: API Design (Week 3-4)
+
 - [ ] Design declarative API
 - [ ] Implement composition pattern
 - [ ] Create animation presets
@@ -692,6 +713,7 @@ interface ErrorBoundaryConfig {
 - [ ] Add accessibility support
 
 ### Phase 3: Documentation (Week 5-6)
+
 - [ ] Write comprehensive docs
 - [ ] Create interactive examples
 - [ ] Build documentation site
@@ -699,6 +721,7 @@ interface ErrorBoundaryConfig {
 - [ ] Write migration guides
 
 ### Phase 4: Testing & QA (Week 7-8)
+
 - [ ] Write unit tests
 - [ ] Add integration tests
 - [ ] Set up E2E tests
@@ -706,6 +729,7 @@ interface ErrorBoundaryConfig {
 - [ ] Bundle size optimization
 
 ### Phase 5: Release (Week 9-10)
+
 - [ ] Publish beta version
 - [ ] Gather feedback
 - [ ] Fix issues
@@ -717,6 +741,7 @@ interface ErrorBoundaryConfig {
 ## Success Metrics
 
 ### Technical Metrics
+
 - **Performance:** Consistent 60 FPS
 - **Bundle Size:** < 50KB minified
 - **Test Coverage:** > 90%
@@ -724,6 +749,7 @@ interface ErrorBoundaryConfig {
 - **Zero Native Dependencies**
 
 ### Adoption Metrics
+
 - **NPM Downloads:** 10K/month within 6 months
 - **GitHub Stars:** 1K within first year
 - **Active Contributors:** 10+ contributors

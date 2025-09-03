@@ -39,13 +39,15 @@ export function CollapsibleSection({
   onToggle,
 }: CollapsibleSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const rotateAnim = React.useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
+  const rotateAnim = React.useRef(
+    new Animated.Value(defaultOpen ? 1 : 0),
+  ).current;
 
   const toggle = () => {
     const newState = !isOpen;
     setIsOpen(newState);
     onToggle?.(newState);
-    
+
     Animated.timing(rotateAnim, {
       toValue: newState ? 1 : 0,
       duration: 200,
@@ -74,14 +76,18 @@ export function CollapsibleSection({
       >
         <View style={styles.headerLeft}>
           {Icon && (
-            <Icon 
-              size={16} 
-              color={variant === "card" ? gameUIColors.primary : gameUIColors.secondary} 
+            <Icon
+              size={16}
+              color={
+                variant === "card"
+                  ? gameUIColors.primary
+                  : gameUIColors.secondary
+              }
             />
           )}
           <Text style={[styles.title, titleStyle]}>{title}</Text>
         </View>
-        
+
         <View style={styles.headerRight}>
           {badge !== undefined && (
             <View style={styles.badgeContainer}>
@@ -99,12 +105,8 @@ export function CollapsibleSection({
           </Animated.View>
         </View>
       </TouchableOpacity>
-      
-      {isOpen && (
-        <View style={[styles.content, contentStyle]}>
-          {children}
-        </View>
-      )}
+
+      {isOpen && <View style={[styles.content, contentStyle]}>{children}</View>}
     </View>
   );
 }
@@ -115,17 +117,13 @@ interface SimpleProps {
   defaultOpen?: boolean;
 }
 
-CollapsibleSection.Simple = function Simple({ 
-  title, 
-  children, 
-  defaultOpen 
+CollapsibleSection.Simple = function Simple({
+  title,
+  children,
+  defaultOpen,
 }: SimpleProps) {
   return (
-    <CollapsibleSection
-      title={title}
-      defaultOpen={defaultOpen}
-      variant="plain"
-    >
+    <CollapsibleSection title={title} defaultOpen={defaultOpen} variant="plain">
       {children}
     </CollapsibleSection>
   );

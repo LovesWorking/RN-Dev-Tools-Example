@@ -51,7 +51,8 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
   const strokeWidth = 2.5 * scale;
   const isOff = strength === 0;
 
-  const preset = ColorPresets[colorPreset as keyof typeof ColorPresets] || ColorPresets.cyan;
+  const preset =
+    ColorPresets[colorPreset as keyof typeof ColorPresets] || ColorPresets.cyan;
   const baseColor = color || preset.color;
   const baseGlow = glowColor || preset.glow;
   const activeColor = isOff ? "#333" : baseColor;
@@ -61,71 +62,80 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
     <>
       {/* Central dot */}
       <View
-        style={{
-          position: "absolute",
-          width: 5 * scale,
-          height: 5 * scale,
-          borderRadius: 2.5 * scale,
-          backgroundColor: activeColor,
-          left: size / 2 - 2.5 * scale,
-          top: size * 0.7,
-          opacity: strength > 0 ? 1 : 0.3,
-        } as ViewStyle}
+        style={
+          {
+            position: "absolute",
+            width: 5 * scale,
+            height: 5 * scale,
+            borderRadius: 2.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 2.5 * scale,
+            top: size * 0.7,
+            opacity: strength > 0 ? 1 : 0.3,
+          } as ViewStyle
+        }
       />
 
       {/* WiFi arcs - loop based on strength */}
-      {ARCS.filter(arc => strength >= arc.strength).map((arc, i) => (
+      {ARCS.filter((arc) => strength >= arc.strength).map((arc, i) => (
         <View
           key={`arc-${i}`}
-          style={{
-            position: "absolute",
-            width: arc.size * scale,
-            height: arc.size * scale,
-            borderRadius: (arc.size * scale) / 2,
-            borderWidth: strokeWidth,
-            borderColor: activeColor,
-            borderTopColor: "transparent",
-            borderLeftColor: "transparent",
-            borderRightColor: "transparent",
-            left: size / 2 - (arc.size * scale) / 2,
-            top: size * arc.topOffset,
-            transform: [{ rotate: "180deg" }],
-            opacity: arc.opacity,
-          } as ViewStyle}
+          style={
+            {
+              position: "absolute",
+              width: arc.size * scale,
+              height: arc.size * scale,
+              borderRadius: (arc.size * scale) / 2,
+              borderWidth: strokeWidth,
+              borderColor: activeColor,
+              borderTopColor: "transparent",
+              borderLeftColor: "transparent",
+              borderRightColor: "transparent",
+              left: size / 2 - (arc.size * scale) / 2,
+              top: size * arc.topOffset,
+              transform: [{ rotate: "180deg" }],
+              opacity: arc.opacity,
+            } as ViewStyle
+          }
         />
       ))}
 
       {/* Simplified data dots */}
-      {strength > 0 && DOTS.filter(dot => strength >= dot.minStrength).map((dot, i) => (
-        <View
-          key={`dot-${i}`}
-          style={{
-            position: "absolute",
-            width: 1.5 * scale,
-            height: 1.5 * scale,
-            borderRadius: 0.75 * scale,
-            backgroundColor: activeGlow,
-            left: dot.x * size - 0.75 * scale,
-            top: dot.y * size,
-            opacity: 0.6,
-          } as ViewStyle}
-        />
-      ))}
+      {strength > 0 &&
+        DOTS.filter((dot) => strength >= dot.minStrength).map((dot, i) => (
+          <View
+            key={`dot-${i}`}
+            style={
+              {
+                position: "absolute",
+                width: 1.5 * scale,
+                height: 1.5 * scale,
+                borderRadius: 0.75 * scale,
+                backgroundColor: activeGlow,
+                left: dot.x * size - 0.75 * scale,
+                top: dot.y * size,
+                opacity: 0.6,
+              } as ViewStyle
+            }
+          />
+        ))}
 
       {/* Simplified slash overlay */}
       {showSlash && (
         <View
-          style={{
-            position: "absolute",
-            width: size * 0.7,
-            height: strokeWidth * 1.5,
-            backgroundColor: activeColor,
-            left: size * 0.15,
-            top: size * 0.5 - strokeWidth * 0.75,
-            opacity: 0.9,
-            transform: [{ rotate: "45deg" }],
-            borderRadius: strokeWidth,
-          } as ViewStyle}
+          style={
+            {
+              position: "absolute",
+              width: size * 0.7,
+              height: strokeWidth * 1.5,
+              backgroundColor: activeColor,
+              left: size * 0.15,
+              top: size * 0.5 - strokeWidth * 0.75,
+              opacity: 0.9,
+              transform: [{ rotate: "45deg" }],
+              borderRadius: strokeWidth,
+            } as ViewStyle
+          }
         />
       )}
     </>
@@ -133,13 +143,17 @@ export const WifiCircuitIcon: React.FC<WifiIconProps> = ({
 
   if (noBackground) {
     return (
-      <View style={{
-        width: size,
-        height: size,
-        position: "relative",
-        alignItems: "center",
-        justifyContent: "center",
-      } as ViewStyle}>
+      <View
+        style={
+          {
+            width: size,
+            height: size,
+            position: "relative",
+            alignItems: "center",
+            justifyContent: "center",
+          } as ViewStyle
+        }
+      >
         {iconContent}
       </View>
     );

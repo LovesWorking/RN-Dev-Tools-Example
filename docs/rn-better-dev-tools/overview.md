@@ -27,26 +27,29 @@ React Native development often requires juggling multiple debugging tools and co
 
 RN Better Dev Tools integrates directly into your React Native application through a simple component wrapper. Once installed, a floating bubble appears on your screen that provides instant access to all debugging features without interrupting your development flow.
 
-[//]: # 'BasicUsage'
+[//]: # "BasicUsage"
+
 ```tsx
-import { RnBetterDevToolsBubble } from 'rn-better-dev-tools'
-import { queryClient } from './queryClient'
+import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
+import { queryClient } from "./queryClient";
 
 export function App() {
   return (
     <>
-      <RnBetterDevToolsBubble 
+      <RnBetterDevToolsBubble
         queryClient={queryClient}
         environment="development"
       />
       <YourAppContent />
     </>
-  )
+  );
 }
 ```
-[//]: # 'BasicUsage'
+
+[//]: # "BasicUsage"
 
 The tools operate in a non-intrusive overlay, allowing you to:
+
 - Drag the bubble to any position on screen
 - Access different debugging panels through intuitive menus
 - Modify application state in real-time
@@ -55,6 +58,7 @@ The tools operate in a non-intrusive overlay, allowing you to:
 ## Platform Support
 
 RN Better Dev Tools works with **any React-based platform**:
+
 - React Native (iOS & Android)
 - Expo & Expo Go
 - React Native Web
@@ -65,6 +69,7 @@ RN Better Dev Tools works with **any React-based platform**:
 ## Desktop Companion App
 
 For enhanced debugging capabilities, RN Better Dev Tools includes an optional [desktop companion app](https://github.com/LovesWorking/rn-better-dev-tools) that provides:
+
 - Larger viewing area for complex data
 - Advanced filtering and search
 - Export capabilities
@@ -72,7 +77,7 @@ For enhanced debugging capabilities, RN Better Dev Tools includes an optional [d
 
 ## Getting Started
 
-Ready to enhance your debugging experience? 
+Ready to enhance your debugging experience?
 
 - [Quick Start](./quick-start.md) - Get up and running in minutes
 - [Installation](./installation.md) - Detailed setup instructions

@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { gameUIColors } from '@/rn-better-dev-tools/src/shared/ui/gameUI';
-import { DataViewer } from '../../../../react-query/components/shared/DataViewer';
-import type { DiffItem } from '../../../utils/objectDiff';
+import React from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { DataViewer } from "../../../../react-query/components/shared/DataViewer";
+import type { DiffItem } from "../../../utils/objectDiff";
 
 interface SideBySideDiffViewProps {
   oldValue: any;
@@ -11,18 +11,23 @@ interface SideBySideDiffViewProps {
   debugMode?: boolean;
 }
 
-export function SideBySideDiffView({ oldValue, newValue, differences, debugMode }: SideBySideDiffViewProps) {
+export function SideBySideDiffView({
+  oldValue,
+  newValue,
+  differences,
+  debugMode,
+}: SideBySideDiffViewProps) {
   // Create a map of paths that have changes for highlighting
   const changedPaths = new Set(
-    differences.map(diff => {
-      return diff.path.length === 0 ? 'root' : diff.path.join('.');
-    })
+    differences.map((diff) => {
+      return diff.path.length === 0 ? "root" : diff.path.join(".");
+    }),
   );
 
   return (
     <View style={[styles.container, debugMode && styles.debugSideBySide]}>
       {debugMode && <Text style={styles.debugLabel}>SIDE-BY-SIDE MODE</Text>}
-      
+
       <View style={styles.columnsContainer}>
         {/* Previous Value Column */}
         <View style={styles.column}>
@@ -30,11 +35,11 @@ export function SideBySideDiffView({ oldValue, newValue, differences, debugMode 
             <Text style={styles.columnTitle}>PREV</Text>
             <View style={styles.removedBadge}>
               <Text style={styles.badgeText}>
-                {differences.filter(d => d.type === 'REMOVE').length} removed
+                {differences.filter((d) => d.type === "REMOVE").length} removed
               </Text>
             </View>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={true}
@@ -65,11 +70,11 @@ export function SideBySideDiffView({ oldValue, newValue, differences, debugMode 
             <Text style={styles.columnTitle}>CUR</Text>
             <View style={styles.addedBadge}>
               <Text style={styles.badgeText}>
-                {differences.filter(d => d.type === 'CREATE').length} added
+                {differences.filter((d) => d.type === "CREATE").length} added
               </Text>
             </View>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={true}
@@ -95,15 +100,15 @@ export function SideBySideDiffView({ oldValue, newValue, differences, debugMode 
       {/* Change Summary */}
       <View style={styles.summaryBar}>
         <Text style={styles.summaryText}>
-          {differences.filter(d => d.type === 'CHANGE').length} modified
+          {differences.filter((d) => d.type === "CHANGE").length} modified
         </Text>
         <Text style={styles.summaryText}>•</Text>
         <Text style={styles.summaryText}>
-          {differences.filter(d => d.type === 'CREATE').length} added
+          {differences.filter((d) => d.type === "CREATE").length} added
         </Text>
         <Text style={styles.summaryText}>•</Text>
         <Text style={styles.summaryText}>
-          {differences.filter(d => d.type === 'REMOVE').length} removed
+          {differences.filter((d) => d.type === "REMOVE").length} removed
         </Text>
       </View>
     </View>
@@ -115,23 +120,23 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   debugSideBySide: {
-    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+    backgroundColor: "rgba(0, 255, 255, 0.1)",
     borderWidth: 2,
-    borderColor: 'cyan',
+    borderColor: "cyan",
   },
   debugLabel: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
-    backgroundColor: 'cyan',
-    color: 'black',
+    backgroundColor: "cyan",
+    color: "black",
     fontSize: 10,
     padding: 2,
     zIndex: 999,
   },
   columnsContainer: {
-    flexDirection: 'row',
-    backgroundColor: gameUIColors.panel + '30',
+    flexDirection: "row",
+    backgroundColor: gameUIColors.panel + "30",
     borderRadius: 6,
     padding: 8,
     gap: 8,
@@ -140,74 +145,74 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   columnHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 8,
     paddingHorizontal: 4,
   },
   columnTitle: {
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: "700",
     color: gameUIColors.info,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     letterSpacing: 0.5,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   removedBadge: {
-    backgroundColor: gameUIColors.error + '15',
+    backgroundColor: gameUIColors.error + "15",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
   },
   addedBadge: {
-    backgroundColor: gameUIColors.success + '15',
+    backgroundColor: gameUIColors.success + "15",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
   },
   badgeText: {
     fontSize: 8,
-    fontWeight: '600',
+    fontWeight: "600",
     color: gameUIColors.secondary,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   scrollContainer: {
     maxHeight: 300,
   },
   dataContainer: {
-    backgroundColor: gameUIColors.background + '40',
+    backgroundColor: gameUIColors.background + "40",
     borderRadius: 4,
     padding: 8,
     minHeight: 100,
   },
   divider: {
     width: 1,
-    backgroundColor: gameUIColors.border + '30',
+    backgroundColor: gameUIColors.border + "30",
     marginVertical: 24,
   },
   emptyState: {
     fontSize: 10,
     color: gameUIColors.muted,
-    fontFamily: 'monospace',
-    fontStyle: 'italic',
-    textAlign: 'center',
+    fontFamily: "monospace",
+    fontStyle: "italic",
+    textAlign: "center",
     paddingVertical: 20,
   },
   summaryBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     marginTop: 8,
     paddingVertical: 6,
-    backgroundColor: gameUIColors.background + '20',
+    backgroundColor: gameUIColors.background + "20",
     borderRadius: 4,
   },
   summaryText: {
     fontSize: 9,
     color: gameUIColors.secondary,
-    fontFamily: 'monospace',
-    fontWeight: '600',
+    fontFamily: "monospace",
+    fontWeight: "600",
   },
 });

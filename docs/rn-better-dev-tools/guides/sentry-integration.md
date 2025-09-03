@@ -21,9 +21,10 @@ The Sentry viewer will capture:
 
 Application errors and exceptions:
 
-[//]: # 'ErrorEvents'
+[//]: # "ErrorEvents"
+
 ```tsx
-Sentry.captureException(new Error('Something went wrong'))
+Sentry.captureException(new Error("Something went wrong"));
 
 // Displays in viewer:
 // Type: Error
@@ -31,38 +32,43 @@ Sentry.captureException(new Error('Something went wrong'))
 // Stack trace: ...
 // Timestamp: 10:30:45
 ```
-[//]: # 'ErrorEvents'
+
+[//]: # "ErrorEvents"
 
 #### Message Events
 
 Custom log messages:
 
-[//]: # 'MessageEvents'
+[//]: # "MessageEvents"
+
 ```tsx
-Sentry.captureMessage('User completed onboarding', 'info')
+Sentry.captureMessage("User completed onboarding", "info");
 
 // Shows as:
 // Type: Message
 // Level: Info
 // Message: User completed onboarding
 ```
-[//]: # 'MessageEvents'
+
+[//]: # "MessageEvents"
 
 #### Breadcrumbs
 
 Navigation and action trail:
 
-[//]: # 'Breadcrumbs'
+[//]: # "Breadcrumbs"
+
 ```tsx
 Sentry.addBreadcrumb({
-  message: 'User clicked submit',
-  category: 'ui.click',
-  level: 'info'
-})
+  message: "User clicked submit",
+  category: "ui.click",
+  level: "info",
+});
 
 // Breadcrumb trail visible in event details
 ```
-[//]: # 'Breadcrumbs'
+
+[//]: # "Breadcrumbs"
 
 ### Event Details View
 
@@ -102,41 +108,44 @@ npm i @sentry/react-native
 
 Initialize Sentry in your app:
 
-[//]: # 'SentryInit'
+[//]: # "SentryInit"
+
 ```tsx
-import * as Sentry from '@sentry/react-native'
+import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   debug: __DEV__,
   environment: process.env.EXPO_PUBLIC_APP_ENV,
-  integrations: [
-    new Sentry.ReactNativeTracing()
-  ],
-  tracesSampleRate: 1.0
-})
+  integrations: [new Sentry.ReactNativeTracing()],
+  tracesSampleRate: 1.0,
+});
 ```
-[//]: # 'SentryInit'
+
+[//]: # "SentryInit"
 
 ### Enabling in Dev Tools
 
 Once re-enabled, access via:
 
-[//]: # 'EnablingDevTools'
+[//]: # "EnablingDevTools"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   hideSentryButton={false} // Currently must be true
 />
 ```
-[//]: # 'EnablingDevTools'
+
+[//]: # "EnablingDevTools"
 
 ## Planned Interface
 
 ### Event List
 
 The main view will show:
+
 - Recent events in chronological order
 - Color-coded by severity
 - Event count badge
@@ -145,6 +154,7 @@ The main view will show:
 ### Event Statistics
 
 Dashboard showing:
+
 - **Total events** - Count in current session
 - **Error rate** - Errors per minute
 - **Most common** - Frequent error types
@@ -153,6 +163,7 @@ Dashboard showing:
 ### Event Actions
 
 For each event:
+
 - **View details** - Full event information
 - **Copy ID** - For Sentry dashboard lookup
 - **Mark resolved** - Clear from local view
@@ -164,49 +175,55 @@ For each event:
 
 Debug production-like errors locally:
 
-[//]: # 'ErrorDebugging'
+[//]: # "ErrorDebugging"
+
 ```tsx
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
-  Sentry.captureException(error)
+  Sentry.captureException(error);
   // See immediately in dev tools
 }
 ```
-[//]: # 'ErrorDebugging'
+
+[//]: # "ErrorDebugging"
 
 ### Performance Monitoring
 
 Track performance issues:
 
-[//]: # 'PerformanceMonitoring'
+[//]: # "PerformanceMonitoring"
+
 ```tsx
 const transaction = Sentry.startTransaction({
-  name: 'api-call',
-  op: 'http.request'
-})
+  name: "api-call",
+  op: "http.request",
+});
 
 // ... perform operation
 
-transaction.finish()
+transaction.finish();
 // Transaction appears in viewer
 ```
-[//]: # 'PerformanceMonitoring'
+
+[//]: # "PerformanceMonitoring"
 
 ### User Feedback
 
 Correlate user reports with errors:
 
-[//]: # 'UserFeedback'
+[//]: # "UserFeedback"
+
 ```tsx
 Sentry.setUser({
   id: user.id,
-  email: user.email
-})
+  email: user.email,
+});
 
 // All subsequent events tagged with user
 ```
-[//]: # 'UserFeedback'
+
+[//]: # "UserFeedback"
 
 ## Custom Event Tracking
 
@@ -214,48 +231,54 @@ Sentry.setUser({
 
 Enhance events with context:
 
-[//]: # 'AddingContext'
+[//]: # "AddingContext"
+
 ```tsx
-Sentry.setContext('order', {
-  orderId: '12345',
+Sentry.setContext("order", {
+  orderId: "12345",
   amount: 99.99,
-  items: 3
-})
+  items: 3,
+});
 
 // Context appears in all events
 ```
-[//]: # 'AddingContext'
+
+[//]: # "AddingContext"
 
 ### Custom Tags
 
 Tag events for filtering:
 
-[//]: # 'CustomTags'
+[//]: # "CustomTags"
+
 ```tsx
-Sentry.setTag('feature', 'checkout')
-Sentry.setTag('experiment', 'new-flow')
+Sentry.setTag("feature", "checkout");
+Sentry.setTag("experiment", "new-flow");
 
 // Filter by tags in viewer
 ```
-[//]: # 'CustomTags'
+
+[//]: # "CustomTags"
 
 ### Breadcrumbs
 
 Add navigation trail:
 
-[//]: # 'BreadcrumbsTracking'
+[//]: # "BreadcrumbsTracking"
+
 ```tsx
 // Automatic breadcrumbs
 Sentry.addBreadcrumb({
-  type: 'navigation',
-  category: 'navigation',
+  type: "navigation",
+  category: "navigation",
   data: {
-    from: 'Home',
-    to: 'Profile'
-  }
-})
+    from: "Home",
+    to: "Profile",
+  },
+});
 ```
-[//]: # 'BreadcrumbsTracking'
+
+[//]: # "BreadcrumbsTracking"
 
 ## Development Workflow
 
@@ -272,6 +295,7 @@ Use dev tools to verify error tracking:
 ### Monitoring During Development
 
 Keep Sentry viewer open to:
+
 - Catch unexpected errors early
 - Monitor performance issues
 - Track user actions
@@ -283,34 +307,38 @@ Keep Sentry viewer open to:
 
 Configure which events to capture:
 
-[//]: # 'SeverityLevels'
+[//]: # "SeverityLevels"
+
 ```tsx
 Sentry.init({
   // Only capture warnings and above
   beforeSend(event) {
-    if (event.level === 'info' || event.level === 'debug') {
-      return null // Don't send
+    if (event.level === "info" || event.level === "debug") {
+      return null; // Don't send
     }
-    return event
-  }
-})
+    return event;
+  },
+});
 ```
-[//]: # 'SeverityLevels'
+
+[//]: # "SeverityLevels"
 
 ### Sampling
 
 Control event volume:
 
-[//]: # 'Sampling'
+[//]: # "Sampling"
+
 ```tsx
 Sentry.init({
   // Send 50% of events
   sampleRate: 0.5,
   // Send 10% of transactions
-  tracesSampleRate: 0.1
-})
+  tracesSampleRate: 0.1,
+});
 ```
-[//]: # 'Sampling'
+
+[//]: # "Sampling"
 
 ## Best Practices
 
@@ -318,57 +346,64 @@ Sentry.init({
 
 Implement React error boundaries:
 
-[//]: # 'ErrorBoundaries'
+[//]: # "ErrorBoundaries"
+
 ```tsx
-import { ErrorBoundary } from '@sentry/react-native'
+import { ErrorBoundary } from "@sentry/react-native";
 
 <ErrorBoundary fallback={ErrorFallback} showDialog>
   <YourApp />
-</ErrorBoundary>
+</ErrorBoundary>;
 ```
-[//]: # 'ErrorBoundaries'
+
+[//]: # "ErrorBoundaries"
 
 ### Sensitive Data
 
 Scrub sensitive information:
 
-[//]: # 'SensitiveData'
+[//]: # "SensitiveData"
+
 ```tsx
 Sentry.init({
   beforeSend(event) {
     // Remove sensitive data
     if (event.request) {
-      delete event.request.cookies
-      delete event.request.headers['authorization']
+      delete event.request.cookies;
+      delete event.request.headers["authorization"];
     }
-    return event
-  }
-})
+    return event;
+  },
+});
 ```
-[//]: # 'SensitiveData'
+
+[//]: # "SensitiveData"
 
 ### Performance Impact
 
 Minimize overhead:
 
-[//]: # 'PerformanceImpact'
+[//]: # "PerformanceImpact"
+
 ```tsx
 // Use sampling in production
-const sampleRate = __DEV__ ? 1.0 : 0.1
+const sampleRate = __DEV__ ? 1.0 : 0.1;
 
 // Disable in performance-critical paths
-Sentry.withScope(scope => {
-  scope.setLevel('debug')
+Sentry.withScope((scope) => {
+  scope.setLevel("debug");
   // Won't be sent if filtering debug
-})
+});
 ```
-[//]: # 'PerformanceImpact'
+
+[//]: # "PerformanceImpact"
 
 ## Common Issues
 
 ### Events Not Appearing
 
 When events don't show:
+
 1. Verify Sentry DSN is configured
 2. Check network connectivity
 3. Ensure debug mode is enabled
@@ -377,6 +412,7 @@ When events don't show:
 ### Missing Context
 
 If context is incomplete:
+
 1. Set user context early
 2. Add breadcrumbs throughout flow
 3. Use scope for temporary context
@@ -387,6 +423,7 @@ If context is incomplete:
 ### Why It's Disabled
 
 The Sentry integration is temporarily disabled due to:
+
 - Import resolution issues with the modal component
 - Compatibility concerns with certain React Native versions
 - Performance optimizations in progress
@@ -394,6 +431,7 @@ The Sentry integration is temporarily disabled due to:
 ### Workaround
 
 Until re-enabled, use Sentry's web dashboard:
+
 1. Log into sentry.io
 2. Select your project
 3. View real-time events
@@ -402,6 +440,7 @@ Until re-enabled, use Sentry's web dashboard:
 ### Expected Timeline
 
 The Sentry viewer is expected to be re-enabled:
+
 - Next minor release (for basic functionality)
 - Following release (for full features)
 
@@ -430,36 +469,43 @@ While Sentry is disabled, consider:
 
 Enhanced console output:
 
-[//]: # 'ConsoleLogging'
+[//]: # "ConsoleLogging"
+
 ```tsx
 if (__DEV__) {
-  console.error('Error:', error)
-  console.log('Context:', { user, action })
+  console.error("Error:", error);
+  console.log("Context:", { user, action });
 }
 ```
-[//]: # 'ConsoleLogging'
+
+[//]: # "ConsoleLogging"
 
 ### Custom Error Handler
 
 Temporary error tracking:
 
-[//]: # 'CustomErrorHandler'
+[//]: # "CustomErrorHandler"
+
 ```tsx
 const errorHandler = (error, isFatal) => {
   // Log to your service
-  console.error('App Error:', error)
-  
-  // Store locally
-  AsyncStorage.setItem('last_error', JSON.stringify({
-    error: error.message,
-    stack: error.stack,
-    timestamp: Date.now()
-  }))
-}
+  console.error("App Error:", error);
 
-ErrorUtils.setGlobalHandler(errorHandler)
+  // Store locally
+  AsyncStorage.setItem(
+    "last_error",
+    JSON.stringify({
+      error: error.message,
+      stack: error.stack,
+      timestamp: Date.now(),
+    }),
+  );
+};
+
+ErrorUtils.setGlobalHandler(errorHandler);
 ```
-[//]: # 'CustomErrorHandler'
+
+[//]: # "CustomErrorHandler"
 
 ## Next Steps
 

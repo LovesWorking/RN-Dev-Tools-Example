@@ -71,6 +71,7 @@ app/
 ```
 
 Notes:
+
 - The existing `app/index.tsx` should become the authenticated home (e.g., move to `app/(app)/(tabs)/index.tsx` or `app/(app)/index.tsx` if not using tabs yet).
 - Keep `app/+not-found.tsx` as-is to continue handling unknown paths.
 - Keep `app/test-filters.tsx` either as a dev route under `(app)` (e.g., `app/(app)/dev/test-filters.tsx`) or remove from production builds.
@@ -119,35 +120,41 @@ Back behavior and transitions:
 
 ## Step‑By‑Step Implementation Plan
 
-1) Auth state foundation
+1. Auth state foundation
+
 - Create `ctx/auth.tsx` (or equivalent) with `SessionProvider` and `useSession()` exposing `{ session, isLoading, signIn, signOut }`.
 - Persist session token via storage and ensure guard reactivity.
 
-2) Root layout gating
+2. Root layout gating
+
 - Update `app/_layout.tsx` to:
   - Wrap with `SessionProvider`.
   - Gate with `<Stack.Protected guard={!!session}>` for `(app)` and `<Stack.Protected guard={!session}>` for `(auth)`.
   - Keep `+not-found` globally available.
 - Control splash visibility based on `isLoading` to prevent UI flicker.
 
-3) Route reorganization
+3. Route reorganization
+
 - Create `(auth)` group with: `sign-in`, `sign-up`, `forgot-password`.
 - Create `(app)` group:
   - If using tabs: `(app)/(tabs)/_layout.tsx`, and move current `index.tsx` into that group as the home tab.
   - Otherwise: `(app)/index.tsx` as the main entry.
 - Move `test-filters.tsx` into `(app)/dev/` or remove from production.
 
-4) Navigation semantics
+4. Navigation semantics
+
 - On successful `signIn`, rely on guard or call `router.replace('/(app)')`.
 - On `signOut`, rely on guard or call `router.replace('/(auth)/sign-in')`.
 - Ensure initial routes in nested stacks for consistent back buttons.
 
-5) Optional enhancements
+5. Optional enhancements
+
 - Add `+native-intent.tsx` to map legacy deep links to the new routes.
 - Add `Tabs`/`Drawer` as needed for IA; centralize tab icons and badges in `(tabs)/_layout.tsx`.
 - Prefetch heavy screens via `<Link prefetch />` or `router.prefetch`.
 
-6) QA and guardrail checks
+6. QA and guardrail checks
+
 - Verify: logged-in cannot reach `(auth)` and cannot back into it; logged-out cannot reach `(app)` screens.
 - Verify: deep links land correctly with back behavior.
 - Verify: no duplicate screen declarations; no flicker on launch.
@@ -162,4 +169,3 @@ Back behavior and transitions:
 ---
 
 If you want, I can implement this structure next: create the groups/layouts, wire a minimal `SessionProvider`, and migrate `index.tsx` while preserving providers and styles.
-

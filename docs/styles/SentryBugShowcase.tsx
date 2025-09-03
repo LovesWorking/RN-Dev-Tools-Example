@@ -36,9 +36,7 @@ export const SentryBugShowcase: React.FC = () => {
                   glowColor={BugColors.red}
                 />
               </View>
-              <Text style={styles.variantName}>
-                {variant?.toUpperCase()}
-              </Text>
+              <Text style={styles.variantName}>{variant?.toUpperCase()}</Text>
             </View>
           ))}
         </View>
@@ -69,9 +67,7 @@ export const SentryBugShowcase: React.FC = () => {
         <Text style={styles.sectionTitle}>🎨 VARIANT × COLOR MATRIX</Text>
         {variants.map((variant) => (
           <View key={variant} style={styles.variantRow}>
-            <Text style={styles.variantLabel}>
-              {variant?.toUpperCase()}
-            </Text>
+            <Text style={styles.variantLabel}>{variant?.toUpperCase()}</Text>
             <View style={styles.variantColors}>
               {["red", "purple", "cyan", "orange"].map((color) => (
                 <View key={color} style={[styles.darkBg, styles.miniBox]}>

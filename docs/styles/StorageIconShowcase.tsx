@@ -16,7 +16,13 @@ const StorageColors = {
 
 // Demo Component
 export const StorageIconShowcase: React.FC = () => {
-  const stackVariants = ["circuit", "nodes", "grid", "matrix", "glitch"] as const;
+  const stackVariants = [
+    "circuit",
+    "nodes",
+    "grid",
+    "matrix",
+    "glitch",
+  ] as const;
   const colors = Object.keys(StorageColors) as (keyof typeof StorageColors)[];
 
   return (
@@ -38,9 +44,7 @@ export const StorageIconShowcase: React.FC = () => {
                   glowColor={StorageColors.yellow}
                 />
               </View>
-              <Text style={styles.variantName}>
-                {variant?.toUpperCase()}
-              </Text>
+              <Text style={styles.variantName}>{variant?.toUpperCase()}</Text>
             </View>
           ))}
         </View>
@@ -71,9 +75,7 @@ export const StorageIconShowcase: React.FC = () => {
         <Text style={styles.sectionTitle}>🎨 VARIANT × COLOR MATRIX</Text>
         {stackVariants.map((variant) => (
           <View key={variant} style={styles.variantRow}>
-            <Text style={styles.variantLabel}>
-              {variant?.toUpperCase()}
-            </Text>
+            <Text style={styles.variantLabel}>{variant?.toUpperCase()}</Text>
             <View style={styles.variantColors}>
               {["yellow", "cyan", "green", "purple"].map((color) => (
                 <View key={color} style={[styles.darkBg, styles.miniBox]}>
@@ -81,7 +83,9 @@ export const StorageIconShowcase: React.FC = () => {
                     size={32}
                     variant={variant}
                     color={StorageColors[color as keyof typeof StorageColors]}
-                    glowColor={StorageColors[color as keyof typeof StorageColors]}
+                    glowColor={
+                      StorageColors[color as keyof typeof StorageColors]
+                    }
                   />
                 </View>
               ))}

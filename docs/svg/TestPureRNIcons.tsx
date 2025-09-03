@@ -3,8 +3,8 @@
  * This demonstrates the requested icons working without any native dependencies
  */
 
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import {
   WifiIconPure,
   WifiOffIconPure,
@@ -17,7 +17,7 @@ import {
   GlobeIconPure,
   HardDriveIconPure,
   PureRNIcon,
-} from './PureRNSVGConverter';
+} from "./PureRNSVGConverter";
 
 const TestPureRNIcons: React.FC = () => {
   return (
@@ -34,19 +34,19 @@ const TestPureRNIcons: React.FC = () => {
             <Text style={styles.iconLabel}>WiFi</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <WifiOffIconPure size={60} color="#F44336" strokeWidth={2} />
             <Text style={styles.iconLabel}>WiFi Off</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <NetworkIconPure size={60} color="#4CAF50" strokeWidth={2} />
             <Text style={styles.iconLabel}>Network</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <GlobeIconPure size={60} color="#3F51B5" strokeWidth={2} />
             <Text style={styles.iconLabel}>Globe</Text>
@@ -64,19 +64,19 @@ const TestPureRNIcons: React.FC = () => {
             <Text style={styles.iconLabel}>Storage</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <DatabaseIconPure size={60} color="#00BCD4" strokeWidth={2} />
             <Text style={styles.iconLabel}>Database</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <ServerIconPure size={60} color="#607D8B" strokeWidth={2} />
             <Text style={styles.iconLabel}>Server</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <HardDriveIconPure size={60} color="#795548" strokeWidth={2} />
             <Text style={styles.iconLabel}>Hard Drive</Text>
@@ -94,7 +94,7 @@ const TestPureRNIcons: React.FC = () => {
             <Text style={styles.iconLabel}>Shield/Sentry</Text>
             <Text style={styles.iconStatus}>✅ Working</Text>
           </View>
-          
+
           <View style={styles.iconContainer}>
             <EnvIconPure size={60} color="#FF9800" strokeWidth={2} />
             <Text style={styles.iconLabel}>Environment</Text>
@@ -107,13 +107,20 @@ const TestPureRNIcons: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🔄 Dynamic Icon Loading</Text>
         <View style={styles.iconRow}>
-          {['wifi', 'network', 'storage', 'shield', 'database', 'server'].map((iconName) => (
-            <View key={iconName} style={styles.iconContainer}>
-              <PureRNIcon name={iconName} size={40} color="#333" strokeWidth={2} />
-              <Text style={styles.iconLabel}>{iconName}</Text>
-              <Text style={styles.iconStatus}>✅</Text>
-            </View>
-          ))}
+          {["wifi", "network", "storage", "shield", "database", "server"].map(
+            (iconName) => (
+              <View key={iconName} style={styles.iconContainer}>
+                <PureRNIcon
+                  name={iconName}
+                  size={40}
+                  color="#333"
+                  strokeWidth={2}
+                />
+                <Text style={styles.iconLabel}>{iconName}</Text>
+                <Text style={styles.iconStatus}>✅</Text>
+              </View>
+            ),
+          )}
         </View>
       </View>
 
@@ -134,12 +141,14 @@ const TestPureRNIcons: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🎨 Color Variations</Text>
         <View style={styles.iconRow}>
-          {['#FF0000', '#00FF00', '#0000FF', '#FFA500', '#800080'].map((color) => (
-            <View key={color} style={styles.iconContainer}>
-              <NetworkIconPure size={40} color={color} strokeWidth={2} />
-              <Text style={styles.iconLabel}>{color}</Text>
-            </View>
-          ))}
+          {["#FF0000", "#00FF00", "#0000FF", "#FFA500", "#800080"].map(
+            (color) => (
+              <View key={color} style={styles.iconContainer}>
+                <NetworkIconPure size={40} color={color} strokeWidth={2} />
+                <Text style={styles.iconLabel}>{color}</Text>
+              </View>
+            ),
+          )}
         </View>
       </View>
 
@@ -149,7 +158,11 @@ const TestPureRNIcons: React.FC = () => {
         <View style={styles.iconRow}>
           {[1, 2, 3, 4, 5].map((strokeWidth) => (
             <View key={strokeWidth} style={styles.iconContainer}>
-              <DatabaseIconPure size={40} color="#333" strokeWidth={strokeWidth} />
+              <DatabaseIconPure
+                size={40}
+                color="#333"
+                strokeWidth={strokeWidth}
+              />
               <Text style={styles.iconLabel}>{strokeWidth}px</Text>
             </View>
           ))}
@@ -159,20 +172,38 @@ const TestPureRNIcons: React.FC = () => {
       {/* Implementation Notes */}
       <View style={styles.notes}>
         <Text style={styles.notesTitle}>📝 Implementation Notes:</Text>
-        <Text style={styles.note}>• WiFi Icon: Uses simplified arc paths (curves approximated)</Text>
-        <Text style={styles.note}>• Network Icon: Custom design with connected nodes</Text>
-        <Text style={styles.note}>• Storage Icon: Filing cabinet style with drawers</Text>
-        <Text style={styles.note}>• Database Icon: Cylinder shape with ellipses</Text>
-        <Text style={styles.note}>• Shield Icon: Simplified polygon outline</Text>
-        <Text style={styles.note}>• Environment Icon: Hexagon with center circle</Text>
-        <Text style={styles.note}>• All icons work without react-native-svg!</Text>
+        <Text style={styles.note}>
+          • WiFi Icon: Uses simplified arc paths (curves approximated)
+        </Text>
+        <Text style={styles.note}>
+          • Network Icon: Custom design with connected nodes
+        </Text>
+        <Text style={styles.note}>
+          • Storage Icon: Filing cabinet style with drawers
+        </Text>
+        <Text style={styles.note}>
+          • Database Icon: Cylinder shape with ellipses
+        </Text>
+        <Text style={styles.note}>
+          • Shield Icon: Simplified polygon outline
+        </Text>
+        <Text style={styles.note}>
+          • Environment Icon: Hexagon with center circle
+        </Text>
+        <Text style={styles.note}>
+          • All icons work without react-native-svg!
+        </Text>
       </View>
 
       {/* Conversion Status */}
       <View style={styles.statusBox}>
         <Text style={styles.statusTitle}>Conversion Status:</Text>
-        <Text style={styles.statusSuccess}>✅ 10/10 Icons Successfully Converted</Text>
-        <Text style={styles.statusInfo}>These icons use only React Native View, Text, and transform styles.</Text>
+        <Text style={styles.statusSuccess}>
+          ✅ 10/10 Icons Successfully Converted
+        </Text>
+        <Text style={styles.statusInfo}>
+          These icons use only React Native View, Text, and transform styles.
+        </Text>
         <Text style={styles.statusInfo}>No native dependencies required!</Text>
       </View>
     </ScrollView>
@@ -182,28 +213,28 @@ const TestPureRNIcons: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginTop: 40,
     marginBottom: 10,
-    color: '#333',
+    color: "#333",
   },
   subtitle: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 30,
-    color: '#666',
+    color: "#666",
   },
   section: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     margin: 10,
     padding: 15,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -211,49 +242,49 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
-    color: '#333',
+    color: "#333",
   },
   iconRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
   },
   iconContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     margin: 10,
     minWidth: 70,
   },
   iconLabel: {
     fontSize: 12,
     marginTop: 5,
-    color: '#666',
+    color: "#666",
   },
   iconStatus: {
     fontSize: 10,
     marginTop: 2,
-    color: '#4CAF50',
+    color: "#4CAF50",
   },
   notes: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: "#E3F2FD",
     margin: 10,
     padding: 15,
     borderRadius: 10,
   },
   notesTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    color: '#1976D2',
+    color: "#1976D2",
   },
   note: {
     fontSize: 14,
     marginBottom: 5,
-    color: '#424242',
+    color: "#424242",
   },
   statusBox: {
-    backgroundColor: '#C8E6C9',
+    backgroundColor: "#C8E6C9",
     margin: 10,
     padding: 15,
     borderRadius: 10,
@@ -261,19 +292,19 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    color: '#2E7D32',
+    color: "#2E7D32",
   },
   statusSuccess: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1B5E20',
+    fontWeight: "bold",
+    color: "#1B5E20",
     marginBottom: 5,
   },
   statusInfo: {
     fontSize: 14,
-    color: '#424242',
+    color: "#424242",
     marginBottom: 3,
   },
 });

@@ -244,12 +244,19 @@ export const WifiOffIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Signal dot */}
     <PureCircle cx={12} cy={20} r={1} fill={color} />
-    
+
     {/* Diagonal line for "off" */}
-    <PureLine x1={3} y1={3} x2={21} y2={21} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={3}
+      y1={3}
+      x2={21}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -269,7 +276,7 @@ export const SettingsIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Inner settings circle */}
     <PureCircle
       cx={12}
@@ -278,12 +285,40 @@ export const SettingsIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Simple gear teeth as lines */}
-    <PureLine x1={12} y1={1} x2={12} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={20} x2={12} y2={23} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={1} y1={12} x2={4} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={20} y1={12} x2={23} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={1}
+      x2={12}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={20}
+      x2={12}
+      y2={23}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={1}
+      y1={12}
+      x2={4}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={20}
+      y1={12}
+      x2={23}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -297,18 +332,23 @@ export const CloudIcon = ({
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Simple cloud using circles */}
     <PureCircle cx={8} cy={15} r={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureCircle cx={16} cy={15} r={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureCircle cx={12} cy={11} r={4} stroke={color} strokeWidth={strokeWidth} />
-    
-    {/* Bottom rectangle to connect */}
-    <PureRect
-      x={8}
-      y={13}
-      width={8}
-      height={6}
-      fill="white"
-      stroke="white"
+    <PureCircle
+      cx={16}
+      cy={15}
+      r={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
     />
+    <PureCircle
+      cx={12}
+      cy={11}
+      r={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
+    {/* Bottom rectangle to connect */}
+    <PureRect x={8} y={13} width={8} height={6} fill="white" stroke="white" />
   </PureSvg>
 );
 
@@ -368,16 +408,58 @@ export const VolumeIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Speaker cone triangle */}
-    <PureLine x1={8} y1={9} x2={11} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={8} y1={15} x2={11} y2={18} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={8} y1={9} x2={8} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={8}
+      y1={9}
+      x2={11}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={8}
+      y1={15}
+      x2={11}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={8}
+      y1={9}
+      x2={8}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Sound waves - simple arcs */}
-    <PureLine x1={13} y1={9} x2={13} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={16} y1={7} x2={16} y2={17} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={19} y1={5} x2={19} y2={19} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={13}
+      y1={9}
+      x2={13}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={16}
+      y1={7}
+      x2={16}
+      y2={17}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={19}
+      y1={5}
+      x2={19}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -462,12 +544,40 @@ export const RefreshCwIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Arrow heads */}
-    <PureLine x1={12} y1={3} x2={15} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={3} x2={9} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={21} x2={15} y2={18} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={21} x2={9} y2={18} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={3}
+      x2={15}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={3}
+      x2={9}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={21}
+      x2={15}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={21}
+      x2={9}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -480,16 +590,72 @@ export const ShieldIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Simple shield outline using lines */}
-    <PureLine x1={12} y1={2} x2={4} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={2} x2={20} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={4} y1={8} x2={4} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={20} y1={8} x2={20} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={4} y1={14} x2={12} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={20} y1={14} x2={12} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={12}
+      y1={2}
+      x2={4}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={2}
+      x2={20}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={4}
+      y1={8}
+      x2={4}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={20}
+      y1={8}
+      x2={20}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={4}
+      y1={14}
+      x2={12}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={20}
+      y1={14}
+      x2={12}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Check mark inside */}
-    <PureLine x1={8} y1={11} x2={11} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={11} y1={14} x2={16} y2={9} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={8}
+      y1={11}
+      x2={11}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={11}
+      y1={14}
+      x2={16}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -509,15 +675,21 @@ export const PaletteIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Paint dots in simple pattern */}
     <PureCircle cx={8} cy={8} r={1} fill={color} />
     <PureCircle cx={16} cy={8} r={1} fill={color} />
     <PureCircle cx={8} cy={14} r={1} fill={color} />
     <PureCircle cx={14} cy={14} r={1} fill={color} />
-    
+
     {/* Thumb hole */}
-    <PureCircle cx={17} cy={17} r={2} stroke={color} strokeWidth={strokeWidth} />
+    <PureCircle
+      cx={17}
+      cy={17}
+      r={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -539,14 +711,42 @@ export const HandIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Fingers as simple lines */}
-    <PureLine x1={9} y1={11} x2={9} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={11} x2={12} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={15} y1={11} x2={15} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={9}
+      y1={11}
+      x2={9}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={11}
+      x2={12}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={15}
+      y1={11}
+      x2={15}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Thumb */}
-    <PureLine x1={7} y1={14} x2={4} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={7}
+      y1={14}
+      x2={4}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -621,7 +821,7 @@ export const DatabaseIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Middle section */}
     <PureRect
       x={5}
@@ -631,7 +831,7 @@ export const DatabaseIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Bottom cylinder */}
     <PureRect
       x={5}
@@ -642,10 +842,24 @@ export const DatabaseIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Horizontal dividers */}
-    <PureLine x1={5} y1={7} x2={19} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={5} y1={11} x2={19} y2={11} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={5}
+      y1={7}
+      x2={19}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={5}
+      y1={11}
+      x2={19}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1030,17 +1244,66 @@ export const FileCodeIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* File fold corner */}
-    <PureLine x1={14} y1={2} x2={19} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={2} x2={14} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={7} x2={19} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={14}
+      y1={2}
+      x2={19}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={2}
+      x2={14}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={7}
+      x2={19}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Simple code symbols < > */}
-    <PureLine x1={8} y1={11} x2={10} y2={13} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={8} y1={15} x2={10} y2={13} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={11} x2={16} y2={13} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={15} x2={16} y2={13} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={8}
+      y1={11}
+      x2={10}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={8}
+      y1={15}
+      x2={10}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={11}
+      x2={16}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={15}
+      x2={16}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1130,20 +1393,83 @@ export const FileJsonIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* File fold corner */}
-    <PureLine x1={14} y1={2} x2={19} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={2} x2={14} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={7} x2={19} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={14}
+      y1={2}
+      x2={19}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={2}
+      x2={14}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={7}
+      x2={19}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Simple JSON braces { } */}
-    <PureLine x1={9} y1={11} x2={9} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={9} y1={11} x2={10} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={9} y1={15} x2={10} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    
-    <PureLine x1={15} y1={11} x2={15} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={11} x2={15} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={15} x2={15} y2={15} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={9}
+      y1={11}
+      x2={9}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={9}
+      y1={11}
+      x2={10}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={9}
+      y1={15}
+      x2={10}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
+    <PureLine
+      x1={15}
+      y1={11}
+      x2={15}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={11}
+      x2={15}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={15}
+      x2={15}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1165,13 +1491,27 @@ export const TestTube2Icon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Cork/top */}
-    <PureLine x1={8} y1={4} x2={16} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={8}
+      y1={4}
+      x2={16}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Liquid level */}
-    <PureLine x1={10} y1={14} x2={14} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={10}
+      y1={14}
+      x2={14}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Liquid fill */}
     <PureRect x={11} y={15} width={2} height={4} fill={color} />
   </PureSvg>
@@ -1186,19 +1526,68 @@ export const FlaskConicalIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Flask neck */}
-    <PureLine x1={10} y1={2} x2={10} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={2} x2={14} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={10}
+      y1={2}
+      x2={10}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={2}
+      x2={14}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Flask opening */}
-    <PureLine x1={8} y1={2} x2={16} y2={2} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={8}
+      y1={2}
+      x2={16}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Flask body - triangle */}
-    <PureLine x1={10} y1={9} x2={4} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={9} x2={20} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={4} y1={21} x2={20} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={10}
+      y1={9}
+      x2={4}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={9}
+      x2={20}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={4}
+      y1={21}
+      x2={20}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Liquid level */}
-    <PureLine x1={8} y1={16} x2={16} y2={16} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={8}
+      y1={16}
+      x2={16}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1364,14 +1753,42 @@ export const BoxIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Box top - simple lines for 3D effect */}
-    <PureLine x1={4} y1={8} x2={8} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={20} y1={8} x2={16} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={8} y1={4} x2={16} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={4}
+      y1={8}
+      x2={8}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={20}
+      y1={8}
+      x2={16}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={8}
+      y1={4}
+      x2={16}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Tape/opening line */}
-    <PureLine x1={12} y1={4} x2={12} y2={8} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={4}
+      x2={12}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1388,10 +1805,31 @@ export const KeyIcon = ({
     {/* Key hole */}
     <PureCircle cx={7} cy={12} r={1.5} fill={color} />
     {/* Key shaft */}
-    <PureLine x1={12} y1={12} x2={21} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={12}
+      x2={21}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     {/* Simple teeth */}
-    <PureLine x1={19} y1={12} x2={19} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={21} y1={12} x2={21} y2={14} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={19}
+      y1={12}
+      x2={19}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={21}
+      y1={12}
+      x2={21}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1406,12 +1844,39 @@ export const RouteIcon = ({
     {/* Start point */}
     <PureCircle cx={5} cy={12} r={3} stroke={color} strokeWidth={strokeWidth} />
     {/* End point */}
-    <PureCircle cx={19} cy={12} r={3} stroke={color} strokeWidth={strokeWidth} />
+    <PureCircle
+      cx={19}
+      cy={12}
+      r={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     {/* Simple connecting line */}
-    <PureLine x1={8} y1={12} x2={16} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={8}
+      y1={12}
+      x2={16}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     {/* Direction arrow */}
-    <PureLine x1={13} y1={9} x2={16} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={13} y1={15} x2={16} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={13}
+      y1={9}
+      x2={16}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={13}
+      y1={15}
+      x2={16}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1424,17 +1889,45 @@ export const TriangleAlertIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Triangle outline */}
-    <PureLine x1={12} y1={3} x2={3} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={3} x2={21} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={3} y1={20} x2={21} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={12}
+      y1={3}
+      x2={3}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={3}
+      x2={21}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={3}
+      y1={20}
+      x2={21}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Exclamation mark */}
-    <PureLine x1={12} y1={9} x2={12} y2={13} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={9}
+      x2={12}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <PureCircle cx={12} cy={16} r={1} fill={color} />
   </PureSvg>
 );
 
-// SIMPLIFIED UNLOCK ICON  
+// SIMPLIFIED UNLOCK ICON
 export const UnlockIcon = ({
   size = 24,
   color = "currentColor",
@@ -1452,11 +1945,25 @@ export const UnlockIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Open shackle - not connected */}
-    <PureLine x1={7} y1={11} x2={7} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={7} y1={7} x2={14} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={7}
+      y1={11}
+      x2={7}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={7}
+      y1={7}
+      x2={14}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Keyhole */}
     <PureCircle cx={12} cy={16} r={1} fill={color} />
   </PureSvg>
@@ -1480,13 +1987,27 @@ export const ImageIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Sun circle */}
     <PureCircle cx={8} cy={8} r={2} fill={color} />
-    
+
     {/* Simple mountain */}
-    <PureLine x1={3} y1={21} x2={10} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={10} y1={14} x2={21} y2={21} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={3}
+      y1={21}
+      x2={10}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={10}
+      y1={14}
+      x2={21}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1507,15 +2028,22 @@ export const FilmIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Film perforations - simplified */}
     <PureRect x={7} y={5} width={2} height={2} fill={color} />
     <PureRect x={7} y={17} width={2} height={2} fill={color} />
     <PureRect x={15} y={5} width={2} height={2} fill={color} />
     <PureRect x={15} y={17} width={2} height={2} fill={color} />
-    
+
     {/* Center divider lines */}
-    <PureLine x1={5} y1={12} x2={19} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={5}
+      y1={12}
+      x2={19}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1528,13 +2056,41 @@ export const MusicIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Note stem */}
-    <PureLine x1={8} y1={6} x2={8} y2={18} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={8}
+      y1={6}
+      x2={8}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Flag/beam */}
-    <PureLine x1={8} y1={6} x2={18} y2={3} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={18} y1={3} x2={18} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={8} y1={10} x2={18} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={8}
+      y1={6}
+      x2={18}
+      y2={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={18}
+      y1={3}
+      x2={18}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={8}
+      y1={10}
+      x2={18}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Note head */}
     <PureCircle cx={8} cy={18} r={2} fill={color} />
   </PureSvg>
@@ -1556,13 +2112,34 @@ export const TimerIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Timer button on top */}
-    <PureLine x1={12} y1={2} x2={12} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={9} y1={2} x2={15} y2={2} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={12}
+      y1={2}
+      x2={12}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={9}
+      y1={2}
+      x2={15}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Clock hand */}
-    <PureLine x1={12} y1={13} x2={12} y2={8} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={13}
+      x2={12}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1584,13 +2161,34 @@ export const SmartphoneIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Screen area indicator */}
-    <PureLine x1={6} y1={5} x2={18} y2={5} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={6} y1={19} x2={18} y2={19} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={6}
+      y1={5}
+      x2={18}
+      y2={5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={6}
+      y1={19}
+      x2={18}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Home button/indicator */}
-    <PureLine x1={10} y1={20.5} x2={14} y2={20.5} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={10}
+      y1={20.5}
+      x2={14}
+      y2={20.5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1611,7 +2209,7 @@ export const LayersIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Middle layer */}
     <PureRect
       x={5}
@@ -1621,7 +2219,7 @@ export const LayersIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Top layer */}
     <PureRect
       x={5}
@@ -1643,10 +2241,38 @@ export const NavigationIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Simple arrow pointer */}
-    <PureLine x1={12} y1={2} x2={5} y2={19} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={12} y1={2} x2={19} y2={19} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={5} y1={19} x2={12} y2={16} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={19} y1={19} x2={12} y2={16} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={2}
+      x2={5}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={12}
+      y1={2}
+      x2={19}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={5}
+      y1={19}
+      x2={12}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={19}
+      y1={19}
+      x2={12}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1668,9 +2294,16 @@ export const TouchpadIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Click button divider */}
-    <PureLine x1={12} y1={15} x2={12} y2={19} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={15}
+      x2={12}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -1987,11 +2620,46 @@ export const FilterIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Funnel shape with lines */}
-    <PureLine x1={4} y1={5} x2={20} y2={5} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={4} y1={5} x2={10} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={20} y1={5} x2={14} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={10} y1={12} x2={10} y2={19} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={14} y1={12} x2={14} y2={19} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={4}
+      y1={5}
+      x2={20}
+      y2={5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={4}
+      y1={5}
+      x2={10}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={20}
+      y1={5}
+      x2={14}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={10}
+      y1={12}
+      x2={10}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={14}
+      y1={12}
+      x2={14}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -2004,12 +2672,33 @@ export const GitBranchIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Main line */}
-    <PureLine x1={6} y1={3} x2={6} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={6}
+      y1={3}
+      x2={6}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Branch line */}
-    <PureLine x1={6} y1={9} x2={18} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={18} y1={9} x2={18} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={6}
+      y1={9}
+      x2={18}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={18}
+      y1={9}
+      x2={18}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Circle nodes */}
     <PureCircle cx={6} cy={18} r={3} stroke={color} strokeWidth={strokeWidth} />
     <PureCircle cx={18} cy={6} r={3} stroke={color} strokeWidth={strokeWidth} />
@@ -2035,7 +2724,7 @@ export const LinkIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Left link */}
     <PureRect
       x={4}
@@ -2046,7 +2735,7 @@ export const LinkIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Right link */}
     <PureRect
       x={12}
@@ -2200,13 +2889,62 @@ export const ZapIcon = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Lightning bolt shape */}
-    <PureLine x1={13} y1={2} x2={5} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={5} y1={14} x2={11} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={11} y1={14} x2={11} y2={10} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={11} y1={10} x2={19} y2={10} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={19} y1={10} x2={11} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={11} y1={22} x2={13} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={13} y1={14} x2={13} y2={2} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={13}
+      y1={2}
+      x2={5}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={5}
+      y1={14}
+      x2={11}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={11}
+      y1={14}
+      x2={11}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={11}
+      y1={10}
+      x2={19}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={19}
+      y1={10}
+      x2={11}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={11}
+      y1={22}
+      x2={13}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={13}
+      y1={14}
+      x2={13}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -2296,9 +3034,16 @@ export const PowerIcon = ({
       stroke={color}
       strokeWidth={strokeWidth}
     />
-    
+
     {/* Power line */}
-    <PureLine x1={12} y1={2} x2={12} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={12}
+      y1={2}
+      x2={12}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 
@@ -2544,15 +3289,51 @@ export const Edit3 = ({
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Pencil outline */}
-    <PureLine x1={12} y1={20} x2={20} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={16} y1={8} x2={2} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <PureLine x1={17.5} y1={15} x2={9} y2={6.5} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureLine
+      x1={12}
+      y1={20}
+      x2={20}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={16}
+      y1={8}
+      x2={2}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <PureLine
+      x1={17.5}
+      y1={15}
+      x2={9}
+      y2={6.5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Pencil tip */}
-    <PureRect x={20} y={2} width={4} height={4} rx={1} stroke={color} strokeWidth={strokeWidth} />
-    
+    <PureRect
+      x={20}
+      y={2}
+      width={4}
+      height={4}
+      rx={1}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+
     {/* Edit marks */}
-    <PureLine x1={2} y1={22} x2={6} y2={18} stroke={color} strokeWidth={strokeWidth} />
+    <PureLine
+      x1={2}
+      y1={22}
+      x2={6}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </PureSvg>
 );
 

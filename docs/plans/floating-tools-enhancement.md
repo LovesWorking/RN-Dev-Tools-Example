@@ -23,4 +23,3 @@ Goal: Show quick-access dev tool icons (Query, Env, Storage, WiFi, Network, etc.
 - [x] 6. Verify modals open / respect hide props
 - [x] 7. Style polish
 - [x] 8. Sanity pass
-

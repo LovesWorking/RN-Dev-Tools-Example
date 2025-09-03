@@ -1,7 +1,13 @@
 import React, { useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { Plus, Minus, Edit3, GitBranch, ChevronRight } from "rn-better-dev-tools/icons";
+import {
+  Plus,
+  Minus,
+  Edit3,
+  GitBranch,
+  ChevronRight,
+} from "rn-better-dev-tools/icons";
 import { objectDiff, type DiffItem } from "../utils/objectDiff";
 
 interface DiffViewerProps {
@@ -53,17 +59,18 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
 
     // Convert to flattened format with readable paths
     const flatDiffs: FlattenedDiff[] = differences.map((diff) => {
-      const pathString = diff.path.length === 0 
-        ? "root" 
-        : diff.path
-            .map((segment, index) => {
-              if (typeof segment === "number") {
-                return `[${segment}]`;
-              }
-              // First segment doesn't need a dot
-              return index === 0 ? segment : `.${segment}`;
-            })
-            .join("");
+      const pathString =
+        diff.path.length === 0
+          ? "root"
+          : diff.path
+              .map((segment, index) => {
+                if (typeof segment === "number") {
+                  return `[${segment}]`;
+                }
+                // First segment doesn't need a dot
+                return index === 0 ? segment : `.${segment}`;
+              })
+              .join("");
 
       return {
         path: pathString,
@@ -134,7 +141,9 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
       case "boolean":
         return gameUIColors.dataTypes.boolean;
       case "object":
-        return Array.isArray(value) ? gameUIColors.dataTypes.array : gameUIColors.dataTypes.object;
+        return Array.isArray(value)
+          ? gameUIColors.dataTypes.array
+          : gameUIColors.dataTypes.object;
       default:
         return gameUIColors.primary;
     }
@@ -154,16 +163,19 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
       </View>
 
       {/* Diff List */}
-      <ScrollView 
+      <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
       >
         {flattened.map((diff, index) => (
-          <View key={index} style={[
-            styles.diffCard,
-            { borderLeftColor: getDiffColor(diff.type) }
-          ]}>
+          <View
+            key={index}
+            style={[
+              styles.diffCard,
+              { borderLeftColor: getDiffColor(diff.type) },
+            ]}
+          >
             {/* Card Header with Path and Badge */}
             <View style={styles.cardHeader}>
               <View style={styles.pathContainer}>
@@ -172,11 +184,15 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
                   {diff.path}
                 </Text>
               </View>
-              <View style={[
-                styles.typeBadge, 
-                { backgroundColor: getDiffColor(diff.type) + "15" }
-              ]}>
-                <Text style={[styles.typeText, { color: getDiffColor(diff.type) }]}>
+              <View
+                style={[
+                  styles.typeBadge,
+                  { backgroundColor: getDiffColor(diff.type) + "15" },
+                ]}
+              >
+                <Text
+                  style={[styles.typeText, { color: getDiffColor(diff.type) }]}
+                >
                   {diff.type}
                 </Text>
               </View>
@@ -188,20 +204,30 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
                 <View style={styles.changeValue}>
                   <Text style={styles.valueLabel}>OLD</Text>
                   <View style={styles.valueContent}>
-                    <Text style={[styles.value, { color: getTypeColor(diff.oldValue) }]}>
+                    <Text
+                      style={[
+                        styles.value,
+                        { color: getTypeColor(diff.oldValue) },
+                      ]}
+                    >
                       {formatValue(diff.oldValue)}
                     </Text>
                   </View>
                 </View>
-                
+
                 <View style={styles.arrowContainer}>
                   <ChevronRight size={16} color={gameUIColors.warning} />
                 </View>
-                
+
                 <View style={styles.changeValue}>
                   <Text style={styles.valueLabel}>NEW</Text>
                   <View style={styles.valueContent}>
-                    <Text style={[styles.value, { color: getTypeColor(diff.newValue) }]}>
+                    <Text
+                      style={[
+                        styles.value,
+                        { color: getTypeColor(diff.newValue) },
+                      ]}
+                    >
                       {formatValue(diff.newValue)}
                     </Text>
                   </View>
@@ -212,11 +238,18 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
             {diff.type === "CREATE" && (
               <View style={styles.singleValueContainer}>
                 <View style={styles.singleValue}>
-                  <Text style={[styles.valueLabel, { color: gameUIColors.success }]}>
+                  <Text
+                    style={[styles.valueLabel, { color: gameUIColors.success }]}
+                  >
                     ADDED
                   </Text>
                   <View style={[styles.valueContent, styles.addedContent]}>
-                    <Text style={[styles.value, { color: getTypeColor(diff.newValue) }]}>
+                    <Text
+                      style={[
+                        styles.value,
+                        { color: getTypeColor(diff.newValue) },
+                      ]}
+                    >
                       {formatValue(diff.newValue)}
                     </Text>
                   </View>
@@ -227,11 +260,18 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
             {diff.type === "REMOVE" && (
               <View style={styles.singleValueContainer}>
                 <View style={styles.singleValue}>
-                  <Text style={[styles.valueLabel, { color: gameUIColors.error }]}>
+                  <Text
+                    style={[styles.valueLabel, { color: gameUIColors.error }]}
+                  >
                     REMOVED
                   </Text>
                   <View style={[styles.valueContent, styles.removedContent]}>
-                    <Text style={[styles.value, { color: getTypeColor(diff.oldValue) }]}>
+                    <Text
+                      style={[
+                        styles.value,
+                        { color: getTypeColor(diff.oldValue) },
+                      ]}
+                    >
                       {formatValue(diff.oldValue)}
                     </Text>
                   </View>

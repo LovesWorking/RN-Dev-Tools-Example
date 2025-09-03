@@ -85,7 +85,7 @@ export function StorageModalWithTabs({
   const [showFilters, setShowFilters] = useState(false);
   const [detailTab, setDetailTab] = useState<"current" | "diff">("current");
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
-    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"])
+    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"]),
   );
   const lastEventRef = useRef<AsyncStorageEvent | null>(null);
   const hasLoadedFilters = useRef(false);
@@ -108,7 +108,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedTab = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.activeTab()
+          devToolsStorageKeys.storage.activeTab(),
         );
         if (storedTab && (storedTab === "browser" || storedTab === "events")) {
           setActiveTab(storedTab as TabType);
@@ -132,7 +132,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedMonitoring = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.isMonitoring()
+          devToolsStorageKeys.storage.isMonitoring(),
         );
         if (storedMonitoring !== null) {
           const shouldMonitor = storedMonitoring === "true";
@@ -161,7 +161,7 @@ export function StorageModalWithTabs({
         );
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.activeTab(),
-          activeTab
+          activeTab,
         );
       } catch (error) {
         console.warn("Failed to save tab state:", error);
@@ -182,7 +182,7 @@ export function StorageModalWithTabs({
         );
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.isMonitoring(),
-          isListening.toString()
+          isListening.toString(),
         );
       } catch (error) {
         console.warn("Failed to save monitoring state:", error);
@@ -202,7 +202,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedFilters = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.eventFilters()
+          devToolsStorageKeys.storage.eventFilters(),
         );
         if (storedFilters) {
           const filters = JSON.parse(storedFilters) as string[];
@@ -229,7 +229,7 @@ export function StorageModalWithTabs({
         const filters = Array.from(ignoredPatterns);
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.eventFilters(),
-          JSON.stringify(filters)
+          JSON.stringify(filters),
         );
       } catch (error) {
         console.warn("Failed to save storage event filters:", error);
@@ -291,7 +291,7 @@ export function StorageModalWithTabs({
       setSelectedEventIndex(0);
       setDetailTab("current");
     },
-    []
+    [],
   );
 
   const handleTogglePattern = useCallback((pattern: string) => {
@@ -327,7 +327,7 @@ export function StorageModalWithTabs({
   };
 
   const getValueType = (
-    value: unknown
+    value: unknown,
   ): StorageKeyConversation["valueType"] => {
     const parsed = parseValue(value);
     if (parsed === null) return "null";
@@ -362,7 +362,7 @@ export function StorageModalWithTabs({
 
       // Filter out keys that match ignored patterns
       const shouldIgnore = Array.from(ignoredPatterns).some((pattern) =>
-        key.includes(pattern)
+        key.includes(pattern),
       );
 
       if (shouldIgnore) return;
@@ -394,7 +394,7 @@ export function StorageModalWithTabs({
     // Convert to array and sort by last updated
     return Array.from(keyMap.values()).sort(
       (a, b) =>
-        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
+        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime(),
     );
   }, [events, ignoredPatterns]);
 
@@ -471,7 +471,7 @@ export function StorageModalWithTabs({
         </TouchableOpacity>
       );
     },
-    []
+    [],
   );
 
   if (!visible) return null;
@@ -479,7 +479,6 @@ export function StorageModalWithTabs({
   const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.storage.modal();
-
 
   const renderContent = () => {
     if (activeTab === "browser") {
@@ -656,7 +655,10 @@ export function StorageModalWithTabs({
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleToggleListening}
-                    style={[styles.iconButton, isListening && styles.activeButton]}
+                    style={[
+                      styles.iconButton,
+                      isListening && styles.activeButton,
+                    ]}
                   >
                     {isListening ? (
                       <Pause size={14} color={gameUIColors.success} />

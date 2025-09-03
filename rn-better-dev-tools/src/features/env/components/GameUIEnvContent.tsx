@@ -195,7 +195,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
     stats,
-    ENV_ALERT_STATES
+    ENV_ALERT_STATES,
   );
 
   // Transform issues for GameUIIssuesList
@@ -208,8 +208,8 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
           varItem.status === "required_missing"
             ? "missing"
             : varItem.status === "required_wrong_type"
-            ? "wrong_type"
-            : "wrong_value",
+              ? "wrong_type"
+              : "wrong_value",
         value: varItem.value,
         expectedType: varItem.expectedType,
         expectedValue: varItem.expectedValue as string,
@@ -218,8 +218,8 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
           varItem.status === "required_missing"
             ? `Add to .env: ${varItem.key}=your_value_here`
             : varItem.status === "required_wrong_type"
-            ? `Update type to ${varItem.expectedType} in .env file`
-            : `Check valid values for ${varItem.key}`,
+              ? `Update type to ${varItem.expectedType} in .env file`
+              : `Check valid values for ${varItem.key}`,
       }));
   }, [requiredVars]);
 
@@ -272,7 +272,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
         pulseDelay: 800,
       },
     ],
-    [stats]
+    [stats],
   );
 
   // Calculate health percentage
@@ -281,7 +281,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       ? Math.round(
           (stats.presentRequiredCount /
             (stats.totalCount - stats.optionalCount)) *
-            100
+            100,
         )
       : 0;
 
@@ -289,15 +289,15 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
     healthPercentage >= 90
       ? "OPTIMAL"
       : healthPercentage >= 70
-      ? "WARNING"
-      : "CRITICAL";
+        ? "WARNING"
+        : "CRITICAL";
 
   const healthColor =
     healthPercentage >= 90
       ? gameUIColors.success
       : healthPercentage >= 70
-      ? gameUIColors.warning
-      : gameUIColors.error;
+        ? gameUIColors.warning
+        : gameUIColors.error;
 
   return (
     <ScrollView
@@ -392,7 +392,9 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
         />
       </GameUICollapsibleSection>
 
-      <Text style={styles.techFooter}>EXPO_PUBLIC_* NAMESPACE REQUIRED FOR RN ACCESS</Text>
+      <Text style={styles.techFooter}>
+        EXPO_PUBLIC_* NAMESPACE REQUIRED FOR RN ACCESS
+      </Text>
 
       {/* Dev Test Mode removed - test component no longer needed */}
     </ScrollView>

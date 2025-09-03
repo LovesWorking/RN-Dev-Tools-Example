@@ -24,6 +24,7 @@ This guide distills the performance optimization techniques from the react-nativ
 The react-native-bottom-sheet library uses Reanimated's worklets to run animations on the UI thread. In pure JS, we must minimize bridge crossings:
 
 **❌ DON'T DO THIS:**
+
 ```typescript
 // This causes multiple bridge calls
 const handleGesture = (event) => {
@@ -35,25 +36,23 @@ const handleGesture = (event) => {
 ```
 
 **✅ DO THIS INSTEAD:**
+
 ```typescript
 // Use Animated.event to handle gestures directly
 const panResponder = PanResponder.create({
-  onPanResponderMove: Animated.event(
-    [null, { dx: animatedX, dy: animatedY }],
-    { 
-      useNativeDriver: false, // Set to true when possible
-      listener: (event, gestureState) => {
-        // Batch updates using RAF
-        if (!animationFrameRef.current) {
-          animationFrameRef.current = requestAnimationFrame(() => {
-            // Process all updates at once
-            processGestureUpdate(gestureState);
-            animationFrameRef.current = null;
-          });
-        }
+  onPanResponderMove: Animated.event([null, { dx: animatedX, dy: animatedY }], {
+    useNativeDriver: false, // Set to true when possible
+    listener: (event, gestureState) => {
+      // Batch updates using RAF
+      if (!animationFrameRef.current) {
+        animationFrameRef.current = requestAnimationFrame(() => {
+          // Process all updates at once
+          processGestureUpdate(gestureState);
+          animationFrameRef.current = null;
+        });
       }
-    }
-  ),
+    },
+  }),
 });
 ```
 
@@ -62,6 +61,7 @@ const panResponder = PanResponder.create({
 The library heavily relies on native driver animations. For pure JS:
 
 **✅ OPTIMAL APPROACH:**
+
 ```typescript
 // For transform properties, always use native driver
 Animated.timing(animatedValue, {
@@ -123,40 +123,41 @@ const animationConfig = Platform.select({
 ### 2. Velocity-Based Animations & Snap Point Selection
 
 **✅ ENHANCED SNAP POINT CALCULATION WITH VELOCITY:**
+
 ```typescript
 // Normalize snap points once on layout/keyboard change
 function normalizeSnapPoints(
-  snapPoints: (number | `${number}%`)[], 
-  containerHeight: number
+  snapPoints: (number | `${number}%`)[],
+  containerHeight: number,
 ): number[] {
   if (!snapPoints || snapPoints.length === 0) return [];
-  
-  const normalized = snapPoints.map(point => {
-    if (typeof point === 'string' && point.endsWith('%')) {
+
+  const normalized = snapPoints.map((point) => {
+    if (typeof point === "string" && point.endsWith("%")) {
       const percentage = parseFloat(point) / 100;
       return containerHeight * (1 - percentage); // Convert to position from top
     }
     return containerHeight - point; // Convert absolute height to position
   });
-  
+
   // Sort in ascending order (top-most positions first)
   return normalized.sort((a, b) => a - b);
 }
 
 // Calculate snap point with velocity lookahead
 const calculateSnapPoint = (
-  currentPosition: number, 
-  velocity: number, 
+  currentPosition: number,
+  velocity: number,
   snapPoints: number[],
-  velocityLookahead: number = 180 // ms of velocity projection
+  velocityLookahead: number = 180, // ms of velocity projection
 ) => {
   // Project position based on velocity (platform-tuned lookahead)
   const projectedPosition = currentPosition + velocity * velocityLookahead;
-  
+
   // Find closest snap point to projected position
   let closestPoint = snapPoints[0];
   let minDistance = Math.abs(projectedPosition - closestPoint);
-  
+
   for (const point of snapPoints) {
     const distance = Math.abs(projectedPosition - point);
     if (distance < minDistance) {
@@ -164,13 +165,13 @@ const calculateSnapPoint = (
       closestPoint = point;
     }
   }
-  
+
   return closestPoint;
 };
 
 // Platform-specific velocity lookahead tuning
 const VELOCITY_LOOKAHEAD = Platform.select({
-  ios: 180,     // iOS: more responsive to velocity
+  ios: 180, // iOS: more responsive to velocity
   android: 150, // Android: slightly less velocity influence
 });
 ```
@@ -178,13 +179,17 @@ const VELOCITY_LOOKAHEAD = Platform.select({
 ### 3. Interpolation Optimization
 
 **✅ EFFICIENT INTERPOLATION:**
+
 ```typescript
 // Pre-calculate interpolation ranges
-const interpolationConfig = useMemo(() => ({
-  inputRange: [0, 1],
-  outputRange: [SCREEN_HEIGHT, 0],
-  extrapolate: 'clamp',
-}), []);
+const interpolationConfig = useMemo(
+  () => ({
+    inputRange: [0, 1],
+    outputRange: [SCREEN_HEIGHT, 0],
+    extrapolate: "clamp",
+  }),
+  [],
+);
 
 // Use interpolation for smooth transitions
 const translateY = animatedValue.interpolate(interpolationConfig);
@@ -195,12 +200,12 @@ const complexInterpolation = useMemo(() => {
     opacity: animatedPosition.interpolate({
       inputRange: [0, 100, 200],
       outputRange: [0, 0.5, 1],
-      extrapolate: 'clamp',
+      extrapolate: "clamp",
     }),
     scale: animatedPosition.interpolate({
       inputRange: [0, 100],
       outputRange: [0.8, 1],
-      extrapolate: 'clamp',
+      extrapolate: "clamp",
     }),
   };
 }, [animatedPosition]);
@@ -213,36 +218,37 @@ const complexInterpolation = useMemo(() => {
 ### 1. PanResponder Optimization
 
 **✅ OPTIMIZED GESTURE HANDLER:**
+
 ```typescript
 const createOptimizedPanResponder = () => {
   let startPosition = { x: 0, y: 0 };
   let accumulator = { x: 0, y: 0 };
-  
+
   return PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: (evt, gestureState) => {
       // Only capture if movement exceeds threshold
       return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
     },
-    
+
     onPanResponderGrant: (evt, gestureState) => {
       // Store initial position
       startPosition = {
         x: evt.nativeEvent.pageX,
         y: evt.nativeEvent.pageY,
       };
-      
+
       // Stop any ongoing animations
       animatedX.stopAnimation();
       animatedY.stopAnimation();
-      
+
       // Extract current values without bridge call
       animatedX.setOffset(animatedX._value);
       animatedY.setOffset(animatedY._value);
       animatedX.setValue(0);
       animatedY.setValue(0);
     },
-    
+
     onPanResponderMove: Animated.event(
       [null, { dx: animatedX, dy: animatedY }],
       {
@@ -251,17 +257,17 @@ const createOptimizedPanResponder = () => {
           // Throttle non-critical updates
           throttledUpdate(gestureState);
         },
-      }
+      },
     ),
-    
+
     onPanResponderRelease: (evt, gestureState) => {
       // Calculate final position with velocity
       const finalPosition = calculateSnapPoint(
         currentPosition,
         gestureState.vy,
-        snapPoints
+        snapPoints,
       );
-      
+
       // Animate to final position
       Animated.spring(animatedPosition, {
         toValue: finalPosition,
@@ -269,7 +275,7 @@ const createOptimizedPanResponder = () => {
         useNativeDriver: true,
         ...SPRING_CONFIG,
       }).start();
-      
+
       // Clear offsets
       animatedX.flattenOffset();
       animatedY.flattenOffset();
@@ -281,21 +287,22 @@ const createOptimizedPanResponder = () => {
 ### 2. Gesture Conflict Resolution & Scrollable Coordination
 
 **✅ ENHANCED SCROLLABLE COORDINATION:**
+
 ```typescript
 // Track scroll offset without re-renders
 function useContentOffsetY() {
   const offsetRef = useRef(0);
   const lockedRef = useRef(false);
-  
+
   const onScroll = useCallback((event: any) => {
     offsetRef.current = event.nativeEvent.contentOffset.y;
   }, []);
-  
+
   const isAtTop = useCallback(() => offsetRef.current <= 0, []);
   const lockPosition = useCallback(() => { lockedRef.current = true; }, []);
   const unlockPosition = useCallback(() => { lockedRef.current = false; }, []);
-  
-  return { 
+
+  return {
     get: () => offsetRef.current,
     isAtTop,
     isLocked: () => lockedRef.current,
@@ -308,12 +315,12 @@ function useContentOffsetY() {
 // Intelligent gesture gating
 const createScrollAwarePanResponder = (scrollableRef: any) => {
   const { get: getOffsetY, isAtTop, lockPosition, unlockPosition } = useContentOffsetY();
-  
+
   return PanResponder.create({
     onMoveShouldSetPanResponder: (evt, gestureState) => {
       const isVertical = Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
       const atTop = isAtTop();
-      
+
       // Sheet takes over when:
       // 1. Pulling down at scroll top
       // 2. Dragging up from handle (not content)
@@ -322,19 +329,19 @@ const createScrollAwarePanResponder = (scrollableRef: any) => {
         lockPosition(); // Lock scrollable while sheet moves
         return true;
       }
-      
+
       if (!atTop && gestureState.dy < 0) {
         return false; // Let ScrollView handle upward scroll
       }
-      
+
       return isVertical && gestureState.dy < 0; // Sheet handles collapse
     },
-    
+
     onPanResponderGrant: () => {
       // Stop any scroll momentum
       scrollableRef.current?.scrollTo({ y: getOffsetY(), animated: false });
     },
-    
+
     onPanResponderRelease: () => {
       unlockPosition(); // Unlock scrollable after gesture
     },
@@ -355,11 +362,12 @@ const createScrollAwarePanResponder = (scrollableRef: any) => {
 ### 3. Over-Drag Resistance
 
 **✅ IMPLEMENT RESISTANCE:**
+
 ```typescript
 const applyOverDragResistance = (
   position: number,
   boundary: number,
-  factor: number = 2.5
+  factor: number = 2.5,
 ) => {
   if (position < boundary) {
     // Apply resistance formula
@@ -372,14 +380,14 @@ const applyOverDragResistance = (
 // In gesture handler
 onPanResponderMove: (evt, gestureState) => {
   let newPosition = startPosition + gestureState.dy;
-  
+
   // Apply resistance at boundaries
   if (newPosition < MIN_POSITION) {
     newPosition = applyOverDragResistance(newPosition, MIN_POSITION);
   } else if (newPosition > MAX_POSITION) {
     newPosition = applyOverDragResistance(newPosition, MAX_POSITION);
   }
-  
+
   animatedPosition.setValue(newPosition);
 };
 ```
@@ -391,23 +399,24 @@ onPanResponderMove: (evt, gestureState) => {
 ### 1. Minimize Re-renders
 
 **✅ USE REFS FOR NON-VISUAL STATE:**
+
 ```typescript
 const ModalComponent = () => {
   // Visual state (causes re-render)
   const [isVisible, setIsVisible] = useState(false);
-  
+
   // Non-visual state (no re-render)
   const gestureStateRef = useRef({
     startY: 0,
     velocityY: 0,
     isDragging: false,
   });
-  
+
   const dimensionsRef = useRef({
     width: 0,
     height: 0,
   });
-  
+
   // Update refs without re-render
   const updateGestureState = useCallback((updates) => {
     Object.assign(gestureStateRef.current, updates);
@@ -418,6 +427,7 @@ const ModalComponent = () => {
 ### 2. Batch State Updates
 
 **✅ BATCH MULTIPLE UPDATES:**
+
 ```typescript
 const batchedUpdate = useCallback(() => {
   // Use unstable_batchedUpdates for React Native < 0.65
@@ -426,9 +436,9 @@ const batchedUpdate = useCallback(() => {
     setWidth(newWidth);
     setPosition({ x: newX, y: newY });
   });
-  
+
   // Or use functional updates
-  setState(prevState => ({
+  setState((prevState) => ({
     ...prevState,
     height: newHeight,
     width: newWidth,
@@ -440,6 +450,7 @@ const batchedUpdate = useCallback(() => {
 ### 3. Memoization Strategy
 
 **✅ STRATEGIC MEMOIZATION:**
+
 ```typescript
 const BottomSheet = memo(({ children, snapPoints, ...props }) => {
   // Memoize expensive calculations
@@ -451,7 +462,7 @@ const BottomSheet = memo(({ children, snapPoints, ...props }) => {
       return point;
     });
   }, [snapPoints]); // Only recalculate when snapPoints change
-  
+
   // Memoize callbacks that are passed to children
   const handleClose = useCallback(() => {
     Animated.timing(animatedPosition, {
@@ -462,12 +473,12 @@ const BottomSheet = memo(({ children, snapPoints, ...props }) => {
       props.onClose?.();
     });
   }, [props.onClose]); // Minimal dependencies
-  
+
   // DON'T memoize everything
   const style = {
     transform: [{ translateY: animatedPosition }],
   }; // This is cheap to recreate
-  
+
   return <Animated.View style={style}>{children}</Animated.View>;
 });
 ```
@@ -479,6 +490,7 @@ const BottomSheet = memo(({ children, snapPoints, ...props }) => {
 ### 1. Component Structure
 
 **✅ OPTIMIZE COMPONENT HIERARCHY:**
+
 ```typescript
 // Separate animated and static parts
 const BottomSheet = () => {
@@ -486,12 +498,12 @@ const BottomSheet = () => {
     <>
       {/* Static backdrop - separate component */}
       <Backdrop />
-      
+
       {/* Animated container */}
       <Animated.View style={animatedStyles}>
         {/* Static header - memoized */}
         <Header />
-        
+
         {/* Dynamic content */}
         <Content />
       </Animated.View>
@@ -512,24 +524,25 @@ const Backdrop = memo(({ onPress }) => {
 ### 2. Use Animated Components
 
 **✅ PREFER ANIMATED COMPONENTS:**
+
 ```typescript
 // Instead of updating state for animations
 const BadExample = () => {
   const [opacity, setOpacity] = useState(0);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setOpacity(prev => prev + 0.1);
     }, 16);
   }, []);
-  
+
   return <View style={{ opacity }} />;
 };
 
 // Use Animated API
 const GoodExample = () => {
   const opacity = useRef(new Animated.Value(0)).current;
-  
+
   useEffect(() => {
     Animated.timing(opacity, {
       toValue: 1,
@@ -537,7 +550,7 @@ const GoodExample = () => {
       useNativeDriver: true,
     }).start();
   }, []);
-  
+
   return <Animated.View style={{ opacity }} />;
 };
 ```
@@ -545,10 +558,11 @@ const GoodExample = () => {
 ### 3. Optimize List Rendering
 
 **✅ FOR SCROLLABLE CONTENT:**
+
 ```typescript
 const OptimizedScrollView = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  
+
   return (
     <Animated.ScrollView
       scrollEventThrottle={16} // For 60fps
@@ -576,36 +590,40 @@ const OptimizedScrollView = () => {
 ### Enhanced Keyboard Handling
 
 **✅ KEYBOARD-AWARE LAYOUT WITH SNAP POINT RECALCULATION:**
+
 ```typescript
 function useKeyboardAwareLayout(
   containerHeight: number,
   snapPoints: (number | `${number}%`)[],
-  onHeightChange: (height: number) => void
+  onHeightChange: (height: number) => void,
 ) {
   const keyboardHeightRef = useRef(0);
   const normalizedSnapPointsRef = useRef<number[]>([]);
-  
+
   useEffect(() => {
     const showEvent = Platform.select({
-      ios: 'keyboardWillShow',     // iOS: Use Will events for smoother animation
-      android: 'keyboardDidShow',   // Android: Only Did events available
+      ios: "keyboardWillShow", // iOS: Use Will events for smoother animation
+      android: "keyboardDidShow", // Android: Only Did events available
     });
-    
+
     const hideEvent = Platform.select({
-      ios: 'keyboardWillHide',
-      android: 'keyboardDidHide',
+      ios: "keyboardWillHide",
+      android: "keyboardDidHide",
     });
-    
+
     const handleKeyboardShow = Keyboard.addListener(showEvent, (e) => {
       keyboardHeightRef.current = e.endCoordinates.height;
       const effectiveHeight = containerHeight - e.endCoordinates.height;
-      
+
       // Recalculate snap points with new container height
-      normalizedSnapPointsRef.current = normalizeSnapPoints(snapPoints, effectiveHeight);
+      normalizedSnapPointsRef.current = normalizeSnapPoints(
+        snapPoints,
+        effectiveHeight,
+      );
       onHeightChange(effectiveHeight);
-      
+
       // Clamp current position if needed
-      if (Platform.OS === 'ios') {
+      if (Platform.OS === "ios") {
         // iOS: Animate with keyboard using duration from event
         Animated.timing(containerHeightAnim, {
           toValue: effectiveHeight,
@@ -615,15 +633,18 @@ function useKeyboardAwareLayout(
         }).start();
       }
     });
-    
+
     const handleKeyboardHide = Keyboard.addListener(hideEvent, (e) => {
       keyboardHeightRef.current = 0;
-      
+
       // Restore original snap points
-      normalizedSnapPointsRef.current = normalizeSnapPoints(snapPoints, containerHeight);
+      normalizedSnapPointsRef.current = normalizeSnapPoints(
+        snapPoints,
+        containerHeight,
+      );
       onHeightChange(containerHeight);
-      
-      if (Platform.OS === 'ios') {
+
+      if (Platform.OS === "ios") {
         Animated.timing(containerHeightAnim, {
           toValue: containerHeight,
           duration: e?.duration || 250,
@@ -632,13 +653,13 @@ function useKeyboardAwareLayout(
         }).start();
       }
     });
-    
+
     return () => {
       handleKeyboardShow.remove();
       handleKeyboardHide.remove();
     };
   }, [containerHeight, snapPoints, onHeightChange]);
-  
+
   return {
     keyboardHeight: keyboardHeightRef.current,
     adjustedSnapPoints: normalizedSnapPointsRef.current,
@@ -648,10 +669,10 @@ function useKeyboardAwareLayout(
 // Keyboard dismiss behavior during gestures
 const handleKeyboardDuringGesture = (gestureState: any) => {
   const shouldDismiss = Platform.select({
-    ios: gestureState.dy > 50,     // iOS: Interactive dismiss
-    android: gestureState.dy > 10,  // Android: Quick dismiss
+    ios: gestureState.dy > 50, // iOS: Interactive dismiss
+    android: gestureState.dy > 10, // Android: Quick dismiss
   });
-  
+
   if (shouldDismiss) {
     Keyboard.dismiss();
   }
@@ -667,16 +688,16 @@ const iosOptimizations = {
   // Use iOS-specific scroll deceleration
   decelerationRate: Platform.select({
     ios: 0.998, // iOS native feel
-    default: 'normal',
+    default: "normal",
   }),
-  
+
   // iOS rubber-band effect
   bounces: true,
   bouncesZoom: true,
-  
+
   // Optimize keyboard handling
-  keyboardDismissMode: 'interactive',
-  keyboardShouldPersistTaps: 'handled',
+  keyboardDismissMode: "interactive",
+  keyboardShouldPersistTaps: "handled",
 };
 ```
 
@@ -685,17 +706,17 @@ const iosOptimizations = {
 ```typescript
 const androidOptimizations = {
   // Disable overscroll effect on Android
-  overScrollMode: 'never',
-  
+  overScrollMode: "never",
+
   // Android-specific elevation for shadows
   elevation: 8,
-  
+
   // Optimize for Android gesture navigation
   statusBarTranslucent: true,
-  
+
   // Use hardware acceleration
   renderToHardwareTextureAndroid: true,
-  
+
   // Prevent view collapsing
   collapsable: false,
 };
@@ -715,13 +736,13 @@ const PlatformOptimizedModal = () => {
       config: ANDROID_TIMING_CONFIG,
     },
   });
-  
+
   // Platform-specific gesture thresholds
   const GESTURE_THRESHOLD = Platform.select({
     ios: 5,     // More sensitive on iOS
     android: 10, // Less sensitive on Android
   });
-  
+
   return <Modal {...animationConfig} />;
 };
 ```
@@ -733,11 +754,12 @@ const PlatformOptimizedModal = () => {
 ### 1. Stable View Hierarchy (Critical for Performance)
 
 **✅ NEVER CONDITIONALLY RENDER CORE COMPONENTS:**
+
 ```typescript
 // ❌ BAD - Causes reconciliation and layout thrashing
 const Modal = ({ visible }) => {
   if (!visible) return null;
-  
+
   return (
     <>
       {showBackdrop && <Backdrop />}
@@ -755,15 +777,15 @@ const Modal = ({ visible }) => {
     outputRange: [0.5, 0],
     extrapolate: 'clamp',
   });
-  
+
   return (
     <>
-      <Animated.View 
+      <Animated.View
         style={{ opacity: backdropOpacity }}
         pointerEvents={visible ? 'auto' : 'none'}>
         <Backdrop />
       </Animated.View>
-      
+
       <Animated.View style={{ transform: [{ translateY }] }}>
         <Handle />
         <Content />
@@ -777,16 +799,17 @@ const Modal = ({ visible }) => {
 ### 2. Request Animation Frame (RAF) Throttling
 
 **✅ IMPLEMENT RAF THROTTLING:**
+
 ```typescript
 class RAFThrottler {
   private frameId: number | null = null;
   private lastArgs: any[] = [];
-  
+
   constructor(private callback: Function) {}
-  
+
   throttle = (...args: any[]) => {
     this.lastArgs = args;
-    
+
     if (!this.frameId) {
       this.frameId = requestAnimationFrame(() => {
         this.callback(...this.lastArgs);
@@ -794,7 +817,7 @@ class RAFThrottler {
       });
     }
   };
-  
+
   cancel = () => {
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
@@ -806,7 +829,7 @@ class RAFThrottler {
 // Usage
 const throttledUpdate = useMemo(
   () => new RAFThrottler(updatePosition),
-  [updatePosition]
+  [updatePosition],
 );
 
 // In gesture handler
@@ -818,40 +841,49 @@ onPanResponderMove: (evt, gestureState) => {
 ### 2. Transform Preview for Resize (Avoids Layout Thrashing)
 
 **✅ USE TRANSFORM DURING RESIZE, COMMIT LAYOUT ON RELEASE:**
+
 ```typescript
 // For 4-corner resizing without jank
 function useCornerResize(
   initialWidth: number,
   initialHeight: number,
-  onCommit: (w: number, h: number) => void
+  onCommit: (w: number, h: number) => void,
 ) {
   const previewScaleX = useRef(new Animated.Value(1)).current;
   const previewScaleY = useRef(new Animated.Value(1)).current;
   const startDimensions = useRef({ w: initialWidth, h: initialHeight });
-  
+
   const panResponder = PanResponder.create({
     onPanResponderGrant: () => {
       startDimensions.current = { w: initialWidth, h: initialHeight };
       previewScaleX.setValue(1);
       previewScaleY.setValue(1);
     },
-    
+
     onPanResponderMove: (_, gestureState) => {
       // Use transform scale for preview - NO layout changes during drag
-      const scaleX = 1 + gestureState.dx / Math.max(120, startDimensions.current.w);
-      const scaleY = 1 + gestureState.dy / Math.max(120, startDimensions.current.h);
-      
+      const scaleX =
+        1 + gestureState.dx / Math.max(120, startDimensions.current.w);
+      const scaleY =
+        1 + gestureState.dy / Math.max(120, startDimensions.current.h);
+
       previewScaleX.setValue(scaleX);
       previewScaleY.setValue(scaleY);
     },
-    
+
     onPanResponderRelease: (_, gestureState) => {
-      const newWidth = Math.max(120, startDimensions.current.w + gestureState.dx);
-      const newHeight = Math.max(120, startDimensions.current.h + gestureState.dy);
-      
+      const newWidth = Math.max(
+        120,
+        startDimensions.current.w + gestureState.dx,
+      );
+      const newHeight = Math.max(
+        120,
+        startDimensions.current.h + gestureState.dy,
+      );
+
       // Commit actual layout change ONCE on release
       onCommit(newWidth, newHeight);
-      
+
       // Animate scale back to 1
       Animated.parallel([
         Animated.timing(previewScaleX, {
@@ -867,14 +899,11 @@ function useCornerResize(
       ]).start();
     },
   });
-  
+
   const previewStyle = {
-    transform: [
-      { scaleX: previewScaleX },
-      { scaleY: previewScaleY },
-    ],
+    transform: [{ scaleX: previewScaleX }, { scaleY: previewScaleY }],
   };
-  
+
   return { panResponder, previewStyle };
 }
 ```
@@ -882,28 +911,29 @@ function useCornerResize(
 ### 3. Deferred Updates
 
 **✅ DEFER NON-CRITICAL UPDATES:**
+
 ```typescript
 const useDeferredValue = (value: any, delay: number = 100) => {
   const [deferredValue, setDeferredValue] = useState(value);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDeferredValue(value);
     }, delay);
-    
+
     return () => clearTimeout(timer);
   }, [value, delay]);
-  
+
   return deferredValue;
 };
 
 // Usage
 const Modal = ({ height }) => {
   const deferredHeight = useDeferredValue(height, 200);
-  
+
   // Use immediate value for animation
   const animatedHeight = useRef(new Animated.Value(height)).current;
-  
+
   // Use deferred value for expensive operations
   useEffect(() => {
     calculateLayout(deferredHeight);
@@ -914,10 +944,11 @@ const Modal = ({ height }) => {
 ### 3. Portal-Based Modal Provider (No RN Modal)
 
 **✅ IMPLEMENT MODAL STACK WITHOUT REACT NATIVE MODAL:**
+
 ```typescript
 // Modal provider with portal pattern for better performance
-type ModalEntry = { 
-  key: string; 
+type ModalEntry = {
+  key: string;
   component: React.ReactNode;
   priority?: number;
 };
@@ -932,16 +963,16 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   // Use ref to avoid re-renders on stack changes
   const stackRef = useRef<ModalEntry[]>([]);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  
+
   const present = useCallback((component: React.ReactNode, key = `modal-${Date.now()}`) => {
     stackRef.current.push({ key, component });
     forceUpdate();
     return key;
   }, []);
-  
+
   const dismiss = useCallback((key?: string) => {
     if (!stackRef.current.length) return;
-    
+
     if (key) {
       const index = stackRef.current.findIndex(e => e.key === key);
       if (index >= 0) stackRef.current.splice(index, 1);
@@ -950,31 +981,31 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
     }
     forceUpdate();
   }, []);
-  
+
   const minimize = useCallback((key?: string) => {
     // Animate to middle snap point instead of dismissing
-    const modal = key 
+    const modal = key
       ? stackRef.current.find(e => e.key === key)
       : stackRef.current[stackRef.current.length - 1];
-      
+
     if (modal) {
       // Trigger minimize animation via ref or context
       // Keep modal in stack but visually minimized
     }
   }, []);
-  
+
   return (
     <ModalContext.Provider value={{ present, dismiss, minimize }}>
       <View style={{ flex: 1 }}>
         {children}
       </View>
-      
+
       {/* Portal container - always mounted */}
-      <View 
-        pointerEvents="box-none" 
+      <View
+        pointerEvents="box-none"
         style={StyleSheet.absoluteFillObject}>
         {stackRef.current.map(entry => (
-          <View 
+          <View
             key={entry.key}
             pointerEvents="box-none"
             style={StyleSheet.absoluteFillObject}>
@@ -990,18 +1021,18 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 const useModal = () => {
   const { present, dismiss } = useContext(ModalContext);
   const modalKeyRef = useRef<string>();
-  
+
   const showModal = useCallback((content: React.ReactNode) => {
     modalKeyRef.current = present(content);
   }, [present]);
-  
+
   const hideModal = useCallback(() => {
     if (modalKeyRef.current) {
       dismiss(modalKeyRef.current);
       modalKeyRef.current = undefined;
     }
   }, [dismiss]);
-  
+
   return { showModal, hideModal };
 };
 ```
@@ -1009,6 +1040,7 @@ const useModal = () => {
 ### 4. Measure Performance
 
 **✅ PERFORMANCE MONITORING:**
+
 ```typescript
 const usePerformanceMonitor = () => {
   const metricsRef = useRef({
@@ -1016,31 +1048,31 @@ const usePerformanceMonitor = () => {
     lastFrameTime: Date.now(),
     fps: 60,
   });
-  
+
   useEffect(() => {
     let frameId: number;
-    
+
     const measureFrame = () => {
       const now = Date.now();
       const delta = now - metricsRef.current.lastFrameTime;
-      
+
       // Detect frame drops (> 16.67ms for 60fps)
       if (delta > 17) {
         metricsRef.current.frameDrops++;
       }
-      
+
       // Calculate FPS
       metricsRef.current.fps = Math.round(1000 / delta);
       metricsRef.current.lastFrameTime = now;
-      
+
       frameId = requestAnimationFrame(measureFrame);
     };
-    
+
     frameId = requestAnimationFrame(measureFrame);
-    
+
     return () => cancelAnimationFrame(frameId);
   }, []);
-  
+
   return metricsRef.current;
 };
 ```
@@ -1052,23 +1084,25 @@ const usePerformanceMonitor = () => {
 ### 1. Layout Thrashing
 
 **❌ PROBLEM:**
+
 ```typescript
 // Multiple layout recalculations
 const handleResize = () => {
-  setHeight(newHeight);     // Triggers layout
-  setWidth(newWidth);       // Triggers layout again
-  updatePosition();         // Another layout
-  recalculateBounds();     // Yet another layout
+  setHeight(newHeight); // Triggers layout
+  setWidth(newWidth); // Triggers layout again
+  updatePosition(); // Another layout
+  recalculateBounds(); // Yet another layout
 };
 ```
 
 **✅ SOLUTION:**
+
 ```typescript
 // Batch layout updates
 const handleResize = () => {
   requestAnimationFrame(() => {
     // All updates in single frame
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       height: newHeight,
       width: newWidth,
@@ -1082,6 +1116,7 @@ const handleResize = () => {
 ### 2. Memory Leaks
 
 **❌ PROBLEM:**
+
 ```typescript
 useEffect(() => {
   const listener = Animated.addListener(({ value }) => {
@@ -1092,12 +1127,13 @@ useEffect(() => {
 ```
 
 **✅ SOLUTION:**
+
 ```typescript
 useEffect(() => {
   const listenerId = animatedValue.addListener(({ value }) => {
     updateState(value);
   });
-  
+
   return () => {
     animatedValue.removeListener(listenerId);
   };
@@ -1107,35 +1143,37 @@ useEffect(() => {
 ### 3. Excessive Re-renders
 
 **❌ PROBLEM:**
+
 ```typescript
 const Modal = ({ onHeightChange }) => {
   // Creates new function every render
   const handleHeight = (height) => {
     onHeightChange(height);
   };
-  
+
   // Creates new object every render
   const style = {
     height: animatedHeight,
   };
-  
+
   return <Animated.View style={style} />;
 };
 ```
 
 **✅ SOLUTION:**
+
 ```typescript
 const Modal = memo(({ onHeightChange }) => {
   // Memoize callback
   const handleHeight = useCallback((height) => {
     onHeightChange(height);
   }, [onHeightChange]);
-  
+
   // Use static styles or memoize
   const style = useMemo(() => ({
     height: animatedHeight,
   }), []); // animatedHeight is a ref, doesn't change
-  
+
   return <Animated.View style={style} />;
 });
 ```
@@ -1143,6 +1181,7 @@ const Modal = memo(({ onHeightChange }) => {
 ### 4. Gesture Lag on Resize
 
 **❌ PROBLEM:**
+
 ```typescript
 // Direct state updates cause lag
 onPanResponderMove: (evt, gestureState) => {
@@ -1152,6 +1191,7 @@ onPanResponderMove: (evt, gestureState) => {
 ```
 
 **✅ SOLUTION:**
+
 ```typescript
 // Use Animated values for smooth updates
 const animatedWidth = useRef(new Animated.Value(initialWidth)).current;
@@ -1159,14 +1199,14 @@ const animatedHeight = useRef(new Animated.Value(initialHeight)).current;
 
 onPanResponderMove: Animated.event(
   [null, { dx: animatedWidth, dy: animatedHeight }],
-  { useNativeDriver: false }
+  { useNativeDriver: false },
 );
 
 // Sync state after gesture ends
 onPanResponderRelease: () => {
   const finalWidth = animatedWidth._value;
   const finalHeight = animatedHeight._value;
-  
+
   // Single state update
   setState({ width: finalWidth, height: finalHeight });
 };
@@ -1221,6 +1261,7 @@ onPanResponderRelease: () => {
 ### Optimal Configuration Values
 
 **✅ PLATFORM-SPECIFIC TUNING PARAMETERS:**
+
 ```typescript
 const PERFORMANCE_CONFIG = {
   // Spring configurations (iOS preferred)
@@ -1236,13 +1277,13 @@ const PERFORMANCE_CONFIG = {
       velocity: 0,
     },
   },
-  
+
   // Timing configurations (Android preferred)
   timing: {
     duration: Platform.select({ ios: 250, android: 200 }),
     easing: Easing.out(Easing.exp),
   },
-  
+
   // Gesture thresholds
   gesture: {
     velocityLookahead: Platform.select({ ios: 180, android: 150 }), // ms
@@ -1250,7 +1291,7 @@ const PERFORMANCE_CONFIG = {
     panThreshold: Platform.select({ ios: 5, android: 10 }), // px
     velocityThreshold: 0.3, // Minimum velocity to trigger snap
   },
-  
+
   // Scrollable configuration
   scrollable: {
     scrollEventThrottle: 16, // 60fps
@@ -1260,7 +1301,7 @@ const PERFORMANCE_CONFIG = {
     updateCellsBatchingPeriod: 50,
     removeClippedSubviews: true,
   },
-  
+
   // Keyboard
   keyboard: {
     dismissThreshold: Platform.select({ ios: 50, android: 10 }), // px
@@ -1272,6 +1313,7 @@ const PERFORMANCE_CONFIG = {
 ### Complete Minimal Implementation
 
 **✅ FULLY WIRED PURE JS BOTTOM SHEET:**
+
 ```typescript
 import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import {
@@ -1300,13 +1342,13 @@ export const PureJSBottomSheet: React.FC<PureJSBottomSheetProps> = ({
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const dragY = useRef(new Animated.Value(0)).current;
   const velocityY = useRef(0);
-  
+
   // State refs (no re-renders)
   const containerHeight = useRef(SCREEN_HEIGHT);
   const normalizedSnapPoints = useRef<number[]>([]);
   const currentIndex = useRef(0);
   const gestureContext = useRef({ startY: 0, startTranslateY: 0 });
-  
+
   // Normalize snap points once
   const updateSnapPoints = useCallback(() => {
     normalizedSnapPoints.current = snapPoints.map(point => {
@@ -1317,13 +1359,13 @@ export const PureJSBottomSheet: React.FC<PureJSBottomSheetProps> = ({
       return containerHeight.current - point;
     }).sort((a, b) => a - b);
   }, [snapPoints]);
-  
+
   // Animate to snap point
   const snapToIndex = useCallback((index: number) => {
     const clampedIndex = Math.max(0, Math.min(normalizedSnapPoints.current.length - 1, index));
     const destination = normalizedSnapPoints.current[clampedIndex];
     currentIndex.current = clampedIndex;
-    
+
     Animated.spring(translateY, {
       toValue: destination,
       velocity: velocityY.current,
@@ -1336,58 +1378,58 @@ export const PureJSBottomSheet: React.FC<PureJSBottomSheetProps> = ({
       }
     });
   }, [translateY, onClose]);
-  
+
   // Pan responder with all optimizations
-  const panResponder = useMemo(() => 
+  const panResponder = useMemo(() =>
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_, gestureState) => {
         return Math.abs(gestureState.dy) > 5;
       },
-      
+
       onPanResponderGrant: () => {
         gestureContext.current = {
           startY: 0,
           startTranslateY: (translateY as any).__getValue(),
         };
         dragY.setValue(0);
-        
+
         // Stop any ongoing animation
         translateY.stopAnimation();
       },
-      
+
       onPanResponderMove: Animated.event(
         [null, { dy: dragY }],
         {
           useNativeDriver: false,
           listener: (_, gestureState) => {
             velocityY.current = gestureState.vy;
-            
+
             // Apply overdrag resistance
             const raw = gestureContext.current.startTranslateY + gestureState.dy;
             const min = Math.min(...normalizedSnapPoints.current);
             const max = Math.max(...normalizedSnapPoints.current);
-            
+
             let resisted = raw;
             if (raw < min) {
               resisted = min - Math.sqrt(Math.abs(min - raw)) * 2.5;
             } else if (raw > max) {
               resisted = max + Math.sqrt(raw - max) * 2.5;
             }
-            
+
             translateY.setValue(resisted);
           },
         }
       ),
-      
+
       onPanResponderRelease: () => {
         const currentPosition = (translateY as any).__getValue();
         const projectedPosition = currentPosition + velocityY.current * 180;
-        
+
         // Find nearest snap point
         let nearestIndex = 0;
         let minDistance = Math.abs(projectedPosition - normalizedSnapPoints.current[0]);
-        
+
         normalizedSnapPoints.current.forEach((point, index) => {
           const distance = Math.abs(projectedPosition - point);
           if (distance < minDistance) {
@@ -1395,27 +1437,27 @@ export const PureJSBottomSheet: React.FC<PureJSBottomSheetProps> = ({
             nearestIndex = index;
           }
         });
-        
+
         snapToIndex(nearestIndex);
         dragY.setValue(0);
       },
     }),
     [translateY, dragY, snapToIndex]
   );
-  
+
   // Initialize on mount
   useEffect(() => {
     updateSnapPoints();
     snapToIndex(normalizedSnapPoints.current.length - 1); // Start closed
   }, [updateSnapPoints, snapToIndex]);
-  
+
   // Backdrop opacity interpolation
   const backdropOpacity = translateY.interpolate({
     inputRange: [0, SCREEN_HEIGHT],
     outputRange: [0.5, 0],
     extrapolate: 'clamp',
   });
-  
+
   return (
     <>
       {/* Backdrop - always mounted */}
@@ -1426,7 +1468,7 @@ export const PureJSBottomSheet: React.FC<PureJSBottomSheetProps> = ({
         ]}
         pointerEvents={currentIndex.current === normalizedSnapPoints.current.length - 1 ? 'none' : 'auto'}
       />
-      
+
       {/* Sheet - always mounted */}
       <Animated.View
         style={[

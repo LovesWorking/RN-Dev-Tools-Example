@@ -40,7 +40,8 @@ export const devToolsStorageKeys = {
     theme: () => `${devToolsStorageKeys.settings.root()}_theme` as const,
     preferences: () =>
       `${devToolsStorageKeys.settings.root()}_preferences` as const,
-    wifiEnabled: () => `${devToolsStorageKeys.settings.root()}_wifi_enabled` as const,
+    wifiEnabled: () =>
+      `${devToolsStorageKeys.settings.root()}_wifi_enabled` as const,
   },
 
   /**
@@ -77,7 +78,8 @@ export const devToolsStorageKeys = {
       `${devToolsStorageKeys.storage.root()}_event_filters` as const,
     preferences: () =>
       `${devToolsStorageKeys.storage.root()}_preferences` as const,
-    activeTab: () => `${devToolsStorageKeys.storage.root()}_active_tab` as const,
+    activeTab: () =>
+      `${devToolsStorageKeys.storage.root()}_active_tab` as const,
     isMonitoring: () =>
       `${devToolsStorageKeys.storage.root()}_is_monitoring` as const,
   },

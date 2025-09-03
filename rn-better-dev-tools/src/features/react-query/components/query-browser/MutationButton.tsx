@@ -2,7 +2,10 @@ import { Mutation } from "@tanstack/react-query";
 import { Text, View, StyleSheet } from "react-native";
 import { CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { ListItem, StatusBadge } from "@/rn-better-dev-tools/src/shared/ui/components";
+import {
+  ListItem,
+  StatusBadge,
+} from "@/rn-better-dev-tools/src/shared/ui/components";
 
 const getMutationText = (mutation: Mutation) => {
   if (!mutation.options.mutationKey) return "Anonymous Mutation";
@@ -68,16 +71,16 @@ export default function MutationButton({
   const isSelected = selected?.mutationId === mutation.mutationId;
 
   return (
-    <ListItem 
+    <ListItem
       onPress={() =>
         setSelectedMutation(mutation === selected ? undefined : mutation)
       }
-      style={[
-        isSelected && styles.selected,
-      ]}
+      style={[isSelected && styles.selected]}
     >
       <ListItem.Header>
-        <View style={[styles.statusDot, { backgroundColor: statusInfo.color }]} />
+        <View
+          style={[styles.statusDot, { backgroundColor: statusInfo.color }]}
+        />
         <StatusBadge status={statusInfo.status} />
       </ListItem.Header>
 

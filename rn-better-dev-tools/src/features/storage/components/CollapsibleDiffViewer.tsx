@@ -1,7 +1,20 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { GitBranch, Minus, Plus, Edit3, ChevronDown, ChevronRight } from "rn-better-dev-tools/icons";
+import {
+  GitBranch,
+  Minus,
+  Plus,
+  Edit3,
+  ChevronDown,
+  ChevronRight,
+} from "rn-better-dev-tools/icons";
 import { objectDiff, type DiffItem } from "../utils/objectDiff";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 
@@ -17,7 +30,10 @@ interface FlattenedDiff {
   newValue?: any;
 }
 
-export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffViewerProps) {
+export function CollapsibleDiffViewer({
+  oldValue,
+  newValue,
+}: CollapsibleDiffViewerProps) {
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
 
   const parseValue = (value: unknown): unknown => {
@@ -55,16 +71,17 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
 
     // Convert to flattened format with readable paths
     const flatDiffs: FlattenedDiff[] = differences.map((diff) => {
-      const pathString = diff.path.length === 0 
-        ? "root" 
-        : diff.path
-            .map((segment, index) => {
-              if (typeof segment === "number") {
-                return `[${segment}]`;
-              }
-              return index === 0 ? segment : `.${segment}`;
-            })
-            .join("");
+      const pathString =
+        diff.path.length === 0
+          ? "root"
+          : diff.path
+              .map((segment, index) => {
+                if (typeof segment === "number") {
+                  return `[${segment}]`;
+                }
+                return index === 0 ? segment : `.${segment}`;
+              })
+              .join("");
 
       return {
         path: pathString,
@@ -117,7 +134,9 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
       case "boolean":
         return gameUIColors.dataTypes.boolean;
       case "object":
-        return Array.isArray(value) ? gameUIColors.dataTypes.array : gameUIColors.dataTypes.object;
+        return Array.isArray(value)
+          ? gameUIColors.dataTypes.array
+          : gameUIColors.dataTypes.object;
       default:
         return gameUIColors.primary;
     }
@@ -160,15 +179,15 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
         <View style={styles.headerLeft}>
           <GitBranch size={12} color={gameUIColors.info} />
           <Text style={styles.title}>
-            Found {flattened.length} change{flattened.length !== 1 ? 's' : ''}
+            Found {flattened.length} change{flattened.length !== 1 ? "s" : ""}
           </Text>
         </View>
         <View style={styles.typeSummary}>
           {(() => {
-            const created = flattened.filter(d => d.type === "CREATE").length;
-            const changed = flattened.filter(d => d.type === "CHANGE").length;
-            const removed = flattened.filter(d => d.type === "REMOVE").length;
-            
+            const created = flattened.filter((d) => d.type === "CREATE").length;
+            const changed = flattened.filter((d) => d.type === "CHANGE").length;
+            const removed = flattened.filter((d) => d.type === "REMOVE").length;
+
             return (
               <>
                 {created > 0 && (
@@ -197,13 +216,13 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
 
       {/* Diff List */}
       <View style={styles.listContainer}>
-        <ScrollView 
+        <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
         >
           {flattened.map((diff, index) => {
             const isExpanded = expandedPaths.has(diff.path);
-            
+
             return (
               <View key={index} style={styles.diffItem}>
                 <TouchableOpacity
@@ -222,20 +241,23 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                       {diff.path}
                     </Text>
                   </View>
-                  <View 
+                  <View
                     style={[
                       styles.typeBadge,
-                      { backgroundColor: getDiffColor(diff.type) + "15" }
+                      { backgroundColor: getDiffColor(diff.type) + "15" },
                     ]}
                   >
-                    <Text 
+                    <Text
                       style={[
                         styles.typeText,
-                        { color: getDiffColor(diff.type) }
+                        { color: getDiffColor(diff.type) },
                       ]}
                     >
-                      {diff.type === "CREATE" ? "NEW" : 
-                       diff.type === "REMOVE" ? "DEL" : "CHG"}
+                      {diff.type === "CREATE"
+                        ? "NEW"
+                        : diff.type === "REMOVE"
+                          ? "DEL"
+                          : "CHG"}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -246,10 +268,16 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                       <View style={styles.valuesContainer}>
                         {/* PREV value */}
                         <View style={styles.valueSection}>
-                          <Text style={[styles.valueLabel, { color: gameUIColors.optional }]}>
+                          <Text
+                            style={[
+                              styles.valueLabel,
+                              { color: gameUIColors.optional },
+                            ]}
+                          >
                             PREV:
                           </Text>
-                          {typeof diff.oldValue === 'object' && diff.oldValue !== null ? (
+                          {typeof diff.oldValue === "object" &&
+                          diff.oldValue !== null ? (
                             <View style={styles.dataViewerContainer}>
                               <DataViewer
                                 title=""
@@ -261,10 +289,10 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                               />
                             </View>
                           ) : (
-                            <Text 
+                            <Text
                               style={[
                                 styles.value,
-                                { color: getTypeColor(diff.oldValue) }
+                                { color: getTypeColor(diff.oldValue) },
                               ]}
                             >
                               {formatValue(diff.oldValue)}
@@ -273,10 +301,16 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                         </View>
                         {/* CUR value */}
                         <View style={styles.valueSection}>
-                          <Text style={[styles.valueLabel, { color: gameUIColors.success }]}>
+                          <Text
+                            style={[
+                              styles.valueLabel,
+                              { color: gameUIColors.success },
+                            ]}
+                          >
                             CUR:
                           </Text>
-                          {typeof diff.newValue === 'object' && diff.newValue !== null ? (
+                          {typeof diff.newValue === "object" &&
+                          diff.newValue !== null ? (
                             <View style={styles.dataViewerContainer}>
                               <DataViewer
                                 title=""
@@ -288,10 +322,10 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                               />
                             </View>
                           ) : (
-                            <Text 
+                            <Text
                               style={[
                                 styles.value,
-                                { color: getTypeColor(diff.newValue) }
+                                { color: getTypeColor(diff.newValue) },
                               ]}
                             >
                               {formatValue(diff.newValue)}
@@ -303,10 +337,16 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                     {diff.type === "CREATE" && (
                       <View style={styles.valuesContainer}>
                         <View style={styles.valueSection}>
-                          <Text style={[styles.valueLabel, { color: gameUIColors.success }]}>
+                          <Text
+                            style={[
+                              styles.valueLabel,
+                              { color: gameUIColors.success },
+                            ]}
+                          >
                             ADDED:
                           </Text>
-                          {typeof diff.newValue === 'object' && diff.newValue !== null ? (
+                          {typeof diff.newValue === "object" &&
+                          diff.newValue !== null ? (
                             <View style={styles.dataViewerContainer}>
                               <DataViewer
                                 title=""
@@ -318,10 +358,10 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                               />
                             </View>
                           ) : (
-                            <Text 
+                            <Text
                               style={[
                                 styles.value,
-                                { color: getTypeColor(diff.newValue) }
+                                { color: getTypeColor(diff.newValue) },
                               ]}
                             >
                               {formatValue(diff.newValue)}
@@ -333,10 +373,16 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                     {diff.type === "REMOVE" && (
                       <View style={styles.valuesContainer}>
                         <View style={styles.valueSection}>
-                          <Text style={[styles.valueLabel, { color: gameUIColors.error }]}>
+                          <Text
+                            style={[
+                              styles.valueLabel,
+                              { color: gameUIColors.error },
+                            ]}
+                          >
                             REMOVED:
                           </Text>
-                          {typeof diff.oldValue === 'object' && diff.oldValue !== null ? (
+                          {typeof diff.oldValue === "object" &&
+                          diff.oldValue !== null ? (
                             <View style={styles.dataViewerContainer}>
                               <DataViewer
                                 title=""
@@ -348,10 +394,10 @@ export function CollapsibleDiffViewer({ oldValue, newValue }: CollapsibleDiffVie
                               />
                             </View>
                           ) : (
-                            <Text 
+                            <Text
                               style={[
                                 styles.value,
-                                { color: getTypeColor(diff.oldValue) }
+                                { color: getTypeColor(diff.oldValue) },
                               ]}
                             >
                               {formatValue(diff.oldValue)}

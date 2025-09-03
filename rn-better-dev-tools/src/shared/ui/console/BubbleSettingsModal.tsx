@@ -38,7 +38,6 @@ export function BubbleSettingsModal({
     ? "@dev_tools_console_modal"
     : "@bubble_settings_modal";
 
-
   return (
     <ClaudeModal60FPSClean
       visible={visible}

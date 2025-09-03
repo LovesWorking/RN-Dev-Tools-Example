@@ -38,7 +38,7 @@ const [state, setState] = useState(0); // Runs here
 
 // 2. UI Thread - Where native rendering happens
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet'; // This marks code to run on UI thread
+  "worklet"; // This marks code to run on UI thread
   return { transform: [{ translateX: offset.value }] };
 });
 
@@ -53,15 +53,15 @@ const animatedStyle = useAnimatedStyle(() => {
 ```typescript
 // ✅ CORRECT: Worklet function
 const myWorklet = () => {
-  'worklet'; // MUST be the first statement
-  console.log('Running on UI thread');
+  "worklet"; // MUST be the first statement
+  console.log("Running on UI thread");
   return 42;
 };
 
 // ❌ WRONG: 'worklet' not first
 const badWorklet = () => {
   const x = 5; // ❌ Statement before 'worklet'
-  'worklet';
+  ("worklet");
   return x;
 };
 
@@ -91,13 +91,13 @@ progress.value = withSpring(100);
 
 // Reading in worklet (UI thread)
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
+  "worklet";
   return { width: progress.value }; // Direct access to .value
 });
 
 // Modifying in worklet
 const gesture = Gesture.Tap().onEnd(() => {
-  'worklet';
+  "worklet";
   progress.value = withSpring(progress.value + 10);
 });
 ```
@@ -142,7 +142,7 @@ function FirstAnimation() {
   // 1. Create shared value
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
-  
+
   // 2. Create animated styles
   const animatedStyle = useAnimatedStyle(() => {
     // This runs on UI thread - no bridge calls!
@@ -153,7 +153,7 @@ function FirstAnimation() {
       ]
     };
   });
-  
+
   // 3. Trigger animations
   const animate = () => {
     // These animations run entirely on UI thread
@@ -166,15 +166,15 @@ function FirstAnimation() {
       easing: Easing.bezier(0.25, 0.1, 0.25, 1)
     });
   };
-  
+
   const reset = () => {
     scale.value = withSpring(1);
     rotation.value = withTiming(0);
   };
-  
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Animated.View 
+      <Animated.View
         style={[
           {
             width: 100,
@@ -197,29 +197,33 @@ function FirstAnimation() {
 ```typescript
 function AnimationLifecycle() {
   const progress = useSharedValue(0);
-  
+
   useEffect(() => {
     // Start animation on mount
-    progress.value = withTiming(1, {
-      duration: 2000
-    }, (finished) => {
-      'worklet';
-      if (finished) {
-        console.log('Animation completed!');
-        // Can trigger another animation here
-        runOnJS(onAnimationComplete)();
-      }
-    });
-    
+    progress.value = withTiming(
+      1,
+      {
+        duration: 2000,
+      },
+      (finished) => {
+        "worklet";
+        if (finished) {
+          console.log("Animation completed!");
+          // Can trigger another animation here
+          runOnJS(onAnimationComplete)();
+        }
+      },
+    );
+
     // Cleanup on unmount - CRITICAL for performance
     return () => {
       cancelAnimation(progress);
     };
   }, []);
-  
+
   const onAnimationComplete = () => {
     // Handle completion on JS thread
-    console.log('Back on JS thread');
+    console.log("Back on JS thread");
   };
 }
 ```
@@ -234,7 +238,7 @@ function AnimationLifecycle() {
 // ❌ BAD: Causes bridge traffic on every frame
 function BadAnimation() {
   const [jsValue, setJsValue] = useState(0);
-  
+
   const animatedStyle = useAnimatedStyle(() => {
     // This causes bridge call to get jsValue!
     return { opacity: jsValue };
@@ -244,9 +248,9 @@ function BadAnimation() {
 // ✅ GOOD: Everything stays on UI thread
 function GoodAnimation() {
   const opacity = useSharedValue(0);
-  
+
   const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
+    "worklet";
     return { opacity: opacity.value };
   });
 }
@@ -260,13 +264,17 @@ Worklets capture variables from their surrounding scope. Minimize what gets capt
 // ❌ BAD: Captures entire theme object (could be huge)
 function BadCapture() {
   const theme = {
-    colors: { primary: '#007AFF', secondary: '#5856D6', /*...*/ },
-    fonts: { /*...*/ },
-    spacing: { /*...*/ }
+    colors: { primary: "#007AFF", secondary: "#5856D6" /*...*/ },
+    fonts: {
+      /*...*/
+    },
+    spacing: {
+      /*...*/
+    },
   };
-  
+
   const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
+    "worklet";
     // Captures ALL of theme even though we only use one color
     return { backgroundColor: theme.colors.primary };
   });
@@ -274,11 +282,13 @@ function BadCapture() {
 
 // ✅ GOOD: Only capture what you need
 function GoodCapture() {
-  const theme = { /*...*/ };
+  const theme = {
+    /*...*/
+  };
   const primaryColor = theme.colors.primary; // Extract needed value
-  
+
   const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
+    "worklet";
     // Only captures primaryColor string
     return { backgroundColor: primaryColor };
   });
@@ -286,14 +296,14 @@ function GoodCapture() {
 
 // ✅ BEST: Use constants for static values
 const ANIMATION_CONSTANTS = {
-  PRIMARY_COLOR: '#007AFF',
+  PRIMARY_COLOR: "#007AFF",
   ANIMATION_DURATION: 300,
-  MAX_SCALE: 1.5
+  MAX_SCALE: 1.5,
 } as const;
 
 function BestCapture() {
   const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
+    "worklet";
     return { backgroundColor: ANIMATION_CONSTANTS.PRIMARY_COLOR };
   });
 }
@@ -305,20 +315,20 @@ function BestCapture() {
 function ProperCleanup() {
   const translateX = useSharedValue(0);
   const animationRef = useRef<AnimationCallback | null>(null);
-  
+
   useEffect(() => {
     // Store animation reference for cleanup
     animationRef.current = withRepeat(
       withSequence(
         withTiming(100, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
+        withTiming(0, { duration: 1000 }),
       ),
       -1, // Infinite repeat
-      true // Reverse
+      true, // Reverse
     );
-    
+
     translateX.value = animationRef.current;
-    
+
     // CRITICAL: Clean up on unmount
     return () => {
       cancelAnimation(translateX);
@@ -334,50 +344,50 @@ function ProperCleanup() {
 // ❌ BAD: Creates new function every render
 function BadStyleCreation() {
   const opacity = useSharedValue(1);
-  
+
   // This creates a new function on every render!
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value
+    opacity: opacity.value,
   }));
 }
 
 // ✅ GOOD: Stable function reference
 function GoodStyleCreation() {
   const opacity = useSharedValue(1);
-  
+
   // Dependencies array ensures stable reference
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value
-  }), []); // Empty deps if opacity reference is stable
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: opacity.value,
+    }),
+    [],
+  ); // Empty deps if opacity reference is stable
 }
 
 // ✅ BEST: Memoize complex calculations
 function BestStyleCreation() {
   const progress = useSharedValue(0);
-  
+
   const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
-    
+    "worklet";
+
     // Complex but optimized calculations
     const scale = interpolate(
       progress.value,
       [0, 0.5, 1],
       [1, 1.2, 1],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
-    
+
     const rotation = interpolate(
       progress.value,
       [0, 1],
       [0, 360],
-      Extrapolation.EXTEND
+      Extrapolation.EXTEND,
     );
-    
+
     return {
-      transform: [
-        { scale },
-        { rotate: `${rotation}deg` }
-      ]
+      transform: [{ scale }, { rotate: `${rotation}deg` }],
     };
   }, []);
 }
@@ -403,12 +413,12 @@ progress.value = withTiming(1); // 300ms, default easing
 // Custom configuration
 progress.value = withTiming(1, {
   duration: 500,
-  easing: Easing.bezier(0.25, 0.1, 0.25, 1) // Custom cubic-bezier
+  easing: Easing.bezier(0.25, 0.1, 0.25, 1), // Custom cubic-bezier
 });
 
 // With completion callback
 progress.value = withTiming(1, { duration: 1000 }, (finished) => {
-  'worklet';
+  "worklet";
   if (finished) {
     // Animation completed normally
     runOnJS(onComplete)();
@@ -434,7 +444,7 @@ const easings = {
   bezier: Easing.bezier(0.42, 0, 0.58, 1), // Custom curve
   in: Easing.in(Easing.ease), // Acceleration
   out: Easing.out(Easing.ease), // Deceleration
-  inOut: Easing.inOut(Easing.ease) // Both
+  inOut: Easing.inOut(Easing.ease), // Both
 };
 ```
 
@@ -461,36 +471,36 @@ const SPRING_CONFIGS = {
   Snappy: {
     damping: 20,
     stiffness: 250,
-    mass: 0.5
+    mass: 0.5,
   },
-  
+
   // Gentle - Smooth and subtle
   Gentle: {
     damping: 20,
     stiffness: 120,
-    mass: 1
+    mass: 1,
   },
-  
+
   // Wiggly - Bouncy and playful
   Wiggly: {
     damping: 8,
     stiffness: 120,
-    mass: 0.8
+    mass: 0.8,
   },
-  
+
   // Stiff - Minimal bounce
   Stiff: {
     damping: 30,
     stiffness: 400,
-    mass: 0.5
+    mass: 0.5,
   },
-  
+
   // Slow - Relaxed motion
   Slow: {
     damping: 25,
     stiffness: 50,
-    mass: 2
-  }
+    mass: 2,
+  },
 };
 
 // Usage examples
@@ -501,14 +511,14 @@ translateX.value = withSpring(100, SPRING_CONFIGS.Snappy);
 // Duration-based spring (easier to reason about)
 translateX.value = withSpring(100, {
   duration: 1000,
-  dampingRatio: 0.7 // 0 = maximum bounce, 1 = no bounce
+  dampingRatio: 0.7, // 0 = maximum bounce, 1 = no bounce
 });
 
 // With initial velocity (for gesture continuity)
 translateX.value = withSpring(0, {
   velocity: gestureVelocity,
   damping: 15,
-  stiffness: 100
+  stiffness: 100,
 });
 ```
 
@@ -526,26 +536,25 @@ interface DecayConfig {
 }
 
 // Fling gesture with decay
-const gesture = Gesture.Pan()
-  .onEnd((event) => {
-    'worklet';
-    translateX.value = withDecay({
-      velocity: event.velocityX,
-      clamp: [-200, 200], // Boundaries
-      rubberBandEffect: true // Bounce at edges
-    });
+const gesture = Gesture.Pan().onEnd((event) => {
+  "worklet";
+  translateX.value = withDecay({
+    velocity: event.velocityX,
+    clamp: [-200, 200], // Boundaries
+    rubberBandEffect: true, // Bounce at edges
   });
+});
 
 // Momentum scrolling implementation
 const scrollOffset = useSharedValue(0);
 const velocity = useSharedValue(0);
 
 const handleRelease = () => {
-  'worklet';
+  "worklet";
   scrollOffset.value = withDecay({
     velocity: velocity.value,
     deceleration: 0.997,
-    clamp: [0, contentHeight - containerHeight]
+    clamp: [0, contentHeight - containerHeight],
   });
 };
 ```
@@ -557,33 +566,33 @@ const handleRelease = () => {
 progress.value = withSequence(
   withTiming(1, { duration: 300 }),
   withTiming(0.5, { duration: 200 }),
-  withSpring(1)
+  withSpring(1),
 );
 
 // Complex sequence with different types
 scale.value = withSequence(
   withTiming(0, { duration: 0 }), // Instant reset
   withDelay(200, withSpring(1.2)), // Delayed spring
-  withTiming(1, { duration: 300, easing: Easing.bounce })
+  withTiming(1, { duration: 300, easing: Easing.bounce }),
 );
 
 // Practical example: Attention-grabbing animation
 function AttentionAnimation() {
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
-  
+
   const grabAttention = () => {
     scale.value = withSequence(
       withTiming(1.1, { duration: 100 }),
       withTiming(0.95, { duration: 100 }),
-      withSpring(1, { damping: 5, stiffness: 200 })
+      withSpring(1, { damping: 5, stiffness: 200 }),
     );
-    
+
     rotation.value = withSequence(
       withTiming(-5, { duration: 50 }),
       withTiming(5, { duration: 100 }),
       withTiming(-5, { duration: 100 }),
-      withSpring(0)
+      withSpring(0),
     );
   };
 }
@@ -599,7 +608,7 @@ opacity.value = withDelay(500, withTiming(1));
 items.forEach((item, index) => {
   item.translateY.value = withDelay(
     index * 50, // Stagger by 50ms
-    withSpring(0)
+    withSpring(0),
   );
 });
 
@@ -612,8 +621,8 @@ function StaggeredEntrance({ items }: { items: SharedValue<number>[] }) {
         index * 100,
         withSpring(1, {
           damping: 10 + index * 2, // Vary spring config
-          stiffness: 100
-        })
+          stiffness: 100,
+        }),
       );
     });
   }, []);
@@ -634,41 +643,41 @@ interface RepeatConfig {
 progress.value = withRepeat(
   withTiming(1, { duration: 1000 }),
   -1, // Infinite
-  true // Reverse (ping-pong)
+  true, // Reverse (ping-pong)
 );
 
 // Fixed repetitions
 scale.value = withRepeat(
   withSequence(
     withTiming(1.2, { duration: 300 }),
-    withTiming(1, { duration: 300 })
+    withTiming(1, { duration: 300 }),
   ),
   3, // Repeat 3 times
-  false // Don't reverse
+  false, // Don't reverse
 );
 
 // Breathing animation
 function BreathingDot() {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.5);
-  
+
   useEffect(() => {
     scale.value = withRepeat(
       withSequence(
         withTiming(1.2, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) })
+        withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
       ),
-      -1
+      -1,
     );
-    
+
     opacity.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 1000 }),
-        withTiming(0.5, { duration: 1000 })
+        withTiming(0.5, { duration: 1000 }),
       ),
-      -1
+      -1,
     );
-    
+
     return () => {
       cancelAnimation(scale);
       cancelAnimation(opacity);
@@ -689,7 +698,7 @@ const scale = interpolate(
   progress.value,
   [0, 1], // Input range
   [1, 2], // Output range
-  Extrapolation.CLAMP // Behavior outside range
+  Extrapolation.CLAMP, // Behavior outside range
 );
 
 // Multi-point interpolation for complex curves
@@ -699,53 +708,50 @@ const complexAnimation = interpolate(
   [0, 0.5, 0.8, 0.9, 1], // Output values
   {
     extrapolateLeft: Extrapolation.CLAMP,
-    extrapolateRight: Extrapolation.EXTEND
-  }
+    extrapolateRight: Extrapolation.EXTEND,
+  },
 );
 
 // Color interpolation with different color spaces
 const backgroundColor = interpolateColor(
   progress.value,
   [0, 0.5, 1],
-  ['#FF0000', '#00FF00', '#0000FF'],
-  ColorSpace.RGB // or HSV, LAB, OKLCH
+  ["#FF0000", "#00FF00", "#0000FF"],
+  ColorSpace.RGB, // or HSV, LAB, OKLCH
 );
 
 // Practical example: Parallax effect
 function ParallaxHeader() {
   const scrollY = useSharedValue(0);
   const HEADER_HEIGHT = 300;
-  
+
   const headerStyle = useAnimatedStyle(() => {
-    'worklet';
-    
+    "worklet";
+
     const scale = interpolate(
       scrollY.value,
       [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
       [2, 1, 0.75],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
-    
+
     const opacity = interpolate(
       scrollY.value,
       [0, HEADER_HEIGHT / 2, HEADER_HEIGHT],
       [1, 0.5, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
-    
+
     const translateY = interpolate(
       scrollY.value,
       [0, HEADER_HEIGHT],
       [0, -HEADER_HEIGHT / 2],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
-    
+
     return {
-      transform: [
-        { scale },
-        { translateY }
-      ],
-      opacity
+      transform: [{ scale }, { translateY }],
+      opacity,
     };
   });
 }
@@ -757,35 +763,33 @@ function ParallaxHeader() {
 // Derived values automatically update when dependencies change
 function DerivedAnimation() {
   const progress = useSharedValue(0);
-  
+
   // Simple derived value
   const doubled = useDerivedValue(() => {
-    'worklet';
+    "worklet";
     return progress.value * 2;
   });
-  
+
   // Complex derived value with multiple dependencies
   const x = useSharedValue(0);
   const y = useSharedValue(0);
-  
+
   const distance = useDerivedValue(() => {
-    'worklet';
+    "worklet";
     return Math.sqrt(x.value ** 2 + y.value ** 2);
   });
-  
+
   const angle = useDerivedValue(() => {
-    'worklet';
+    "worklet";
     return Math.atan2(y.value, x.value) * (180 / Math.PI);
   });
-  
+
   // Use in animated styles
   const pointerStyle = useAnimatedStyle(() => {
-    'worklet';
+    "worklet";
     return {
-      transform: [
-        { rotate: `${angle.value}deg` }
-      ],
-      width: distance.value
+      transform: [{ rotate: `${angle.value}deg` }],
+      width: distance.value,
     };
   });
 }
@@ -798,12 +802,12 @@ function DerivedAnimation() {
 function AnimatedReactionExample() {
   const progress = useSharedValue(0);
   const threshold = 0.5;
-  
+
   // Simple reaction
   useAnimatedReaction(
     () => progress.value > threshold,
     (result, previous) => {
-      'worklet';
+      "worklet";
       if (result !== previous) {
         if (result) {
           // Crossed threshold upward
@@ -814,29 +818,28 @@ function AnimatedReactionExample() {
         }
       }
     },
-    [threshold] // Dependencies
+    [threshold], // Dependencies
   );
-  
+
   // Complex reaction with preparation
   useAnimatedReaction(
     () => ({
       x: translateX.value,
-      y: translateY.value
+      y: translateY.value,
     }), // Prepare function
     (current, previous) => {
-      'worklet';
+      "worklet";
       if (previous) {
         const distance = Math.sqrt(
-          (current.x - previous.x) ** 2 + 
-          (current.y - previous.y) ** 2
+          (current.x - previous.x) ** 2 + (current.y - previous.y) ** 2,
         );
-        
+
         if (distance > 100) {
           // Moved more than 100 units
           runOnJS(onLargeMovement)();
         }
       }
-    }
+    },
   );
 }
 ```
@@ -846,25 +849,25 @@ function AnimatedReactionExample() {
 ```typescript
 // Create custom animation modifiers
 function withBounce(toValue: number, config?: SpringConfig) {
-  'worklet';
+  "worklet";
   return withSequence(
     withSpring(toValue * 1.2, config),
-    withSpring(toValue, { ...config, damping: 20 })
+    withSpring(toValue, { ...config, damping: 20 }),
   );
 }
 
 // Custom easing function
 function customEasing(t: number): number {
-  'worklet';
+  "worklet";
   // Elastic easing
   const p = 0.3;
-  return Math.pow(2, -10 * t) * Math.sin((t - p / 4) * (2 * Math.PI) / p) + 1;
+  return Math.pow(2, -10 * t) * Math.sin(((t - p / 4) * (2 * Math.PI)) / p) + 1;
 }
 
 // Use in animations
 progress.value = withTiming(1, {
   duration: 1000,
-  easing: customEasing
+  easing: customEasing,
 });
 
 // Complex custom animation
@@ -872,12 +875,12 @@ function withPulse(
   value: SharedValue<number>,
   toValue: number,
   pulseScale = 1.1,
-  duration = 300
+  duration = 300,
 ) {
-  'worklet';
+  "worklet";
   return withSequence(
     withTiming(toValue * pulseScale, { duration: duration / 2 }),
-    withSpring(toValue, { damping: 15, stiffness: 200 })
+    withSpring(toValue, { damping: 15, stiffness: 200 }),
   );
 }
 ```
@@ -903,7 +906,7 @@ const customTransition = SharedTransition.custom((values) => {
 const progressiveTransition = SharedTransition.progressAnimation((values, progress) => {
   'worklet';
   const scale = interpolate(progress, [0, 0.5, 1], [1, 1.2, 1]);
-  
+
   return {
     originX: values.currentOriginX + (values.targetOriginX - values.currentOriginX) * progress,
     originY: values.currentOriginY + (values.targetOriginY - values.currentOriginY) * progress,
@@ -935,7 +938,7 @@ function GestureExample() {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
-  
+
   // Pan gesture
   const pan = Gesture.Pan()
     .onStart(() => {
@@ -952,7 +955,7 @@ function GestureExample() {
       translateX.value = withSpring(0);
       translateY.value = withSpring(0);
     });
-  
+
   // Pinch gesture
   const pinch = Gesture.Pinch()
     .onUpdate((event) => {
@@ -963,10 +966,10 @@ function GestureExample() {
       'worklet';
       scale.value = withSpring(1);
     });
-  
+
   // Composed gesture
   const composed = Gesture.Simultaneous(pan, pinch);
-  
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: translateX.value },
@@ -974,7 +977,7 @@ function GestureExample() {
       { scale: scale.value }
     ]
   }));
-  
+
   return (
     <GestureDetector gesture={composed}>
       <Animated.View style={[styles.box, animatedStyle]} />
@@ -990,63 +993,61 @@ function SwipeableCard() {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const context = useSharedValue({ x: 0, y: 0 });
-  
+
   const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
   const VELOCITY_THRESHOLD = 500;
-  
+
   const gesture = Gesture.Pan()
     .onStart(() => {
-      'worklet';
+      "worklet";
       context.value = {
         x: translateX.value,
-        y: translateY.value
+        y: translateY.value,
       };
     })
     .onUpdate((event) => {
-      'worklet';
+      "worklet";
       translateX.value = context.value.x + event.translationX;
       translateY.value = context.value.y + event.translationY;
     })
     .onEnd((event) => {
-      'worklet';
-      const shouldSwipe = 
+      "worklet";
+      const shouldSwipe =
         Math.abs(event.translationX) > SWIPE_THRESHOLD ||
         Math.abs(event.velocityX) > VELOCITY_THRESHOLD;
-      
+
       if (shouldSwipe) {
         // Swipe away
         const direction = event.translationX > 0 ? 1 : -1;
-        translateX.value = withSpring(
-          direction * SCREEN_WIDTH * 1.5,
-          { velocity: event.velocityX }
-        );
-        translateY.value = withSpring(
-          event.translationY,
-          { velocity: event.velocityY }
-        );
-        
-        runOnJS(onSwipe)(direction > 0 ? 'right' : 'left');
+        translateX.value = withSpring(direction * SCREEN_WIDTH * 1.5, {
+          velocity: event.velocityX,
+        });
+        translateY.value = withSpring(event.translationY, {
+          velocity: event.velocityY,
+        });
+
+        runOnJS(onSwipe)(direction > 0 ? "right" : "left");
       } else {
         // Spring back
         translateX.value = withSpring(0);
         translateY.value = withSpring(0);
       }
     });
-  
+
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
       translateX.value,
       [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
       [-15, 0, 15],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
-    
+
     return {
       transform: [
         { translateX: translateX.value },
         { translateY: translateY.value },
-        { rotate: `${rotate}deg` }
-      ]
+        { rotate: `${rotate}deg` },
+      ],
     };
   });
 }
@@ -1058,37 +1059,39 @@ function SwipeableCard() {
 function GestureStateExample() {
   const isPressed = useSharedValue(false);
   const isDragging = useSharedValue(false);
-  
+
   const gesture = Gesture.Pan()
     .onBegin(() => {
-      'worklet';
+      "worklet";
       isPressed.value = true;
     })
     .onStart(() => {
-      'worklet';
+      "worklet";
       isDragging.value = true;
     })
     .onEnd(() => {
-      'worklet';
+      "worklet";
       isDragging.value = false;
       isPressed.value = false;
     })
     .onFinalize(() => {
-      'worklet';
+      "worklet";
       // Always called, even if gesture is cancelled
       isPressed.value = false;
       isDragging.value = false;
     });
-  
+
   const animatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: isDragging.value 
-      ? 'lightblue' 
-      : isPressed.value 
-        ? 'lightgray' 
-        : 'white',
-    transform: [{
-      scale: withSpring(isPressed.value ? 0.95 : 1)
-    }]
+    backgroundColor: isDragging.value
+      ? "lightblue"
+      : isPressed.value
+        ? "lightgray"
+        : "white",
+    transform: [
+      {
+        scale: withSpring(isPressed.value ? 0.95 : 1),
+      },
+    ],
   }));
 }
 ```
@@ -1118,12 +1121,12 @@ import {
 <Animated.View entering={FadeIn} />
 
 // With configuration
-<Animated.View 
-  entering={FadeIn.duration(500).delay(200)} 
+<Animated.View
+  entering={FadeIn.duration(500).delay(200)}
 />
 
 // Chained modifiers
-<Animated.View 
+<Animated.View
   entering={SlideInRight
     .duration(400)
     .delay(100)
@@ -1136,7 +1139,7 @@ import {
         runOnJS(onEntered)();
       }
     })
-  } 
+  }
 />
 
 // Custom entering animation
@@ -1149,7 +1152,7 @@ const customEntering = () => {
       { rotate: withTiming(0, { duration: 400 }) }
     ]
   };
-  
+
   const initialValues = {
     opacity: 0,
     transform: [
@@ -1157,7 +1160,7 @@ const customEntering = () => {
       { rotate: '180deg' }
     ]
   };
-  
+
   return {
     initialValues,
     animations
@@ -1178,8 +1181,8 @@ import {
 
 // Conditional rendering with exit animation
 {isVisible && (
-  <Animated.View 
-    exiting={FadeOut.duration(300)} 
+  <Animated.View
+    exiting={FadeOut.duration(300)}
   />
 )}
 
@@ -1324,7 +1327,7 @@ const complexKeyframe = new Keyframe({
 function OptimizedScrollView() {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollY = useSharedValue(0);
-  
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       'worklet';
@@ -1345,12 +1348,12 @@ function OptimizedScrollView() {
       }
     }
   });
-  
+
   // Programmatic scroll
   const scrollToTop = () => {
     scrollTo(scrollRef, 0, 0, true); // Animated
   };
-  
+
   return (
     <Animated.ScrollView
       ref={scrollRef}
@@ -1373,7 +1376,7 @@ const AnimatedFlatListItem = ({ item, index, scrollY }) => {
     index * ITEM_HEIGHT,
     (index + 1) * ITEM_HEIGHT
   ];
-  
+
   const animatedStyle = useAnimatedStyle(() => {
     const scale = interpolate(
       scrollY.value,
@@ -1381,20 +1384,20 @@ const AnimatedFlatListItem = ({ item, index, scrollY }) => {
       [0.8, 1, 0.8],
       Extrapolation.CLAMP
     );
-    
+
     const opacity = interpolate(
       scrollY.value,
       inputRange,
       [0.3, 1, 0.3],
       Extrapolation.CLAMP
     );
-    
+
     return {
       transform: [{ scale }],
       opacity
     };
   });
-  
+
   return (
     <Animated.View style={[styles.item, animatedStyle]}>
       <Text>{item.title}</Text>
@@ -1405,15 +1408,15 @@ const AnimatedFlatListItem = ({ item, index, scrollY }) => {
 // Main component
 function AnimatedFlatList() {
   const scrollY = useSharedValue(0);
-  
+
   const renderItem = useCallback(({ item, index }) => (
-    <AnimatedFlatListItem 
-      item={item} 
-      index={index} 
-      scrollY={scrollY} 
+    <AnimatedFlatListItem
+      item={item}
+      index={index}
+      scrollY={scrollY}
     />
   ), [scrollY]);
-  
+
   return (
     <Animated.FlatList
       data={data}
@@ -1443,7 +1446,7 @@ function AnimatedFlatList() {
 function ParallaxScrollView() {
   const scrollY = useSharedValue(0);
   const HEADER_HEIGHT = 300;
-  
+
   const headerStyle = useAnimatedStyle(() => {
     const translateY = interpolate(
       scrollY.value,
@@ -1451,25 +1454,25 @@ function ParallaxScrollView() {
       [0, -HEADER_HEIGHT / 2],
       Extrapolation.CLAMP
     );
-    
+
     const scale = interpolate(
       scrollY.value,
       [-HEADER_HEIGHT, 0],
       [2, 1],
       Extrapolation.CLAMP
     );
-    
+
     return {
       transform: [{ translateY }, { scale }]
     };
   });
-  
+
   const contentStyle = useAnimatedStyle(() => ({
     transform: [{
       translateY: Math.max(0, scrollY.value)
     }]
   }));
-  
+
   return (
     <View style={{ flex: 1 }}>
       <Animated.Image
@@ -1503,7 +1506,7 @@ import { PerformanceMonitor } from 'react-native-reanimated';
 
 function App() {
   const [showPerf, setShowPerf] = useState(__DEV__);
-  
+
   return (
     <>
       {showPerf && <PerformanceMonitor />}
@@ -1516,23 +1519,26 @@ function App() {
 ### 2. Logging Configuration
 
 ```typescript
-import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 // Configure logging
 configureReanimatedLogger({
   level: __DEV__ ? ReanimatedLogLevel.warn : ReanimatedLogLevel.error,
-  strict: __DEV__ // Throw on warnings in development
+  strict: __DEV__, // Throw on warnings in development
 });
 
 // Custom logger in worklets
 const debugWorklet = (value: any) => {
-  'worklet';
-  console.log('[Worklet]:', value);
+  "worklet";
+  console.log("[Worklet]:", value);
 };
 
 // Use in animations
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
+  "worklet";
   debugWorklet(`Progress: ${progress.value}`);
   return { opacity: progress.value };
 });
@@ -1543,9 +1549,9 @@ const animatedStyle = useAnimatedStyle(() => {
 ```javascript
 // In your index.js or App.js
 if (__DEV__) {
-  require('react-native-reanimated').configureReanimatedLogger({
-    level: 'warn',
-    strict: false
+  require("react-native-reanimated").configureReanimatedLogger({
+    level: "warn",
+    strict: false,
   });
 }
 
@@ -1555,8 +1561,10 @@ if (__DEV__) {
 module.exports = {
   transformer: {
     // ... other config
-    workerPath: require.resolve('react-native-reanimated/lib/reanimated2/js-reanimated/workerString')
-  }
+    workerPath: require.resolve(
+      "react-native-reanimated/lib/reanimated2/js-reanimated/workerString",
+    ),
+  },
 };
 ```
 
@@ -1567,7 +1575,7 @@ module.exports = {
 function DebugAnimation() {
   const progress = useSharedValue(0);
   const [jsProgress, setJsProgress] = useState(0);
-  
+
   // Sync to JS for debugging
   useAnimatedReaction(
     () => progress.value,
@@ -1575,7 +1583,7 @@ function DebugAnimation() {
       runOnJS(setJsProgress)(current);
     }
   );
-  
+
   return (
     <View>
       <Text>Progress: {jsProgress.toFixed(2)}</Text>
@@ -1587,9 +1595,9 @@ function DebugAnimation() {
 // Measure animation performance
 function measureAnimationPerformance(name: string, animation: () => void) {
   const start = performance.now();
-  
+
   animation();
-  
+
   const end = performance.now();
   console.log(`[${name}] took ${(end - start).toFixed(2)}ms`);
 }
@@ -1610,31 +1618,31 @@ function validateAnimation(value: SharedValue<number>, min: number, max: number)
 ### 1. iOS Optimizations
 
 ```typescript
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
 // iOS-specific spring configurations
 const IOS_SPRING = Platform.select({
   ios: {
     damping: 15,
     stiffness: 150,
-    mass: 1
+    mass: 1,
   },
   default: {
     damping: 20,
     stiffness: 100,
-    mass: 1
-  }
+    mass: 1,
+  },
 });
 
 // iOS-specific gesture handling
 const gesture = Gesture.Pan()
-  .shouldCancelWhenOutside(Platform.OS === 'ios') // iOS-specific behavior
-  .minDistance(Platform.OS === 'ios' ? 5 : 10);
+  .shouldCancelWhenOutside(Platform.OS === "ios") // iOS-specific behavior
+  .minDistance(Platform.OS === "ios" ? 5 : 10);
 
 // iOS haptic feedback
 function triggerHaptic() {
-  'worklet';
-  if (Platform.OS === 'ios') {
+  "worklet";
+  if (Platform.OS === "ios") {
     runOnJS(HapticFeedback.impact)(HapticFeedback.ImpactFeedbackStyle.Light);
   }
 }
@@ -1645,22 +1653,22 @@ function triggerHaptic() {
 ```typescript
 // Android-specific elevation for shadows
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
-  
-  if (Platform.OS === 'android') {
+  "worklet";
+
+  if (Platform.OS === "android") {
     return {
       elevation: interpolate(progress.value, [0, 1], [0, 8]),
       // Android doesn't support shadow properties
     };
   }
-  
+
   return {
     shadowOpacity: interpolate(progress.value, [0, 1], [0, 0.3]),
     shadowRadius: interpolate(progress.value, [0, 1], [0, 10]),
     shadowOffset: {
       width: 0,
-      height: interpolate(progress.value, [0, 1], [0, 5])
-    }
+      height: interpolate(progress.value, [0, 1], [0, 5]),
+    },
   };
 });
 
@@ -1668,9 +1676,9 @@ const animatedStyle = useAnimatedStyle(() => {
 const ANDROID_OPTIMIZATION = Platform.select({
   android: {
     renderToHardwareTextureAndroid: true,
-    collapsable: false
+    collapsable: false,
   },
-  default: {}
+  default: {},
 });
 ```
 
@@ -1682,19 +1690,19 @@ const WEB_OPTIMIZATION = Platform.select({
   web: {
     // Web doesn't have separate UI thread
     // Worklets run as regular functions
-    userSelect: 'none',
-    cursor: 'pointer'
+    userSelect: "none",
+    cursor: "pointer",
   },
-  default: {}
+  default: {},
 });
 
 // Conditional native driver
-const USE_NATIVE_DRIVER = Platform.OS !== 'web';
+const USE_NATIVE_DRIVER = Platform.OS !== "web";
 
 progress.value = withTiming(1, {
   duration: 300,
   // Web doesn't support native driver
-  ...(USE_NATIVE_DRIVER && { useNativeDriver: true })
+  ...(USE_NATIVE_DRIVER && { useNativeDriver: true }),
 });
 ```
 
@@ -1708,7 +1716,7 @@ progress.value = withTiming(1, {
 // ❌ PROBLEM: Animation continues after unmount
 function LeakyComponent() {
   const progress = useSharedValue(0);
-  
+
   useEffect(() => {
     progress.value = withRepeat(withTiming(1), -1);
     // ❌ No cleanup!
@@ -1718,10 +1726,10 @@ function LeakyComponent() {
 // ✅ SOLUTION: Always clean up
 function FixedComponent() {
   const progress = useSharedValue(0);
-  
+
   useEffect(() => {
     progress.value = withRepeat(withTiming(1), -1);
-    
+
     return () => {
       cancelAnimation(progress);
     };
@@ -1734,7 +1742,7 @@ function FixedComponent() {
 ```typescript
 // ❌ PROBLEM: Using non-worklet functions
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
+  "worklet";
   // ❌ Math.random() is not a worklet
   const randomValue = Math.random();
   return { opacity: randomValue };
@@ -1742,13 +1750,9 @@ const animatedStyle = useAnimatedStyle(() => {
 
 // ✅ SOLUTION: Use worklet-compatible code
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
+  "worklet";
   // ✅ Use interpolate for pseudo-random effect
-  const pseudoRandom = interpolate(
-    Date.now() % 1000,
-    [0, 1000],
-    [0, 1]
-  );
+  const pseudoRandom = interpolate(Date.now() % 1000, [0, 1000], [0, 1]);
   return { opacity: pseudoRandom };
 });
 ```
@@ -1759,7 +1763,7 @@ const animatedStyle = useAnimatedStyle(() => {
 // ❌ PROBLEM: Frequent bridge calls
 function BadBridge() {
   const [jsState, setJsState] = useState(0);
-  
+
   const animatedStyle = useAnimatedStyle(() => {
     // ❌ Accessing JS state causes bridge call
     return { opacity: jsState };
@@ -1769,9 +1773,9 @@ function BadBridge() {
 // ✅ SOLUTION: Use shared values
 function GoodBridge() {
   const opacity = useSharedValue(0);
-  
+
   const animatedStyle = useAnimatedStyle(() => {
-    'worklet';
+    "worklet";
     return { opacity: opacity.value };
   });
 }
@@ -1783,9 +1787,9 @@ function GoodBridge() {
 // ❌ PROBLEM: Stale closure in worklet
 function StaleClosureIssue() {
   const [count, setCount] = useState(0);
-  
+
   const gesture = Gesture.Tap().onEnd(() => {
-    'worklet';
+    "worklet";
     // ❌ count is captured at creation time
     runOnJS(setCount)(count + 1);
   });
@@ -1794,9 +1798,9 @@ function StaleClosureIssue() {
 // ✅ SOLUTION: Use shared values or updater functions
 function FixedClosure() {
   const count = useSharedValue(0);
-  
+
   const gesture = Gesture.Tap().onEnd(() => {
-    'worklet';
+    "worklet";
     count.value += 1;
     // Or use updater function
     runOnJS(setCount)((prev) => prev + 1);
@@ -1809,7 +1813,7 @@ function FixedClosure() {
 ```typescript
 // ❌ PROBLEM: Heavy calculations in animated style
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
+  "worklet";
   // ❌ Expensive calculation on every frame
   let sum = 0;
   for (let i = 0; i < 10000; i++) {
@@ -1820,13 +1824,13 @@ const animatedStyle = useAnimatedStyle(() => {
 
 // ✅ SOLUTION: Pre-calculate or use derived values
 const calculatedValue = useDerivedValue(() => {
-  'worklet';
+  "worklet";
   // Calculate once when dependencies change
   return expensiveCalculation();
 }, [dependency]);
 
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
+  "worklet";
   return { opacity: calculatedValue.value };
 });
 ```
@@ -1842,34 +1846,34 @@ function DoubleTapHeart() {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const rotation = useSharedValue(0);
-  
+
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
       'worklet';
-      
+
       // Reset and animate
       scale.value = 0;
       opacity.value = 1;
       rotation.value = 0;
-      
+
       scale.value = withSequence(
         withSpring(1.2, { damping: 8, stiffness: 200 }),
         withDelay(200, withSpring(0, { damping: 8 }))
       );
-      
+
       opacity.value = withDelay(
         400,
         withTiming(0, { duration: 200 })
       );
-      
+
       rotation.value = withSequence(
         withTiming(15, { duration: 100 }),
         withTiming(-15, { duration: 100 }),
         withSpring(0)
       );
     });
-  
+
   const heartStyle = useAnimatedStyle(() => ({
     transform: [
       { scale: scale.value },
@@ -1877,7 +1881,7 @@ function DoubleTapHeart() {
     ],
     opacity: opacity.value
   }));
-  
+
   return (
     <GestureDetector gesture={doubleTap}>
       <View style={styles.container}>
@@ -1899,13 +1903,13 @@ function SwipeCard({ data, onSwipe }) {
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
   const rotateZ = useSharedValue(0);
-  
+
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
       'worklet';
       translateX.value = event.translationX;
       translateY.value = event.translationY;
-      
+
       // Rotation based on horizontal movement
       rotateZ.value = interpolate(
         event.translationX,
@@ -1913,7 +1917,7 @@ function SwipeCard({ data, onSwipe }) {
         [-15, 0, 15],
         Extrapolation.CLAMP
       );
-      
+
       // Scale based on distance from center
       const distance = Math.sqrt(
         event.translationX ** 2 + event.translationY ** 2
@@ -1929,27 +1933,27 @@ function SwipeCard({ data, onSwipe }) {
       'worklet';
       const THRESHOLD = SCREEN_WIDTH * 0.3;
       const VELOCITY_THRESHOLD = 500;
-      
-      const shouldSwipe = 
+
+      const shouldSwipe =
         Math.abs(event.translationX) > THRESHOLD ||
         Math.abs(event.velocityX) > VELOCITY_THRESHOLD;
-      
+
       if (shouldSwipe) {
         const direction = event.translationX > 0 ? 'right' : 'left';
-        
+
         // Swipe away with physics
         translateX.value = withSpring(
           event.translationX > 0 ? SCREEN_WIDTH * 2 : -SCREEN_WIDTH * 2,
           { velocity: event.velocityX, damping: 50 }
         );
-        
+
         translateY.value = withSpring(
           event.translationY + event.velocityY * 0.2,
           { velocity: event.velocityY }
         );
-        
+
         scale.value = withTiming(0.5, { duration: 300 });
-        
+
         runOnJS(onSwipe)(direction);
       } else {
         // Spring back to center
@@ -1959,7 +1963,7 @@ function SwipeCard({ data, onSwipe }) {
         scale.value = withSpring(1, { damping: 20 });
       }
     });
-  
+
   const cardStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: translateX.value },
@@ -1968,7 +1972,7 @@ function SwipeCard({ data, onSwipe }) {
       { scale: scale.value }
     ]
   }));
-  
+
   const likeOpacity = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateX.value,
@@ -1977,7 +1981,7 @@ function SwipeCard({ data, onSwipe }) {
       Extrapolation.CLAMP
     )
   }));
-  
+
   const nopeOpacity = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateX.value,
@@ -1986,7 +1990,7 @@ function SwipeCard({ data, onSwipe }) {
       Extrapolation.CLAMP
     )
   }));
-  
+
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.card, cardStyle]}>
@@ -2009,10 +2013,10 @@ function SwipeCard({ data, onSwipe }) {
 function NowPlayingBar() {
   const COLLAPSED_HEIGHT = 60;
   const EXPANDED_HEIGHT = SCREEN_HEIGHT * 0.9;
-  
+
   const translateY = useSharedValue(EXPANDED_HEIGHT - COLLAPSED_HEIGHT);
   const context = useSharedValue({ y: 0 });
-  
+
   const gesture = Gesture.Pan()
     .onStart(() => {
       'worklet';
@@ -2032,18 +2036,18 @@ function NowPlayingBar() {
       'worklet';
       const isExpanded = translateY.value < (EXPANDED_HEIGHT - COLLAPSED_HEIGHT) / 2;
       const targetY = isExpanded ? 0 : EXPANDED_HEIGHT - COLLAPSED_HEIGHT;
-      
+
       translateY.value = withSpring(targetY, {
         velocity: event.velocityY,
         damping: 20,
         stiffness: 200
       });
     });
-  
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }]
   }));
-  
+
   const backdropOpacity = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateY.value,
@@ -2053,7 +2057,7 @@ function NowPlayingBar() {
     ),
     pointerEvents: translateY.value < 100 ? 'auto' : 'none'
   }));
-  
+
   const contentOpacity = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateY.value,
@@ -2062,7 +2066,7 @@ function NowPlayingBar() {
       Extrapolation.CLAMP
     )
   }));
-  
+
   return (
     <>
       <Animated.View style={[styles.backdrop, backdropOpacity]} />
@@ -2093,21 +2097,21 @@ function FPSMonitor() {
   const fps = useSharedValue(0);
   const frameCount = useSharedValue(0);
   const lastTime = useSharedValue(0);
-  
+
   useFrameCallback((frameInfo) => {
     'worklet';
-    
+
     frameCount.value += 1;
-    
+
     if (frameInfo.timestamp - lastTime.value >= 1000) {
       fps.value = frameCount.value;
       frameCount.value = 0;
       lastTime.value = frameInfo.timestamp;
-      
+
       runOnJS(console.log)(`FPS: ${fps.value}`);
     }
   }, true);
-  
+
   const fpsStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
       fps.value,
@@ -2115,7 +2119,7 @@ function FPSMonitor() {
       ['red', 'yellow', 'green']
     )
   }));
-  
+
   return (
     <Animated.View style={[styles.fpsIndicator, fpsStyle]}>
       <AnimatedText text={fps} />
@@ -2128,17 +2132,17 @@ function FPSMonitor() {
 
 ```typescript
 function profileAnimation(name: string, animation: () => void) {
-  'worklet';
-  
+  "worklet";
+
   const startTime = performance.now();
-  
+
   animation();
-  
+
   const endTime = performance.now();
   const duration = endTime - startTime;
-  
+
   runOnJS(console.log)(`[${name}] took ${duration.toFixed(2)}ms`);
-  
+
   if (duration > 16.67) {
     runOnJS(console.warn)(`[${name}] missed frame budget!`);
   }
@@ -2146,15 +2150,15 @@ function profileAnimation(name: string, animation: () => void) {
 
 // Usage
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
-  
-  return profileAnimation('complexStyle', () => {
+  "worklet";
+
+  return profileAnimation("complexStyle", () => {
     // Your animation code
     return {
       transform: [
         { scale: interpolate(progress.value, [0, 1], [1, 2]) },
-        { rotate: `${progress.value * 360}deg` }
-      ]
+        { rotate: `${progress.value * 360}deg` },
+      ],
     };
   });
 });
@@ -2165,7 +2169,7 @@ const animatedStyle = useAnimatedStyle(() => {
 ```typescript
 function MemoryTracker() {
   const [memoryInfo, setMemoryInfo] = useState({});
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       // React Native specific
@@ -2177,10 +2181,10 @@ function MemoryTracker() {
         });
       }
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
-  
+
   return (
     <View style={styles.memoryTracker}>
       <Text>Memory: {memoryInfo.used}MB / {memoryInfo.total}MB</Text>
@@ -2212,14 +2216,14 @@ Gesture.Pan()
 
 // Layout animations change
 // Reanimated 2
-<Animated.View 
-  entering={FadeIn.duration(300)} 
+<Animated.View
+  entering={FadeIn.duration(300)}
   exiting={FadeOut.duration(300)}
 />
 
 // Reanimated 3 - Same API but better performance
-<Animated.View 
-  entering={FadeIn.duration(300)} 
+<Animated.View
+  entering={FadeIn.duration(300)}
   exiting={FadeOut.duration(300)}
   layout={LinearTransition} // New in v3
 />
@@ -2229,22 +2233,22 @@ Gesture.Pan()
 
 ```typescript
 // Reanimated 3 adds full web support
-const isWeb = Platform.OS === 'web';
+const isWeb = Platform.OS === "web";
 
 // Conditional features
 const animatedStyle = useAnimatedStyle(() => {
-  'worklet';
-  
+  "worklet";
+
   if (isWeb) {
     // Web-specific optimizations
     return {
       transform: `translateX(${translateX.value}px)`,
-      willChange: 'transform'
+      willChange: "transform",
     };
   }
-  
+
   return {
-    transform: [{ translateX: translateX.value }]
+    transform: [{ translateX: translateX.value }],
   };
 });
 ```
@@ -2318,6 +2322,7 @@ const animatedStyle = useAnimatedStyle(() => {
 This guide represents the complete knowledge base for creating the fastest, most advanced animations with React Native Reanimated. By following these patterns, avoiding the pitfalls, and applying the optimizations, you can create native-quality animations that run at a consistent 60fps.
 
 Remember:
+
 1. **Keep animations on the UI thread** using worklets
 2. **Minimize bridge communication** with shared values
 3. **Clean up resources** to prevent memory leaks

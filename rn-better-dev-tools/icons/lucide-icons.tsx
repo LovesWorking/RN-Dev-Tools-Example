@@ -17,8 +17,21 @@ const Svg = ({ width, height, viewBox, children, style, ...props }: any) => {
   const scaleY = height / vbHeight;
 
   return (
-    <View style={[{ width, height, position: "relative", overflow: "hidden" }, style]} {...props}>
-      <View style={{ transform: [{ scaleX }, { scaleY }], transformOrigin: "top left", width: vbWidth, height: vbHeight }}>
+    <View
+      style={[
+        { width, height, position: "relative", overflow: "hidden" },
+        style,
+      ]}
+      {...props}
+    >
+      <View
+        style={{
+          transform: [{ scaleX }, { scaleY }],
+          transformOrigin: "top left",
+          width: vbWidth,
+          height: vbHeight,
+        }}
+      >
         {children}
       </View>
     </View>
@@ -60,7 +73,16 @@ const Circle = ({ cx, cy, r, fill, stroke, strokeWidth = 2 }: any) => (
   />
 );
 
-const Rect = ({ x, y, width, height, fill, stroke, strokeWidth = 2, rx = 0 }: any) => (
+const Rect = ({
+  x,
+  y,
+  width,
+  height,
+  fill,
+  stroke,
+  strokeWidth = 2,
+  rx = 0,
+}: any) => (
   <View
     style={{
       position: "absolute",
@@ -77,225 +99,964 @@ const Rect = ({ x, y, width, height, fill, stroke, strokeWidth = 2, rx = 0 }: an
 );
 
 // Icons Being Reviewed (Exact Originals)
-export const Activity = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Activity = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={3} y1={12} x2={7} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={7} y1={12} x2={10} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={6} x2={14} y2={18} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={18} x2={17} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={17} y1={12} x2={21} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={3}
+      y1={12}
+      x2={7}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={7}
+      y1={12}
+      x2={10}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={6}
+      x2={14}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={18}
+      x2={17}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={17}
+      y1={12}
+      x2={21}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const AlertTriangle = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const AlertTriangle = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={12} y1={3} x2={3} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={3} x2={21} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={3} y1={20} x2={21} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={9} x2={12} y2={13} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={3}
+      x2={3}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={3}
+      x2={21}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={3}
+      y1={20}
+      x2={21}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={9}
+      x2={12}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={12} cy={16} r={1} fill={color} />
   </Svg>
 );
 
-export const Check = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Check = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={20} y1={6} x2={9} y2={17} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={9} y1={17} x2={4} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={20}
+      y1={6}
+      x2={9}
+      y2={17}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={9}
+      y1={17}
+      x2={4}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const CheckCircle = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const CheckCircle = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={10} x2={11} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={11} y1={15} x2={8} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={16}
+      y1={10}
+      x2={11}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={11}
+      y1={15}
+      x2={8}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const ChevronDown = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronDown = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={6} y1={9} x2={12} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={15} x2={18} y2={9} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={6}
+      y1={9}
+      x2={12}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={15}
+      x2={18}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const ChevronLeft = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronLeft = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={15} y1={18} x2={9} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={9} y1={12} x2={15} y2={6} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={15}
+      y1={18}
+      x2={9}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={9}
+      y1={12}
+      x2={15}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const ChevronRight = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronRight = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={9} y1={18} x2={15} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={15} y1={12} x2={9} y2={6} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={9}
+      y1={18}
+      x2={15}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={15}
+      y1={12}
+      x2={9}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const ChevronUp = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const ChevronUp = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={18} y1={15} x2={12} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={9} x2={6} y2={15} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={18}
+      y1={15}
+      x2={12}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={9}
+      x2={6}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Clock = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Clock = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={6} x2={12} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={12} x2={16} y2={14} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={6}
+      x2={12}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={12}
+      x2={16}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Copy = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Copy = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Rect x={8} y={8} width={12} height={12} rx={1} stroke={color} strokeWidth={strokeWidth} />
-    <View style={{ position: "absolute", left: 4, top: 4, width: 12, height: 12, borderRadius: 1, borderWidth: strokeWidth, borderColor: color, borderRightColor: "transparent", borderBottomColor: "transparent", backgroundColor: "transparent" }} />
+    <Rect
+      x={8}
+      y={8}
+      width={12}
+      height={12}
+      rx={1}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <View
+      style={{
+        position: "absolute",
+        left: 4,
+        top: 4,
+        width: 12,
+        height: 12,
+        borderRadius: 1,
+        borderWidth: strokeWidth,
+        borderColor: color,
+        borderRightColor: "transparent",
+        borderBottomColor: "transparent",
+        backgroundColor: "transparent",
+      }}
+    />
   </Svg>
 );
 
-export const Edit3 = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Edit3 = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={12} y1={20} x2={20} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={4} x2={4} y2={16} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={4} y1={16} x2={4} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={4} y1={20} x2={8} y2={20} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={2} x2={22} y2={10} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={20}
+      x2={20}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={16}
+      y1={4}
+      x2={4}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={4}
+      y1={16}
+      x2={4}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={4}
+      y1={20}
+      x2={8}
+      y2={20}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={2}
+      x2={22}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Eye = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Eye = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <View style={{ position: "absolute", left: 2, top: 8, width: 20, height: 8, borderWidth: strokeWidth, borderColor: color, borderRadius: 10 }} />
+    <View
+      style={{
+        position: "absolute",
+        left: 2,
+        top: 8,
+        width: 20,
+        height: 8,
+        borderWidth: strokeWidth,
+        borderColor: color,
+        borderRadius: 10,
+      }}
+    />
     <Circle cx={12} cy={12} r={3} stroke={color} strokeWidth={strokeWidth} />
   </Svg>
 );
 
-export const EyeOff = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const EyeOff = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={17.94} y1={17.94} x2={14.12} y2={14.12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={9.88} y1={9.88} x2={6.06} y2={6.06} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={21} y1={21} x2={3} y2={3} stroke={color} strokeWidth={strokeWidth} />
-    <View style={{ position: "absolute", left: 2, top: 8, width: 20, height: 8, borderWidth: strokeWidth, borderColor: color, borderRadius: 10 }} />
+    <Line
+      x1={17.94}
+      y1={17.94}
+      x2={14.12}
+      y2={14.12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={9.88}
+      y1={9.88}
+      x2={6.06}
+      y2={6.06}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={21}
+      y1={21}
+      x2={3}
+      y2={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <View
+      style={{
+        position: "absolute",
+        left: 2,
+        top: 8,
+        width: 20,
+        height: 8,
+        borderWidth: strokeWidth,
+        borderColor: color,
+        borderRadius: 10,
+      }}
+    />
   </Svg>
 );
 
-export const FileCode = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FileCode = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Rect x={4} y={2} width={12} height={20} rx={2} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={2} x2={20} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={20} y1={6} x2={20} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={20} y1={22} x2={4} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={9} x2={8} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={11} x2={10} y2={13} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={9} x2={16} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={11} x2={14} y2={13} stroke={color} strokeWidth={strokeWidth} />
+    <Rect
+      x={4}
+      y={2}
+      width={12}
+      height={20}
+      rx={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={16}
+      y1={2}
+      x2={20}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={20}
+      y1={6}
+      x2={20}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={20}
+      y1={22}
+      x2={4}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={9}
+      x2={8}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={11}
+      x2={10}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={9}
+      x2={16}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={16}
+      y1={11}
+      x2={14}
+      y2={13}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const FileText = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FileText = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Rect x={4} y={2} width={12} height={20} rx={2} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={2} x2={20} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={20} y1={6} x2={20} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={20} y1={22} x2={4} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={12} x2={16} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={16} x2={16} y2={16} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={8} x2={13} y2={8} stroke={color} strokeWidth={strokeWidth} />
+    <Rect
+      x={4}
+      y={2}
+      width={12}
+      height={20}
+      rx={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={16}
+      y1={2}
+      x2={20}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={20}
+      y1={6}
+      x2={20}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={20}
+      y1={22}
+      x2={4}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={12}
+      x2={16}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={16}
+      x2={16}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={8}
+      x2={13}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Filter = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Filter = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={22} y1={3} x2={2} y2={3} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={2} y1={3} x2={10} y2={12.5} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={22} y1={3} x2={14} y2={12.5} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={12.5} x2={10} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={12.5} x2={14} y2={21} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={22}
+      y1={3}
+      x2={2}
+      y2={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={2}
+      y1={3}
+      x2={10}
+      y2={12.5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={22}
+      y1={3}
+      x2={14}
+      y2={12.5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={12.5}
+      x2={10}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={12.5}
+      x2={14}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const FlaskConical = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const FlaskConical = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={10} y1={2} x2={10} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={2} x2={14} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={2} x2={16} y2={2} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={9} x2={4} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={9} x2={20} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={4} y1={21} x2={20} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={16} x2={16} y2={16} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={10}
+      y1={2}
+      x2={10}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={2}
+      x2={14}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={2}
+      x2={16}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={9}
+      x2={4}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={9}
+      x2={20}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={4}
+      y1={21}
+      x2={20}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={16}
+      x2={16}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const GitBranch = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const GitBranch = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={6} y1={3} x2={6} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={6} y1={9} x2={18} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={18} y1={9} x2={18} y2={6} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={6}
+      y1={3}
+      x2={6}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={6}
+      y1={9}
+      x2={18}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={18}
+      y1={9}
+      x2={18}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={6} cy={18} r={3} stroke={color} strokeWidth={strokeWidth} />
     <Circle cx={18} cy={6} r={3} stroke={color} strokeWidth={strokeWidth} />
     <Circle cx={6} cy={6} r={3} stroke={color} strokeWidth={strokeWidth} />
   </Svg>
 );
 
-export const HardDrive = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const HardDrive = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Rect x={3} y={6} width={18} height={12} rx={2} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={3} y1={12} x2={21} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Rect
+      x={3}
+      y={6}
+      width={18}
+      height={12}
+      rx={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={3}
+      y1={12}
+      x2={21}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={6} cy={15} r={1} fill={color} />
     <Circle cx={9} cy={15} r={0.5} fill={color} />
-    <Line x1={18} y1={9} x2={21} y2={9} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={18}
+      y1={9}
+      x2={21}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Hash = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Hash = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={4} y1={9} x2={20} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={4} y1={15} x2={20} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={3} x2={8} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={3} x2={14} y2={21} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={4}
+      y1={9}
+      x2={20}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={4}
+      y1={15}
+      x2={20}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={3}
+      x2={8}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={16}
+      y1={3}
+      x2={14}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Info = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Info = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={16} x2={12} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={16}
+      x2={12}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={12} cy={8} r={1} fill={color} />
   </Svg>
 );
 
-export const Key = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Key = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={7} cy={12} r={5} stroke={color} strokeWidth={strokeWidth} />
     <Circle cx={7} cy={12} r={1.5} fill={color} />
-    <Line x1={12} y1={12} x2={21} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={19} y1={12} x2={19} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={21} y1={12} x2={21} y2={14} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={12}
+      x2={21}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={19}
+      y1={12}
+      x2={19}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={21}
+      y1={12}
+      x2={21}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Layers = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Layers = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={12} y1={2} x2={2} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={2} y1={7} x2={12} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={12} x2={22} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={22} y1={7} x2={12} y2={2} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={2} y1={12} x2={12} y2={17} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={17} x2={22} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={2} y1={17} x2={12} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={22} x2={22} y2={17} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={2}
+      x2={2}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={2}
+      y1={7}
+      x2={12}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={12}
+      x2={22}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={22}
+      y1={7}
+      x2={12}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={2}
+      y1={12}
+      x2={12}
+      y2={17}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={17}
+      x2={22}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={2}
+      y1={17}
+      x2={12}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={22}
+      x2={22}
+      y2={17}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Minus = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Minus = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={5} y1={12} x2={19} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={5}
+      y1={12}
+      x2={19}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Palette = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Palette = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={strokeWidth} />
     <Circle cx={8.5} cy={8.5} r={1.5} fill={color} />
@@ -305,154 +1066,682 @@ export const Palette = ({ size = 24, color = "currentColor", strokeWidth = 2, ..
   </Svg>
 );
 
-export const Pause = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Pause = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Rect x={6} y={4} width={4} height={16} stroke={color} strokeWidth={strokeWidth} fill={color} />
-    <Rect x={14} y={4} width={4} height={16} stroke={color} strokeWidth={strokeWidth} fill={color} />
+    <Rect
+      x={6}
+      y={4}
+      width={4}
+      height={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+      fill={color}
+    />
+    <Rect
+      x={14}
+      y={4}
+      width={4}
+      height={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+      fill={color}
+    />
   </Svg>
 );
 
-export const Play = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Play = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={5} y1={3} x2={5} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={5} y1={3} x2={19} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={19} y1={12} x2={5} y2={21} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={5}
+      y1={3}
+      x2={5}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={5}
+      y1={3}
+      x2={19}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={19}
+      y1={12}
+      x2={5}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Plus = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Plus = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={12} y1={5} x2={12} y2={19} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={5} y1={12} x2={19} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={5}
+      x2={12}
+      y2={19}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={5}
+      y1={12}
+      x2={19}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const RefreshCw = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const RefreshCw = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={23} y1={4} x2={23} y2={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={23} y1={10} x2={17} y2={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={1} y1={20} x2={1} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={1} y1={14} x2={7} y2={14} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={23}
+      y1={4}
+      x2={23}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={23}
+      y1={10}
+      x2={17}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={1}
+      y1={20}
+      x2={1}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={1}
+      y1={14}
+      x2={7}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={strokeWidth} />
   </Svg>
 );
 
-export const Search = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Search = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={11} cy={11} r={8} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={21} y1={21} x2={16.65} y2={16.65} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={21}
+      y1={21}
+      x2={16.65}
+      y2={16.65}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Settings = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Settings = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={3} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={1} x2={12} y2={3} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={21} x2={12} y2={23} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={4.22} y1={4.22} x2={5.64} y2={5.64} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={18.36} y1={18.36} x2={19.78} y2={19.78} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={1} y1={12} x2={3} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={21} y1={12} x2={23} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={4.22} y1={19.78} x2={5.64} y2={18.36} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={18.36} y1={5.64} x2={19.78} y2={4.22} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={1}
+      x2={12}
+      y2={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={21}
+      x2={12}
+      y2={23}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={4.22}
+      y1={4.22}
+      x2={5.64}
+      y2={5.64}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={18.36}
+      y1={18.36}
+      x2={19.78}
+      y2={19.78}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={1}
+      y1={12}
+      x2={3}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={21}
+      y1={12}
+      x2={23}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={4.22}
+      y1={19.78}
+      x2={5.64}
+      y2={18.36}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={18.36}
+      y1={5.64}
+      x2={19.78}
+      y2={4.22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Shield = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Shield = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={12} y1={2} x2={5} y2={5} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={5} y1={5} x2={5} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={5} y1={11} x2={12} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={22} x2={19} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={19} y1={11} x2={19} y2={5} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={19} y1={5} x2={12} y2={2} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={2}
+      x2={5}
+      y2={5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={5}
+      y1={5}
+      x2={5}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={5}
+      y1={11}
+      x2={12}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={22}
+      x2={19}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={19}
+      y1={11}
+      x2={19}
+      y2={5}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={19}
+      y1={5}
+      x2={12}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const TestTube2 = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const TestTube2 = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Rect x={10} y={2} width={4} height={18} rx={2} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={4} x2={16} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={14} x2={14} y2={14} stroke={color} strokeWidth={strokeWidth} />
+    <Rect
+      x={10}
+      y={2}
+      width={4}
+      height={18}
+      rx={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={4}
+      x2={16}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={14}
+      x2={14}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Rect x={11} y={15} width={2} height={4} fill={color} />
   </Svg>
 );
 
-export const Trash2 = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Trash2 = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={3} y1={6} x2={21} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={19} y1={6} x2={19} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={19} y1={21} x2={5} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={5} y1={21} x2={5} y2={6} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={11} x2={10} y2={17} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={11} x2={14} y2={17} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={6} x2={8} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={8} y1={4} x2={16} y2={4} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={16} y1={4} x2={16} y2={6} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={3}
+      y1={6}
+      x2={21}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={19}
+      y1={6}
+      x2={19}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={19}
+      y1={21}
+      x2={5}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={5}
+      y1={21}
+      x2={5}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={11}
+      x2={10}
+      y2={17}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={11}
+      x2={14}
+      y2={17}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={6}
+      x2={8}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={8}
+      y1={4}
+      x2={16}
+      y2={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={16}
+      y1={4}
+      x2={16}
+      y2={6}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const X = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const X = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={18} y1={6} x2={6} y2={18} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={6} y1={6} x2={18} y2={18} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={18}
+      y1={6}
+      x2={6}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={6}
+      y1={6}
+      x2={18}
+      y2={18}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const XCircle = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const XCircle = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={15} y1={9} x2={9} y2={15} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={9} y1={9} x2={15} y2={15} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={15}
+      y1={9}
+      x2={9}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={9}
+      y1={9}
+      x2={15}
+      y2={15}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Zap = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Zap = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={13} y1={2} x2={3} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={3} y1={14} x2={10} y2={14} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={10} y1={14} x2={11} y2={22} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={11} y1={22} x2={21} y2={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={21} y1={10} x2={14} y2={10} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={14} y1={10} x2={13} y2={2} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={13}
+      y1={2}
+      x2={3}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={3}
+      y1={14}
+      x2={10}
+      y2={14}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={10}
+      y1={14}
+      x2={11}
+      y2={22}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={11}
+      y1={22}
+      x2={21}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={21}
+      y1={10}
+      x2={14}
+      y2={10}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={14}
+      y1={10}
+      x2={13}
+      y2={2}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
-export const Box = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const Box = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
-    <Line x1={21} y1={16} x2={21} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={21} y1={8} x2={12} y2={3} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={3} x2={3} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={3} y1={8} x2={3} y2={16} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={3} y1={16} x2={12} y2={21} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={21} x2={21} y2={16} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={21} x2={12} y2={12} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={12} x2={12} y2={3} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={12} x2={3} y2={8} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={12} x2={21} y2={8} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={21}
+      y1={16}
+      x2={21}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={21}
+      y1={8}
+      x2={12}
+      y2={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={3}
+      x2={3}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={3}
+      y1={8}
+      x2={3}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={3}
+      y1={16}
+      x2={12}
+      y2={21}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={21}
+      x2={21}
+      y2={16}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={21}
+      x2={12}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={12}
+      x2={12}
+      y2={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={12}
+      x2={3}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={12}
+      x2={21}
+      y2={8}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   </Svg>
 );
 
 // AlertOctagon - simplified octagon with exclamation mark (using XCircle as fallback)
-export const AlertOctagon = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const AlertOctagon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     {/* Using a square with cut corners to approximate octagon */}
-    <Rect x={3} y={3} width={18} height={18} rx={4} ry={4} stroke={color} strokeWidth={strokeWidth} />
+    <Rect
+      x={3}
+      y={3}
+      width={18}
+      height={18}
+      rx={4}
+      ry={4}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     {/* Exclamation mark */}
-    <Line x1={12} y1={8} x2={12} y2={12} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={8}
+      x2={12}
+      y2={12}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={12} cy={16} r={1} fill={color} />
   </Svg>
 );
 
 // HelpCircle - circle with question mark
-export const HelpCircle = ({ size = 24, color = "currentColor", strokeWidth = 2, ...props }: IconProps) => (
+export const HelpCircle = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+  ...props
+}: IconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={strokeWidth} />
     {/* Simplified question mark using lines */}
-    <Line x1={12} y1={13} x2={12} y2={11} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={11} x2={12} y2={9} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={9} x2={10} y2={7} stroke={color} strokeWidth={strokeWidth} />
-    <Line x1={12} y1={9} x2={14} y2={7} stroke={color} strokeWidth={strokeWidth} />
+    <Line
+      x1={12}
+      y1={13}
+      x2={12}
+      y2={11}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={11}
+      x2={12}
+      y2={9}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={9}
+      x2={10}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+    <Line
+      x1={12}
+      y1={9}
+      x2={14}
+      y2={7}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
     <Circle cx={12} cy={17} r={1} fill={color} />
   </Svg>
 );
@@ -462,44 +1751,44 @@ export const HelpCircle = ({ size = 24, color = "currentColor", strokeWidth = 2,
 // Icons without optimized versions will use originals
 
 // Re-export icons with Icon suffix for compatibility
-export const ActivityIcon = Activity;  // Uses optimized version
-export const AlertTriangleIcon = AlertTriangle;  // Uses optimized version
-export const BoxIcon = Box;  // Uses optimized version
-export const CheckIcon = Check;  // Uses optimized version
-export const CheckCircleIcon = CheckCircle;  // Uses optimized version
-export const ChevronDownIcon = ChevronDown;  // Uses optimized version
-export const ChevronLeftIcon = ChevronLeft;  // Uses optimized version
-export const ChevronRightIcon = ChevronRight;  // Uses optimized version
-export const ChevronUpIcon = ChevronUp;  // Uses optimized version
-export const ClockIcon = Clock;  // Uses optimized version
-export const CopyIcon = Copy;  // Uses optimized version
-export const Edit3Icon = Edit3;  // Uses optimized version
-export const EyeIcon = Eye;  // Uses optimized version
-export const EyeOffIcon = EyeOff;  // Uses optimized version
-export const FileCodeIcon = FileCode;  // Uses optimized version
-export const FileTextIcon = FileText;  // Uses optimized version
-export const FilterIcon = Filter;  // Uses optimized version
-export const FlaskConicalIcon = FlaskConical;  // Uses optimized version
-export const GitBranchIcon = GitBranch;  // Uses optimized version
-export const HardDriveIcon = HardDrive;  // Uses optimized version
-export const HashIcon = Hash;  // Uses optimized version
-export const InfoIcon = Info;  // Uses optimized version
-export const KeyIcon = Key;  // Uses optimized version
-export const LayersIcon = Layers;  // Uses optimized version
-export const MinusIcon = Minus;  // Uses optimized version
-export const PaletteIcon = Palette;  // Uses optimized version
-export const PauseIcon = Pause;  // Uses optimized version
-export const PlayIcon = Play;  // Uses optimized version
-export const PlusIcon = Plus;  // Uses optimized version
-export const RefreshCwIcon = RefreshCw;  // Uses optimized version
-export const SearchIcon = Search;  // Uses optimized version
-export const SettingsIcon = Settings;  // Uses optimized version
-export const ShieldIcon = Shield;  // Uses optimized version
-export const TestTube2Icon = TestTube2;  // Uses optimized version
-export const Trash2Icon = Trash2;  // Uses optimized version
-export const XIcon = X;  // Uses optimized version
-export const XCircleIcon = XCircle;  // Uses optimized version
-export const ZapIcon = Zap;  // Uses optimized version
+export const ActivityIcon = Activity; // Uses optimized version
+export const AlertTriangleIcon = AlertTriangle; // Uses optimized version
+export const BoxIcon = Box; // Uses optimized version
+export const CheckIcon = Check; // Uses optimized version
+export const CheckCircleIcon = CheckCircle; // Uses optimized version
+export const ChevronDownIcon = ChevronDown; // Uses optimized version
+export const ChevronLeftIcon = ChevronLeft; // Uses optimized version
+export const ChevronRightIcon = ChevronRight; // Uses optimized version
+export const ChevronUpIcon = ChevronUp; // Uses optimized version
+export const ClockIcon = Clock; // Uses optimized version
+export const CopyIcon = Copy; // Uses optimized version
+export const Edit3Icon = Edit3; // Uses optimized version
+export const EyeIcon = Eye; // Uses optimized version
+export const EyeOffIcon = EyeOff; // Uses optimized version
+export const FileCodeIcon = FileCode; // Uses optimized version
+export const FileTextIcon = FileText; // Uses optimized version
+export const FilterIcon = Filter; // Uses optimized version
+export const FlaskConicalIcon = FlaskConical; // Uses optimized version
+export const GitBranchIcon = GitBranch; // Uses optimized version
+export const HardDriveIcon = HardDrive; // Uses optimized version
+export const HashIcon = Hash; // Uses optimized version
+export const InfoIcon = Info; // Uses optimized version
+export const KeyIcon = Key; // Uses optimized version
+export const LayersIcon = Layers; // Uses optimized version
+export const MinusIcon = Minus; // Uses optimized version
+export const PaletteIcon = Palette; // Uses optimized version
+export const PauseIcon = Pause; // Uses optimized version
+export const PlayIcon = Play; // Uses optimized version
+export const PlusIcon = Plus; // Uses optimized version
+export const RefreshCwIcon = RefreshCw; // Uses optimized version
+export const SearchIcon = Search; // Uses optimized version
+export const SettingsIcon = Settings; // Uses optimized version
+export const ShieldIcon = Shield; // Uses optimized version
+export const TestTube2Icon = TestTube2; // Uses optimized version
+export const Trash2Icon = Trash2; // Uses optimized version
+export const XIcon = X; // Uses optimized version
+export const XCircleIcon = XCircle; // Uses optimized version
+export const ZapIcon = Zap; // Uses optimized version
 
 // Re-export complex icons that don't have optimized versions
 export const Bug = OriginalIcons.BugIcon;

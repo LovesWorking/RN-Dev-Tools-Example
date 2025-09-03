@@ -87,7 +87,7 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
   initialSettings,
 }) => {
   const [settings, setSettings] = useState<DevToolsSettings>(
-    initialSettings || defaultSettings
+    initialSettings || defaultSettings,
   );
   const [activeTab, setActiveTab] = useState<"dial" | "floating">("dial");
   const theme = useTheme();
@@ -136,7 +136,7 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
 
   const toggleDialTool = (tool: keyof DevToolsSettings["dialTools"]) => {
     const currentEnabled = Object.values(settings.dialTools).filter(
-      (v) => v
+      (v) => v,
     ).length;
     const isCurrentlyEnabled = settings.dialTools[tool];
 
@@ -156,7 +156,7 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
   };
 
   const toggleFloatingTool = (
-    tool: keyof DevToolsSettings["floatingTools"]
+    tool: keyof DevToolsSettings["floatingTools"],
   ) => {
     const newSettings = {
       ...settings,
@@ -204,23 +204,57 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     keyName: string,
     value: boolean,
     disabled: boolean,
-    onToggle: () => void
+    onToggle: () => void,
   ) => {
     const color = getToolColor(keyName);
     const getToolIcon = (tool: string) => {
       switch (tool) {
         case "query":
           return (
-            <ReactQueryIcon size={16} color={color} glowColor={color} noBackground />
+            <ReactQueryIcon
+              size={16}
+              color={color}
+              glowColor={color}
+              noBackground
+            />
           );
         case "env":
-          return <EnvLaptopIcon size={16} color={color} glowColor={color} noBackground />;
+          return (
+            <EnvLaptopIcon
+              size={16}
+              color={color}
+              glowColor={color}
+              noBackground
+            />
+          );
         case "sentry":
-          return <SentryBugIcon size={16} color={color} glowColor={color} noBackground />;
+          return (
+            <SentryBugIcon
+              size={16}
+              color={color}
+              glowColor={color}
+              noBackground
+            />
+          );
         case "storage":
-          return <StorageStackIcon size={16} color={color} glowColor={color} noBackground />;
+          return (
+            <StorageStackIcon
+              size={16}
+              color={color}
+              glowColor={color}
+              noBackground
+            />
+          );
         case "wifi":
-          return <WifiCircuitIcon size={16} color={color} glowColor={color} strength={4} noBackground />;
+          return (
+            <WifiCircuitIcon
+              size={16}
+              color={color}
+              glowColor={color}
+              strength={4}
+              noBackground
+            />
+          );
         case "network":
           return <Globe size={16} color={color} />;
         case "environment":
@@ -310,7 +344,6 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
     );
   };
 
-
   const renderContent = () => (
     <View style={styles.container}>
       <ScrollView
@@ -323,14 +356,14 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
           <View style={styles.section}>
             {(() => {
               const enabledCount = Object.values(settings.dialTools).filter(
-                (v) => v
+                (v) => v,
               ).length;
               const isAtLimit = enabledCount >= 6;
 
               return Object.entries(settings.dialTools).map(([key, value]) => {
                 const isDisabled = !value && isAtLimit;
                 return renderToolCard(key, value, isDisabled, () =>
-                  toggleDialTool(key as keyof DevToolsSettings["dialTools"])
+                  toggleDialTool(key as keyof DevToolsSettings["dialTools"]),
                 );
               });
             })()}
@@ -340,9 +373,9 @@ export const DevToolsSettingsModal: React.FC<DevToolsSettingsModalProps> = ({
             {Object.entries(settings.floatingTools).map(([key, value]) =>
               renderToolCard(key, value, false, () =>
                 toggleFloatingTool(
-                  key as keyof DevToolsSettings["floatingTools"]
-                )
-              )
+                  key as keyof DevToolsSettings["floatingTools"],
+                ),
+              ),
             )}
           </View>
         )}

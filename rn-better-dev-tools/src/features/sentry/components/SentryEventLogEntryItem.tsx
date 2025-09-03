@@ -19,7 +19,7 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
         <EventListItem.Header>
           <LogEntryHeader entry={entry} />
         </EventListItem.Header>
-        
+
         <EventListItem.Main>
           <LogEntrySentryBadge metadata={entry.metadata} />
           <SentryEventMessage entry={entry} />

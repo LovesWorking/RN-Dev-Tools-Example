@@ -15,17 +15,22 @@ Storage Events Listener captures and displays all AsyncStorage operations in rea
 
 The Storage Events system intercepts AsyncStorage operations at runtime:
 
-[//]: # 'StorageEventsSystem'
+[//]: # "StorageEventsSystem"
+
 ```tsx
 // All these operations are automatically tracked:
-await AsyncStorage.setItem('key', 'value')
-await AsyncStorage.removeItem('key')
-await AsyncStorage.multiSet([['key1', 'val1'], ['key2', 'val2']])
-await AsyncStorage.clear()
+await AsyncStorage.setItem("key", "value");
+await AsyncStorage.removeItem("key");
+await AsyncStorage.multiSet([
+  ["key1", "val1"],
+  ["key2", "val2"],
+]);
+await AsyncStorage.clear();
 
 // Each operation appears instantly in the events list
 ```
-[//]: # 'StorageEventsSystem'
+
+[//]: # "StorageEventsSystem"
 
 ## Event Types
 
@@ -33,96 +38,111 @@ await AsyncStorage.clear()
 
 Single key-value write operations:
 
-[//]: # 'SetItemEvent'
+[//]: # "SetItemEvent"
+
 ```tsx
-AsyncStorage.setItem('user_token', 'abc123')
+AsyncStorage.setItem("user_token", "abc123");
 
 // Event shows:
 // Action: setItem
 // Key: user_token
 // Timestamp: 10:30:45
 ```
-[//]: # 'SetItemEvent'
+
+[//]: # "SetItemEvent"
 
 ### removeItem
 
 Key deletion operations:
 
-[//]: # 'RemoveItemEvent'
+[//]: # "RemoveItemEvent"
+
 ```tsx
-AsyncStorage.removeItem('temp_data')
+AsyncStorage.removeItem("temp_data");
 
 // Event shows:
 // Action: removeItem (red)
 // Key: temp_data
 // Timestamp: 10:30:46
 ```
-[//]: # 'RemoveItemEvent'
+
+[//]: # "RemoveItemEvent"
 
 ### multiSet
 
 Batch write operations:
 
-[//]: # 'MultiSetEvent'
+[//]: # "MultiSetEvent"
+
 ```tsx
 AsyncStorage.multiSet([
-  ['setting1', 'value1'],
-  ['setting2', 'value2']
-])
+  ["setting1", "value1"],
+  ["setting2", "value2"],
+]);
 
 // Event shows:
 // Action: multiSet
 // Data: 2 pairs
 // Timestamp: 10:30:47
 ```
-[//]: # 'MultiSetEvent'
+
+[//]: # "MultiSetEvent"
 
 ### multiRemove
 
 Batch deletion operations:
 
-[//]: # 'MultiRemoveEvent'
+[//]: # "MultiRemoveEvent"
+
 ```tsx
-AsyncStorage.multiRemove(['key1', 'key2', 'key3'])
+AsyncStorage.multiRemove(["key1", "key2", "key3"]);
 
 // Event shows:
 // Action: multiRemove (red)
 // Data: 3 keys
 // Timestamp: 10:30:48
 ```
-[//]: # 'MultiRemoveEvent'
+
+[//]: # "MultiRemoveEvent"
 
 ### mergeItem
 
 Merge operations for existing data:
 
-[//]: # 'MergeItemEvent'
+[//]: # "MergeItemEvent"
+
 ```tsx
-AsyncStorage.mergeItem('user_settings', JSON.stringify({
-  theme: 'dark'
-}))
+AsyncStorage.mergeItem(
+  "user_settings",
+  JSON.stringify({
+    theme: "dark",
+  }),
+);
 
 // Event shows:
 // Action: mergeItem (blue)
 // Key: user_settings
 // Timestamp: 10:30:49
 ```
-[//]: # 'MergeItemEvent'
+
+[//]: # "MergeItemEvent"
 
 ### clear
 
 Complete storage wipe:
 
-[//]: # 'ClearEvent'
+[//]: # "ClearEvent"
+
 ```tsx
-AsyncStorage.clear()
+AsyncStorage.clear();
 
 // Event shows:
 // Action: clear (red)
 // Data: All storage
 // Timestamp: 10:30:50
 ```
-[//]: # 'ClearEvent'
+
+[//]: # "ClearEvent"
 
 ## Event Interface Features
 
@@ -136,6 +156,7 @@ AsyncStorage.clear()
 ### Visual Indicators
 
 Event colors indicate operation type:
+
 - **Green** - Write operations (setItem, multiSet)
 - **Red** - Delete operations (removeItem, clear)
 - **Blue** - Merge operations (mergeItem)
@@ -155,55 +176,64 @@ Control event capture:
 
 Track down storage-related bugs:
 
-[//]: # 'DebuggingStorage'
+[//]: # "DebuggingStorage"
+
 ```tsx
 // Monitor when and how data is stored
 // See if data is being overwritten
 // Check for unexpected deletions
 // Verify batch operations
 ```
-[//]: # 'DebuggingStorage'
+
+[//]: # "DebuggingStorage"
 
 ### Performance Monitoring
 
 Identify storage bottlenecks:
 
-[//]: # 'PerformanceMonitoring'
+[//]: # "PerformanceMonitoring"
+
 ```tsx
 // Count storage operations per second
 // Identify excessive storage calls
 // Find unnecessary clear operations
 // Optimize batch operations
 ```
-[//]: # 'PerformanceMonitoring'
+
+[//]: # "PerformanceMonitoring"
 
 ### Data Flow Analysis
 
 Understand storage patterns:
 
-[//]: # 'DataFlowAnalysis'
+[//]: # "DataFlowAnalysis"
+
 ```tsx
 // Track user session storage
 // Monitor cache updates
 // Verify data persistence
 // Analyze storage sequences
 ```
-[//]: # 'DataFlowAnalysis'
+
+[//]: # "DataFlowAnalysis"
 
 ## Current Implementation
 
 The Storage Events component currently exists as:
 
-[//]: # 'CurrentImplementation'
+[//]: # "CurrentImplementation"
+
 ```tsx
-import { StorageEventListener } from './components/StorageEventListener'
+import { StorageEventListener } from "./components/StorageEventListener";
 
 // Standalone component (not in bubble yet)
-<StorageEventListener />
+<StorageEventListener />;
 ```
-[//]: # 'CurrentImplementation'
+
+[//]: # "CurrentImplementation"
 
 Features available:
+
 - AsyncStorage operation tracking
 - Event history (last 100 events)
 - Play/pause recording
@@ -216,6 +246,7 @@ Features available:
 ### Bubble Integration
 
 Coming in next release:
+
 - Access via **STORAGE EVENTS** menu option
 - Modal view with full event details
 - Integration with storage browser
@@ -223,6 +254,7 @@ Coming in next release:
 ### Enhanced Filtering
 
 Future filtering options:
+
 - Filter by operation type
 - Search by key name
 - Time range selection
@@ -231,6 +263,7 @@ Future filtering options:
 ### Event Details
 
 Expanded event information:
+
 - Full value display
 - Before/after comparison for merges
 - Stack trace to calling code
@@ -239,6 +272,7 @@ Expanded event information:
 ### Export Capabilities
 
 Data export features:
+
 - Export to JSON
 - Copy event log
 - Share via email
@@ -248,7 +282,8 @@ Data export features:
 
 Storage Events will complement the Storage Browser:
 
-[//]: # 'StorageIntegration'
+[//]: # "StorageIntegration"
+
 ```tsx
 // Storage Browser: Current state of all keys
 // Storage Events: How we got to that state
@@ -257,7 +292,8 @@ Storage Events will complement the Storage Browser:
 // See storage changes in real-time
 // Correlate events with app actions
 ```
-[//]: # 'StorageIntegration'
+
+[//]: # "StorageIntegration"
 
 ## Performance Impact
 
@@ -274,24 +310,27 @@ Storage Events Listener has minimal overhead:
 
 The system wraps AsyncStorage methods:
 
-[//]: # 'EventCapture'
+[//]: # "EventCapture"
+
 ```tsx
 // Internally, the listener wraps AsyncStorage:
-const originalSetItem = AsyncStorage.setItem
+const originalSetItem = AsyncStorage.setItem;
 AsyncStorage.setItem = async (key, value) => {
   // Capture event
-  captureEvent({ action: 'setItem', key, value })
+  captureEvent({ action: "setItem", key, value });
   // Call original
-  return originalSetItem(key, value)
-}
+  return originalSetItem(key, value);
+};
 ```
-[//]: # 'EventCapture'
+
+[//]: # "EventCapture"
 
 ### Event Data Structure
 
 Each event contains:
 
-[//]: # 'EventStructure'
+[//]: # "EventStructure"
+
 ```tsx
 interface AsyncStorageEvent {
   action: 'setItem' | 'removeItem' | 'clear' | ...
@@ -304,7 +343,8 @@ interface AsyncStorageEvent {
   }
 }
 ```
-[//]: # 'EventStructure'
+
+[//]: # "EventStructure"
 
 ## Best Practices
 
@@ -319,6 +359,7 @@ interface AsyncStorageEvent {
 ### What to Look For
 
 Common issues to identify:
+
 - Excessive storage operations
 - Missing data persistence
 - Unexpected clear operations
@@ -343,16 +384,19 @@ Common issues to identify:
 ## Roadmap
 
 ### Phase 1 (Current)
+
 ✅ Basic event capture
 ✅ Event display component
 ✅ Play/pause/clear controls
 
 ### Phase 2 (Next Release)
+
 ⏳ Bubble menu integration
 ⏳ Modal view
 ⏳ Event filtering
 
 ### Phase 3 (Future)
+
 ⏳ MMKV event tracking
 ⏳ SecureStorage events
 ⏳ Export capabilities
@@ -362,20 +406,22 @@ Common issues to identify:
 
 Until bubble integration is complete:
 
-[//]: # 'TemporaryUsage'
+[//]: # "TemporaryUsage"
+
 ```tsx
 // Add to your debug screen
-import { StorageEventListener } from 'rn-better-dev-tools/storage-events'
+import { StorageEventListener } from "rn-better-dev-tools/storage-events";
 
 function DebugScreen() {
   return (
     <View>
       <StorageEventListener />
     </View>
-  )
+  );
 }
 ```
-[//]: # 'TemporaryUsage'
+
+[//]: # "TemporaryUsage"
 
 ## Next Steps
 

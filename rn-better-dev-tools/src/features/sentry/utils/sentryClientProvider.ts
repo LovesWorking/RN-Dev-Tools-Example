@@ -43,14 +43,14 @@ export function getSentryClient(): SentryClient | null {
   if (userProvidedGetClient) {
     return userProvidedGetClient();
   }
-  
+
   if (realSentryGetClient) {
     const client = realSentryGetClient();
     if (client) {
       return client;
     }
   }
-  
+
   // Fall back to mock client
   if (!mockClientInstance) {
     console.log("📦 Creating mock Sentry client for dev tools");
@@ -58,7 +58,7 @@ export function getSentryClient(): SentryClient | null {
     // Auto-start event generation for testing
     (mockClientInstance as any).startMockEventGeneration?.();
   }
-  
+
   return mockClientInstance;
 }
 

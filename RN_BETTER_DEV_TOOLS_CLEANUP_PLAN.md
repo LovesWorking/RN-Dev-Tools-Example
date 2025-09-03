@@ -1,28 +1,33 @@
 # RN Better Dev Tools - Cleanup Plan
 
 ## Overview
+
 This document outlines all the files, folders, and code that should be removed from the `rn-better-dev-tools` package to clean it up for packaging as a standalone module.
 
 ## Files to Remove
 
 ### 1. Unused Bubble Components (Never Imported)
-- `rn-better-dev-tools/src/components/bubble/ClaudeGridMenu.tsx` 
+
+- `rn-better-dev-tools/src/components/bubble/ClaudeGridMenu.tsx`
 - `rn-better-dev-tools/src/components/bubble/ClaudeGridMenuSVGGlitch.tsx`
 - `rn-better-dev-tools/src/components/bubble/CyberpunkGlitchBackground.tsx`
 - `rn-better-dev-tools/src/components/bubble/CyberpunkToggle.tsx`
 - `rn-better-dev-tools/src/components/bubble/dial/Dial2.tsx`
 
 ### 2. Example/Demo Files
+
 - `rn-better-dev-tools/src/components/modals/PureModal/PureModalExample.tsx`
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffThemeShowcase.tsx`
 
 ### 3. Unused DiffViewer Components
+
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffModeSelector.tsx`
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffOptionsPanel.tsx`
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/MultiModeDiffViewer.tsx`
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/StandaloneDiffViewer.tsx`
 
 ### 4. Unused DiffViewer Modes (All Never Imported)
+
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/modes/EnhancedSplitView.tsx`
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/modes/InlineDiffView.tsx`
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/modes/SideBySideDiffView.tsx`
@@ -30,7 +35,9 @@ This document outlines all the files, folders, and code that should be removed f
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/modes/UnifiedDiffView.tsx`
 
 ### 5. Entire VSCode DiffViewer Integration (Never Used)
+
 **Remove entire folder:** `rn-better-dev-tools/src/features/storage/components/DiffViewer/vscode/`
+
 - `DiffDecorations.ts`
 - `DiffViewModel.ts`
 - `VSCodeDiffViewer.tsx`
@@ -39,17 +46,21 @@ This document outlines all the files, folders, and code that should be removed f
 - `diffComputer.ts`
 
 ### 6. Backup Files
+
 - `rn-better-dev-tools/src/features/react-query/components/shared/VirtualizedDataExplorer.tsx.bak`
 
 ### 7. Documentation Files
+
 - `rn-better-dev-tools/src/features/storage/components/DiffViewer/VS_CODE_DIFF_MIGRATION_GUIDE.md`
 
 ### 8. Unused Console Components
+
 - `rn-better-dev-tools/src/shared/ui/console/BubbleSettingsModal.tsx`
 
 ## TypeScript Errors to Fix
 
 ### 1. Import Errors
+
 - **File:** `components/AutoDiffTest.tsx`
   - **Error:** Cannot find module `MultiModeDiffViewer`
   - **Action:** Remove this test file or update imports
@@ -63,6 +74,7 @@ This document outlines all the files, folders, and code that should be removed f
   - **Action:** Update import path or remove if unused
 
 ### 2. Type Errors
+
 - **File:** `rn-better-dev-tools/src/components/bubble/RnBetterDevToolsBubble.tsx`
   - **Error:** Property 'buttonPosition' does not exist on type 'DialDevToolsProps'
   - **Action:** Fix type definition or remove unused prop
@@ -72,12 +84,14 @@ This document outlines all the files, folders, and code that should be removed f
   - **Action:** Remove import or create missing file
 
 ### 3. Commented/Disabled Code to Clean
+
 - **File:** `rn-better-dev-tools/src/components/bubble/RnBetterDevToolsBubble.tsx`
   - Remove commented import: `// import { SentryLogsModal } from "@/rn-better-dev-tools/src/features/sentry/components/SentryLogsModal";`
 
 ## Unused Variables and Imports Analysis
 
 Will scan each remaining file after removing unused files to identify:
+
 - Unused imports
 - Unused variables
 - Unused functions
@@ -86,6 +100,7 @@ Will scan each remaining file after removing unused files to identify:
 ## Files/Components That ARE Being Used (Keep These)
 
 ### Core Components
+
 - `RnBetterDevToolsBubble.tsx` - Main entry point
 - `DialDevTools.tsx` - Used by bubble
 - `ThemedSplitView.tsx` - Used in StorageEventDetailContent
@@ -93,6 +108,7 @@ Will scan each remaining file after removing unused files to identify:
 - All features folders (env, network, react-query, sentry, storage) - Core functionality
 
 ### Utilities
+
 - All action utilities (triggerError, triggerLoading, etc.) - Used by components
 - `VirtualizedDataExplorer.tsx` - Used despite having backup file
 - All hooks - Used throughout components

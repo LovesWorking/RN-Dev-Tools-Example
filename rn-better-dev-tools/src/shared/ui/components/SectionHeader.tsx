@@ -17,7 +17,11 @@ interface IconProps {
   size?: number;
 }
 
-function Icon({ icon: IconComponent, color = "#E5E7EB", size = 16 }: IconProps) {
+function Icon({
+  icon: IconComponent,
+  color = "#E5E7EB",
+  size = 16,
+}: IconProps) {
   return (
     <View style={styles.iconWrapper}>
       <IconComponent size={size} color={color} />

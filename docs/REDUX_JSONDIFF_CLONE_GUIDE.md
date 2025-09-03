@@ -27,6 +27,7 @@ This document captures exactly how Redux DevTools renders its JSON diff (single 
 ### Exact Colors (from Base16-derived theme)
 
 From `packages/redux-devtools-inspector-monitor/src/utils/themes.ts`:
+
 - `TEXT_COLOR`: `theme.base06`
 - `TEXT_PLACEHOLDER_COLOR`: `rgba(theme.base06, 60)`
 - `ITEM_HINT_COLOR`: `rgba(theme.base0F, 90)`
@@ -35,6 +36,7 @@ From `packages/redux-devtools-inspector-monitor/src/utils/themes.ts`:
 - `DIFF_ARROW_COLOR`: `theme.base0E`
 
 For the common “default/dark” theme, typical resolved values are:
+
 - Add bg: green @ 40% opacity
 - Remove bg: red @ 40% opacity
 - Arrow: magenta/purple (base0E)
@@ -43,6 +45,7 @@ For the common “default/dark” theme, typical resolved values are:
 ### Renderer Details (Redux)
 
 `JSONDiff.tsx` core logic (summarized):
+
 - `postprocessValue(prepareDelta)` maps jsondiffpatch arrays to readable tuples for arrays (`_t: 'a'`).
 - `valueRenderer(raw, value)`:
   - If `Array.isArray(value)` then:
@@ -70,7 +73,8 @@ Effect: lower readability and visual mismatch with Redux DevTools.
 
 Goal: a one-to-one visual match to Redux’s single-view diff, using RN `View`/`Text` primitives.
 
-1) Theme Tokens (new constants)
+1. Theme Tokens (new constants)
+
 - Add RN equivalents for the Redux tokens (resolve from your existing theme or define constants):
   - `TEXT_COLOR` → base16 `base06`-like neutral text.
   - `DIFF_ADD_COLOR` → `rgba(base0B, 0.4)`.
@@ -78,7 +82,8 @@ Goal: a one-to-one visual match to Redux’s single-view diff, using RN `View`/`
   - `DIFF_ARROW_COLOR` → `base0E`.
 - Stop using `addedText/removedText` for value text; always use `TEXT_COLOR` for values inside chips.
 
-2) Inline Chips (values and arrow)
+2. Inline Chips (values and arrow)
+
 - Implement styles equivalent to Redux chips:
   - `chipBase`: `paddingVertical: 2, paddingHorizontal: 3, borderRadius: 3`
   - `chipAdd`: `backgroundColor: DIFF_ADD_COLOR`
@@ -86,31 +91,37 @@ Goal: a one-to-one visual match to Redux’s single-view diff, using RN `View`/`
   - `arrow`: `color: DIFF_ARROW_COLOR`, text is literal `' => '`
 - Ensure the encapsulated text color is always `TEXT_COLOR`.
 
-3) Update Types/Rendering
+3. Update Types/Rendering
+
 - For leaf diffs:
   - Added: `[new]` → render one chip (green bg) with neutral text color.
   - Removed: `[old, 0, 0]` → one chip (red bg + line-through).
   - Changed: `[old, new]` → three inline pieces: red-del + arrow + green-add.
 - For collapsed object/array nodes in “changed” state, display compact `"{…}"` / `"[…]"` values with the same chip rules for old/new.
 
-4) Truncation/Shrink Logic
+4. Truncation/Shrink Logic
+
 - Implement `stringifyAndShrink(value, isWideLayout)`:
   - If wide: if length > 42 → show first 30 + ellipsis + last 10.
   - Else: if length > 22 → first 15 + ellipsis + last 5.
 - Apply to both old/new values inside chips.
 
-5) Neutral Type Coloring
+5. Neutral Type Coloring
+
 - Do not color strings/numbers/booleans differently inside chips; use `TEXT_COLOR`.
 - Keep syntax coloring only for non-diff, unhighlighted values if desired. For Redux parity within chips, text is neutral.
 
-6) Spacing/Alignment
+6. Spacing/Alignment
+
 - Keep chips inline in a single row with small spacing.
 - Avoid large padding/margins that make the chips look like blocks.
 
-7) Arrow Color
+7. Arrow Color
+
 - Replace current blue with `DIFF_ARROW_COLOR` (magenta/purple from theme).
 
-8) RN Implementation Notes
+8. RN Implementation Notes
+
 - Use `<Text>` nesting to apply background color and line-through cleanly.
 - Set `numberOfLines`/`ellipsizeMode` only if needed; prefer manual truncation matching Redux’s logic.
 - Ensure `fontFamily: 'monospace'` is applied consistently.
@@ -137,7 +148,9 @@ Goal: a one-to-one visual match to Redux’s single-view diff, using RN `View`/`
 - Visual comparison against Redux DevTools shows parity.
 
 ---
+
 If you approve this plan, I will:
-1) Replace `ChatGPTDiffWrapper` with `chatgtsingledifviewer` (cloned),
-2) Implement the Redux-accurate visuals in the clone,
-3) Wire it in `TestDiffViewers` for the `chatgpt` viewer mode.
+
+1. Replace `ChatGPTDiffWrapper` with `chatgtsingledifviewer` (cloned),
+2. Implement the Redux-accurate visuals in the clone,
+3. Wire it in `TestDiffViewers` for the `chatgpt` viewer mode.

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
   computeLineDiff,
@@ -37,10 +31,10 @@ export function EnhancedSplitView({
     hideLineNumbers: false,
     disableWordDiff: false,
     showDiffOnly: false,
-    compareMethod: 'words',
+    compareMethod: "words",
     contextLines: 3,
     lineOffset: 0,
-  }
+  },
 }: EnhancedSplitViewProps) {
   // Compute line-by-line diff with options
   const diffComputeOptions: DiffComputeOptions = {
@@ -49,7 +43,7 @@ export function EnhancedSplitView({
     showDiffOnly: options.showDiffOnly,
     contextLines: options.contextLines,
   };
-  
+
   const lineDiffs = computeLineDiff(oldValue, newValue, diffComputeOptions);
 
   // Render word diff content
@@ -75,7 +69,7 @@ export function EnhancedSplitView({
     content: string | WordDiff[] | undefined,
     type: DiffType,
     marker: string,
-    isEmpty: boolean = false
+    isEmpty: boolean = false,
   ) => {
     if (isEmpty) {
       return (
@@ -131,21 +125,29 @@ export function EnhancedSplitView({
   // Check if we should show a separator (gap in line numbers)
   const shouldShowSeparator = (idx: number, diffs: LineDiffInfo[]) => {
     if (!options.showDiffOnly || idx === 0) return false;
-    
+
     const prevDiff = diffs[idx - 1];
     const currDiff = diffs[idx];
-    
+
     // Check for gap in line numbers
-    const leftGap = currDiff.leftLineNumber && prevDiff.leftLineNumber && 
-                    (currDiff.leftLineNumber - prevDiff.leftLineNumber > 1);
-    const rightGap = currDiff.rightLineNumber && prevDiff.rightLineNumber && 
-                     (currDiff.rightLineNumber - prevDiff.rightLineNumber > 1);
-    
+    const leftGap =
+      currDiff.leftLineNumber &&
+      prevDiff.leftLineNumber &&
+      currDiff.leftLineNumber - prevDiff.leftLineNumber > 1;
+    const rightGap =
+      currDiff.rightLineNumber &&
+      prevDiff.rightLineNumber &&
+      currDiff.rightLineNumber - prevDiff.rightLineNumber > 1;
+
     return leftGap || rightGap;
   };
 
   // Render a complete row with both left and right sides
-  const renderDiffRow = (diff: LineDiffInfo, idx: number, diffs: LineDiffInfo[]) => {
+  const renderDiffRow = (
+    diff: LineDiffInfo,
+    idx: number,
+    diffs: LineDiffInfo[],
+  ) => {
     const isRemoved = diff.type === DiffType.REMOVED;
     const isAdded = diff.type === DiffType.ADDED;
     const isModified = diff.type === DiffType.MODIFIED;
@@ -166,9 +168,15 @@ export function EnhancedSplitView({
                   diff.leftLineNumber,
                   diff.leftContent,
                   isModified ? DiffType.REMOVED : diff.type,
-                  isRemoved || isModified ? "-" : " "
+                  isRemoved || isModified ? "-" : " ",
                 )
-              : renderLineSide(undefined, undefined, DiffType.DEFAULT, " ", true)}
+              : renderLineSide(
+                  undefined,
+                  undefined,
+                  DiffType.DEFAULT,
+                  " ",
+                  true,
+                )}
           </View>
 
           {/* Center divider */}
@@ -181,9 +189,15 @@ export function EnhancedSplitView({
                   diff.rightLineNumber,
                   diff.rightContent,
                   isModified ? DiffType.ADDED : diff.type,
-                  isAdded || isModified ? "+" : " "
+                  isAdded || isModified ? "+" : " ",
                 )
-              : renderLineSide(undefined, undefined, DiffType.DEFAULT, " ", true)}
+              : renderLineSide(
+                  undefined,
+                  undefined,
+                  DiffType.DEFAULT,
+                  " ",
+                  true,
+                )}
           </View>
         </View>
       </React.Fragment>
@@ -214,7 +228,9 @@ export function EnhancedSplitView({
         {lineDiffs.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>
-              {options.showDiffOnly ? 'No differences found' : 'No content to display'}
+              {options.showDiffOnly
+                ? "No differences found"
+                : "No content to display"}
             </Text>
           </View>
         ) : (

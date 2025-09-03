@@ -83,10 +83,12 @@ export function NetworkCombinedFilterView({
   const urlFilterManager = useFilterManager(new Set());
 
   // Get the current filter manager and handlers based on active tab
-  const currentFilterManager = activeTab === "domains" ? domainFilterManager : urlFilterManager;
+  const currentFilterManager =
+    activeTab === "domains" ? domainFilterManager : urlFilterManager;
   const currentFilters = activeTab === "domains" ? ignoredDomains : ignoredUrls;
   const currentOnAdd = activeTab === "domains" ? onAddDomain : onAddUrl;
-  const currentOnToggle = activeTab === "domains" ? onToggleDomain : onToggleUrl;
+  const currentOnToggle =
+    activeTab === "domains" ? onToggleDomain : onToggleUrl;
 
   const totalFilters = ignoredDomains.size + ignoredUrls.size;
 
@@ -136,14 +138,20 @@ export function NetworkCombinedFilterView({
   const customDomainCount = ignoredDomains.size - commonDomainCount;
 
   const tabs = [
-    { key: "domains", label: `Domains${ignoredDomains.size > 0 ? ` (${ignoredDomains.size})` : ''}` },
-    { key: "urls", label: `URLs${ignoredUrls.size > 0 ? ` (${ignoredUrls.size})` : ''}` },
+    {
+      key: "domains",
+      label: `Domains${ignoredDomains.size > 0 ? ` (${ignoredDomains.size})` : ""}`,
+    },
+    {
+      key: "urls",
+      label: `URLs${ignoredUrls.size > 0 ? ` (${ignoredUrls.size})` : ""}`,
+    },
   ];
 
   const renderHeaderContent = () => {
     return (
       <View style={styles.headerContainer}>
-        <TabSelector 
+        <TabSelector
           tabs={tabs}
           activeTab={activeTab}
           onTabChange={(tab) => setActiveTab(tab as TabType)}
@@ -280,11 +288,10 @@ export function NetworkCombinedFilterView({
             onRemoveFilter={currentOnToggle}
             color={gameUIColors.network}
           />
-          
+
           {currentFilters.size === 0 && (
             <Text style={styles.emptyText}>
-              No {activeTab === "domains" ? "domains" : "URL patterns"}{" "}
-              filtered
+              No {activeTab === "domains" ? "domains" : "URL patterns"} filtered
             </Text>
           )}
         </FilterSection>

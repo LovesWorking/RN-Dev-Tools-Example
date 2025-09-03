@@ -60,7 +60,7 @@ const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
   const dimensionKey = `${width},${height}`;
 
   const deviceInsets = iPhoneDimensionMap[dimensionKey];
-  
+
   if (deviceInsets) {
     return {
       ...deviceInsets,
@@ -87,12 +87,12 @@ try {
   if (SafeAreaContextModule?.useSafeAreaInsets) {
     hasNativePackage = true;
     console.log(
-      "✅ react-native-safe-area-context package found - using native implementation"
+      "✅ react-native-safe-area-context package found - using native implementation",
     );
   }
 } catch {
   console.warn(
-    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation"
+    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation",
   );
 }
 
@@ -102,13 +102,15 @@ const useNativeSafeAreaInsets = hasNativePackage
   : () => null;
 
 // Main hook with automatic fallback
-export const useSafeAreaInsets = (options: SafeAreaInsetsOptions = {}): SafeAreaInsets => {
+export const useSafeAreaInsets = (
+  options: SafeAreaInsetsOptions = {},
+): SafeAreaInsets => {
   // Always call the native hook unconditionally (returns null if not available)
   const nativeInsets = useNativeSafeAreaInsets();
 
   // Fallback state for pure JS implementation
   const [fallbackInsets, setFallbackInsets] = useState<SafeAreaInsets>(() =>
-    getPureJSSafeAreaInsets()
+    getPureJSSafeAreaInsets(),
   );
 
   useEffect(() => {
@@ -125,17 +127,29 @@ export const useSafeAreaInsets = (options: SafeAreaInsetsOptions = {}): SafeArea
       };
     }
   }, [!nativeInsets]); // Use boolean for stable dependency
-  
+
   const baseInsets = nativeInsets || fallbackInsets;
-  
+
   // Apply minimum values - handles both 0 values and values less than minimum
   const finalInsets = {
-    top: options.minTop !== undefined ? Math.max(baseInsets.top, options.minTop) : baseInsets.top,
-    bottom: options.minBottom !== undefined ? Math.max(baseInsets.bottom, options.minBottom) : baseInsets.bottom,
-    left: options.minLeft !== undefined ? Math.max(baseInsets.left, options.minLeft) : baseInsets.left,
-    right: options.minRight !== undefined ? Math.max(baseInsets.right, options.minRight) : baseInsets.right,
+    top:
+      options.minTop !== undefined
+        ? Math.max(baseInsets.top, options.minTop)
+        : baseInsets.top,
+    bottom:
+      options.minBottom !== undefined
+        ? Math.max(baseInsets.bottom, options.minBottom)
+        : baseInsets.bottom,
+    left:
+      options.minLeft !== undefined
+        ? Math.max(baseInsets.left, options.minLeft)
+        : baseInsets.left,
+    right:
+      options.minRight !== undefined
+        ? Math.max(baseInsets.right, options.minRight)
+        : baseInsets.right,
   };
-  
+
   return finalInsets;
 };
 

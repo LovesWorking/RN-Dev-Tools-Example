@@ -46,7 +46,7 @@ export function createMockSentryClient(): MockSentryClient {
 
     off: (event: string, callback?: (arg: unknown) => unknown) => {
       const index = listeners.findIndex(
-        (l) => l.event === event && (!callback || l.callback === callback)
+        (l) => l.event === event && (!callback || l.callback === callback),
       );
       if (index >= 0) {
         listeners.splice(index, 1);
@@ -94,7 +94,8 @@ export function createMockSentryClient(): MockSentryClient {
         ];
 
         // Pick a random event type
-        const randomType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+        const randomType =
+          eventTypes[Math.floor(Math.random() * eventTypes.length)];
         client.generateMockEvent(randomType);
       }, 3000);
     },
@@ -135,7 +136,7 @@ export function createMockSentryClient(): MockSentryClient {
             "/api/products",
           ];
           const statuses = [200, 201, 400, 401, 404, 500];
-          
+
           const method = methods[Math.floor(Math.random() * methods.length)];
           const url = endpoints[Math.floor(Math.random() * endpoints.length)];
           const status = statuses[Math.floor(Math.random() * statuses.length)];
@@ -163,7 +164,8 @@ export function createMockSentryClient(): MockSentryClient {
             response: {
               status,
               headers: {
-                get: (key: string) => key === "content-length" ? "1234" : null,
+                get: (key: string) =>
+                  key === "content-length" ? "1234" : null,
               },
             } as unknown,
           };
@@ -173,7 +175,13 @@ export function createMockSentryClient(): MockSentryClient {
         }
 
         case "breadcrumb-navigation": {
-          const routes = ["/home", "/profile", "/settings", "/messages", "/dashboard"];
+          const routes = [
+            "/home",
+            "/profile",
+            "/settings",
+            "/messages",
+            "/dashboard",
+          ];
           const fromRoute = routes[Math.floor(Math.random() * routes.length)];
           const toRoute = routes[Math.floor(Math.random() * routes.length)];
 
@@ -223,7 +231,8 @@ export function createMockSentryClient(): MockSentryClient {
 
           const breadcrumb: Breadcrumb = {
             type: "user",
-            category: "ui." + actions[Math.floor(Math.random() * actions.length)],
+            category:
+              "ui." + actions[Math.floor(Math.random() * actions.length)],
             message: `User interacted with ${targets[Math.floor(Math.random() * targets.length)]}`,
             level: "info",
             timestamp: timestamp / 1000,
@@ -239,8 +248,9 @@ export function createMockSentryClient(): MockSentryClient {
         case "span-http": {
           const spanId = `span-${eventCounter}`;
           const traceId = `trace-${Math.floor(eventCounter / 5)}`;
-          const startTime = (timestamp - Math.floor(Math.random() * 3000)) / 1000;
-          
+          const startTime =
+            (timestamp - Math.floor(Math.random() * 3000)) / 1000;
+
           const methods = ["GET", "POST", "PUT", "DELETE"];
           const urls = [
             "/api/users",
@@ -279,7 +289,9 @@ export function createMockSentryClient(): MockSentryClient {
               data: {
                 ...spanStart.data,
                 "http.response.status_code": status,
-                "http.response_content_length": Math.floor(Math.random() * 50000),
+                "http.response_content_length": Math.floor(
+                  Math.random() * 50000,
+                ),
               },
             };
 
@@ -322,19 +334,23 @@ export function createMockSentryClient(): MockSentryClient {
                   status: "ok",
                 },
               },
-              spans: Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (_, i) => ({
-                span_id: `span-${eventCounter}-${i}`,
-                trace_id: traceId,
-                op: "http.client",
-                description: `GET /api/resource-${i}`,
-                start_timestamp: (startTime + i * 200) / 1000,
-                timestamp: (startTime + i * 200 + 150) / 1000,
-                data: {
-                  "http.request.method": "GET",
-                  "url.full": `/api/resource-${i}`,
-                  "http.response.status_code": 200,
-                },
-              } as SpanJSON)),
+              spans: Array.from(
+                { length: Math.floor(Math.random() * 5) + 1 },
+                (_, i) =>
+                  ({
+                    span_id: `span-${eventCounter}-${i}`,
+                    trace_id: traceId,
+                    op: "http.client",
+                    description: `GET /api/resource-${i}`,
+                    start_timestamp: (startTime + i * 200) / 1000,
+                    timestamp: (startTime + i * 200 + 150) / 1000,
+                    data: {
+                      "http.request.method": "GET",
+                      "url.full": `/api/resource-${i}`,
+                      "http.response.status_code": 200,
+                    },
+                  }) as SpanJSON,
+              ),
             };
 
             client.emit("transactionFinish", transaction);
@@ -344,7 +360,10 @@ export function createMockSentryClient(): MockSentryClient {
 
         case "error": {
           const errors = [
-            { type: "TypeError", message: "Cannot read property 'data' of undefined" },
+            {
+              type: "TypeError",
+              message: "Cannot read property 'data' of undefined",
+            },
             { type: "NetworkError", message: "Failed to fetch" },
             { type: "ReferenceError", message: "variable is not defined" },
             { type: "SyntaxError", message: "Unexpected token" },

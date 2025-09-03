@@ -42,7 +42,7 @@ export function SearchBar({
   containerStyle,
   autoFocus = false,
   onSubmitEditing,
-  returnKeyType
+  returnKeyType,
 }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -57,18 +57,20 @@ export function SearchBar({
     setShowSuggestions(false);
   };
 
-  const filteredSuggestions = suggestions.filter(s =>
-    s.toLowerCase().includes(value.toLowerCase())
+  const filteredSuggestions = suggestions.filter((s) =>
+    s.toLowerCase().includes(value.toLowerCase()),
   );
 
-  const shouldShowSuggestions = isFocused && 
-    (filteredSuggestions.length > 0 || (value === "" && recentSearches.length > 0));
+  const shouldShowSuggestions =
+    isFocused &&
+    (filteredSuggestions.length > 0 ||
+      (value === "" && recentSearches.length > 0));
 
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.searchBar, isFocused && styles.searchBarFocused]}>
         <Search size={16} color={gameUIColors.secondary} />
-        
+
         <TextInput
           style={[styles.input, style]}
           placeholder={placeholder}
@@ -89,23 +91,20 @@ export function SearchBar({
           onSubmitEditing={onSubmitEditing}
           returnKeyType={returnKeyType}
         />
-        
+
         {value.length > 0 && (
           <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
             <X size={14} color={gameUIColors.secondary} />
           </TouchableOpacity>
         )}
-        
+
         {showFilters && (
-          <TouchableOpacity
-            onPress={onFilterPress}
-            style={styles.filterButton}
-          >
+          <TouchableOpacity onPress={onFilterPress} style={styles.filterButton}>
             <Filter size={14} color={gameUIColors.primary} />
           </TouchableOpacity>
         )}
       </View>
-      
+
       {shouldShowSuggestions && showSuggestions && (
         <View style={styles.suggestionsContainer}>
           {value === "" && recentSearches.length > 0 && (
@@ -123,7 +122,7 @@ export function SearchBar({
               ))}
             </>
           )}
-          
+
           {filteredSuggestions.length > 0 && (
             <>
               {value !== "" && (
@@ -153,10 +152,10 @@ interface QuickSearchProps {
   style?: any;
 }
 
-SearchBar.Quick = function QuickSearch({ 
-  onSearch, 
+SearchBar.Quick = function QuickSearch({
+  onSearch,
   placeholder = "Quick search...",
-  style 
+  style,
 }: QuickSearchProps) {
   const [query, setQuery] = useState("");
 

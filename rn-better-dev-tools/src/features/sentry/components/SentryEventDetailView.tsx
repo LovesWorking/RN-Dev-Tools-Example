@@ -111,7 +111,9 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
           value={url}
           buttonStyle={styles.copyButton}
           onCopySuccess={() => Alert.alert("Copied", "URL copied to clipboard")}
-          onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+          onCopyError={() =>
+            Alert.alert("Error", "Failed to copy to clipboard")
+          }
         />
       </View>
       <View style={styles.urlPathRow}>
@@ -1084,7 +1086,7 @@ export function SentryEventDetailView({
           { key: "details", label: "Details" },
           { key: "insights", label: "Insights" },
           { key: "rawData", label: "Raw Data" },
-          { key: "deviceContext", label: "Context" }
+          { key: "deviceContext", label: "Context" },
         ]}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as TabType)}

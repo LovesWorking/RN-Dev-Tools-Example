@@ -9,28 +9,28 @@ export function useWifiState() {
   // Load persisted WiFi state on mount
   useEffect(() => {
     if (hasLoadedPersistedState.current) return;
-    
+
     const loadPersistedState = async () => {
       try {
         const { default: AsyncStorage } = await import(
           "@react-native-async-storage/async-storage"
         );
         const savedState = await AsyncStorage.getItem(
-          devToolsStorageKeys.settings.wifiEnabled()
+          devToolsStorageKeys.settings.wifiEnabled(),
         );
-        
+
         if (savedState !== null) {
           const isEnabled = savedState === "true";
           setIsOnline(isEnabled);
           onlineManager.setOnline(isEnabled);
         }
-        
+
         hasLoadedPersistedState.current = true;
       } catch (error) {
         console.warn("Failed to load WiFi state:", error);
       }
     };
-    
+
     loadPersistedState();
   }, []);
 
@@ -42,7 +42,7 @@ export function useWifiState() {
       );
       await AsyncStorage.setItem(
         devToolsStorageKeys.settings.wifiEnabled(),
-        enabled.toString()
+        enabled.toString(),
       );
     } catch (error) {
       console.warn("Failed to save WiFi state:", error);

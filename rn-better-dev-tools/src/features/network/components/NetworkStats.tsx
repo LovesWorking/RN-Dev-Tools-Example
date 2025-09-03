@@ -44,9 +44,9 @@ export function NetworkStatsSection({ stats }: NetworkStatsProps) {
           color="warning"
         />
       </StatsCard.Grid>
-      
+
       <StatsCard.Divider />
-      
+
       <StatsCard.Grid columns={3}>
         <StatsCard.Item
           icon={Upload}
@@ -65,7 +65,9 @@ export function NetworkStatsSection({ stats }: NetworkStatsProps) {
         <StatsCard.Item
           icon={Timer}
           label="Avg Time"
-          value={stats.averageDuration ? formatDuration(stats.averageDuration) : "-"}
+          value={
+            stats.averageDuration ? formatDuration(stats.averageDuration) : "-"
+          }
           color="#9CA3AF"
           size="small"
         />

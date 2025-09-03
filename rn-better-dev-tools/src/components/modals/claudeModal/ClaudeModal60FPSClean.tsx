@@ -330,7 +330,7 @@ const ModalHeader = memo(function ModalHeader({
           panHandlers: headerProps,
           showToggleButton: header?.showToggleButton !== false,
           hideCloseButton: header?.hideCloseButton,
-        }
+        },
       );
     }
 
@@ -426,13 +426,13 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
 
   // Bottom sheet specific - using translateY for performance!
   const bottomSheetTranslateY = useRef(
-    new Animated.Value(SCREEN.height)
+    new Animated.Value(SCREEN.height),
   ).current;
   const dragOffset = useRef(new Animated.Value(0)).current;
 
   // Height tracking for resize - actual position from bottom
   const animatedBottomPosition = useRef(
-    new Animated.Value(initialHeight)
+    new Animated.Value(initialHeight),
   ).current;
 
   // Load persisted state on mount
@@ -548,12 +548,12 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
     new Animated.ValueXY({
       x: initialFloatingPosition?.x ?? (SCREEN.width - FLOATING_WIDTH) / 2,
       y: initialFloatingPosition?.y ?? (SCREEN.height - FLOATING_HEIGHT) / 2,
-    })
+    }),
   ).current;
   const floatingScale = useRef(new Animated.Value(0)).current;
   const animatedWidth = useRef(new Animated.Value(FLOATING_WIDTH)).current;
   const animatedFloatingHeight = useRef(
-    new Animated.Value(FLOATING_HEIGHT)
+    new Animated.Value(FLOATING_HEIGHT),
   ).current;
 
   // Refs for resize handles
@@ -713,7 +713,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           // Clamp between min and max
           const clampedPosition = Math.max(
             minHeight,
-            Math.min(draggedPosition, effectiveMaxHeight)
+            Math.min(draggedPosition, effectiveMaxHeight),
           );
 
           // Update the animated value for height
@@ -808,7 +808,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
       bottomSheetTranslateY,
       visibilityProgress,
       onClose,
-    ]
+    ],
   );
 
   // ============================================================================
@@ -846,15 +846,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
                 FLOATING_MIN_WIDTH,
                 Math.min(
                   sWidth.current - dx,
-                  containerBounds.width - offsetX.current
-                )
+                  containerBounds.width - offsetX.current,
+                ),
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
                 Math.min(
                   sHeight.current - dy,
-                  containerBounds.height - updatedY
-                )
+                  containerBounds.height - updatedY,
+                ),
               );
               if (updatedWidth !== sWidth.current) {
                 updatedX = offsetX.current + (sWidth.current - updatedWidth);
@@ -864,8 +864,8 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
                   insets.top,
                   Math.min(
                     offsetY.current + dy,
-                    containerBounds.height - updatedHeight
-                  )
+                    containerBounds.height - updatedHeight,
+                  ),
                 );
               }
               break;
@@ -875,23 +875,23 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
                 FLOATING_MIN_WIDTH,
                 Math.min(
                   sWidth.current + dx,
-                  containerBounds.width - offsetX.current
-                )
+                  containerBounds.width - offsetX.current,
+                ),
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
                 Math.min(
                   sHeight.current - dy,
-                  containerBounds.height - updatedY
-                )
+                  containerBounds.height - updatedY,
+                ),
               );
               if (updatedHeight !== sHeight.current) {
                 updatedY = Math.max(
                   insets.top,
                   Math.min(
                     offsetY.current + dy,
-                    containerBounds.height - updatedHeight
-                  )
+                    containerBounds.height - updatedHeight,
+                  ),
                 );
               }
               break;
@@ -901,15 +901,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
                 FLOATING_MIN_WIDTH,
                 Math.min(
                   sWidth.current - dx,
-                  containerBounds.width - offsetX.current
-                )
+                  containerBounds.width - offsetX.current,
+                ),
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
                 Math.min(
                   sHeight.current + dy,
-                  containerBounds.height - offsetY.current
-                )
+                  containerBounds.height - offsetY.current,
+                ),
               );
               if (updatedWidth !== sWidth.current) {
                 updatedX = offsetX.current + (sWidth.current - updatedWidth);
@@ -921,15 +921,15 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
                 FLOATING_MIN_WIDTH,
                 Math.min(
                   sWidth.current + dx,
-                  containerBounds.width - offsetX.current
-                )
+                  containerBounds.width - offsetX.current,
+                ),
               );
               updatedHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
                 Math.min(
                   sHeight.current + dy,
-                  containerBounds.height - offsetY.current
-                )
+                  containerBounds.height - offsetY.current,
+                ),
               );
               break;
             }
@@ -973,7 +973,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
       animatedWidth,
       animatedFloatingHeight,
       floatingPosition,
-    ]
+    ],
   );
 
   const resizeHandlers = useMemo(() => {
@@ -1020,11 +1020,11 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
 
           const clampedX = Math.max(
             0,
-            Math.min(currentX, containerBounds.width - currentDims.width)
+            Math.min(currentX, containerBounds.width - currentDims.width),
           );
           const clampedY = Math.max(
             insets.top,
-            Math.min(currentY, containerBounds.height - currentDims.height)
+            Math.min(currentY, containerBounds.height - currentDims.height),
           );
 
           floatingPosition.setValue({ x: clampedX, y: clampedY });
@@ -1042,7 +1042,7 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           floatingPosition.flattenOffset();
         },
       }),
-    [mode, floatingPosition, containerBounds, insets.top]
+    [mode, floatingPosition, containerBounds, insets.top],
   );
 
   // ============================================================================
@@ -1088,7 +1088,10 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
           {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
           <ScrollView
             style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: footerHeight as number }}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: footerHeight as number,
+            }}
             showsVerticalScrollIndicator={true}
             nestedScrollEnabled={true}
           >
@@ -1175,7 +1178,10 @@ export const ClaudeModal60FPSClean: React.FC<ClaudeModalProps> = ({
             {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: footerHeight as number }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: footerHeight as number,
+              }}
               showsVerticalScrollIndicator={true}
               nestedScrollEnabled={true}
             >

@@ -170,9 +170,7 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
             ) : null}
 
             {/* Content type badge */}
-            {contentType ? (
-              <TypeBadge type={contentType} size="small" />
-            ) : null}
+            {contentType ? <TypeBadge type={contentType} size="small" /> : null}
           </View>
 
           {/* Bottom row: Time and size */}

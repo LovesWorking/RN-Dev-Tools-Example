@@ -31,6 +31,7 @@ docs/rn-better-dev-tools/
 ## Key Features Documented
 
 ### ✅ Fully Functional
+
 1. **React Query DevTools** - Complete query/mutation debugging
 2. **Environment Variables** - Monitoring and validation
 3. **Storage Monitoring** - MMKV, AsyncStorage, SecureStorage
@@ -39,15 +40,18 @@ docs/rn-better-dev-tools/
 6. **WiFi Toggle** - Network simulation for React Query
 
 ### ⏳ In Development
+
 1. **Network Monitoring** - Partial functionality available
 2. **Storage Events Listener** - Component exists, not integrated in bubble
 
 ### 🚧 Temporarily Disabled
+
 1. **Sentry Events Viewer** - Import issues being resolved
 
 ## Documentation Highlights
 
 ### Style Guide Compliance
+
 - ✅ Follows TanStack Query documentation patterns
 - ✅ YAML frontmatter with id and title
 - ✅ Progressive disclosure (simple → complex)
@@ -57,6 +61,7 @@ docs/rn-better-dev-tools/
 - ✅ All package manager options shown
 
 ### Comprehensive Coverage
+
 - ✅ Getting started guides
 - ✅ Platform-specific setup
 - ✅ Configuration options
@@ -67,6 +72,7 @@ docs/rn-better-dev-tools/
 - ✅ Common use cases
 
 ### Special Notes Added
+
 - Storage Events coming soon notification
 - Sentry temporary disability explanation
 - Mock MMKV for Expo Go compatibility
@@ -78,6 +84,7 @@ docs/rn-better-dev-tools/
 ## Documentation Features
 
 ### User-Friendly Elements
+
 - Quick navigation index
 - Common tasks section
 - Use case scenarios
@@ -87,6 +94,7 @@ docs/rn-better-dev-tools/
 - Troubleshooting guides
 
 ### Developer Resources
+
 - Complete API reference
 - Type definitions
 - Hook documentation
@@ -98,11 +106,13 @@ docs/rn-better-dev-tools/
 ## Important Callouts
 
 ### Coming Soon
+
 - **Storage Events Integration** - Currently exists as component, needs bubble menu integration
 - **Network Monitoring Full Features** - Request/response body viewing, filtering
 - **Sentry Re-enablement** - Fixing import issues
 
 ### Platform Notes
+
 - **Expo Go** - Uses mock MMKV (AsyncStorage fallback)
 - **Production** - Auto-disabled for zero impact
 - **Web** - localStorage and browser-specific considerations
@@ -110,12 +120,14 @@ docs/rn-better-dev-tools/
 ## Usage Instructions
 
 ### For Developers
+
 1. Start with [Quick Start](./quick-start.md) for rapid setup
 2. Review [Configuration](./configuration.md) for customization
 3. Explore feature guides as needed
 4. Reference [API](./reference/api.md) for technical details
 
 ### For Teams
+
 1. Review [Overview](./overview.md) for feature understanding
 2. Set up using [Installation](./installation.md) guide
 3. Configure required env vars and storage keys
@@ -134,6 +146,7 @@ docs/rn-better-dev-tools/
 ## Recommendations
 
 ### Next Steps
+
 1. Review documentation for accuracy
 2. Test all code examples
 3. Add screenshots/GIFs where helpful
@@ -143,6 +156,7 @@ docs/rn-better-dev-tools/
 7. Enable community contributions
 
 ### Maintenance
+
 - Update when Storage Events integrates
 - Update when Network Monitoring completes
 - Update when Sentry re-enables

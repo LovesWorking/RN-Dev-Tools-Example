@@ -16,7 +16,10 @@ interface FlattenedItem {
   type: "SAME" | "CHANGE" | "CREATE" | "REMOVE";
 }
 
-export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps) {
+export function CompactDiffViewer({
+  oldValue,
+  newValue,
+}: CompactDiffViewerProps) {
   const parseValue = (value: unknown): unknown => {
     if (value === null || value === undefined) return value;
     if (typeof value === "string") {
@@ -31,16 +34,16 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
 
   const flattenObject = (obj: any, prefix = ""): Record<string, any> => {
     const flattened: Record<string, any> = {};
-    
+
     if (obj === null || obj === undefined) {
       return flattened;
     }
-    
+
     if (typeof obj !== "object") {
       flattened[prefix || "root"] = obj;
       return flattened;
     }
-    
+
     if (Array.isArray(obj)) {
       obj.forEach((item, index) => {
         const path = prefix ? `${prefix}[${index}]` : `[${index}]`;
@@ -60,7 +63,7 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
         }
       });
     }
-    
+
     return flattened;
   };
 
@@ -70,19 +73,22 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
 
     const oldFlat = flattenObject(oldParsed);
     const newFlat = flattenObject(newParsed);
-    
+
     // Get all unique paths
-    const allPaths = new Set([...Object.keys(oldFlat), ...Object.keys(newFlat)]);
+    const allPaths = new Set([
+      ...Object.keys(oldFlat),
+      ...Object.keys(newFlat),
+    ]);
     const sortedPaths = Array.from(allPaths).sort();
-    
+
     // Track which paths have changes
     const changes = new Set<string>();
     const items: FlattenedItem[] = [];
-    
-    sortedPaths.forEach(path => {
+
+    sortedPaths.forEach((path) => {
       const oldVal = oldFlat[path];
       const newVal = newFlat[path];
-      
+
       let type: FlattenedItem["type"] = "SAME";
       if (!(path in oldFlat)) {
         type = "CREATE";
@@ -94,15 +100,15 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
         type = "CHANGE";
         changes.add(path);
       }
-      
+
       items.push({
         path,
         oldValue: oldVal,
         newValue: newVal,
-        type
+        type,
       });
     });
-    
+
     return { flattenedData: items, changedPaths: changes };
   }, [oldValue, newValue]);
 
@@ -153,18 +159,15 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
           <View style={styles.columnHeader}>
             <Text style={styles.columnTitle}>OLD</Text>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.columnContent}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={true}
           >
             {flattenedData.map((item, index) => (
-              <View 
-                key={`old-${index}`} 
-                style={[
-                  styles.row,
-                  item.type !== "SAME" && styles.rowChanged
-                ]}
+              <View
+                key={`old-${index}`}
+                style={[styles.row, item.type !== "SAME" && styles.rowChanged]}
               >
                 <Text style={styles.path} numberOfLines={1}>
                   {item.path}:
@@ -172,11 +175,11 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
                 {item.type === "CREATE" ? (
                   <Text style={styles.emptyValue}>-</Text>
                 ) : (
-                  <Text 
+                  <Text
                     style={[
-                      styles.value, 
+                      styles.value,
                       { color: getValueColor(item.oldValue) },
-                      item.type === "REMOVE" && styles.removedValue
+                      item.type === "REMOVE" && styles.removedValue,
                     ]}
                     numberOfLines={1}
                   >
@@ -196,18 +199,15 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
           <View style={styles.columnHeader}>
             <Text style={styles.columnTitle}>NEW</Text>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.columnContent}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={true}
           >
             {flattenedData.map((item, index) => (
-              <View 
-                key={`new-${index}`} 
-                style={[
-                  styles.row,
-                  item.type !== "SAME" && styles.rowChanged
-                ]}
+              <View
+                key={`new-${index}`}
+                style={[styles.row, item.type !== "SAME" && styles.rowChanged]}
               >
                 <Text style={styles.path} numberOfLines={1}>
                   {item.path}:
@@ -215,11 +215,11 @@ export function CompactDiffViewer({ oldValue, newValue }: CompactDiffViewerProps
                 {item.type === "REMOVE" ? (
                   <Text style={styles.emptyValue}>-</Text>
                 ) : (
-                  <Text 
+                  <Text
                     style={[
-                      styles.value, 
+                      styles.value,
                       { color: getValueColor(item.newValue) },
-                      item.type === "CREATE" && styles.addedValue
+                      item.type === "CREATE" && styles.addedValue,
                     ]}
                     numberOfLines={1}
                   >

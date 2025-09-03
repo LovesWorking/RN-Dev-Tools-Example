@@ -58,8 +58,10 @@ export function ReactQueryModal({
   };
   const showQueryBrowserModal = visible && !inDetail && isQueryMode;
   const showMutationBrowserModal = visible && !inDetail && isMutationMode;
-  const showDataEditorModal = visible && inDetail && isQueryMode && !!selectedQueryKey;
-  const showMutationEditorModal = visible && inDetail && isMutationMode && !!selectedMutationId;
+  const showDataEditorModal =
+    visible && inDetail && isQueryMode && !!selectedQueryKey;
+  const showMutationEditorModal =
+    visible && inDetail && isMutationMode && !!selectedMutationId;
 
   return (
     <>

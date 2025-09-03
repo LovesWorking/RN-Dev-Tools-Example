@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import { LucideIcon } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";
 
@@ -38,9 +32,7 @@ StatsCard.Grid = function Grid({ children, columns = 4, style }: GridProps) {
   };
 
   return (
-    <View style={[styles.grid, gridStyles[columns], style]}>
-      {children}
-    </View>
+    <View style={[styles.grid, gridStyles[columns], style]}>{children}</View>
   );
 };
 
@@ -55,7 +47,7 @@ interface ItemProps {
   valueStyle?: TextStyle;
 }
 
-StatsCard.Item = function Item({ 
+StatsCard.Item = function Item({
   icon: Icon,
   label,
   value,
@@ -99,19 +91,19 @@ StatsCard.Item = function Item({
     <View style={[styles.statCard, style]}>
       <View style={styles.statHeader}>
         {Icon && <Icon size={config.iconSize} color={finalColor} />}
-        <Text style={[
-          styles.statLabel, 
-          { fontSize: config.labelSize },
-          labelStyle
-        ]}>
+        <Text
+          style={[styles.statLabel, { fontSize: config.labelSize }, labelStyle]}
+        >
           {label}
         </Text>
       </View>
-      <Text style={[
-        styles.statValue,
-        { fontSize: config.valueSize, color: finalColor },
-        valueStyle
-      ]}>
+      <Text
+        style={[
+          styles.statValue,
+          { fontSize: config.valueSize, color: finalColor },
+          valueStyle,
+        ]}
+      >
         {value}
       </Text>
     </View>

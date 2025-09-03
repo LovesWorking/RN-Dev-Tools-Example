@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
  * Preset copy button for inline use (smaller size)
  */
 export const InlineCopyButton = memo(function InlineCopyButton(
-  props: Omit<CopyButtonProps, "size">
+  props: Omit<CopyButtonProps, "size">,
 ) {
   return <CopyButton size={12} {...props} />;
 });
@@ -168,7 +168,7 @@ export const InlineCopyButton = memo(function InlineCopyButton(
  * Preset copy button for header/toolbar use (medium size)
  */
 export const ToolbarCopyButton = memo(function ToolbarCopyButton(
-  props: Omit<CopyButtonProps, "size">
+  props: Omit<CopyButtonProps, "size">,
 ) {
   return <CopyButton size={14} {...props} />;
 });
@@ -177,7 +177,7 @@ export const ToolbarCopyButton = memo(function ToolbarCopyButton(
  * Preset copy button for main actions (larger size)
  */
 export const ActionCopyButton = memo(function ActionCopyButton(
-  props: Omit<CopyButtonProps, "size">
+  props: Omit<CopyButtonProps, "size">,
 ) {
   return <CopyButton size={18} {...props} />;
 });

@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useEffect, useState, useCallback } from "react";
 import {
   ChevronLeft,
@@ -48,11 +54,13 @@ export function StorageEventDetailContent({
   disableInternalFooter = false,
 }: StorageEventDetailContentProps) {
   // Compare-any-two state for Diff tab
-  const [leftIndex, setLeftIndex] = useState<number>(Math.max(0, selectedEventIndex - 1));
+  const [leftIndex, setLeftIndex] = useState<number>(
+    Math.max(0, selectedEventIndex - 1),
+  );
   const [rightIndex, setRightIndex] = useState<number>(selectedEventIndex);
   const [isLeftPickerOpen, setIsLeftPickerOpen] = useState(false);
   const [isRightPickerOpen, setIsRightPickerOpen] = useState(false);
-  const [diffViewerTab, setDiffViewerTab] = useState<'split' | 'tree'>('tree');
+  const [diffViewerTab, setDiffViewerTab] = useState<"split" | "tree">("tree");
   const parseValue = (value: unknown): unknown => {
     if (value === null || value === undefined) return value;
     if (typeof value === "string") {
@@ -71,10 +79,10 @@ export function StorageEventDetailContent({
       parsed === null
         ? "null"
         : parsed === undefined
-        ? "undefined"
-        : Array.isArray(parsed)
-        ? "array"
-        : typeof parsed;
+          ? "undefined"
+          : Array.isArray(parsed)
+            ? "array"
+            : typeof parsed;
 
     return (
       <View style={styles.valueContent}>
@@ -101,10 +109,10 @@ export function StorageEventDetailContent({
               {parsed === null
                 ? "null"
                 : parsed === undefined
-                ? "undefined"
-                : type === "string"
-                ? `"${parsed}"`
-                : String(parsed)}
+                  ? "undefined"
+                  : type === "string"
+                    ? `"${parsed}"`
+                    : String(parsed)}
             </Text>
           )}
         </View>
@@ -114,7 +122,7 @@ export function StorageEventDetailContent({
 
   // Get all events sorted by time
   const navigationItems = conversation.events.sort(
-    (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+    (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
   );
   const totalEvents = navigationItems.length;
 
@@ -174,8 +182,10 @@ export function StorageEventDetailContent({
       );
     }
 
-    const leftEvent = navigationItems[Math.max(0, Math.min(totalEvents - 1, leftIndex))];
-    const rightEvent = navigationItems[Math.max(0, Math.min(totalEvents - 1, rightIndex))];
+    const leftEvent =
+      navigationItems[Math.max(0, Math.min(totalEvents - 1, leftIndex))];
+    const rightEvent =
+      navigationItems[Math.max(0, Math.min(totalEvents - 1, rightIndex))];
     const previousValue = leftEvent?.data?.value ?? null;
     const currentValue = rightEvent?.data?.value;
 
@@ -184,18 +194,34 @@ export function StorageEventDetailContent({
         {/* Diff Viewer Tabs */}
         <View style={styles.diffViewerTabs}>
           <TouchableOpacity
-            style={[styles.diffViewerTab, diffViewerTab === 'split' && styles.diffViewerTabActive]}
-            onPress={() => setDiffViewerTab('split')}
+            style={[
+              styles.diffViewerTab,
+              diffViewerTab === "split" && styles.diffViewerTabActive,
+            ]}
+            onPress={() => setDiffViewerTab("split")}
           >
-            <Text style={[styles.diffViewerTabText, diffViewerTab === 'split' && styles.diffViewerTabTextActive]}>
+            <Text
+              style={[
+                styles.diffViewerTabText,
+                diffViewerTab === "split" && styles.diffViewerTabTextActive,
+              ]}
+            >
               SPLIT VIEW
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.diffViewerTab, diffViewerTab === 'tree' && styles.diffViewerTabActive]}
-            onPress={() => setDiffViewerTab('tree')}
+            style={[
+              styles.diffViewerTab,
+              diffViewerTab === "tree" && styles.diffViewerTabActive,
+            ]}
+            onPress={() => setDiffViewerTab("tree")}
           >
-            <Text style={[styles.diffViewerTabText, diffViewerTab === 'tree' && styles.diffViewerTabTextActive]}>
+            <Text
+              style={[
+                styles.diffViewerTabText,
+                diffViewerTab === "tree" && styles.diffViewerTabTextActive,
+              ]}
+            >
               TREE VIEW
             </Text>
           </TouchableOpacity>
@@ -206,30 +232,60 @@ export function StorageEventDetailContent({
           <View style={styles.compareBar}>
             {/* PREV side */}
             <View style={styles.compareSide}>
-              <Text style={[styles.compareLabel, { color: gameUIColors.optional }]}>PREV</Text>
+              <Text
+                style={[styles.compareLabel, { color: gameUIColors.optional }]}
+              >
+                PREV
+              </Text>
               <View style={styles.compareControls}>
                 <TouchableOpacity
                   onPress={() => bumpLeft(-1)}
                   disabled={leftIndex <= 0}
-                  style={[styles.compareBtn, leftIndex <= 0 && styles.compareBtnDisabled]}
+                  style={[
+                    styles.compareBtn,
+                    leftIndex <= 0 && styles.compareBtnDisabled,
+                  ]}
                 >
-                  <ChevronLeft size={14} color={leftIndex <= 0 ? gameUIColors.muted : gameUIColors.secondary} />
+                  <ChevronLeft
+                    size={14}
+                    color={
+                      leftIndex <= 0
+                        ? gameUIColors.muted
+                        : gameUIColors.secondary
+                    }
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.compareMeta}
                   onPress={() => setIsLeftPickerOpen(true)}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.compareIndex}>#{leftIndex + 1} / {totalEvents}</Text>
-                  <Text style={styles.compareTime}>{formatTimeWithMs(leftEvent.timestamp)}</Text>
-                  <Text style={styles.compareRelative}>({formatRelativeTime(leftEvent.timestamp)})</Text>
+                  <Text style={styles.compareIndex}>
+                    #{leftIndex + 1} / {totalEvents}
+                  </Text>
+                  <Text style={styles.compareTime}>
+                    {formatTimeWithMs(leftEvent.timestamp)}
+                  </Text>
+                  <Text style={styles.compareRelative}>
+                    ({formatRelativeTime(leftEvent.timestamp)})
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => bumpLeft(1)}
                   disabled={leftIndex >= rightIndex - 1}
-                  style={[styles.compareBtn, leftIndex >= rightIndex - 1 && styles.compareBtnDisabled]}
+                  style={[
+                    styles.compareBtn,
+                    leftIndex >= rightIndex - 1 && styles.compareBtnDisabled,
+                  ]}
                 >
-                  <ChevronRight size={14} color={leftIndex >= rightIndex - 1 ? gameUIColors.muted : gameUIColors.secondary} />
+                  <ChevronRight
+                    size={14}
+                    color={
+                      leftIndex >= rightIndex - 1
+                        ? gameUIColors.muted
+                        : gameUIColors.secondary
+                    }
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -238,37 +294,67 @@ export function StorageEventDetailContent({
 
             {/* CUR side */}
             <View style={styles.compareSide}>
-              <Text style={[styles.compareLabel, { color: gameUIColors.success }]}>CUR</Text>
+              <Text
+                style={[styles.compareLabel, { color: gameUIColors.success }]}
+              >
+                CUR
+              </Text>
               <View style={styles.compareControls}>
                 <TouchableOpacity
                   onPress={() => bumpRight(-1)}
                   disabled={rightIndex <= leftIndex + 1}
-                  style={[styles.compareBtn, rightIndex <= leftIndex + 1 && styles.compareBtnDisabled]}
+                  style={[
+                    styles.compareBtn,
+                    rightIndex <= leftIndex + 1 && styles.compareBtnDisabled,
+                  ]}
                 >
-                  <ChevronLeft size={14} color={rightIndex <= leftIndex + 1 ? gameUIColors.muted : gameUIColors.secondary} />
+                  <ChevronLeft
+                    size={14}
+                    color={
+                      rightIndex <= leftIndex + 1
+                        ? gameUIColors.muted
+                        : gameUIColors.secondary
+                    }
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.compareMeta}
                   onPress={() => setIsRightPickerOpen(true)}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.compareIndex}>#{rightIndex + 1} / {totalEvents}</Text>
-                  <Text style={styles.compareTime}>{formatTimeWithMs(rightEvent.timestamp)}</Text>
-                  <Text style={styles.compareRelative}>({formatRelativeTime(rightEvent.timestamp)})</Text>
+                  <Text style={styles.compareIndex}>
+                    #{rightIndex + 1} / {totalEvents}
+                  </Text>
+                  <Text style={styles.compareTime}>
+                    {formatTimeWithMs(rightEvent.timestamp)}
+                  </Text>
+                  <Text style={styles.compareRelative}>
+                    ({formatRelativeTime(rightEvent.timestamp)})
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => bumpRight(1)}
                   disabled={rightIndex >= totalEvents - 1}
-                  style={[styles.compareBtn, rightIndex >= totalEvents - 1 && styles.compareBtnDisabled]}
+                  style={[
+                    styles.compareBtn,
+                    rightIndex >= totalEvents - 1 && styles.compareBtnDisabled,
+                  ]}
                 >
-                  <ChevronRight size={14} color={rightIndex >= totalEvents - 1 ? gameUIColors.muted : gameUIColors.secondary} />
+                  <ChevronRight
+                    size={14}
+                    color={
+                      rightIndex >= totalEvents - 1
+                        ? gameUIColors.muted
+                        : gameUIColors.secondary
+                    }
+                  />
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         )}
 
-        {diffViewerTab === 'split' && (
+        {diffViewerTab === "split" && (
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator>
             <ThemedSplitView
               oldValue={parseValue(previousValue)}
@@ -288,7 +374,7 @@ export function StorageEventDetailContent({
           </ScrollView>
         )}
 
-        {diffViewerTab === 'tree' && (
+        {diffViewerTab === "tree" && (
           <TreeDiffViewer
             oldValue={parseValue(previousValue)}
             newValue={parseValue(currentValue)}
@@ -326,7 +412,7 @@ export function StorageEventDetailContent({
           <View style={styles.pickerCard}>
             <View style={styles.pickerHeader}>
               <Text style={styles.pickerTitle}>
-                Select {isLeftPickerOpen ? 'PREV' : 'CUR'} Event
+                Select {isLeftPickerOpen ? "PREV" : "CUR"} Event
               </Text>
               <TouchableOpacity
                 onPress={() => {
@@ -340,7 +426,7 @@ export function StorageEventDetailContent({
               </TouchableOpacity>
             </View>
             <View style={styles.pickerDivider} />
-            
+
             <ScrollView
               style={styles.pickerScroll}
               contentContainerStyle={styles.pickerList}
@@ -348,7 +434,9 @@ export function StorageEventDetailContent({
               nestedScrollEnabled
             >
               {navigationItems.map((item, idx) => {
-                const disabled = isLeftPickerOpen ? idx >= rightIndex : idx <= leftIndex;
+                const disabled = isLeftPickerOpen
+                  ? idx >= rightIndex
+                  : idx <= leftIndex;
                 return (
                   <TouchableOpacity
                     key={idx}
@@ -362,25 +450,78 @@ export function StorageEventDetailContent({
                         setIsRightPickerOpen(false);
                       }
                     }}
-                    style={[styles.pickerItem, disabled && styles.pickerItemDisabled]}
+                    style={[
+                      styles.pickerItem,
+                      disabled && styles.pickerItemDisabled,
+                    ]}
                   >
                     <Text style={styles.pickerIndex}>#{idx + 1}</Text>
-                    <Text style={styles.pickerTime}>{formatTimeWithMs(item.timestamp)}</Text>
-                    <Text style={styles.pickerRelative}>({formatRelativeTime(item.timestamp)})</Text>
+                    <Text style={styles.pickerTime}>
+                      {formatTimeWithMs(item.timestamp)}
+                    </Text>
+                    <Text style={styles.pickerRelative}>
+                      ({formatRelativeTime(item.timestamp)})
+                    </Text>
                     {(() => {
-                      const targetOld = isLeftPickerOpen ? item : navigationItems[leftIndex];
-                      const targetNew = isLeftPickerOpen ? navigationItems[rightIndex] : item;
+                      const targetOld = isLeftPickerOpen
+                        ? item
+                        : navigationItems[leftIndex];
+                      const targetNew = isLeftPickerOpen
+                        ? navigationItems[rightIndex]
+                        : item;
                       const oldVal = parseValue(targetOld.data?.value);
                       const newVal = parseValue(targetNew.data?.value);
-                      const diffs = computeLineDiff(oldVal, newVal, { compareMethod: 'words', disableWordDiff: false, showDiffOnly: false, contextLines: 0 });
-                      const added = diffs.filter(d => d.type === DiffType.ADDED).length;
-                      const removed = diffs.filter(d => d.type === DiffType.REMOVED).length;
-                      const modified = diffs.filter(d => d.type === DiffType.MODIFIED).length;
+                      const diffs = computeLineDiff(oldVal, newVal, {
+                        compareMethod: "words",
+                        disableWordDiff: false,
+                        showDiffOnly: false,
+                        contextLines: 0,
+                      });
+                      const added = diffs.filter(
+                        (d) => d.type === DiffType.ADDED,
+                      ).length;
+                      const removed = diffs.filter(
+                        (d) => d.type === DiffType.REMOVED,
+                      ).length;
+                      const modified = diffs.filter(
+                        (d) => d.type === DiffType.MODIFIED,
+                      ).length;
                       return (
                         <View style={styles.pickerCounts}>
-                          <Text style={[styles.pickerCountText, { color: diffThemes.devToolsDefault.summaryAddedText }]}>+{added}</Text>
-                          <Text style={[styles.pickerCountText, { color: diffThemes.devToolsDefault.summaryRemovedText }]}>-{removed}</Text>
-                          <Text style={[styles.pickerCountText, { color: diffThemes.devToolsDefault.summaryModifiedText }]}>~{modified}</Text>
+                          <Text
+                            style={[
+                              styles.pickerCountText,
+                              {
+                                color:
+                                  diffThemes.devToolsDefault.summaryAddedText,
+                              },
+                            ]}
+                          >
+                            +{added}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.pickerCountText,
+                              {
+                                color:
+                                  diffThemes.devToolsDefault.summaryRemovedText,
+                              },
+                            ]}
+                          >
+                            -{removed}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.pickerCountText,
+                              {
+                                color:
+                                  diffThemes.devToolsDefault
+                                    .summaryModifiedText,
+                              },
+                            ]}
+                          >
+                            ~{modified}
+                          </Text>
                         </View>
                       );
                     })()}
@@ -396,13 +537,22 @@ export function StorageEventDetailContent({
       {totalEvents > 1 && !disableInternalFooter && (
         <View style={styles.stickyFooter}>
           <TouchableOpacity
-            onPress={() => onEventIndexChange(Math.max(0, selectedEventIndex - 1))}
+            onPress={() =>
+              onEventIndexChange(Math.max(0, selectedEventIndex - 1))
+            }
             disabled={selectedEventIndex === 0}
-            style={[styles.navButton, selectedEventIndex === 0 && styles.navButtonDisabled]}
+            style={[
+              styles.navButton,
+              selectedEventIndex === 0 && styles.navButtonDisabled,
+            ]}
           >
             <ChevronLeft
               size={20}
-              color={selectedEventIndex === 0 ? gameUIColors.muted : gameUIColors.primary}
+              color={
+                selectedEventIndex === 0
+                  ? gameUIColors.muted
+                  : gameUIColors.primary
+              }
             />
             <Text
               style={[
@@ -419,29 +569,41 @@ export function StorageEventDetailContent({
               Event {selectedEventIndex + 1} of {totalEvents}
             </Text>
             <Text style={styles.eventTimestamp}>
-              {formatRelativeTime(navigationItems[selectedEventIndex]?.timestamp)}
+              {formatRelativeTime(
+                navigationItems[selectedEventIndex]?.timestamp,
+              )}
             </Text>
           </View>
 
           <TouchableOpacity
-            onPress={() => onEventIndexChange(Math.min(totalEvents - 1, selectedEventIndex + 1))}
+            onPress={() =>
+              onEventIndexChange(
+                Math.min(totalEvents - 1, selectedEventIndex + 1),
+              )
+            }
             disabled={selectedEventIndex === totalEvents - 1}
             style={[
               styles.navButton,
-              selectedEventIndex === totalEvents - 1 && styles.navButtonDisabled,
+              selectedEventIndex === totalEvents - 1 &&
+                styles.navButtonDisabled,
             ]}
           >
             <Text
               style={[
                 styles.navButtonText,
-                selectedEventIndex === totalEvents - 1 && styles.navButtonTextDisabled,
+                selectedEventIndex === totalEvents - 1 &&
+                  styles.navButtonTextDisabled,
               ]}
             >
               Next
             </Text>
             <ChevronRight
               size={20}
-              color={selectedEventIndex === totalEvents - 1 ? gameUIColors.muted : gameUIColors.primary}
+              color={
+                selectedEventIndex === totalEvents - 1
+                  ? gameUIColors.muted
+                  : gameUIColors.primary
+              }
             />
           </TouchableOpacity>
         </View>
@@ -461,7 +623,7 @@ export function StorageEventDetailFooter({
   onEventIndexChange?: (index: number) => void;
 }) {
   const navigationItems = conversation.events.sort(
-    (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+    (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
   );
   const totalEvents = navigationItems.length;
 
@@ -472,11 +634,16 @@ export function StorageEventDetailFooter({
       <TouchableOpacity
         onPress={() => onEventIndexChange(Math.max(0, selectedEventIndex - 1))}
         disabled={selectedEventIndex === 0}
-        style={[styles.navButton, selectedEventIndex === 0 && styles.navButtonDisabled]}
+        style={[
+          styles.navButton,
+          selectedEventIndex === 0 && styles.navButtonDisabled,
+        ]}
       >
         <ChevronLeft
           size={20}
-          color={selectedEventIndex === 0 ? gameUIColors.muted : gameUIColors.primary}
+          color={
+            selectedEventIndex === 0 ? gameUIColors.muted : gameUIColors.primary
+          }
         />
         <Text
           style={[
@@ -498,7 +665,9 @@ export function StorageEventDetailFooter({
       </View>
 
       <TouchableOpacity
-        onPress={() => onEventIndexChange(Math.min(totalEvents - 1, selectedEventIndex + 1))}
+        onPress={() =>
+          onEventIndexChange(Math.min(totalEvents - 1, selectedEventIndex + 1))
+        }
         disabled={selectedEventIndex === totalEvents - 1}
         style={[
           styles.navButton,
@@ -508,14 +677,19 @@ export function StorageEventDetailFooter({
         <Text
           style={[
             styles.navButtonText,
-            selectedEventIndex === totalEvents - 1 && styles.navButtonTextDisabled,
+            selectedEventIndex === totalEvents - 1 &&
+              styles.navButtonTextDisabled,
           ]}
         >
           Next
         </Text>
         <ChevronRight
           size={20}
-          color={selectedEventIndex === totalEvents - 1 ? gameUIColors.muted : gameUIColors.primary}
+          color={
+            selectedEventIndex === totalEvents - 1
+              ? gameUIColors.muted
+              : gameUIColors.primary
+          }
         />
       </TouchableOpacity>
     </View>
@@ -737,26 +911,26 @@ const styles = StyleSheet.create({
   pickerOverlay: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   pickerBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   pickerCard: {
-    width: '86%',
+    width: "86%",
     maxHeight: 320,
     backgroundColor: gameUIColors.panel,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border + '60',
+    borderColor: gameUIColors.border + "60",
     padding: 12,
   },
   pickerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   pickerClose: {
     padding: 6,
@@ -767,7 +941,7 @@ const styles = StyleSheet.create({
   },
   pickerDivider: {
     height: 1,
-    backgroundColor: gameUIColors.border + '40',
+    backgroundColor: gameUIColors.border + "40",
     marginVertical: 8,
   },
   pickerScroll: {
@@ -775,10 +949,10 @@ const styles = StyleSheet.create({
   },
   pickerTitle: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
     color: gameUIColors.primary,
-    fontFamily: 'monospace',
-    textTransform: 'uppercase',
+    fontFamily: "monospace",
+    textTransform: "uppercase",
     marginBottom: 8,
   },
   pickerList: {
@@ -791,8 +965,8 @@ const styles = StyleSheet.create({
     backgroundColor: gameUIColors.blackTint2,
     borderWidth: 1,
     borderColor: gameUIColors.border,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 4,
   },
@@ -802,35 +976,35 @@ const styles = StyleSheet.create({
   pickerIndex: {
     fontSize: 10,
     color: gameUIColors.secondary,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     width: 40,
   },
   pickerTime: {
     fontSize: 11,
     color: gameUIColors.primary,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     flex: 1,
   },
   pickerRelative: {
     fontSize: 10,
     color: gameUIColors.secondary,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   pickerCounts: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
   pickerCountText: {
     fontSize: 10,
-    fontFamily: 'monospace',
-    fontWeight: '700',
+    fontFamily: "monospace",
+    fontWeight: "700",
   },
   diffViewerTabs: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
     backgroundColor: gameUIColors.panel + "40",
     borderWidth: 1,
     borderColor: gameUIColors.border + "20",
@@ -845,8 +1019,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 4,
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    alignItems: "center",
+    backgroundColor: "transparent",
   },
   diffViewerTabActive: {
     backgroundColor: gameUIColors.primary + "20",
@@ -855,8 +1029,8 @@ const styles = StyleSheet.create({
   },
   diffViewerTabText: {
     fontSize: 11,
-    fontFamily: 'monospace',
-    fontWeight: '600',
+    fontFamily: "monospace",
+    fontWeight: "600",
     color: gameUIColors.secondary,
     letterSpacing: 0.5,
   },

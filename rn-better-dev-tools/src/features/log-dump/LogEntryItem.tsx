@@ -32,15 +32,17 @@ export const LogEntryItem = ({ entry, onSelectEntry }: LogEntryItemProps) => {
   const typeColor = getTypeColor(entry.type);
 
   return (
-    <ListItem
-      onPress={() => onSelectEntry(entry)}
-      style={styles.container}
-    >
+    <ListItem onPress={() => onSelectEntry(entry)} style={styles.container}>
       {/* Header row with type, level and time */}
       <ListItem.Header style={styles.header}>
         <View style={styles.headerLeft}>
           {/* Type indicator */}
-          <View style={[styles.typeIndicator, { backgroundColor: `${typeColor}15` }]}>
+          <View
+            style={[
+              styles.typeIndicator,
+              { backgroundColor: `${typeColor}15` },
+            ]}
+          >
             <IconComponent size={12} color={typeColor} />
             <Text style={[styles.typeText, { color: typeColor }]}>
               {entry.type}
@@ -50,7 +52,7 @@ export const LogEntryItem = ({ entry, onSelectEntry }: LogEntryItemProps) => {
           {/* Level indicator using StatusBadge */}
           <StatusBadge status={getLevelStatus(entry.level)} size="small" />
         </View>
-        
+
         <View style={styles.headerRight}>
           <ListItem.Metadata>
             {formatTimestamp(entry.timestamp)}

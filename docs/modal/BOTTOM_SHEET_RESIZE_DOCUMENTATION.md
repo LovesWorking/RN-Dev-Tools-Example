@@ -3,6 +3,7 @@
 This document provides a comprehensive explanation of how the bottom sheet modal's drag-to-resize functionality works, tracing through all the code involved in handling the gesture to resize the modal height.
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Key Components](#key-components)
 3. [Gesture Setup Flow](#gesture-setup-flow)
@@ -15,6 +16,7 @@ This document provides a comprehensive explanation of how the bottom sheet modal
 The drag-to-resize functionality allows users to grab the handle at the top of the bottom sheet and drag it vertically to change its height. The system uses React Native Gesture Handler for gesture detection and Reanimated for smooth animations.
 
 ### Key Files Involved:
+
 - `src/components/bottomSheetHandleContainer/BottomSheetHandleContainer.tsx` - Handle UI component with gesture detector
 - `src/hooks/useGestureEventsHandlersDefault.tsx` - Core gesture handling logic
 - `src/hooks/useGestureHandler.ts` - Gesture handler wrapper
@@ -24,6 +26,7 @@ The drag-to-resize functionality allows users to grab the handle at the top of t
 ## Key Components
 
 ### 1. Gesture Source Types
+
 The system distinguishes between different gesture sources:
 
 ```typescript
@@ -31,12 +34,13 @@ The system distinguishes between different gesture sources:
 enum GESTURE_SOURCE {
   UNDETERMINED = 0,
   SCROLLABLE = 1,
-  HANDLE = 2,  // <-- This is used for handle dragging
+  HANDLE = 2, // <-- This is used for handle dragging
   CONTENT = 3,
 }
 ```
 
 ### 2. Animation Sources
+
 Different triggers for animations:
 
 ```typescript
@@ -44,7 +48,7 @@ Different triggers for animations:
 enum ANIMATION_SOURCE {
   NONE = 0,
   MOUNT = 1,
-  GESTURE = 2,  // <-- Used when animation is triggered by gesture
+  GESTURE = 2, // <-- Used when animation is triggered by gesture
   USER = 3,
   CONTAINER_RESIZE = 4,
   SNAP_POINT_CHANGE = 5,
@@ -55,6 +59,7 @@ enum ANIMATION_SOURCE {
 ## Gesture Setup Flow
 
 ### Step 1: Handle Container Setup
+
 The `BottomSheetHandleContainer` component sets up the Pan gesture on the handle:
 
 ```typescript
@@ -75,7 +80,7 @@ const panGesture = useMemo(() => {
 
   if (simultaneousHandlers) {
     gesture = gesture.simultaneousWithExternalGesture(
-      simultaneousHandlers as never
+      simultaneousHandlers as never,
     );
   }
 
@@ -134,6 +139,7 @@ return HandleComponent !== null ? (
 ```
 
 ### Step 2: Gesture Handlers Provider
+
 The `BottomSheetGestureHandlersProvider` creates and provides the gesture handlers:
 
 ```typescript
@@ -145,21 +151,22 @@ const contentPanGestureHandler = useGestureHandler(
   handleOnStart,
   handleOnChange,
   handleOnEnd,
-  handleOnFinalize
+  handleOnFinalize,
 );
 
 const handlePanGestureHandler = useGestureHandler(
-  GESTURE_SOURCE.HANDLE,  // <-- Handle gesture source
+  GESTURE_SOURCE.HANDLE, // <-- Handle gesture source
   animatedHandleGestureState,
   animatedGestureSource,
   handleOnStart,
   handleOnChange,
   handleOnEnd,
-  handleOnFinalize
+  handleOnFinalize,
 );
 ```
 
 ### Step 3: Gesture Handler Wrapper
+
 The `useGestureHandler` hook wraps the gesture event handlers:
 
 ```typescript
@@ -172,14 +179,14 @@ const handleOnStart = useWorkletCallback(
     onStart(source, event);
     return;
   },
-  [state, gestureSource, source, onStart]
+  [state, gestureSource, source, onStart],
 );
 
 const handleOnChange = useWorkletCallback(
   (
     event: GestureUpdateEvent<
       PanGestureHandlerEventPayload & PanGestureChangeEventPayload
-    >
+    >,
   ) => {
     if (gestureSource.value !== source) {
       return;
@@ -188,7 +195,7 @@ const handleOnChange = useWorkletCallback(
     state.value = event.state;
     onChange(source, event);
   },
-  [state, gestureSource, source, onChange]
+  [state, gestureSource, source, onChange],
 );
 
 const handleOnEnd = useWorkletCallback(
@@ -202,7 +209,7 @@ const handleOnEnd = useWorkletCallback(
 
     onEnd(source, event);
   },
-  [state, gestureSource, source, onEnd]
+  [state, gestureSource, source, onEnd],
 );
 
 const handleOnFinalize = useWorkletCallback(
@@ -216,7 +223,7 @@ const handleOnFinalize = useWorkletCallback(
 
     onFinalize(source, event);
   },
-  [state, gestureSource, source, onFinalize]
+  [state, gestureSource, source, onFinalize],
 );
 ```
 
@@ -225,6 +232,7 @@ const handleOnFinalize = useWorkletCallback(
 The core gesture handling logic is in `useGestureEventsHandlersDefault`:
 
 ### handleOnStart - When Drag Begins
+
 ```typescript
 // From src/hooks/useGestureEventsHandlersDefault.tsx (lines 73-113)
 const handleOnStart: GestureEventHandlerCallbackType = useWorkletCallback(
@@ -245,7 +253,7 @@ const handleOnStart: GestureEventHandlerCallbackType = useWorkletCallback(
     // store current animated position
     context.value = {
       ...context.value,
-      initialPosition: animatedPosition.value,  // <-- Stores starting position
+      initialPosition: animatedPosition.value, // <-- Stores starting position
       initialKeyboardState: animatedKeyboardState.value,
     };
 
@@ -266,11 +274,12 @@ const handleOnStart: GestureEventHandlerCallbackType = useWorkletCallback(
     animatedPosition,
     animatedKeyboardState,
     animatedScrollableContentOffsetY,
-  ]
+  ],
 );
 ```
 
 ### handleOnChange - During Drag (THIS IS WHERE RESIZING HAPPENS)
+
 ```typescript
 // From src/hooks/useGestureEventsHandlersDefault.tsx (lines 114-269)
 const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
@@ -331,7 +340,7 @@ const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
     /**
      * an accumulated value of starting position with gesture translation y.
      */
-    const draggedPosition = context.value.initialPosition + translationY;  // <-- KEY CALCULATION
+    const draggedPosition = context.value.initialPosition + translationY; // <-- KEY CALCULATION
 
     /**
      * an accumulated value of dragged position and negative scrollable content offset,
@@ -348,7 +357,7 @@ const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
     const clampedPosition = clamp(
       accumulatedDraggedPosition,
       highestSnapPoint,
-      lowestSnapPoint
+      lowestSnapPoint,
     );
 
     /**
@@ -379,7 +388,7 @@ const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
           highestSnapPoint -
           Math.sqrt(1 + (highestSnapPoint - draggedPosition)) *
             overDragResistanceFactor;
-        animatedPosition.value = resistedPosition;  // <-- Updates position with resistance
+        animatedPosition.value = resistedPosition; // <-- Updates position with resistance
         return;
       }
 
@@ -391,7 +400,7 @@ const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
           lowestSnapPoint +
           Math.sqrt(1 + (draggedPosition - lowestSnapPoint)) *
             overDragResistanceFactor;
-        animatedPosition.value = resistedPosition;  // <-- Updates position with resistance
+        animatedPosition.value = resistedPosition; // <-- Updates position with resistance
         return;
       }
 
@@ -405,15 +414,15 @@ const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
             1 +
               (draggedPosition +
                 negativeScrollableContentOffset -
-                lowestSnapPoint)
+                lowestSnapPoint),
           ) *
             overDragResistanceFactor;
-        animatedPosition.value = resistedPosition;  // <-- Updates position with resistance
+        animatedPosition.value = resistedPosition; // <-- Updates position with resistance
         return;
       }
     }
 
-    animatedPosition.value = clampedPosition;  // <-- FINAL POSITION UPDATE
+    animatedPosition.value = clampedPosition; // <-- FINAL POSITION UPDATE
   },
   [
     enableOverDrag,
@@ -427,11 +436,12 @@ const handleOnChange: GestureEventHandlerCallbackType = useWorkletCallback(
     animatedPosition,
     animatedScrollableType,
     animatedScrollableContentOffsetY,
-  ]
+  ],
 );
 ```
 
 ### handleOnEnd - When Drag Ends
+
 ```typescript
 // From src/hooks/useGestureEventsHandlersDefault.tsx (lines 270-402)
 const handleOnEnd: GestureEventHandlerCallbackType = useWorkletCallback(
@@ -464,7 +474,7 @@ const handleOnEnd: GestureEventHandlerCallbackType = useWorkletCallback(
         animateToPosition(
           context.value.initialPosition,
           ANIMATION_SOURCE.GESTURE,
-          velocityY / 2
+          velocityY / 2,
         );
       }
       return;
@@ -495,7 +505,7 @@ const handleOnEnd: GestureEventHandlerCallbackType = useWorkletCallback(
        */
       if (
         !(
-          Platform.OS === 'ios' &&
+          Platform.OS === "ios" &&
           isScrollable &&
           absoluteY > WINDOW_HEIGHT - animatedKeyboardHeight.value
         )
@@ -526,7 +536,7 @@ const handleOnEnd: GestureEventHandlerCallbackType = useWorkletCallback(
     const destinationPoint = snapPoint(
       translationY + context.value.initialPosition,
       velocityY,
-      snapPoints
+      snapPoints,
     );
 
     /**
@@ -550,7 +560,7 @@ const handleOnEnd: GestureEventHandlerCallbackType = useWorkletCallback(
     animateToPosition(
       destinationPoint,
       ANIMATION_SOURCE.GESTURE,
-      velocityY / 2
+      velocityY / 2,
     );
   },
   [
@@ -565,13 +575,14 @@ const handleOnEnd: GestureEventHandlerCallbackType = useWorkletCallback(
     animatedSnapPoints,
     animatedScrollableContentOffsetY,
     animateToPosition,
-  ]
+  ],
 );
 ```
 
 ## Position Calculation Logic
 
 ### Core Formula
+
 The key calculation happens in `handleOnChange`:
 
 ```typescript
@@ -579,22 +590,25 @@ const draggedPosition = context.value.initialPosition + translationY;
 ```
 
 Where:
+
 - `context.value.initialPosition` = The position when the drag started (stored in handleOnStart)
 - `translationY` = The vertical distance dragged from the starting point
 - `draggedPosition` = The new position for the bottom sheet
 
 ### Clamping
+
 The position is clamped between the highest and lowest snap points:
 
 ```typescript
 const clampedPosition = clamp(
   accumulatedDraggedPosition,
   highestSnapPoint,
-  lowestSnapPoint
+  lowestSnapPoint,
 );
 ```
 
 ### Over-drag Resistance
+
 When `enableOverDrag` is true, dragging beyond limits applies resistance:
 
 ```typescript
@@ -608,6 +622,7 @@ const resistedPosition =
 ## Animation and Snapping
 
 ### Snap Point Calculation
+
 When the gesture ends, the sheet snaps to the nearest snap point:
 
 ```typescript
@@ -615,29 +630,31 @@ When the gesture ends, the sheet snaps to the nearest snap point:
 export const snapPoint = (
   value: number,
   velocity: number,
-  points: ReadonlyArray<number>
+  points: ReadonlyArray<number>,
 ): number => {
-  'worklet';
-  const point = value + 0.2 * velocity;  // Factor in velocity for momentum
-  const deltas = points.map(p => Math.abs(point - p));
+  "worklet";
+  const point = value + 0.2 * velocity; // Factor in velocity for momentum
+  const deltas = points.map((p) => Math.abs(point - p));
   const minDelta = Math.min.apply(null, deltas);
-  return points.filter(p => Math.abs(point - p) === minDelta)[0];
+  return points.filter((p) => Math.abs(point - p) === minDelta)[0];
 };
 ```
 
 The function:
+
 1. Adds 20% of the velocity to the current position (for momentum-based snapping)
 2. Calculates distances to all snap points
 3. Returns the closest snap point
 
 ### Animating to Final Position
+
 After calculating the destination snap point, the sheet animates to it:
 
 ```typescript
 animateToPosition(
   destinationPoint,
   ANIMATION_SOURCE.GESTURE,
-  velocityY / 2  // Half the velocity is passed for smoother animation
+  velocityY / 2, // Half the velocity is passed for smoother animation
 );
 ```
 

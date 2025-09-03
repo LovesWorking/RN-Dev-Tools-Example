@@ -1,11 +1,13 @@
 # Storage Browser Feature Documentation
 
 ## Overview
+
 The Storage Browser is a development tool that provides real-time visibility and management of your React Native application's persistent storage. It monitors and displays all storage keys across different storage types (AsyncStorage, MMKV, SecureStorage) helping developers debug storage-related issues and ensure data integrity.
 
 ## What It Does
 
 ### Core Functionality
+
 1. **Storage Discovery & Monitoring**
    - Automatically discovers all storage keys used in the application
    - Displays values stored for each key in real-time
@@ -27,6 +29,7 @@ The Storage Browser is a development tool that provides real-time visibility and
 ## What It Helps With
 
 ### Development & Debugging
+
 - **Storage Issues**: Quickly identify when expected data is missing from storage
 - **Data Type Mismatches**: Catch when stored values have wrong types (e.g., string instead of number)
 - **Storage Migration**: Verify data migration between storage types or app versions
@@ -34,6 +37,7 @@ The Storage Browser is a development tool that provides real-time visibility and
 - **Storage Leaks**: Identify unused or orphaned storage keys
 
 ### Testing & QA
+
 - **Data Validation**: Ensure critical app data is stored correctly
 - **Storage Reset**: Quickly clear storage for testing fresh install scenarios
 - **Data Export**: Export storage state for bug reports or testing
@@ -66,6 +70,7 @@ The Storage Browser is a development tool that provides real-time visibility and
 ## Current Implementation Analysis
 
 ### What's Working Well
+
 - Storage key discovery and display
 - Storage type identification (MMKV, AsyncStorage, SecureStorage)
 - Required vs optional key categorization
@@ -97,6 +102,7 @@ The Storage Browser is a development tool that provides real-time visibility and
 ## Recommended Improvements
 
 ### Immediate Fixes Needed
+
 1. Update terminology to be storage-specific
 2. Remove duplicate stat displays
 3. Fix "Required Storage Keys" instead of "Required Modules"
@@ -104,6 +110,7 @@ The Storage Browser is a development tool that provides real-time visibility and
 5. Add proper storage-specific status indicators
 
 ### Feature Enhancements
+
 1. Add storage size indicators
 2. Implement search/filter for keys
 3. Show last modified timestamps
@@ -112,7 +119,9 @@ The Storage Browser is a development tool that provides real-time visibility and
 6. Add import functionality to complement export
 
 ### Game UI Theme Adaptation
+
 Following the cyberpunk/gaming aesthetic:
+
 - "STORAGE MATRIX" header with glitch effects
 - "DATA INTEGRITY" status indicators
 - "MEMORY BANKS" for storage types
@@ -124,11 +133,13 @@ Following the cyberpunk/gaming aesthetic:
 ## Technical Details
 
 ### Storage Types Supported
+
 - **AsyncStorage**: React Native's default key-value storage
 - **MMKV**: High-performance key-value storage (faster than AsyncStorage)
 - **SecureStorage**: Encrypted storage for sensitive data
 
 ### Data Flow
+
 1. Storage queries are monitored via React Query cache
 2. Keys are extracted and categorized
 3. Values are validated against requirements
@@ -136,10 +147,12 @@ Following the cyberpunk/gaming aesthetic:
 5. UI updates reflect current storage state
 
 ### Performance Considerations
+
 - Storage operations are asynchronous
 - Large values may impact UI performance
 - Refresh operations re-query all storage
 - Export operations serialize all data
 
 ## Summary
+
 The Storage Browser is essential for any React Native app that uses persistent storage. It provides visibility into what data is actually stored, validates it against requirements, and offers tools to manage storage during development and debugging. The current implementation works but needs UI/UX improvements to better communicate its purpose and capabilities with the new game-themed design system.

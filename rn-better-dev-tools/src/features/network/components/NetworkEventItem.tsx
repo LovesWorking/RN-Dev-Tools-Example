@@ -1,4 +1,9 @@
-import { EventListItem, MethodBadge, StatusIndicator, TimeDisplay } from "../../../shared/ui/components";
+import {
+  EventListItem,
+  MethodBadge,
+  StatusIndicator,
+  TimeDisplay,
+} from "../../../shared/ui/components";
 import type { NetworkEvent } from "../types";
 
 interface NetworkEventItemProps {
@@ -6,7 +11,9 @@ interface NetworkEventItemProps {
   onPress: (event: NetworkEvent) => void;
 }
 
-function getStatus(event: NetworkEvent): "success" | "error" | "warning" | "pending" {
+function getStatus(
+  event: NetworkEvent,
+): "success" | "error" | "warning" | "pending" {
   if (event.error) return "error";
   if (!event.status) return "pending";
   if (event.status >= 200 && event.status < 300) return "success";
@@ -35,7 +42,11 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
 
       <EventListItem.Metadata>
         {event.status && (
-          <StatusIndicator.Text status={status} label={String(event.status)} size="small" />
+          <StatusIndicator.Text
+            status={status}
+            label={String(event.status)}
+            size="small"
+          />
         )}
         {event.duration && (
           <TimeDisplay.Duration milliseconds={event.duration} />

@@ -24,7 +24,7 @@ export type UseFilterManagerReturn = FilterManagerState & FilterManagerActions;
  * @returns State and actions for filter management
  */
 export function useFilterManager(
-  initialFilters: Set<string> = new Set()
+  initialFilters: Set<string> = new Set(),
 ): UseFilterManagerReturn {
   const [filters, setFilters] = useState<Set<string>>(initialFilters);
   const [showAddInput, setShowAddInput] = useState(false);
@@ -69,7 +69,7 @@ export function useFilterManager(
     (filter: string) => {
       return filters.has(filter);
     },
-    [filters]
+    [filters],
   );
 
   return {

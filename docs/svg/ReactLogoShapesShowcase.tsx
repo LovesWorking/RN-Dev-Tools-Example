@@ -1,26 +1,26 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 
-const REACT_BLUE = '#61DAFB';
-const DARK_BG = '#20232a';
+const REACT_BLUE = "#61DAFB";
+const DARK_BG = "#20232a";
 
 export const ReactLogoShapesShowcase = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>React Logo Shape Components</Text>
-      
+
       {/* Row 1: Nucleus Variations */}
       <View style={styles.row}>
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Nucleus - Small</Text>
           <View style={styles.nucleusSmall} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Nucleus - Medium</Text>
           <View style={styles.nucleusMedium} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Nucleus - Large</Text>
           <View style={styles.nucleusLarge} />
@@ -33,12 +33,12 @@ export const ReactLogoShapesShowcase = () => {
           <Text style={styles.label}>Ellipse - Horizontal</Text>
           <View style={styles.ellipseHorizontal} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Ellipse - Vertical</Text>
           <View style={styles.ellipseVertical} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Ellipse - Diagonal</Text>
           <View style={styles.ellipseDiagonal} />
@@ -51,12 +51,12 @@ export const ReactLogoShapesShowcase = () => {
           <Text style={styles.label}>Orbit - Thin</Text>
           <View style={styles.orbitThin} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Orbit - Medium</Text>
           <View style={styles.orbitMedium} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Orbit - Thick</Text>
           <View style={styles.orbitThick} />
@@ -69,12 +69,12 @@ export const ReactLogoShapesShowcase = () => {
           <Text style={styles.label}>Orbit 0°</Text>
           <View style={[styles.orbitBase, styles.orbit0deg]} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Orbit 60°</Text>
           <View style={[styles.orbitBase, styles.orbit60deg]} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Orbit -60°</Text>
           <View style={[styles.orbitBase, styles.orbitMinus60deg]} />
@@ -87,12 +87,12 @@ export const ReactLogoShapesShowcase = () => {
           <Text style={styles.label}>Circle to Ellipse X</Text>
           <View style={styles.circleToEllipseX} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Circle to Ellipse Y</Text>
           <View style={styles.circleToEllipseY} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Perfect Circle Ring</Text>
           <View style={styles.perfectCircleRing} />
@@ -108,7 +108,7 @@ export const ReactLogoShapesShowcase = () => {
             <View style={[styles.orbitPreview, styles.orbitPreview2]} />
           </View>
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Three Orbits</Text>
           <View style={styles.previewContainer}>
@@ -117,7 +117,7 @@ export const ReactLogoShapesShowcase = () => {
             <View style={[styles.orbitPreview, styles.orbitPreview3]} />
           </View>
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>With Nucleus</Text>
           <View style={styles.previewContainer}>
@@ -135,12 +135,12 @@ export const ReactLogoShapesShowcase = () => {
           <Text style={styles.label}>Solid Ellipse</Text>
           <View style={styles.solidEllipse} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Dashed Border</Text>
           <View style={styles.dashedBorderEllipse} />
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>With Shadow</Text>
           <View style={styles.ellipseWithShadow} />
@@ -158,7 +158,7 @@ export const ReactLogoShapesShowcase = () => {
             <View style={styles.miniNucleus} />
           </View>
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Standard Logo</Text>
           <View style={styles.standardContainer}>
@@ -168,7 +168,7 @@ export const ReactLogoShapesShowcase = () => {
             <View style={styles.standardNucleus} />
           </View>
         </View>
-        
+
         <View style={styles.shapeBox}>
           <Text style={styles.label}>Large Logo</Text>
           <View style={styles.largeContainer}>
@@ -186,20 +186,20 @@ export const ReactLogoShapesShowcase = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
+    textAlign: "center",
+    color: "#333",
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 20,
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
   },
   shapeBox: {
     width: 110,
@@ -207,15 +207,15 @@ const styles = StyleSheet.create({
     backgroundColor: DARK_BG,
     borderRadius: 8,
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
-    color: 'white',
+    color: "white",
     fontSize: 10,
     marginBottom: 8,
-    textAlign: 'center',
-    position: 'absolute',
+    textAlign: "center",
+    position: "absolute",
     top: 5,
   },
 
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     backgroundColor: REACT_BLUE,
-    transform: [{ rotate: '45deg' }],
+    transform: [{ rotate: "45deg" }],
   },
 
   // Border-Only Orbits - Thinner, more lens-like
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1.5,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   orbitMedium: {
     width: 90,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   orbitThick: {
     width: 90,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 2.5,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 
   // Rotated Orbits - More stretched
@@ -293,16 +293,16 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   orbit0deg: {
-    transform: [{ rotate: '0deg' }],
+    transform: [{ rotate: "0deg" }],
   },
   orbit60deg: {
-    transform: [{ rotate: '60deg' }],
+    transform: [{ rotate: "60deg" }],
   },
   orbitMinus60deg: {
-    transform: [{ rotate: '-60deg' }],
+    transform: [{ rotate: "-60deg" }],
   },
 
   // Scale Experiments - Better lens proportions
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     borderRadius: 22.5,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     transform: [{ scaleX: 2 }, { scaleY: 0.5 }],
   },
   circleToEllipseY: {
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     transform: [{ scaleX: 1.8 }, { scaleY: 0.4 }],
   },
   perfectCircleRing: {
@@ -330,40 +330,40 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 
   // Preview Container
   previewContainer: {
     width: 80,
     height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   orbitPreview: {
-    position: 'absolute',
+    position: "absolute",
     width: 75,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   orbitPreview1: {
-    transform: [{ rotate: '0deg' }],
+    transform: [{ rotate: "0deg" }],
   },
   orbitPreview2: {
-    transform: [{ rotate: '60deg' }],
+    transform: [{ rotate: "60deg" }],
   },
   orbitPreview3: {
-    transform: [{ rotate: '-60deg' }],
+    transform: [{ rotate: "-60deg" }],
   },
   nucleusPreview: {
     width: 10,
     height: 10,
     borderRadius: 5,
     backgroundColor: REACT_BLUE,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 2,
   },
 
@@ -381,8 +381,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    borderStyle: 'dashed',
-    backgroundColor: 'transparent',
+    borderStyle: "dashed",
+    backgroundColor: "transparent",
   },
   ellipseWithShadow: {
     width: 80,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     shadowColor: REACT_BLUE,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
@@ -402,33 +402,33 @@ const styles = StyleSheet.create({
   miniContainer: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   miniOrbit: {
-    position: 'absolute',
+    position: "absolute",
     width: 38,
     height: 10,
     borderRadius: 5,
     borderWidth: 1.2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   miniOrbit1: {
-    transform: [{ rotate: '0deg' }],
+    transform: [{ rotate: "0deg" }],
   },
   miniOrbit2: {
-    transform: [{ rotate: '60deg' }],
+    transform: [{ rotate: "60deg" }],
   },
   miniOrbit3: {
-    transform: [{ rotate: '-60deg' }],
+    transform: [{ rotate: "-60deg" }],
   },
   miniNucleus: {
     width: 5,
     height: 5,
     borderRadius: 2.5,
     backgroundColor: REACT_BLUE,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 2,
   },
 
@@ -436,33 +436,33 @@ const styles = StyleSheet.create({
   standardContainer: {
     width: 60,
     height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   standardOrbit: {
-    position: 'absolute',
+    position: "absolute",
     width: 58,
     height: 16,
     borderRadius: 8,
     borderWidth: 1.8,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   standardOrbit1: {
-    transform: [{ rotate: '0deg' }],
+    transform: [{ rotate: "0deg" }],
   },
   standardOrbit2: {
-    transform: [{ rotate: '60deg' }],
+    transform: [{ rotate: "60deg" }],
   },
   standardOrbit3: {
-    transform: [{ rotate: '-60deg' }],
+    transform: [{ rotate: "-60deg" }],
   },
   standardNucleus: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: REACT_BLUE,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 2,
   },
 
@@ -470,33 +470,33 @@ const styles = StyleSheet.create({
   largeContainer: {
     width: 80,
     height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   largeOrbit: {
-    position: 'absolute',
+    position: "absolute",
     width: 78,
     height: 22,
     borderRadius: 11,
     borderWidth: 2.2,
     borderColor: REACT_BLUE,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   largeOrbit1: {
-    transform: [{ rotate: '0deg' }],
+    transform: [{ rotate: "0deg" }],
   },
   largeOrbit2: {
-    transform: [{ rotate: '60deg' }],
+    transform: [{ rotate: "60deg" }],
   },
   largeOrbit3: {
-    transform: [{ rotate: '-60deg' }],
+    transform: [{ rotate: "-60deg" }],
   },
   largeNucleus: {
     width: 11,
     height: 11,
     borderRadius: 5.5,
     backgroundColor: REACT_BLUE,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 2,
   },
 });

@@ -22,35 +22,42 @@ const GearV1 = ({ size = 48, color = "#059669" }: IconProps) => {
   const centerY = size / 2;
   return (
     <View style={{ width: size, height: size }}>
-      <View style={{
-        position: "absolute",
-        width: 17 * scale,
-        height: 17 * scale,
-        borderRadius: 8.5 * scale,
-        backgroundColor: color,
-        top: 3.5 * scale,
-        left: 3.5 * scale,
-      }} />
-      {[0, 60, 120].map((angle) => (
-        <View key={angle} style={{
+      <View
+        style={{
           position: "absolute",
-          width: 4 * scale,
-          height: 21 * scale,
+          width: 17 * scale,
+          height: 17 * scale,
+          borderRadius: 8.5 * scale,
           backgroundColor: color,
-          left: centerX - 2 * scale,
-          top: 1.5 * scale,
-          transform: [{ rotate: `${angle}deg` }],
-        }} />
+          top: 3.5 * scale,
+          left: 3.5 * scale,
+        }}
+      />
+      {[0, 60, 120].map((angle) => (
+        <View
+          key={angle}
+          style={{
+            position: "absolute",
+            width: 4 * scale,
+            height: 21 * scale,
+            backgroundColor: color,
+            left: centerX - 2 * scale,
+            top: 1.5 * scale,
+            transform: [{ rotate: `${angle}deg` }],
+          }}
+        />
       ))}
-      <View style={{
-        position: "absolute",
-        width: 5.5 * scale,
-        height: 5.5 * scale,
-        borderRadius: 2.75 * scale,
-        backgroundColor: gameUIColors.background,
-        top: centerY - 2.75 * scale,
-        left: centerX - 2.75 * scale,
-      }} />
+      <View
+        style={{
+          position: "absolute",
+          width: 5.5 * scale,
+          height: 5.5 * scale,
+          borderRadius: 2.75 * scale,
+          backgroundColor: gameUIColors.background,
+          top: centerY - 2.75 * scale,
+          left: centerX - 2.75 * scale,
+        }}
+      />
     </View>
   );
 };
@@ -60,20 +67,22 @@ const GearV2 = ({ size = 48, color = "#059669" }: IconProps) => {
   const scale = size / 24;
   const centerX = size / 2;
   const centerY = size / 2;
-  
+
   return (
     <View style={{ width: size, height: size }}>
       {/* Main gear circle */}
-      <View style={{
-        position: "absolute",
-        width: 16 * scale,
-        height: 16 * scale,
-        borderRadius: 8 * scale,
-        backgroundColor: color,
-        top: 4 * scale,
-        left: 4 * scale,
-      }} />
-      
+      <View
+        style={{
+          position: "absolute",
+          width: 16 * scale,
+          height: 16 * scale,
+          borderRadius: 8 * scale,
+          backgroundColor: color,
+          top: 4 * scale,
+          left: 4 * scale,
+        }}
+      />
+
       {/* Dots as teeth */}
       {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
         <View
@@ -93,22 +102,24 @@ const GearV2 = ({ size = 48, color = "#059669" }: IconProps) => {
           }}
         />
       ))}
-      
+
       {/* Center hole */}
-      <View style={{
-        position: "absolute",
-        width: 6 * scale,
-        height: 6 * scale,
-        borderRadius: 3 * scale,
-        backgroundColor: gameUIColors.background,
-        top: centerY - 3 * scale,
-        left: centerX - 3 * scale,
-      }} />
+      <View
+        style={{
+          position: "absolute",
+          width: 6 * scale,
+          height: 6 * scale,
+          borderRadius: 3 * scale,
+          backgroundColor: gameUIColors.background,
+          top: centerY - 3 * scale,
+          left: centerX - 3 * scale,
+        }}
+      />
     </View>
   );
 };
 
-// Version 3: Settings Gear - 8 teeth (from GearsIcon.tsx) 
+// Version 3: Settings Gear - 8 teeth (from GearsIcon.tsx)
 const GearV3 = ({ size = 48, color = "#059669" }: IconProps) => {
   const scale = size / 24;
   const centerX = size / 2;
@@ -117,15 +128,17 @@ const GearV3 = ({ size = 48, color = "#059669" }: IconProps) => {
   return (
     <View style={{ width: size, height: size }}>
       {/* Main gear circle */}
-      <View style={{
-        position: "absolute",
-        width: 16 * scale,
-        height: 16 * scale,
-        borderRadius: 8 * scale,
-        backgroundColor: color,
-        top: 4 * scale,
-        left: 4 * scale,
-      }} />
+      <View
+        style={{
+          position: "absolute",
+          width: 16 * scale,
+          height: 16 * scale,
+          borderRadius: 8 * scale,
+          backgroundColor: color,
+          top: 4 * scale,
+          left: 4 * scale,
+        }}
+      />
 
       {/* 8 gear teeth for settings icon */}
       {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
@@ -142,17 +155,19 @@ const GearV3 = ({ size = 48, color = "#059669" }: IconProps) => {
           }}
         />
       ))}
-      
+
       {/* Center hole */}
-      <View style={{
-        position: "absolute",
-        width: 6 * scale,
-        height: 6 * scale,
-        borderRadius: 3 * scale,
-        backgroundColor: gameUIColors.background,
-        top: centerY - 3 * scale,
-        left: centerX - 3 * scale,
-      }} />
+      <View
+        style={{
+          position: "absolute",
+          width: 6 * scale,
+          height: 6 * scale,
+          borderRadius: 3 * scale,
+          backgroundColor: gameUIColors.background,
+          top: centerY - 3 * scale,
+          left: centerX - 3 * scale,
+        }}
+      />
     </View>
   );
 };
@@ -162,7 +177,7 @@ export const GearIconComparison = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Gear Icon Variations</Text>
       <Text style={styles.subtitle}>Best 3 Designs</Text>
-      
+
       <View style={styles.grid}>
         <View style={styles.iconItem}>
           <View style={styles.iconBox}>
@@ -171,7 +186,7 @@ export const GearIconComparison = () => {
           <Text style={styles.iconLabel}>v1</Text>
           <Text style={styles.iconName}>Star 6 Spokes</Text>
         </View>
-        
+
         <View style={styles.iconItem}>
           <View style={styles.iconBox}>
             <GearV2 size={48} color={gameUIColors.primary} />
@@ -179,7 +194,7 @@ export const GearIconComparison = () => {
           <Text style={styles.iconLabel}>v2</Text>
           <Text style={styles.iconName}>Dotted Teeth</Text>
         </View>
-        
+
         <View style={styles.iconItem}>
           <View style={styles.iconBox}>
             <GearV3 size={48} color={gameUIColors.primary} />
@@ -188,7 +203,7 @@ export const GearIconComparison = () => {
           <Text style={styles.iconName}>Settings Gear</Text>
         </View>
       </View>
-      
+
       {/* Size Comparison */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Size Comparison (v3 - Settings)</Text>
@@ -211,7 +226,7 @@ export const GearIconComparison = () => {
           </View>
         </View>
       </View>
-      
+
       {/* Color Variations */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Color Variations (v3)</Text>

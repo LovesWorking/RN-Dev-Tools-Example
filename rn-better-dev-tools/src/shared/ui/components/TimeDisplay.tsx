@@ -25,7 +25,7 @@ export function TimeDisplay({
     const now = Date.now();
     const diff = now - date.getTime();
     const seconds = Math.floor(diff / 1000);
-    
+
     if (seconds < 60) return "just now";
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
@@ -55,7 +55,7 @@ export function TimeDisplay({
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     if (minutes < 60) {
-      return remainingSeconds > 0 
+      return remainingSeconds > 0
         ? `${minutes}m ${remainingSeconds}s`
         : `${minutes}m`;
     }
@@ -70,14 +70,15 @@ export function TimeDisplay({
     const now = Date.now();
     const diff = now - date.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
-    
+
     if (hours < 24) {
       return formatRelativeTime(date);
     }
-    return date.toLocaleDateString([], { 
-      month: "short", 
+    return date.toLocaleDateString([], {
+      month: "short",
       day: "numeric",
-      year: date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+      year:
+        date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
     });
   };
 
@@ -89,7 +90,7 @@ export function TimeDisplay({
       }
 
       const date = new Date(time);
-      
+
       switch (format) {
         case "relative":
           setDisplayTime(formatRelativeTime(date));
@@ -134,7 +135,10 @@ interface DurationProps {
   style?: TextStyle;
 }
 
-TimeDisplay.Duration = function Duration({ milliseconds, style }: DurationProps) {
+TimeDisplay.Duration = function Duration({
+  milliseconds,
+  style,
+}: DurationProps) {
   return <TimeDisplay time={milliseconds} format="duration" style={style} />;
 };
 
@@ -144,15 +148,15 @@ interface RelativeProps {
   style?: TextStyle;
 }
 
-TimeDisplay.Relative = function Relative({ 
-  time, 
+TimeDisplay.Relative = function Relative({
+  time,
   updateInterval = 60000,
-  style 
+  style,
 }: RelativeProps) {
   return (
-    <TimeDisplay 
-      time={time} 
-      format="relative" 
+    <TimeDisplay
+      time={time}
+      format="relative"
       updateInterval={updateInterval}
       style={style}
     />

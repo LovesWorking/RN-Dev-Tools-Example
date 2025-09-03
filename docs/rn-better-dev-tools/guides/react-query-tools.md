@@ -21,19 +21,22 @@ The React Query DevTools provide real-time visibility into your application's se
 
 The main view displays all queries in your application:
 
-[//]: # 'QueryBrowser'
+[//]: # "QueryBrowser"
+
 ```tsx
 // Queries are automatically tracked when using React Query
 const { data, error, isLoading } = useQuery({
-  queryKey: ['todos'],
-  queryFn: fetchTodos
-})
+  queryKey: ["todos"],
+  queryFn: fetchTodos,
+});
 
 // These appear in the dev tools automatically
 ```
-[//]: # 'QueryBrowser'
+
+[//]: # "QueryBrowser"
 
 Each query shows:
+
 - **Query key** - The unique identifier
 - **Status** - Success, error, pending, or stale
 - **Data preview** - First few characters of the response
@@ -53,12 +56,14 @@ Filter queries by status using the status chips:
 
 Use the search bar to find specific queries by key:
 
-[//]: # 'QuerySearch'
+[//]: # "QuerySearch"
+
 ```tsx
 // Search for queries containing "user"
 // Will match: ['user'], ['user', 123], ['posts', 'user']
 ```
-[//]: # 'QuerySearch'
+
+[//]: # "QuerySearch"
 
 ## Query Details
 
@@ -79,49 +84,57 @@ Available actions for each query:
 
 Force a query to refetch its data:
 
-[//]: # 'RefetchQuery'
+[//]: # "RefetchQuery"
+
 ```tsx
 // In your code
-queryClient.refetchQueries({ queryKey: ['todos'] })
+queryClient.refetchQueries({ queryKey: ["todos"] });
 
 // Or use the "Refetch" button in dev tools
 ```
-[//]: # 'RefetchQuery'
+
+[//]: # "RefetchQuery"
 
 #### Invalidate
 
 Mark a query as stale and optionally refetch:
 
-[//]: # 'InvalidateQuery'
+[//]: # "InvalidateQuery"
+
 ```tsx
 // In your code
-queryClient.invalidateQueries({ queryKey: ['todos'] })
+queryClient.invalidateQueries({ queryKey: ["todos"] });
 
 // Or use the "Invalidate" button in dev tools
 ```
-[//]: # 'InvalidateQuery'
+
+[//]: # "InvalidateQuery"
 
 #### Reset
 
 Reset query to its initial state:
 
-[//]: # 'ResetQuery'
+[//]: # "ResetQuery"
+
 ```tsx
 // Clears data and error state
-queryClient.resetQueries({ queryKey: ['todos'] })
+queryClient.resetQueries({ queryKey: ["todos"] });
 ```
-[//]: # 'ResetQuery'
+
+[//]: # "ResetQuery"
 
 #### Remove
 
 Remove a query from the cache entirely:
 
-[//]: # 'RemoveQuery'
+[//]: # "RemoveQuery"
+
 ```tsx
 // Completely removes from cache
-queryClient.removeQueries({ queryKey: ['todos'] })
+queryClient.removeQueries({ queryKey: ["todos"] });
 ```
-[//]: # 'RemoveQuery'
+
+[//]: # "RemoveQuery"
 
 ## Data Editing
 
@@ -134,12 +147,14 @@ Edit query data directly in the dev tools:
 3. Modify the JSON data
 4. Tap **Save** to update the cache
 
-[//]: # 'DataEditing'
+[//]: # "DataEditing"
+
 ```tsx
 // Changes are immediately reflected in your app
 // Useful for testing different data states
 ```
-[//]: # 'DataEditing'
+
+[//]: # "DataEditing"
 
 ### Testing Error States
 
@@ -155,22 +170,25 @@ Simulate error conditions:
 
 Switch to the **Mutations** tab to view all mutations:
 
-[//]: # 'MutationBrowser'
+[//]: # "MutationBrowser"
+
 ```tsx
 const mutation = useMutation({
   mutationFn: updateTodo,
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['todos'] })
-  }
-})
+    queryClient.invalidateQueries({ queryKey: ["todos"] });
+  },
+});
 
 // Track mutation status in dev tools
 ```
-[//]: # 'MutationBrowser'
+
+[//]: # "MutationBrowser"
 
 ### Mutation Details
 
 Each mutation displays:
+
 - **Mutation ID** - Unique identifier
 - **Status** - Idle, pending, success, or error
 - **Variables** - Input data sent to the mutation
@@ -189,23 +207,27 @@ Simulate network conditions using the WiFi toggle:
 ### Offline Mode
 
 Toggle WiFi off to:
+
 - Test offline functionality
 - Verify cached data usage
 - Check error states
 - Test retry logic
 
-[//]: # 'OfflineMode'
+[//]: # "OfflineMode"
+
 ```tsx
 // When WiFi is toggled off:
 // - New queries will fail
 // - Cached data is still available
 // - Mutations queue for retry
 ```
-[//]: # 'OfflineMode'
+
+[//]: # "OfflineMode"
 
 ### Online Recovery
 
 Toggle WiFi back on to:
+
 - Trigger queued mutations
 - Refetch stale queries
 - Test reconnection logic
@@ -224,18 +246,21 @@ Remove all cached queries at once:
 
 React Query data stored in AsyncStorage/MMKV is accessible via:
 
-[//]: # 'StorageIntegration'
+[//]: # "StorageIntegration"
+
 ```tsx
 // Query storage keys in the Storage browser
 // Keys like: ['#storage', 'async', 'react-query-cache']
 ```
-[//]: # 'StorageIntegration'
+
+[//]: # "StorageIntegration"
 
 ## Performance Monitoring
 
 ### Query Statistics
 
 View aggregated statistics:
+
 - **Total queries** - Number of unique query keys
 - **Active queries** - Currently subscribed queries
 - **Stale queries** - Queries needing refresh
@@ -244,6 +269,7 @@ View aggregated statistics:
 ### Query Timing
 
 Each query shows timing information:
+
 - **Fetch duration** - Time to complete request
 - **Last fetch** - When data was last updated
 - **Stale time** - When query becomes stale
@@ -255,37 +281,41 @@ Each query shows timing information:
 
 View query dependencies and relationships:
 
-[//]: # 'QueryComposition'
+[//]: # "QueryComposition"
+
 ```tsx
 // Dependent queries show their relationships
 const { data: user } = useQuery({
-  queryKey: ['user', userId],
-  queryFn: fetchUser
-})
+  queryKey: ["user", userId],
+  queryFn: fetchUser,
+});
 
 const { data: posts } = useQuery({
-  queryKey: ['posts', user?.id],
+  queryKey: ["posts", user?.id],
   queryFn: fetchUserPosts,
-  enabled: !!user?.id // Shows as dependent in dev tools
-})
+  enabled: !!user?.id, // Shows as dependent in dev tools
+});
 ```
-[//]: # 'QueryComposition'
+
+[//]: # "QueryComposition"
 
 ### Optimistic Updates
 
 Monitor optimistic updates in real-time:
 
-[//]: # 'OptimisticUpdates'
+[//]: # "OptimisticUpdates"
+
 ```tsx
 useMutation({
   mutationFn: updateTodo,
   onMutate: async (newTodo) => {
     // Optimistic update visible in dev tools
-    queryClient.setQueryData(['todos'], old => [...old, newTodo])
-  }
-})
+    queryClient.setQueryData(["todos"], (old) => [...old, newTodo]);
+  },
+});
 ```
-[//]: # 'OptimisticUpdates'
+
+[//]: # "OptimisticUpdates"
 
 ## Tips and Best Practices
 
@@ -293,17 +323,18 @@ useMutation({
 
 Use consistent query key patterns for easier debugging:
 
-[//]: # 'QueryKeyPatterns'
+[//]: # "QueryKeyPatterns"
+
 ```tsx
 // Good: Hierarchical and descriptive
-['todos']
-['todos', 'list']
-['todos', 'detail', todoId]
-['user', userId, 'posts']
+["todos"][("todos", "list")][("todos", "detail", todoId)][
+  ("user", userId, "posts")
+];
 
 // Visible structure in dev tools makes debugging easier
 ```
-[//]: # 'QueryKeyPatterns'
+
+[//]: # "QueryKeyPatterns"
 
 ### Development Workflow
 
@@ -316,16 +347,19 @@ Use consistent query key patterns for easier debugging:
 ### Debugging Common Issues
 
 **Queries not updating:**
+
 - Check if query is stale
 - Verify invalidation is triggered
 - Test with manual refetch
 
 **Duplicate queries:**
+
 - Look for different query keys
 - Check component re-renders
 - Verify query key stability
 
 **Performance issues:**
+
 - Monitor active query count
 - Check for unnecessary refetches
 - Review stale/cache time settings

@@ -45,11 +45,11 @@ export function PokemonCardSwipeable({
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
   const scale = useRef(
-    new Animated.Value(index === 0 ? 1 : 1 - index * 0.05)
+    new Animated.Value(index === 0 ? 1 : 1 - index * 0.05),
   ).current;
   const gestureRotation = useRef(new Animated.Value(0)).current;
   const opacity = useRef(
-    new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0)
+    new Animated.Value(index === 0 ? 1 : index < 3 ? 0.8 : 0),
   ).current;
 
   useEffect(() => {
@@ -206,7 +206,15 @@ export function PokemonCardSwipeable({
           }
         },
       }),
-    [isActive, index, onSwipe, gestureRotation, opacity, translateX, translateY]
+    [
+      isActive,
+      index,
+      onSwipe,
+      gestureRotation,
+      opacity,
+      translateX,
+      translateY,
+    ],
   );
 
   // Create animated styles using React Native Animated
@@ -299,7 +307,7 @@ export function PokemonCardSwipeable({
 
 function HolographicShimmer({ shimmerAnim }: { shimmerAnim: any }) {
   if (!shimmerAnim) return null;
-  
+
   return (
     <Animated.View
       style={[
@@ -307,10 +315,11 @@ function HolographicShimmer({ shimmerAnim }: { shimmerAnim: any }) {
         {
           transform: [
             {
-              translateX: shimmerAnim?.interpolate?.({
-                inputRange: [0, 1],
-                outputRange: [-width * 1.5, width * 1.5],
-              }) || 0,
+              translateX:
+                shimmerAnim?.interpolate?.({
+                  inputRange: [0, 1],
+                  outputRange: [-width * 1.5, width * 1.5],
+                }) || 0,
             },
             { rotate: "25deg" },
             { scaleY: 3 },
@@ -344,7 +353,7 @@ function HolographicShimmer({ shimmerAnim }: { shimmerAnim: any }) {
 
 function PrismaticLayer({ shimmerAnim }: { shimmerAnim: any }) {
   if (!shimmerAnim) return null;
-  
+
   return (
     <Animated.View
       style={[
@@ -352,18 +361,20 @@ function PrismaticLayer({ shimmerAnim }: { shimmerAnim: any }) {
         {
           transform: [
             {
-              translateX: shimmerAnim?.interpolate?.({
-                inputRange: [0, 1],
-                outputRange: [-width * 1.2, width * 1.2],
-              }) || 0,
+              translateX:
+                shimmerAnim?.interpolate?.({
+                  inputRange: [0, 1],
+                  outputRange: [-width * 1.2, width * 1.2],
+                }) || 0,
             },
             { rotate: "-15deg" },
             { scaleY: 2.5 },
           ],
-          opacity: shimmerAnim?.interpolate?.({
-            inputRange: [0, 0.5, 1],
-            outputRange: [0, 0.3, 0],
-          }) || 0,
+          opacity:
+            shimmerAnim?.interpolate?.({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0, 0.3, 0],
+            }) || 0,
         },
       ]}
       pointerEvents="none"
@@ -396,11 +407,15 @@ function CardHeader({ data }: { data: any | undefined }) {
   if (!data) return null;
   return (
     <View style={styles.cardHeader}>
-      <Text style={styles.pokemonNameHeader}>{data?.name?.toUpperCase() || "UNKNOWN"}</Text>
+      <Text style={styles.pokemonNameHeader}>
+        {data?.name?.toUpperCase() || "UNKNOWN"}
+      </Text>
       <View style={styles.hpContainer}>
         <Text style={styles.hpText}>HP</Text>
         <Text style={styles.hpValue}>
-          {Array.isArray(data?.stats) ? data.stats.find((s: any) => s?.name === "hp")?.value || 100 : 100}
+          {Array.isArray(data?.stats)
+            ? data.stats.find((s: any) => s?.name === "hp")?.value || 100
+            : 100}
         </Text>
       </View>
     </View>
@@ -410,7 +425,7 @@ function CardHeader({ data }: { data: any | undefined }) {
 function ArtFrame({ mainType, data, cardGlowAnim }: any) {
   if (!data) return null;
   const safeMainType = mainType || "normal";
-  
+
   return (
     <View style={styles.artFrame}>
       <LinearGradient
@@ -430,10 +445,11 @@ function ArtFrame({ mainType, data, cardGlowAnim }: any) {
               {
                 transform: [
                   {
-                    scale: cardGlowAnim?.interpolate?.({
-                      inputRange: [0, 1],
-                      outputRange: [1, 1.08],
-                    }) || 1,
+                    scale:
+                      cardGlowAnim?.interpolate?.({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.08],
+                      }) || 1,
                   },
                 ],
               },
@@ -468,20 +484,24 @@ function TypeBadges({ types }: { types: string[] | undefined }) {
       </View>
     );
   }
-  
+
   return (
     <View style={styles.typesContainer}>
-      {types.filter(type => type).map((type: string) => (
-        <LinearGradient
-          key={type}
-          colors={[getTypeColor(type), `${getTypeColor(type)}CC`]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.typeBadge}
-        >
-          <Text style={styles.typeText}>{type?.toUpperCase() || "UNKNOWN"}</Text>
-        </LinearGradient>
-      ))}
+      {types
+        .filter((type) => type)
+        .map((type: string) => (
+          <LinearGradient
+            key={type}
+            colors={[getTypeColor(type), `${getTypeColor(type)}CC`]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.typeBadge}
+          >
+            <Text style={styles.typeText}>
+              {type?.toUpperCase() || "UNKNOWN"}
+            </Text>
+          </LinearGradient>
+        ))}
     </View>
   );
 }
@@ -489,10 +509,10 @@ function TypeBadges({ types }: { types: string[] | undefined }) {
 function AttackMoves({ mainType, data }: any) {
   if (!data) return null;
   const safeMainType = mainType || "normal";
-  const attackValue = Array.isArray(data?.stats) 
-    ? data.stats.find((s: any) => s?.name === "attack")?.value || 50 
+  const attackValue = Array.isArray(data?.stats)
+    ? data.stats.find((s: any) => s?.name === "attack")?.value || 50
     : 50;
-  
+
   return (
     <View style={styles.movesContainer}>
       <View style={styles.moveRow}>
@@ -533,7 +553,7 @@ function BottomStats({ data, mainType }: any) {
   if (!data) return null;
   const safeMainType = mainType || "normal";
   const secondType = data?.types?.[1] || safeMainType;
-  
+
   return (
     <View style={styles.bottomStats}>
       <View style={styles.weaknessResistance}>
@@ -560,7 +580,7 @@ function BottomStats({ data, mainType }: any) {
 function CardSetInfo({ data }: { data: any }) {
   if (!data) return null;
   const pokemonId = data?.id || "???";
-  
+
   return (
     <View style={styles.cardSetInfo}>
       <Text style={styles.cardSetText}>1st Edition</Text>
@@ -572,7 +592,7 @@ function CardSetInfo({ data }: { data: any }) {
 
 function SwipeHints({ shimmerAnim }: { shimmerAnim: any }) {
   if (!shimmerAnim) return null;
-  
+
   return (
     <>
       <Animated.View
@@ -580,10 +600,11 @@ function SwipeHints({ shimmerAnim }: { shimmerAnim: any }) {
           styles.swipeHint,
           styles.swipeHintLeft,
           {
-            opacity: shimmerAnim?.interpolate?.({
-              inputRange: [0, 0.5, 1],
-              outputRange: [0, 0.4, 0],
-            }) || 0,
+            opacity:
+              shimmerAnim?.interpolate?.({
+                inputRange: [0, 0.5, 1],
+                outputRange: [0, 0.4, 0],
+              }) || 0,
           },
         ]}
       >
@@ -595,10 +616,11 @@ function SwipeHints({ shimmerAnim }: { shimmerAnim: any }) {
           styles.swipeHint,
           styles.swipeHintRight,
           {
-            opacity: shimmerAnim?.interpolate?.({
-              inputRange: [0, 0.5, 1],
-              outputRange: [0, 0.4, 0],
-            }) || 0,
+            opacity:
+              shimmerAnim?.interpolate?.({
+                inputRange: [0, 0.5, 1],
+                outputRange: [0, 0.4, 0],
+              }) || 0,
           },
         ]}
       >

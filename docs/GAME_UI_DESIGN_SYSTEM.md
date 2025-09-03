@@ -1,12 +1,15 @@
 # 🎮 Game UI Design System
 
 ## Overview
+
 This design system creates interfaces that look like AAA game menus, perfect for developer tools that want to feel powerful and engaging.
 
 ## 🚀 Latest Updates
 
 ### React Query Integration
+
 Successfully refactored React Query components to use the Game UI design system:
+
 - Created `GameUIQueryStats` component using `GameUICompactStats`
 - Updated `QueryBrowser` and `MutationsList` with Game UI colors
 - Styled `QueryRow` and `MutationButton` with consistent theming
@@ -14,7 +17,9 @@ Successfully refactored React Query components to use the Game UI design system:
 - Created `GameUIReactQueryBrowser` as comprehensive example
 
 ### Shared Component Library
+
 Established reusable Game UI components:
+
 - `GameUICollapsibleSection` - Expandable sections with icons
 - `GameUIStatusHeader` - System status with alert states
 - `GameUICompactStats` - Flexible stats card displays
@@ -25,11 +30,13 @@ Established reusable Game UI components:
 ## Core Design Principles
 
 ### 1. **Dark Sci-Fi Aesthetic**
+
 - **Background**: Near-black (#0A0A0F) with subtle grid overlays
 - **Accent Colors**: Neon cyan (#00D4FF), magenta (#FF00FF), lime (#00FF88)
 - **Glass Effects**: Semi-transparent panels with blur (rgba(10, 10, 20, 0.98))
 
 ### 2. **Typography**
+
 - **Font**: Monospace for all text
 - **Headers**: Bold, uppercase, wide letter-spacing (3-4px)
 - **Labels**: Small (8-10px), muted colors (#888, #AAA)
@@ -38,6 +45,7 @@ Established reusable Game UI components:
 ### 3. **Layout Structure**
 
 #### HUD Elements
+
 ```
 Top HUD:    [Status] --- MAIN TITLE --- [Info]
             Positioned 60px from top (safe area)
@@ -50,6 +58,7 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
 ```
 
 #### Main Content Area
+
 - Centered card-based layout
 - 15-20px padding
 - 10-12px gap between items
@@ -57,6 +66,7 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
 ### 4. **Interactive Elements**
 
 #### Menu Cards
+
 ```tsx
 <Card>
   [Icon] | Title        | Level/Status
@@ -64,12 +74,14 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
          | Stats        | >
 </Card>
 ```
+
 - Rounded borders (12px radius)
 - Subtle glow on hover/press
 - Color-coded by function
 - Stats displayed inline
 
 #### Status Badges
+
 - Small rounded containers
 - Pulsing dots for live status
 - Color indicates state (green=good, red=warning)
@@ -77,12 +89,14 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
 ### 5. **Animation Patterns**
 
 #### Entrance Sequence (Staggered)
+
 1. Backdrop fade (300ms)
 2. Main panel scale up with spring
 3. HUD elements slide in (200ms delay)
 4. Menu items stagger in (80ms between)
 
 #### Minimal Animation Philosophy
+
 - **Avoid excessive animations** - They impact performance
 - **Use animations only for state changes** - Not continuous loops
 - **Prefer React Native Reanimated** - Better performance than Animated API
@@ -90,6 +104,7 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
 - **Remove continuous effects** like scanning lines and glitches for production
 
 #### When to Animate
+
 - State transitions (expanded/collapsed)
 - Initial load (FadeIn with duration 200-300ms)
 - Error states (single pulse, not continuous)
@@ -100,29 +115,29 @@ Bottom HUD: [Stat 1] [Stat 2] [Stat 3]
 ```javascript
 const gameColors = {
   // Primary UI
-  background: '#0A0A0F',
-  panel: 'rgba(10, 10, 20, 0.98)',
-  border: 'rgba(0, 212, 255, 0.3)',
-  
+  background: "#0A0A0F",
+  panel: "rgba(10, 10, 20, 0.98)",
+  border: "rgba(0, 212, 255, 0.3)",
+
   // Status Colors (Consistent Usage)
-  success: '#00FF88',   // Valid, working, good
-  warning: '#FFD700',   // Issues, attention needed
-  error: '#FF4444',     // Critical failures only
-  info: '#00D4FF',      // Informational, neutral
-  critical: '#FF00FF',  // System-critical states
-  optional: '#9D4EDD',  // Optional features
-  
+  success: "#00FF88", // Valid, working, good
+  warning: "#FFD700", // Issues, attention needed
+  error: "#FF4444", // Critical failures only
+  info: "#00D4FF", // Informational, neutral
+  critical: "#FF00FF", // System-critical states
+  optional: "#9D4EDD", // Optional features
+
   // Tool-Specific
-  query: '#00D4FF',    // Cyan
-  env: '#00FF88',      // Green
-  debug: '#FF4444',    // Red
-  storage: '#FFD700',  // Gold
-  network: '#9D4EDD',  // Purple
-  
+  query: "#00D4FF", // Cyan
+  env: "#00FF88", // Green
+  debug: "#FF4444", // Red
+  storage: "#FFD700", // Gold
+  network: "#9D4EDD", // Purple
+
   // Text
-  primary: '#FFFFFF',
-  secondary: '#AAA',
-  muted: '#666',
+  primary: "#FFFFFF",
+  secondary: "#AAA",
+  muted: "#666",
 };
 
 // Color Usage Guidelines:
@@ -135,6 +150,7 @@ const gameColors = {
 ### 7. **Visual Effects**
 
 #### Glow/Shadow
+
 ```javascript
 shadowColor: colorValue,
 shadowOffset: { width: 0, height: 0 },
@@ -143,6 +159,7 @@ shadowRadius: 20,
 ```
 
 #### Text Shadow (for headers)
+
 ```javascript
 textShadowColor: colorValue,
 textShadowOffset: { width: 0, height: 0 },
@@ -152,6 +169,7 @@ textShadowRadius: 10,
 ### 8. **Developer Humor Elements**
 
 Replace standard labels with dev culture references:
+
 - CPU → BUGS (how many you're tracking)
 - Memory → COFFEE (fuel level)
 - Network → SANITY (remaining patience)
@@ -160,6 +178,7 @@ Replace standard labels with dev culture references:
 ### 9. **Reusable Component Patterns**
 
 #### Collapsible Sections
+
 Create reusable components for consistent layouts:
 
 ```tsx
@@ -190,8 +209,12 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         <View style={styles.sectionHeaderLeft}>
           <Icon size={14} color={iconColor} />
           <Text style={styles.sectionTitle}>{title}</Text>
-          <View style={[styles.sectionBadge, { backgroundColor: iconColor + "20" }]}>
-            <Text style={[styles.sectionCount, { color: iconColor }]}>{count}</Text>
+          <View
+            style={[styles.sectionBadge, { backgroundColor: iconColor + "20" }]}
+          >
+            <Text style={[styles.sectionCount, { color: iconColor }]}>
+              {count}
+            </Text>
           </View>
         </View>
         {expanded ? (
@@ -202,11 +225,9 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       </View>
       <Text style={styles.sectionSubtitle}>{subtitle}</Text>
     </TouchableOpacity>
-    
+
     {expanded && (
-      <Animated.View entering={FadeIn.duration(200)}>
-        {children}
-      </Animated.View>
+      <Animated.View entering={FadeIn.duration(200)}>{children}</Animated.View>
     )}
   </View>
 );
@@ -221,21 +242,21 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
     <ScanlineEffect />
     <GridOverlay />
   </Backdrop>
-  
+
   {/* HUD Layer */}
   <HUDTop>
     <Title />
     <Status />
   </HUDTop>
-  
+
   <HUDSide>
     <StatusBadges />
   </HUDSide>
-  
+
   <HUDBottom>
     <MiniStats />
   </HUDBottom>
-  
+
   {/* Main Interface */}
   <MainPanel>
     <Header>
@@ -243,9 +264,9 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       <MenuTitle />
       <Time />
     </Header>
-    
+
     <Content>
-      {items.map(item => (
+      {items.map((item) => (
         <MenuItem>
           <Icon />
           <Info>
@@ -261,7 +282,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         </MenuItem>
       ))}
     </Content>
-    
+
     <Footer>
       <SessionInfo />
       <ProgressDots />
@@ -274,7 +295,9 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 ### 11. **React Query Patterns**
 
 #### Query Stats Display
+
 Use `GameUIQueryStats` to show query/mutation statistics:
+
 ```tsx
 <GameUIQueryStats
   type="queries" // or "mutations"
@@ -283,7 +306,7 @@ Use `GameUIQueryStats` to show query/mutation statistics:
     stale: 2,
     fetching: 1,
     paused: 0,
-    inactive: 3
+    inactive: 3,
   }}
   activeFilter={filter}
   onFilterChange={setFilter}
@@ -291,7 +314,9 @@ Use `GameUIQueryStats` to show query/mutation statistics:
 ```
 
 #### Query Browser Styling
+
 Apply Game UI colors to query browsers:
+
 ```tsx
 const styles = StyleSheet.create({
   queryRow: {
@@ -304,11 +329,12 @@ const styles = StyleSheet.create({
   },
   statusDot: {
     backgroundColor: gameUIColors.success, // Based on status
-  }
+  },
 });
 ```
 
 #### Query Details Component
+
 ```tsx
 <GameUIQueryDetails
   query={selectedQuery}
@@ -364,30 +390,30 @@ const GameButton = ({ title, level, onPress }) => (
 // Styles
 const styles = StyleSheet.create({
   gameButton: {
-    backgroundColor: 'rgba(10, 10, 20, 0.98)',
+    backgroundColor: "rgba(10, 10, 20, 0.98)",
     borderWidth: 1,
-    borderColor: 'rgba(0, 212, 255, 0.3)',
+    borderColor: "rgba(0, 212, 255, 0.3)",
     borderRadius: 12,
     padding: 15,
-    shadowColor: '#00D4FF',
+    shadowColor: "#00D4FF",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
   },
   buttonTitle: {
-    color: '#00D4FF',
+    color: "#00D4FF",
     fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'monospace',
+    fontWeight: "bold",
+    fontFamily: "monospace",
     letterSpacing: 2,
-    textShadowColor: '#00D4FF',
+    textShadowColor: "#00D4FF",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },
   buttonLevel: {
-    color: '#FFD700',
+    color: "#FFD700",
     fontSize: 11,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
     marginTop: 4,
   },
 });
@@ -396,18 +422,21 @@ const styles = StyleSheet.create({
 ## Key Implementation Learnings
 
 ### Component Composition
+
 - **Extract reusable components** for consistent UI patterns
 - **Use composition over configuration** - Multiple specialized components instead of one complex component
 - **Pass stable props** to avoid unnecessary re-renders
 - **Create wrapper components** for common layouts (CollapsibleSection, etc.)
 
 ### Color Consistency
+
 - **Avoid red for non-critical issues** - Users find it alarming
 - **Use warning colors (yellow/orange)** for issues needing attention
 - **Keep primary text white** for better readability
 - **Use color accents sparingly** - Only for emphasis
 
 ### Compact Stats Design
+
 - **Reduce card padding** from 12px to 8px
 - **Use horizontal layouts** for stat cards
 - **Smaller font sizes** (10px labels, 16px numbers)
@@ -415,12 +444,14 @@ const styles = StyleSheet.create({
 - **Group related stats** in single cards
 
 ### Modal Headers
+
 - **Professional format**: Icon + Title + Subtitle
 - **Consistent with other modals** (StorageModal pattern)
 - **Left padding** to avoid edge proximity
 - **Subtle icon backgrounds** for visual hierarchy
 
 ### Performance Optimizations
+
 - **Use React Native Reanimated** instead of Animated API
 - **Avoid continuous animations** - Only animate state changes
 - **Keep animations under 300ms** for snappy feel
@@ -443,7 +474,7 @@ const styles = StyleSheet.create({
 ✅ Professional yet engaging  
 ✅ Responsive to all screen sizes  
 ✅ Compact, information-dense layouts  
-✅ Maximum use of screen real estate  
+✅ Maximum use of screen real estate
 
 When someone opens a UI built with this system, they should immediately think: **"This dev tool feels as polished as a AAA game interface!"**
 

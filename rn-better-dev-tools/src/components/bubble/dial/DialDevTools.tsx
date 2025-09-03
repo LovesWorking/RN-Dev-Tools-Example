@@ -71,7 +71,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
   const { settings: hookSettings, refreshSettings } = useDevToolsSettings();
   // Initialize with external settings if provided, otherwise use hook settings
   const [localSettings, setLocalSettings] = React.useState(
-    externalSettings || hookSettings
+    externalSettings || hookSettings,
   );
 
   // Always use localSettings (which can be updated by the modal)
@@ -222,7 +222,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         break;
     }
 
-
     // Return empty spot for disabled tools
     if (!isEnabled) {
       return {
@@ -235,7 +234,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
 
     return icon;
   });
-
 
   // Initialize animations on mount
   useEffect(() => {
@@ -327,7 +325,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
-        ])
+        ]),
       );
       pulseAnimationRef.current.start();
     };
@@ -349,7 +347,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Gentle breathing effect for center button
@@ -367,7 +365,7 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Circuit traces fade in

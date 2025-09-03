@@ -80,11 +80,11 @@ export const ReactQueryShowcase: React.FC = () => {
       <View style={styles.notesSection}>
         <Text style={styles.notesTitle}>📝 IMPLEMENTATION NOTES</Text>
         <Text style={styles.notesText}>
-          • Hexagon: 3 rectangles at 0°, 60°, -60° overlapping{'\n'}
-          • Orbital lines: Views with borderRadius for capsule shape{'\n'}
-          • Lines positioned at same angles as hexagon sides{'\n'}
-          • Circuit background from reusable component{'\n'}
-          • No SVG dependencies - pure React Native Views
+          • Hexagon: 3 rectangles at 0°, 60°, -60° overlapping{"\n"}• Orbital
+          lines: Views with borderRadius for capsule shape{"\n"}• Lines
+          positioned at same angles as hexagon sides{"\n"}• Circuit background
+          from reusable component{"\n"}• No SVG dependencies - pure React Native
+          Views
         </Text>
       </View>
     </ScrollView>

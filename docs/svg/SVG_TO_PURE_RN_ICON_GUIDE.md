@@ -6,15 +6,15 @@ This guide demonstrates how to convert SVG icons (like those in icons.ts) to pur
 
 ## 🎯 Quick Reference
 
-| SVG Element | Convertible | Pure RN Solution |
-|------------|-------------|------------------|
-| Circle | ✅ Yes | View with borderRadius |
-| Rect | ✅ Yes | View with backgroundColor |
-| Line | ✅ Yes | Rotated View |
-| Path (simple) | ⚠️ Partial | Multiple Views |
-| Path (curves) | ❌ No | Not possible |
-| Polyline | ⚠️ Partial | Multiple Lines |
-| Polygon | ⚠️ Limited | CSS triangles only |
+| SVG Element   | Convertible | Pure RN Solution          |
+| ------------- | ----------- | ------------------------- |
+| Circle        | ✅ Yes      | View with borderRadius    |
+| Rect          | ✅ Yes      | View with backgroundColor |
+| Line          | ✅ Yes      | Rotated View              |
+| Path (simple) | ⚠️ Partial  | Multiple Views            |
+| Path (curves) | ❌ No       | Not possible              |
+| Polyline      | ⚠️ Partial  | Multiple Lines            |
+| Polygon       | ⚠️ Limited  | CSS triangles only        |
 
 ---
 
@@ -23,18 +23,27 @@ This guide demonstrates how to convert SVG icons (like those in icons.ts) to pur
 ### 1. Circle → View with borderRadius
 
 #### SVG (from AlertCircleIcon)
+
 ```javascript
 <Circle cx="12" cy="12" r="10" />
 ```
 
 #### Pure React Native
+
 ```javascript
-const PureCircle = ({ cx, cy, r, stroke, strokeWidth = 0, fill = 'transparent' }) => {
+const PureCircle = ({
+  cx,
+  cy,
+  r,
+  stroke,
+  strokeWidth = 0,
+  fill = "transparent",
+}) => {
   const diameter = r * 2;
   return (
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: cx - r - strokeWidth / 2,
         top: cy - r - strokeWidth / 2,
         width: diameter,
@@ -54,16 +63,27 @@ const PureCircle = ({ cx, cy, r, stroke, strokeWidth = 0, fill = 'transparent' }
 ### 2. Rect → View
 
 #### SVG (from PauseIcon)
+
 ```javascript
 <Rect x="14" y="3" width="5" height="18" rx="1" />
 ```
 
 #### Pure React Native
+
 ```javascript
-const PureRect = ({ x, y, width, height, rx = 0, stroke, strokeWidth = 0, fill = 'transparent' }) => (
+const PureRect = ({
+  x,
+  y,
+  width,
+  height,
+  rx = 0,
+  stroke,
+  strokeWidth = 0,
+  fill = "transparent",
+}) => (
   <View
     style={{
-      position: 'absolute',
+      position: "absolute",
       left: x,
       top: y,
       width,
@@ -82,27 +102,29 @@ const PureRect = ({ x, y, width, height, rx = 0, stroke, strokeWidth = 0, fill =
 ### 3. Line → Rotated View
 
 #### SVG (from AlertCircleIcon)
+
 ```javascript
 <Line x1="12" y1="8" x2="12" y2="12" />
 ```
 
 #### Pure React Native
+
 ```javascript
 const PureLine = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }) => {
   const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-  
+
   return (
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: x1,
         top: y1 - strokeWidth / 2,
         width: length,
         height: strokeWidth,
         backgroundColor: stroke,
         transform: [{ rotate: `${angle}deg` }],
-        transformOrigin: 'left center',
+        transformOrigin: "left center",
       }}
     />
   );
@@ -116,20 +138,36 @@ const PureLine = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }) => {
 #### Simple Path (Move + Line commands only)
 
 ##### SVG (from CheckIcon)
+
 ```javascript
 <Path d="M20 6 9 17l-5-5" />
 ```
 
 ##### Pure React Native
+
 ```javascript
 // Parse simple path: M20 6 L9 17 L4 12
-const CheckIconPure = ({ size = 24, color = 'black', strokeWidth = 2 }) => {
+const CheckIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
   return (
     <View style={{ width: size, height: size }}>
       {/* Line from (20,6) to (9,17) */}
-      <PureLine x1={20} y1={6} x2={9} y2={17} stroke={color} strokeWidth={strokeWidth} />
+      <PureLine
+        x1={20}
+        y1={6}
+        x2={9}
+        y2={17}
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
       {/* Line from (9,17) to (4,12) */}
-      <PureLine x1={9} y1={17} x2={4} y2={12} stroke={color} strokeWidth={strokeWidth} />
+      <PureLine
+        x1={9}
+        y1={17}
+        x2={4}
+        y2={12}
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
     </View>
   );
 };
@@ -138,11 +176,13 @@ const CheckIconPure = ({ size = 24, color = 'black', strokeWidth = 2 }) => {
 #### Complex Path (with curves) - NOT CONVERTIBLE ❌
 
 ##### SVG (from ActivityIcon)
+
 ```javascript
 <Path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
 ```
 
 ##### Pure React Native
+
 ```javascript
 // ❌ Contains curves and complex paths - NOT POSSIBLE
 // Workaround: Pre-render as PNG or use simplified version
@@ -153,16 +193,18 @@ const CheckIconPure = ({ size = 24, color = 'black', strokeWidth = 2 }) => {
 ### 5. Polyline → Multiple Lines
 
 #### SVG (hypothetical)
+
 ```javascript
 <Polyline points="0,0 10,5 20,0" />
 ```
 
 #### Pure React Native
+
 ```javascript
 const PurePolyline = ({ points, stroke, strokeWidth = 2 }) => {
-  const pointsArray = points.split(' ').map(p => p.split(',').map(Number));
+  const pointsArray = points.split(" ").map((p) => p.split(",").map(Number));
   const lines = [];
-  
+
   for (let i = 0; i < pointsArray.length - 1; i++) {
     const [x1, y1] = pointsArray[i];
     const [x2, y2] = pointsArray[i + 1];
@@ -175,10 +217,10 @@ const PurePolyline = ({ points, stroke, strokeWidth = 2 }) => {
         y2={y2}
         stroke={stroke}
         strokeWidth={strokeWidth}
-      />
+      />,
     );
   }
-  
+
   return <>{lines}</>;
 };
 ```
@@ -188,13 +230,15 @@ const PurePolyline = ({ points, stroke, strokeWidth = 2 }) => {
 ### 6. Polygon → CSS Triangles (limited)
 
 #### SVG (from NavigationIcon)
+
 ```javascript
 <Polygon points="3 11 22 2 13 21 11 13 3 11" />
 ```
 
 #### Pure React Native (Triangle approximation only)
+
 ```javascript
-const PureTriangle = ({ size = 24, color = 'black' }) => {
+const PureTriangle = ({ size = 24, color = "black" }) => {
   // Only works for triangular shapes
   return (
     <View
@@ -204,11 +248,11 @@ const PureTriangle = ({ size = 24, color = 'black' }) => {
         borderLeftWidth: size / 2,
         borderRightWidth: size / 2,
         borderBottomWidth: size,
-        borderStyle: 'solid',
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
+        borderStyle: "solid",
+        borderLeftColor: "transparent",
+        borderRightColor: "transparent",
         borderBottomColor: color,
-        transform: [{ rotate: '-45deg' }],
+        transform: [{ rotate: "-45deg" }],
       }}
     />
   );
@@ -229,69 +273,75 @@ const PureTriangle = ({ size = 24, color = 'black' }) => {
 function parseSimplePath(d) {
   const commands = d.match(/[MLHVZ][^MLHVZ]*/gi);
   if (!commands) return null;
-  
+
   const segments = [];
-  let currentX = 0, currentY = 0;
-  let startX = 0, startY = 0;
-  
+  let currentX = 0,
+    currentY = 0;
+  let startX = 0,
+    startY = 0;
+
   for (const cmd of commands) {
     const type = cmd[0].toUpperCase();
-    const args = cmd.slice(1).trim().split(/[\s,]+/).map(Number);
-    
+    const args = cmd
+      .slice(1)
+      .trim()
+      .split(/[\s,]+/)
+      .map(Number);
+
     switch (type) {
-      case 'M': // Move to
+      case "M": // Move to
         currentX = args[0];
         currentY = args[1];
         startX = currentX;
         startY = currentY;
         break;
-        
-      case 'L': // Line to
+
+      case "L": // Line to
         segments.push({
           x1: currentX,
           y1: currentY,
           x2: args[0],
-          y2: args[1]
+          y2: args[1],
         });
         currentX = args[0];
         currentY = args[1];
         break;
-        
-      case 'H': // Horizontal line
+
+      case "H": // Horizontal line
         segments.push({
           x1: currentX,
           y1: currentY,
           x2: args[0],
-          y2: currentY
+          y2: currentY,
         });
         currentX = args[0];
         break;
-        
-      case 'V': // Vertical line
+
+      case "V": // Vertical line
         segments.push({
           x1: currentX,
           y1: currentY,
           x2: currentX,
-          y2: args[0]
+          y2: args[0],
         });
         currentY = args[0];
         break;
-        
-      case 'Z': // Close path
+
+      case "Z": // Close path
         segments.push({
           x1: currentX,
           y1: currentY,
           x2: startX,
-          y2: startY
+          y2: startY,
         });
         break;
-        
+
       default:
         // Unsupported command (curves, arcs, etc.)
         return null;
     }
   }
-  
+
   return segments;
 }
 ```
@@ -302,21 +352,21 @@ function parseSimplePath(d) {
 class SVGToPureRN {
   static convertElement(element, props) {
     const { stroke, strokeWidth, fill } = props;
-    
+
     switch (element.type) {
-      case 'Circle':
+      case "Circle":
         return this.convertCircle(element.props, { stroke, strokeWidth, fill });
-      case 'Rect':
+      case "Rect":
         return this.convertRect(element.props, { stroke, strokeWidth, fill });
-      case 'Line':
+      case "Line":
         return this.convertLine(element.props, { stroke, strokeWidth });
-      case 'Path':
+      case "Path":
         return this.convertPath(element.props, { stroke, strokeWidth, fill });
       default:
         return null;
     }
   }
-  
+
   static convertCircle({ cx, cy, r }, { stroke, strokeWidth, fill }) {
     return (
       <PureCircle
@@ -329,8 +379,11 @@ class SVGToPureRN {
       />
     );
   }
-  
-  static convertRect({ x, y, width, height, rx }, { stroke, strokeWidth, fill }) {
+
+  static convertRect(
+    { x, y, width, height, rx },
+    { stroke, strokeWidth, fill },
+  ) {
     return (
       <PureRect
         x={x}
@@ -344,7 +397,7 @@ class SVGToPureRN {
       />
     );
   }
-  
+
   static convertLine({ x1, y1, x2, y2 }, { stroke, strokeWidth }) {
     return (
       <PureLine
@@ -357,15 +410,15 @@ class SVGToPureRN {
       />
     );
   }
-  
+
   static convertPath({ d }, { stroke, strokeWidth }) {
     const segments = parseSimplePath(d);
-    
+
     if (!segments) {
-      console.warn('Path contains unsupported commands:', d);
+      console.warn("Path contains unsupported commands:", d);
       return null;
     }
-    
+
     return segments.map((seg, index) => (
       <PureLine
         key={index}
@@ -388,9 +441,21 @@ class SVGToPureRN {
 ### Example 1: PlusIcon (Fully Convertible) ✅
 
 #### Original SVG
+
 ```javascript
-export const PlusIcon = ({ size = 24, color = "currentColor", strokeWidth = 2 }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth}>
+export const PlusIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+}) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth={strokeWidth}
+  >
     <Path d="M5 12h14" />
     <Path d="M12 5v14" />
   </Svg>
@@ -398,13 +463,18 @@ export const PlusIcon = ({ size = 24, color = "currentColor", strokeWidth = 2 })
 ```
 
 #### Pure React Native
+
 ```javascript
-export const PlusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => (
+export const PlusIconPure = ({
+  size = 24,
+  color = "black",
+  strokeWidth = 2,
+}) => (
   <View style={{ width: size, height: size }}>
     {/* Horizontal line */}
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: 5,
         top: 12 - strokeWidth / 2,
         width: 14,
@@ -415,7 +485,7 @@ export const PlusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) =>
     {/* Vertical line */}
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: 12 - strokeWidth / 2,
         top: 5,
         width: strokeWidth,
@@ -430,9 +500,21 @@ export const PlusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) =>
 ### Example 2: CheckCircleIcon (Fully Convertible) ✅
 
 #### Original SVG
+
 ```javascript
-export const CheckCircleIcon = ({ size = 24, color = "currentColor", strokeWidth = 2 }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth}>
+export const CheckCircleIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+}) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth={strokeWidth}
+  >
     <Path d="m9 12 2 2 4-4" />
     <Circle cx="12" cy="12" r="10" />
   </Svg>
@@ -440,16 +522,21 @@ export const CheckCircleIcon = ({ size = 24, color = "currentColor", strokeWidth
 ```
 
 #### Pure React Native
+
 ```javascript
-export const CheckCircleIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
+export const CheckCircleIconPure = ({
+  size = 24,
+  color = "black",
+  strokeWidth = 2,
+}) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size }}>
       {/* Circle */}
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: (2 - strokeWidth / 2) * scale,
           top: (2 - strokeWidth / 2) * scale,
           width: 20 * scale,
@@ -485,9 +572,21 @@ export const CheckCircleIconPure = ({ size = 24, color = "black", strokeWidth = 
 ### Example 3: XIcon (Fully Convertible) ✅
 
 #### Original SVG
+
 ```javascript
-export const XIcon = ({ size = 24, color = "currentColor", strokeWidth = 2 }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth}>
+export const XIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+}) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth={strokeWidth}
+  >
     <Path d="M18 6 6 18" />
     <Path d="m6 6 12 12" />
   </Svg>
@@ -495,10 +594,11 @@ export const XIcon = ({ size = 24, color = "currentColor", strokeWidth = 2 }) =>
 ```
 
 #### Pure React Native
+
 ```javascript
 export const XIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size }}>
       {/* First diagonal */}
@@ -527,24 +627,41 @@ export const XIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
 ### Example 4: MinusIcon (Fully Convertible) ✅
 
 #### Original SVG
+
 ```javascript
-export const MinusIcon = ({ size = 24, color = "currentColor", strokeWidth = 2 }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth}>
+export const MinusIcon = ({
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 2,
+}) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth={strokeWidth}
+  >
     <Path d="M5 12h14" />
   </Svg>
 );
 ```
 
 #### Pure React Native
+
 ```javascript
-export const MinusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
+export const MinusIconPure = ({
+  size = 24,
+  color = "black",
+  strokeWidth = 2,
+}) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size }}>
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: 5 * scale,
           top: (12 - strokeWidth / 2) * scale,
           width: 14 * scale,
@@ -580,7 +697,7 @@ These icons use curves, arcs, or complex path commands that can't be replicated 
 
 ```javascript
 // Option 1: Use pre-rendered PNGs
-import ActivityIconPNG from './icons/activity.png';
+import ActivityIconPNG from "./icons/activity.png";
 
 export const ActivityIconPure = ({ size = 24 }) => (
   <Image
@@ -604,7 +721,7 @@ export const ActivityIconSimplified = ({ size = 24, color = "black" }) => (
 );
 
 // Option 3: Use icon fonts (requires setup)
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from "react-native-vector-icons/Feather";
 
 export const ActivityIconFont = ({ size = 24, color = "black" }) => (
   <Icon name="activity" size={size} color={color} />
@@ -617,16 +734,23 @@ export const ActivityIconFont = ({ size = 24, color = "black" }) => (
 
 ```javascript
 // PureRNIcons.js
-import React from 'react';
-import { View, Image } from 'react-native';
+import React from "react";
+import { View, Image } from "react-native";
 
 // Base Components
-const PureCircle = ({ cx, cy, r, stroke, strokeWidth = 0, fill = 'transparent' }) => {
+const PureCircle = ({
+  cx,
+  cy,
+  r,
+  stroke,
+  strokeWidth = 0,
+  fill = "transparent",
+}) => {
   const diameter = r * 2;
   return (
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: cx - r - strokeWidth / 2,
         top: cy - r - strokeWidth / 2,
         width: diameter,
@@ -643,27 +767,36 @@ const PureCircle = ({ cx, cy, r, stroke, strokeWidth = 0, fill = 'transparent' }
 const PureLine = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }) => {
   const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-  
+
   return (
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: x1,
         top: y1 - strokeWidth / 2,
         width: length,
         height: strokeWidth,
         backgroundColor: stroke,
         transform: [{ rotate: `${angle}deg` }],
-        transformOrigin: 'left center',
+        transformOrigin: "left center",
       }}
     />
   );
 };
 
-const PureRect = ({ x, y, width, height, rx = 0, stroke, strokeWidth = 0, fill = 'transparent' }) => (
+const PureRect = ({
+  x,
+  y,
+  width,
+  height,
+  rx = 0,
+  stroke,
+  strokeWidth = 0,
+  fill = "transparent",
+}) => (
   <View
     style={{
-      position: 'absolute',
+      position: "absolute",
       left: x,
       top: y,
       width,
@@ -677,11 +810,15 @@ const PureRect = ({ x, y, width, height, rx = 0, stroke, strokeWidth = 0, fill =
 );
 
 // Icon Components
-export const PlusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => (
+export const PlusIconPure = ({
+  size = 24,
+  color = "black",
+  strokeWidth = 2,
+}) => (
   <View style={{ width: size, height: size }}>
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: 5 * (size / 24),
         top: (12 - strokeWidth / 2) * (size / 24),
         width: 14 * (size / 24),
@@ -691,7 +828,7 @@ export const PlusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) =>
     />
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: (12 - strokeWidth / 2) * (size / 24),
         top: 5 * (size / 24),
         width: strokeWidth,
@@ -702,7 +839,11 @@ export const PlusIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) =>
   </View>
 );
 
-export const CheckIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
+export const CheckIconPure = ({
+  size = 24,
+  color = "black",
+  strokeWidth = 2,
+}) => {
   const scale = size / 24;
   return (
     <View style={{ width: size, height: size }}>
@@ -753,7 +894,7 @@ export const XIconPure = ({ size = 24, color = "black", strokeWidth = 2 }) => {
 // Usage Example
 export default function IconDemo() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <PlusIconPure size={48} color="blue" strokeWidth={3} />
       <CheckIconPure size={48} color="green" strokeWidth={3} />
       <XIconPure size={48} color="red" strokeWidth={3} />
@@ -768,13 +909,14 @@ export default function IconDemo() {
 
 Based on your icons.ts file:
 
-| Category | Count | Convertible | Notes |
-|----------|-------|-------------|-------|
-| **Fully Convertible** | 15 | ✅ Yes | Simple lines, circles, rects |
-| **Partially Convertible** | 10 | ⚠️ Partial | Need simplification |
-| **Not Convertible** | 25+ | ❌ No | Complex paths with curves |
+| Category                  | Count | Convertible | Notes                        |
+| ------------------------- | ----- | ----------- | ---------------------------- |
+| **Fully Convertible**     | 15    | ✅ Yes      | Simple lines, circles, rects |
+| **Partially Convertible** | 10    | ⚠️ Partial  | Need simplification          |
+| **Not Convertible**       | 25+   | ❌ No       | Complex paths with curves    |
 
 ### Fully Convertible Icons:
+
 - PlusIcon
 - MinusIcon
 - XIcon
@@ -786,12 +928,14 @@ Based on your icons.ts file:
 - TimerIcon (circle + lines)
 
 ### Requires Simplification:
+
 - ChevronIcons (can use CSS triangles)
 - FilterIcon (horizontal lines only)
 - ServerIcon (rectangles + dots)
 - CopyIcon (overlapping rectangles)
 
 ### Not Convertible (Complex Paths):
+
 - ActivityIcon
 - BugIcon
 - EyeIcon
@@ -814,6 +958,7 @@ Based on your icons.ts file:
 4. **Consider Icon Fonts**: As a middle ground (requires minimal setup)
 
 ### Best Approach:
+
 ```javascript
 // Hybrid approach
 const Icon = ({ name, size, color }) => {
@@ -821,14 +966,18 @@ const Icon = ({ name, size, color }) => {
   if (PURE_RN_ICONS[name]) {
     return PURE_RN_ICONS[name]({ size, color });
   }
-  
+
   // Fall back to PNG for complex icons
   if (PNG_ICONS[name]) {
-    return <Image source={PNG_ICONS[name]} style={{ width: size, height: size }} />;
+    return (
+      <Image source={PNG_ICONS[name]} style={{ width: size, height: size }} />
+    );
   }
-  
+
   // Default fallback
-  return <View style={{ width: size, height: size, backgroundColor: '#ccc' }} />;
+  return (
+    <View style={{ width: size, height: size, backgroundColor: "#ccc" }} />
+  );
 };
 ```
 

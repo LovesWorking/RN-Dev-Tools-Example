@@ -57,7 +57,8 @@ const COLOR_PALETTES = [
 ];
 
 const getRandomColor = () => {
-  const palette = COLOR_PALETTES[Math.floor(Math.random() * COLOR_PALETTES.length)];
+  const palette =
+    COLOR_PALETTES[Math.floor(Math.random() * COLOR_PALETTES.length)];
   return palette[Math.floor(Math.random() * palette.length)];
 };
 
@@ -89,7 +90,7 @@ const generateRandomShape = (): ShapeStyle => {
   // Border properties (60% chance)
   if (Math.random() > 0.4) {
     const borderType = Math.random();
-    
+
     if (borderType < 0.3) {
       // Uniform border
       shape.borderWidth = getRandomInt(1, 8);
@@ -100,7 +101,7 @@ const generateRandomShape = (): ShapeStyle => {
       shape.borderBottomWidth = getRandomInt(0, 10);
       shape.borderLeftWidth = getRandomInt(0, 10);
       shape.borderRightWidth = getRandomInt(0, 10);
-      
+
       if (Math.random() > 0.5) {
         // Same color for all borders
         const color = getRandomColor();
@@ -124,8 +125,10 @@ const generateRandomShape = (): ShapeStyle => {
       shape.borderLeftWidth = getRandomInt(20, 50);
       shape.borderRightWidth = getRandomInt(20, 50);
       shape.borderBottomWidth = getRandomInt(30, 70);
-      shape.borderLeftColor = Math.random() > 0.5 ? "transparent" : getRandomColor();
-      shape.borderRightColor = Math.random() > 0.5 ? "transparent" : getRandomColor();
+      shape.borderLeftColor =
+        Math.random() > 0.5 ? "transparent" : getRandomColor();
+      shape.borderRightColor =
+        Math.random() > 0.5 ? "transparent" : getRandomColor();
       shape.borderBottomColor = getRandomColor();
     }
 
@@ -138,10 +141,13 @@ const generateRandomShape = (): ShapeStyle => {
   // Border radius (70% chance)
   if (Math.random() > 0.3 && shape.width && shape.height) {
     const radiusType = Math.random();
-    
+
     if (radiusType < 0.4) {
       // Uniform radius
-      shape.borderRadius = getRandomInt(0, Math.min(shape.width, shape.height) / 2);
+      shape.borderRadius = getRandomInt(
+        0,
+        Math.min(shape.width, shape.height) / 2,
+      );
     } else if (radiusType < 0.7) {
       // Different radius on each corner
       shape.borderTopLeftRadius = getRandomInt(0, 50);
@@ -157,12 +163,12 @@ const generateRandomShape = (): ShapeStyle => {
   // Transform (40% chance)
   if (Math.random() > 0.6) {
     const transforms: any[] = [];
-    
+
     // Rotation
     if (Math.random() > 0.5) {
       transforms.push({ rotate: `${getRandomInt(-180, 180)}deg` });
     }
-    
+
     // Scale
     if (Math.random() > 0.7) {
       if (Math.random() > 0.5) {
@@ -172,13 +178,13 @@ const generateRandomShape = (): ShapeStyle => {
         transforms.push({ scaleY: getRandomFloat(0.5, 2) });
       }
     }
-    
+
     // Skew (rare)
     if (Math.random() > 0.9) {
       transforms.push({ skewX: `${getRandomInt(-30, 30)}deg` });
       transforms.push({ skewY: `${getRandomInt(-30, 30)}deg` });
     }
-    
+
     if (transforms.length > 0) {
       shape.transform = transforms;
     }
@@ -218,7 +224,7 @@ export const RandomShapeGenerator = () => {
   const copyShapeStyle = useCallback((shape: ShapeStyle, index: number) => {
     setSelectedShape(shape);
     setSelectedIndex(index);
-    
+
     // Clean up undefined values
     const cleanStyle = Object.entries(shape).reduce((acc, [key, value]) => {
       if (value !== undefined && value !== null) {
@@ -234,7 +240,7 @@ const shapeStyle = ${JSON.stringify(cleanStyle, null, 2).replace(/"([^"]+)":/g, 
     Alert.alert(
       "Shape Copied!",
       `Shape #${index + 1} style has been copied to clipboard`,
-      [{ text: "OK" }]
+      [{ text: "OK" }],
     );
   }, []);
 
@@ -246,7 +252,10 @@ const shapeStyle = ${JSON.stringify(cleanStyle, null, 2).replace(/"([^"]+)":/g, 
           <Text style={styles.title}>Random Shape Generator</Text>
           <Text style={styles.subtitle}>Tap any shape to copy its style</Text>
         </View>
-        <TouchableOpacity style={styles.regenerateButton} onPress={regenerateShapes}>
+        <TouchableOpacity
+          style={styles.regenerateButton}
+          onPress={regenerateShapes}
+        >
           <Text style={styles.regenerateButtonText}>🎲 Regenerate</Text>
         </TouchableOpacity>
       </View>
@@ -254,7 +263,9 @@ const shapeStyle = ${JSON.stringify(cleanStyle, null, 2).replace(/"([^"]+)":/g, 
       {/* Selected shape preview */}
       {selectedShape && (
         <View style={styles.selectedPreview}>
-          <Text style={styles.selectedTitle}>Selected: Shape #{(selectedIndex || 0) + 1}</Text>
+          <Text style={styles.selectedTitle}>
+            Selected: Shape #{(selectedIndex || 0) + 1}
+          </Text>
           <View style={styles.selectedShapeContainer}>
             <View style={[styles.selectedShapeWrapper]}>
               <View style={selectedShape} />
@@ -297,16 +308,23 @@ const shapeStyle = ${JSON.stringify(cleanStyle, null, 2).replace(/"([^"]+)":/g, 
       {/* Fun stats */}
       <View style={styles.stats}>
         <Text style={styles.statsText}>
-          🎨 {shapes.filter(s => s.backgroundColor && s.backgroundColor !== 'transparent').length} colored
+          🎨{" "}
+          {
+            shapes.filter(
+              (s) => s.backgroundColor && s.backgroundColor !== "transparent",
+            ).length
+          }{" "}
+          colored
         </Text>
         <Text style={styles.statsText}>
-          ⭕ {shapes.filter(s => s.borderWidth || s.borderTopWidth).length} bordered
+          ⭕ {shapes.filter((s) => s.borderWidth || s.borderTopWidth).length}{" "}
+          bordered
         </Text>
         <Text style={styles.statsText}>
-          🔄 {shapes.filter(s => s.transform).length} transformed
+          🔄 {shapes.filter((s) => s.transform).length} transformed
         </Text>
         <Text style={styles.statsText}>
-          🌟 {shapes.filter(s => s.shadowColor).length} with shadow
+          🌟 {shapes.filter((s) => s.shadowColor).length} with shadow
         </Text>
       </View>
     </View>

@@ -12,7 +12,11 @@ interface TabSelectorProps {
   onTabChange: (tab: string) => void;
 }
 
-export function TabSelector({ tabs, activeTab, onTabChange }: TabSelectorProps) {
+export function TabSelector({
+  tabs,
+  activeTab,
+  onTabChange,
+}: TabSelectorProps) {
   return (
     <View style={styles.container}>
       {tabs.map((tab) => (
@@ -24,7 +28,9 @@ export function TabSelector({ tabs, activeTab, onTabChange }: TabSelectorProps) 
           onPress={() => onTabChange(tab.key)}
           style={[
             styles.tabButton,
-            activeTab === tab.key ? styles.tabButtonActive : styles.tabButtonInactive,
+            activeTab === tab.key
+              ? styles.tabButtonActive
+              : styles.tabButtonInactive,
           ]}
         >
           <Text

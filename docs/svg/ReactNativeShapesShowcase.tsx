@@ -399,7 +399,13 @@ export const ReactNativeShapesShowcase = () => {
         <View style={styles.shapeContainer}>
           <View style={styles.starContainer}>
             {[0, 36, 72, 108, 144].map((angle) => (
-              <View key={angle} style={[styles.starRay, { transform: [{ rotate: `${angle}deg` }] }]} />
+              <View
+                key={angle}
+                style={[
+                  styles.starRay,
+                  { transform: [{ rotate: `${angle}deg` }] },
+                ]}
+              />
             ))}
           </View>
           <Text style={styles.shapeLabel}>Star</Text>

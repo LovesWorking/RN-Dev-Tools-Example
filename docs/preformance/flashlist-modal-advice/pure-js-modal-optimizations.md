@@ -34,10 +34,13 @@ import { useEffect, useState } from "react";
 export function useUnmountAwareTimeout() {
   const [timeoutIds] = useState<Set<NodeJS.Timeout>>(() => new Set());
 
-  useEffect(() => () => {
-    timeoutIds.forEach((id) => global.clearTimeout(id));
-    timeoutIds.clear();
-  }, [timeoutIds]);
+  useEffect(
+    () => () => {
+      timeoutIds.forEach((id) => global.clearTimeout(id));
+      timeoutIds.clear();
+    },
+    [timeoutIds],
+  );
 
   const setTimeoutSafe = (cb: () => void, delay: number) => {
     const id = global.setTimeout(() => {
@@ -72,18 +75,24 @@ import { useCallback, useEffect, useState } from "react";
 export function useUnmountAwareAnimationFrame() {
   const [requestIds] = useState<Set<number>>(() => new Set());
 
-  useEffect(() => () => {
-    requestIds.forEach((id) => cancelAnimationFrame(id));
-    requestIds.clear();
-  }, [requestIds]);
+  useEffect(
+    () => () => {
+      requestIds.forEach((id) => cancelAnimationFrame(id));
+      requestIds.clear();
+    },
+    [requestIds],
+  );
 
-  const requestAnimationFrameSafe = useCallback((cb: FrameRequestCallback) => {
-    const id = global.requestAnimationFrame((ts) => {
-      requestIds.delete(id);
-      cb(ts);
-    });
-    requestIds.add(id);
-  }, [requestIds]);
+  const requestAnimationFrameSafe = useCallback(
+    (cb: FrameRequestCallback) => {
+      const id = global.requestAnimationFrame((ts) => {
+        requestIds.delete(id);
+        cb(ts);
+      });
+      requestIds.add(id);
+    },
+    [requestIds],
+  );
 
   return { requestAnimationFrame: requestAnimationFrameSafe };
 }
@@ -111,7 +120,9 @@ export function useUnmountFlag() {
   const isUnmounted = useRef(false);
   useLayoutEffect(() => {
     isUnmounted.current = false;
-    return () => { isUnmounted.current = true; };
+    return () => {
+      isUnmounted.current = true;
+    };
   }, []);
   return isUnmounted;
 }
@@ -138,8 +149,12 @@ class VelocityTracker {
   private v = { x: 0, y: 0 };
   private to: NodeJS.Timeout | null = null;
 
-  compute(newOffset: number, oldOffset: number, isHorizontal: boolean,
-          onUpdate: (v: {x: number; y: number}, momentumEnd: boolean) => void) {
+  compute(
+    newOffset: number,
+    oldOffset: number,
+    isHorizontal: boolean,
+    onUpdate: (v: { x: number; y: number }, momentumEnd: boolean) => void,
+  ) {
     this.clean();
     const now = Date.now();
     const dt = Math.max(1, now - this.last);
@@ -155,7 +170,12 @@ class VelocityTracker {
       onUpdate(this.v, true);
     }, 100);
   }
-  clean() { if (this.to) { clearTimeout(this.to); this.to = null; } }
+  clean() {
+    if (this.to) {
+      clearTimeout(this.to);
+      this.to = null;
+    }
+  }
 }
 ```
 
@@ -176,17 +196,29 @@ class VelocityTracker {
 ```ts
 // Derived from: src/utils/AverageWindow.ts
 class AverageWindow {
-  private avg = 0; private count = 0; private buf: (number | undefined)[]; private i = 0;
+  private avg = 0;
+  private count = 0;
+  private buf: (number | undefined)[];
+  private i = 0;
   constructor(size: number, start?: number) {
     this.buf = new Array(Math.max(1, size));
-    this.avg = start ?? 0; this.count = start === undefined ? 0 : 1; this.i = this.count; this.buf[0] = start;
+    this.avg = start ?? 0;
+    this.count = start === undefined ? 0 : 1;
+    this.i = this.count;
+    this.buf[0] = start;
   }
-  get currentValue() { return this.avg; }
+  get currentValue() {
+    return this.avg;
+  }
   addValue(value: number) {
-    const idx = this.i; const old = this.buf[idx]; const newCount = old === undefined ? this.count + 1 : this.count;
+    const idx = this.i;
+    const old = this.buf[idx];
+    const newCount = old === undefined ? this.count + 1 : this.count;
     this.buf[idx] = value;
-    this.avg = this.avg * (this.count / newCount) + (value - (old ?? 0)) / newCount;
-    this.count = newCount; this.i = (this.i + 1) % this.buf.length;
+    this.avg =
+      this.avg * (this.count / newCount) + (value - (old ?? 0)) / newCount;
+    this.count = newCount;
+    this.i = (this.i + 1) % this.buf.length;
   }
 }
 ```
@@ -209,12 +241,21 @@ class AverageWindow {
 // Adapted from: src/recyclerview/utils/measureLayout.ts
 import { PixelRatio, View } from "react-native";
 
-function round(value: number) { return PixelRatio.roundToNearestPixel(value); }
+function round(value: number) {
+  return PixelRatio.roundToNearestPixel(value);
+}
 
-export function measureRelative(view: View, relativeTo: View, old?: {width: number; height: number}) {
+export function measureRelative(
+  view: View,
+  relativeTo: View,
+  old?: { width: number; height: number },
+) {
   const layout = { x: 0, y: 0, width: 0, height: 0 };
   view.measureLayout(relativeTo, (x, y, w, h) => {
-    layout.x = x; layout.y = y; layout.width = round(w); layout.height = round(h);
+    layout.x = x;
+    layout.y = y;
+    layout.width = round(w);
+    layout.height = round(h);
   });
   if (old) {
     if (Math.abs(layout.width - old.width) <= 1) layout.width = old.width;
@@ -274,14 +315,27 @@ function applyOffsetCorrection({
 import React, { useImperativeHandle, useMemo, useState } from "react";
 import { View } from "react-native";
 
-export interface AnchorRef { scrollBy: (delta: number) => void }
+export interface AnchorRef {
+  scrollBy: (delta: number) => void;
+}
 
-export function ScrollAnchor({ anchorRef }: { anchorRef: React.Ref<AnchorRef> }) {
+export function ScrollAnchor({
+  anchorRef,
+}: {
+  anchorRef: React.Ref<AnchorRef>;
+}) {
   const [offset, setOffset] = useState(1_000_000);
-  useImperativeHandle(anchorRef, () => ({ scrollBy: (d) => setOffset((p) => p + d) }), []);
-  const anchor = useMemo(() => (
-    <View style={{ position: "absolute", height: 0, top: offset, left: 0 }} />
-  ), [offset]);
+  useImperativeHandle(
+    anchorRef,
+    () => ({ scrollBy: (d) => setOffset((p) => p + d) }),
+    [],
+  );
+  const anchor = useMemo(
+    () => (
+      <View style={{ position: "absolute", height: 0, top: offset, left: 0 }} />
+    ),
+    [offset],
+  );
   return anchor;
 }
 ```
@@ -302,7 +356,11 @@ export function ScrollAnchor({ anchorRef }: { anchorRef: React.Ref<AnchorRef> })
 
 ```ts
 // Pattern from: src/recyclerview/viewability/ViewabilityHelper.ts
-function reportVisibleWithDelay(indices: number[], delay = 250, fire: (i: number[]) => void) {
+function reportVisibleWithDelay(
+  indices: number[],
+  delay = 250,
+  fire: (i: number[]) => void,
+) {
   const id = setTimeout(() => fire(indices), delay);
   return () => clearTimeout(id); // cancel if state changes before delay elapses
 }
@@ -329,7 +387,9 @@ type Setter<T> = (value: T | ((p: T) => T), skipParentLayout?: boolean) => void;
 export function useLayoutState<T>(initial: T): [T, Setter<T>] {
   const [state, setState] = React.useState(initial);
   const setLayoutState: Setter<T> = (next, skip) => {
-    setState((prev) => (typeof next === "function" ? (next as any)(prev) : next));
+    setState((prev) =>
+      typeof next === "function" ? (next as any)(prev) : next,
+    );
     if (!skip) {
       // optionally call a parent layout recalculation here
     }
@@ -354,13 +414,23 @@ export function useLayoutState<T>(initial: T): [T, Setter<T>] {
 
 ```ts
 // Derived from: src/recyclerview/hooks/useRecyclingState.ts
-export function useRecyclingState<T>(initial: T | (() => T), deps: React.DependencyList) {
+export function useRecyclingState<T>(
+  initial: T | (() => T),
+  deps: React.DependencyList,
+) {
   const store = React.useRef<T>();
   const [_, trigger] = useLayoutState(0);
-  React.useMemo(() => { store.current = typeof initial === "function" ? (initial as any)() : initial; }, deps);
+  React.useMemo(() => {
+    store.current =
+      typeof initial === "function" ? (initial as any)() : initial;
+  }, deps);
   const set = (next: T | ((p: T) => T)) => {
-    const value = typeof next === "function" ? (next as any)(store.current!) : next;
-    if (value !== store.current) { store.current = value; trigger((p) => p + 1, true); }
+    const value =
+      typeof next === "function" ? (next as any)(store.current!) : next;
+    if (value !== store.current) {
+      store.current = value;
+      trigger((p) => p + 1, true);
+    }
   };
   return [store.current!, set] as const;
 }
@@ -404,7 +474,9 @@ const AnimatedContainer = React.useMemo(() => {
 
 ```ts
 // From: src/recyclerview/utils/componentUtils.ts
-export function getValidComponent(c: React.ComponentType | React.ReactElement | null | undefined) {
+export function getValidComponent(
+  c: React.ComponentType | React.ReactElement | null | undefined,
+) {
   if (React.isValidElement(c)) return c;
   if (typeof c === "function") return React.createElement(c);
   return null;
@@ -454,7 +526,11 @@ if (PlatformConfig.supportsOffsetCorrection) {
 
 ```ts
 // From: src/recyclerview/utils/adjustOffsetForRTL.ts
-export function adjustOffsetForRTL(offset: number, contentSize: number, windowSize: number) {
+export function adjustOffsetForRTL(
+  offset: number,
+  contentSize: number,
+  windowSize: number,
+) {
   return contentSize - offset - windowSize;
 }
 ```
@@ -475,18 +551,34 @@ export function adjustOffsetForRTL(offset: number, contentSize: number, windowSi
 
 ```tsx
 // Specialized modals
-export function BottomSheetModal({ visible, children }: { visible: boolean; children: React.ReactNode }) {
+export function BottomSheetModal({
+  visible,
+  children,
+}: {
+  visible: boolean;
+  children: React.ReactNode;
+}) {
   if (!visible) return null; // stable
   return <Animated.View key="bottom-sheet">{children}</Animated.View>;
 }
 
-export function FullscreenModal({ visible, children }: { visible: boolean; children: React.ReactNode }) {
+export function FullscreenModal({
+  visible,
+  children,
+}: {
+  visible: boolean;
+  children: React.ReactNode;
+}) {
   if (!visible) return null; // stable
   return <Animated.View key="fullscreen-modal">{children}</Animated.View>;
 }
 
 // Router keeps tree stable; toggles visibility only
-export function ModalRouter({ isSheet, sheet, modal }: {
+export function ModalRouter({
+  isSheet,
+  sheet,
+  modal,
+}: {
   isSheet: boolean;
   sheet: React.ReactNode;
   modal: React.ReactNode;
@@ -511,7 +603,9 @@ import React from "react";
 import { PanResponder, View } from "react-native";
 import { useUnmountAwareAnimationFrame, useUnmountFlag } from "./scheduling";
 
-class VelocityTracker { /* as above */ }
+class VelocityTracker {
+  /* as above */
+}
 
 export function useSheetDrag(onSnap: (open: boolean) => void) {
   const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
@@ -519,20 +613,24 @@ export function useSheetDrag(onSnap: (open: boolean) => void) {
   const vt = React.useRef(new VelocityTracker()).current;
   const last = React.useRef(0);
 
-  const pan = React.useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, g) => {
-      vt.compute(g.dy, last.current, false, (v, end) => {
-        if (isUnmounted.current) return;
-        last.current = g.dy;
-        if (end) {
-          requestAnimationFrame(() => {
-            onSnap(Math.abs(v.y) < 0.5 ? g.dy < 100 : v.y < 0); // sample rule
+  const pan = React.useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderMove: (_, g) => {
+          vt.compute(g.dy, last.current, false, (v, end) => {
+            if (isUnmounted.current) return;
+            last.current = g.dy;
+            if (end) {
+              requestAnimationFrame(() => {
+                onSnap(Math.abs(v.y) < 0.5 ? g.dy < 100 : v.y < 0); // sample rule
+              });
+            }
           });
-        }
-      });
-    },
-  }), [requestAnimationFrame, vt]);
+        },
+      }),
+    [requestAnimationFrame, vt],
+  );
 
   return { panHandlers: pan.panHandlers };
 }
@@ -553,5 +651,3 @@ export function BottomSheet({ visible }: { visible: boolean }) {
 - Pixel rounding and offset correction eliminate visible jitter and jumps
 - Stable router composition prevents Fabric crashes and re-layout thrash
 - Precomputation and flexible slots simplify composition while reducing re-renders
-
-

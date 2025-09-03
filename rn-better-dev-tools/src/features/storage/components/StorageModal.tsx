@@ -37,7 +37,6 @@ export function StorageModal({
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.storage.modal();
 
-
   return (
     <ClaudeModal60FPSClean
       visible={visible}

@@ -13,7 +13,10 @@ import {
   RequiredStorageKey,
 } from "@/rn-better-dev-tools/src/features/storage";
 import { NetworkModal } from "@/rn-better-dev-tools/src/features/network";
-import { SentryLogsModal, setupSentryEventListeners } from "@/rn-better-dev-tools/src/features/sentry";
+import {
+  SentryLogsModal,
+  setupSentryEventListeners,
+} from "@/rn-better-dev-tools/src/features/sentry";
 import { useSentrySubtitle } from "@/rn-better-dev-tools/src/features/sentry/hooks/useSentrySubtitle";
 
 import { FloatingTools, type UserRole, UserStatus } from "./floatingTools";
@@ -75,7 +78,7 @@ export function RnBetterDevToolsBubble({
 }: RnBetterDevToolsBubbleProps) {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
   const { settings: devToolsSettings, refreshSettings } = useDevToolsSettings();
-  
+
   // Use persisted WiFi state
   const { isOnline: isWifiEnabled, handleWifiToggle } = useWifiState();
 
@@ -98,7 +101,7 @@ export function RnBetterDevToolsBubble({
         "[RnBetterDevToolsBubble] Default visibility props: " +
           propsProvided.join(", ") +
           ". " +
-          "Users can override these in settings."
+          "Users can override these in settings.",
       );
     }
   }, [
@@ -112,7 +115,7 @@ export function RnBetterDevToolsBubble({
 
   const { getSentrySubtitle } = useSentrySubtitle();
   const envVarsSubtitle = useEnvVarsSubtitle(requiredEnvVars);
-  
+
   // Initialize Sentry event listeners on mount
   useEffect(() => {
     setupSentryEventListeners();
@@ -193,7 +196,12 @@ export function RnBetterDevToolsBubble({
                 onPress={handleQueryPress}
                 style={styles.fab}
               >
-                <ReactQueryIcon size={16} color={gameUIColors.query} glowColor={gameUIColors.query} noBackground />
+                <ReactQueryIcon
+                  size={16}
+                  color={gameUIColors.query}
+                  glowColor={gameUIColors.query}
+                  noBackground
+                />
               </TouchableOpacity>
             )}
 
@@ -203,7 +211,12 @@ export function RnBetterDevToolsBubble({
                 onPress={handleEnvPress}
                 style={styles.fab}
               >
-                <EnvLaptopIcon size={16} color={gameUIColors.env} glowColor={gameUIColors.env} noBackground />
+                <EnvLaptopIcon
+                  size={16}
+                  color={gameUIColors.env}
+                  glowColor={gameUIColors.env}
+                  noBackground
+                />
               </TouchableOpacity>
             )}
 
@@ -213,7 +226,12 @@ export function RnBetterDevToolsBubble({
                 onPress={handleStoragePress}
                 style={styles.fab}
               >
-                <StorageStackIcon size={16} color={gameUIColors.storage} glowColor={gameUIColors.storage} noBackground />
+                <StorageStackIcon
+                  size={16}
+                  color={gameUIColors.storage}
+                  glowColor={gameUIColors.storage}
+                  noBackground
+                />
               </TouchableOpacity>
             )}
 
@@ -225,8 +243,12 @@ export function RnBetterDevToolsBubble({
               >
                 <WifiCircuitIcon
                   size={16}
-                  color={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
-                  glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
+                  color={
+                    isWifiEnabled ? gameUIColors.network : gameUIColors.error
+                  }
+                  glowColor={
+                    isWifiEnabled ? gameUIColors.network : gameUIColors.error
+                  }
                   strength={4}
                   showSlash={!isWifiEnabled}
                   noBackground
@@ -329,7 +351,6 @@ export function RnBetterDevToolsBubble({
           onClose={handleNetworkModalDismiss}
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
-
       </QueryClientProvider>
     </ErrorBoundary>
   );
@@ -341,11 +362,11 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 6,
     marginRight: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minWidth: 0,
     minHeight: 0,
     // No background or border — icon-only buttons
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 });

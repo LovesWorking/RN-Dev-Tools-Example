@@ -37,7 +37,8 @@ export const ReactQueryIcon: React.FC<ReactQueryIconProps> = ({
   noBackground = true,
 }) => {
   const scale = noBackground ? size / 24 : size / 60;
-  const preset = ColorPresets[colorPreset as keyof typeof ColorPresets] || ColorPresets.red;
+  const preset =
+    ColorPresets[colorPreset as keyof typeof ColorPresets] || ColorPresets.red;
   const activeColor = color || preset.color;
   const activeGlow = glowColor || preset.glow;
 
@@ -54,30 +55,35 @@ export const ReactQueryIcon: React.FC<ReactQueryIconProps> = ({
         {rotations.map((rotation, i) => (
           <View
             key={`hex-${i}`}
-            style={{
-              position: "absolute",
-              width: hexWidth,
-              height: hexHeight,
-              backgroundColor: activeColor,
-              left: hexLeft,
-              top: hexTop,
-              transform: rotation !== 0 ? [{ rotate: `${rotation}deg` }] : undefined,
-              opacity: 0.9,
-            } as ViewStyle}
+            style={
+              {
+                position: "absolute",
+                width: hexWidth,
+                height: hexHeight,
+                backgroundColor: activeColor,
+                left: hexLeft,
+                top: hexTop,
+                transform:
+                  rotation !== 0 ? [{ rotate: `${rotation}deg` }] : undefined,
+                opacity: 0.9,
+              } as ViewStyle
+            }
           />
         ))}
         {/* Single hexagon glow */}
         <View
-          style={{
-            position: "absolute",
-            width: 10 * scale,
-            height: 10 * scale,
-            borderRadius: 2 * scale,
-            backgroundColor: activeGlow,
-            left: size / 2 - 5 * scale,
-            top: size / 2 - 5 * scale,
-            opacity: 0.15,
-          } as ViewStyle}
+          style={
+            {
+              position: "absolute",
+              width: 10 * scale,
+              height: 10 * scale,
+              borderRadius: 2 * scale,
+              backgroundColor: activeGlow,
+              left: size / 2 - 5 * scale,
+              top: size / 2 - 5 * scale,
+              opacity: 0.15,
+            } as ViewStyle
+          }
         />
       </>
     );
@@ -95,33 +101,38 @@ export const ReactQueryIcon: React.FC<ReactQueryIconProps> = ({
         {rotations.map((rotation, i) => (
           <View
             key={`orbit-${i}`}
-            style={{
-              position: "absolute",
-              width: lineLength,
-              height: lineThickness,
-              backgroundColor: activeColor,
-              borderRadius: orbitRadius,
-              left: size / 2 - lineLength / 2,
-              top: size / 2 - lineThickness / 2,
-              transform: rotation !== 0 ? [{ rotate: `${rotation}deg` }] : undefined,
-              opacity: 0.7,
-            } as ViewStyle}
+            style={
+              {
+                position: "absolute",
+                width: lineLength,
+                height: lineThickness,
+                backgroundColor: activeColor,
+                borderRadius: orbitRadius,
+                left: size / 2 - lineLength / 2,
+                top: size / 2 - lineThickness / 2,
+                transform:
+                  rotation !== 0 ? [{ rotate: `${rotation}deg` }] : undefined,
+                opacity: 0.7,
+              } as ViewStyle
+            }
           />
         ))}
         {/* Simplified dots */}
         {ORBITAL_DOTS.map((dot, i) => (
           <View
             key={`dot-${i}`}
-            style={{
-              position: "absolute",
-              width: 2.5 * scale,
-              height: 2.5 * scale,
-              borderRadius: 1.25 * scale,
-              backgroundColor: activeGlow,
-              left: dot.x * size - 1.25 * scale,
-              top: dot.y * size - 1.25 * scale,
-              opacity: 0.5,
-            } as ViewStyle}
+            style={
+              {
+                position: "absolute",
+                width: 2.5 * scale,
+                height: 2.5 * scale,
+                borderRadius: 1.25 * scale,
+                backgroundColor: activeGlow,
+                left: dot.x * size - 1.25 * scale,
+                top: dot.y * size - 1.25 * scale,
+                opacity: 0.5,
+              } as ViewStyle
+            }
           />
         ))}
       </>
@@ -134,30 +145,36 @@ export const ReactQueryIcon: React.FC<ReactQueryIconProps> = ({
       {renderHexagon()}
       {/* Single outer ring glow */}
       <View
-        style={{
-          position: "absolute",
-          width: size * 0.7,
-          height: size * 0.7,
-          borderRadius: size * 0.35,
-          borderWidth: 0.5 * scale,
-          borderColor: activeGlow,
-          left: size * 0.15,
-          top: size * 0.15,
-          opacity: 0.2,
-        } as ViewStyle}
+        style={
+          {
+            position: "absolute",
+            width: size * 0.7,
+            height: size * 0.7,
+            borderRadius: size * 0.35,
+            borderWidth: 0.5 * scale,
+            borderColor: activeGlow,
+            left: size * 0.15,
+            top: size * 0.15,
+            opacity: 0.2,
+          } as ViewStyle
+        }
       />
     </>
   );
 
   if (noBackground) {
     return (
-      <View style={{
-        width: size,
-        height: size,
-        position: "relative",
-        alignItems: "center",
-        justifyContent: "center",
-      } as ViewStyle}>
+      <View
+        style={
+          {
+            width: size,
+            height: size,
+            position: "relative",
+            alignItems: "center",
+            justifyContent: "center",
+          } as ViewStyle
+        }
+      >
         {iconContent}
       </View>
     );

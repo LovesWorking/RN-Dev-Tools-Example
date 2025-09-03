@@ -59,8 +59,10 @@ export function StorageFilterView({
 
   // Sync external changes to filter manager
   useEffect(() => {
-    if (ignoredPatterns.size !== filterManager.filters.size ||
-        !Array.from(ignoredPatterns).every((p) => filterManager.filters.has(p))) {
+    if (
+      ignoredPatterns.size !== filterManager.filters.size ||
+      !Array.from(ignoredPatterns).every((p) => filterManager.filters.has(p))
+    ) {
       // External changes detected, update internal state
       // This ensures the filter manager stays in sync with parent component
     }
@@ -133,9 +135,16 @@ export function StorageFilterView({
         {/* Filters Section */}
         <View style={styles.section}>
           <SectionHeader>
-            <SectionHeader.Icon icon={Filter} color={gameUIColors.info} size={14} />
+            <SectionHeader.Icon
+              icon={Filter}
+              color={gameUIColors.info}
+              size={14}
+            />
             <SectionHeader.Title>Active Filters</SectionHeader.Title>
-            <SectionHeader.Badge count={ignoredPatterns.size} color={gameUIColors.info} />
+            <SectionHeader.Badge
+              count={ignoredPatterns.size}
+              color={gameUIColors.info}
+            />
           </SectionHeader>
           <Text style={styles.sectionSubtitle}>
             Add patterns to filter out storage keys
@@ -184,7 +193,10 @@ export function StorageFilterView({
                           style={styles.availableKeyItem}
                           sentry-label="ignore-touchable-opacity"
                         >
-                          <Text style={styles.availableKeyText} numberOfLines={1}>
+                          <Text
+                            style={styles.availableKeyText}
+                            numberOfLines={1}
+                          >
                             {key}
                           </Text>
                           <Plus size={12} color={gameUIColors.info} />
@@ -212,7 +224,11 @@ export function StorageFilterView({
         {/* How Filters Work Section */}
         <View style={styles.howItWorksSection}>
           <SectionHeader>
-            <SectionHeader.Icon icon={Filter} color={gameUIColors.warning} size={12} />
+            <SectionHeader.Icon
+              icon={Filter}
+              color={gameUIColors.warning}
+              size={12}
+            />
             <SectionHeader.Title>HOW FILTERS WORK</SectionHeader.Title>
           </SectionHeader>
           <Text style={styles.howItWorksText}>

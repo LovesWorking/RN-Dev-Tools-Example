@@ -21,7 +21,8 @@ Environment Variables Monitoring helps you track configuration values, detect mi
 
 Variables accessible in the client application:
 
-[//]: # 'PublicVars'
+[//]: # "PublicVars"
+
 ```tsx
 // .env file
 EXPO_PUBLIC_API_URL=https://api.example.com
@@ -31,9 +32,11 @@ EXPO_PUBLIC_VERSION=1.0.0
 // Accessible in your app
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 ```
-[//]: # 'PublicVars'
+
+[//]: # "PublicVars"
 
 Public variables are indicated with:
+
 - **Green badge** - Variable is present
 - **Variable name** - Full key name
 - **Value preview** - First 50 characters
@@ -42,7 +45,8 @@ Public variables are indicated with:
 
 Server-side variables (development only):
 
-[//]: # 'PrivateVars'
+[//]: # "PrivateVars"
+
 ```tsx
 // .env file
 SECRET_KEY=super-secret-key
@@ -51,7 +55,8 @@ NODE_ENV=development
 
 // Not accessible in client, shown in dev tools for debugging
 ```
-[//]: # 'PrivateVars'
+
+[//]: # "PrivateVars"
 
 > Note: Private variables are only visible in development builds
 
@@ -61,29 +66,31 @@ NODE_ENV=development
 
 Define which environment variables your app needs:
 
-[//]: # 'RequiredVarsConfig'
+[//]: # "RequiredVarsConfig"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   requiredEnvVars={[
-    { 
-      key: 'EXPO_PUBLIC_API_URL', 
-      description: 'Backend API endpoint'
-    },
-    { 
-      key: 'EXPO_PUBLIC_APP_ENV', 
-      description: 'Current environment (dev/staging/prod)'
+    {
+      key: "EXPO_PUBLIC_API_URL",
+      description: "Backend API endpoint",
     },
     {
-      key: 'EXPO_PUBLIC_FEATURE_FLAG',
-      description: 'Feature toggle',
-      optional: true
-    }
+      key: "EXPO_PUBLIC_APP_ENV",
+      description: "Current environment (dev/staging/prod)",
+    },
+    {
+      key: "EXPO_PUBLIC_FEATURE_FLAG",
+      description: "Feature toggle",
+      optional: true,
+    },
   ]}
 />
 ```
-[//]: # 'RequiredVarsConfig'
+
+[//]: # "RequiredVarsConfig"
 
 ### Validation Indicators
 
@@ -109,6 +116,7 @@ Each environment variable displays:
 ### Viewing Full Values
 
 Tap any variable card to:
+
 - View the complete value
 - Copy to clipboard
 - See usage examples
@@ -120,7 +128,8 @@ Tap any variable card to:
 
 Monitor different API endpoints per environment:
 
-[//]: # 'APIEndpoints'
+[//]: # "APIEndpoints"
+
 ```tsx
 // Development
 EXPO_PUBLIC_API_URL=http://localhost:3000
@@ -131,37 +140,42 @@ EXPO_PUBLIC_API_URL=https://staging-api.example.com
 // Production
 EXPO_PUBLIC_API_URL=https://api.example.com
 ```
-[//]: # 'APIEndpoints'
+
+[//]: # "APIEndpoints"
 
 ### Feature Flags
 
 Toggle features using environment variables:
 
-[//]: # 'FeatureFlags'
+[//]: # "FeatureFlags"
+
 ```tsx
 // In your .env
-EXPO_PUBLIC_ENABLE_NEW_FEATURE=true
-EXPO_PUBLIC_ENABLE_BETA_FEATURES=false
+EXPO_PUBLIC_ENABLE_NEW_FEATURE = true;
+EXPO_PUBLIC_ENABLE_BETA_FEATURES = false;
 
 // In your app
-if (process.env.EXPO_PUBLIC_ENABLE_NEW_FEATURE === 'true') {
+if (process.env.EXPO_PUBLIC_ENABLE_NEW_FEATURE === "true") {
   // Show new feature
 }
 ```
-[//]: # 'FeatureFlags'
+
+[//]: # "FeatureFlags"
 
 ### Version Information
 
 Track app and API versions:
 
-[//]: # 'VersionInfo'
+[//]: # "VersionInfo"
+
 ```tsx
 EXPO_PUBLIC_APP_VERSION=1.2.3
 EXPO_PUBLIC_BUILD_NUMBER=456
 EXPO_PUBLIC_API_VERSION=v2
 EXPO_PUBLIC_COMMIT_SHA=abc123
 ```
-[//]: # 'VersionInfo'
+
+[//]: # "VersionInfo"
 
 ## Environment Indicators
 
@@ -177,20 +191,22 @@ The floating bubble displays your current environment:
 
 Load different configurations per environment:
 
-[//]: # 'EnvironmentConfig'
+[//]: # "EnvironmentConfig"
+
 ```tsx
 const getEnvironment = () => {
-  const env = process.env.EXPO_PUBLIC_APP_ENV || 'development'
-  
-  return env // Displayed in dev tools
-}
+  const env = process.env.EXPO_PUBLIC_APP_ENV || "development";
 
-<RnBetterDevToolsBubble 
+  return env; // Displayed in dev tools
+};
+
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment={getEnvironment()}
-/>
+/>;
 ```
-[//]: # 'EnvironmentConfig'
+
+[//]: # "EnvironmentConfig"
 
 ## Debugging Missing Variables
 
@@ -207,7 +223,8 @@ When variables show as missing:
 
 **Variable not showing:**
 
-[//]: # 'TroubleshootingVars'
+[//]: # "TroubleshootingVars"
+
 ```bash
 # Clear cache and restart
 npx expo start --clear
@@ -215,18 +232,21 @@ npx expo start --clear
 # For React Native CLI
 npx react-native start --reset-cache
 ```
-[//]: # 'TroubleshootingVars'
+
+[//]: # "TroubleshootingVars"
 
 **Variable shows as undefined:**
 
-[//]: # 'UndefinedVars'
+[//]: # "UndefinedVars"
+
 ```tsx
 // Check spelling and casing
 EXPO_PUBLIC_API_URL ✓
 EXPO_PUBLIC_api_url ✗
 expo_public_API_URL ✗
 ```
-[//]: # 'UndefinedVars'
+
+[//]: # "UndefinedVars"
 
 ## Advanced Features
 
@@ -234,37 +254,38 @@ expo_public_API_URL ✗
 
 Automatically detect environment from variables:
 
-[//]: # 'DynamicEnvironment'
+[//]: # "DynamicEnvironment"
+
 ```tsx
 const detectEnvironment = () => {
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL
-  
-  if (apiUrl?.includes('localhost')) return 'development'
-  if (apiUrl?.includes('staging')) return 'staging'
-  if (apiUrl?.includes('api.')) return 'production'
-  
-  return 'development'
-}
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-<RnBetterDevToolsBubble 
-  environment={detectEnvironment()}
-/>
+  if (apiUrl?.includes("localhost")) return "development";
+  if (apiUrl?.includes("staging")) return "staging";
+  if (apiUrl?.includes("api.")) return "production";
+
+  return "development";
+};
+
+<RnBetterDevToolsBubble environment={detectEnvironment()} />;
 ```
-[//]: # 'DynamicEnvironment'
+
+[//]: # "DynamicEnvironment"
 
 ### Variable Grouping
 
 Variables are automatically grouped by prefix:
 
-- **EXPO_PUBLIC_API_** - API configuration
-- **EXPO_PUBLIC_FEATURE_** - Feature flags
-- **EXPO_PUBLIC_AUTH_** - Authentication settings
+- **EXPO*PUBLIC_API*** - API configuration
+- **EXPO*PUBLIC_FEATURE*** - Feature flags
+- **EXPO*PUBLIC_AUTH*** - Authentication settings
 
 ### Default Values
 
 Provide fallbacks for optional variables:
 
-[//]: # 'DefaultValues'
+[//]: # "DefaultValues"
+
 ```tsx
 requiredEnvVars={[
   {
@@ -278,7 +299,8 @@ requiredEnvVars={[
 // In your app
 const timeout = process.env.EXPO_PUBLIC_TIMEOUT || '5000'
 ```
-[//]: # 'DefaultValues'
+
+[//]: # "DefaultValues"
 
 ## Best Practices
 
@@ -286,7 +308,8 @@ const timeout = process.env.EXPO_PUBLIC_TIMEOUT || '5000'
 
 Use consistent, descriptive names:
 
-[//]: # 'NamingConventions'
+[//]: # "NamingConventions"
+
 ```bash
 # Good
 EXPO_PUBLIC_API_BASE_URL
@@ -298,13 +321,15 @@ EXPO_PUBLIC_URL
 EXPO_PUBLIC_KEY
 EXPO_PUBLIC_FLAG1
 ```
-[//]: # 'NamingConventions'
+
+[//]: # "NamingConventions"
 
 ### Security Considerations
 
 Never expose sensitive data:
 
-[//]: # 'SecurityConsiderations'
+[//]: # "SecurityConsiderations"
+
 ```bash
 # Never use EXPO_PUBLIC_ for secrets
 EXPO_PUBLIC_API_KEY=secret123 ✗
@@ -313,13 +338,15 @@ EXPO_PUBLIC_API_KEY=secret123 ✗
 API_SECRET=secret123 ✓
 DATABASE_PASSWORD=pass123 ✓
 ```
-[//]: # 'SecurityConsiderations'
+
+[//]: # "SecurityConsiderations"
 
 ### Documentation
 
 Document all environment variables:
 
-[//]: # 'Documentation'
+[//]: # "Documentation"
+
 ```tsx
 requiredEnvVars={[
   {
@@ -333,7 +360,8 @@ requiredEnvVars={[
   }
 ]}
 ```
-[//]: # 'Documentation'
+
+[//]: # "Documentation"
 
 ## Platform-Specific Notes
 
@@ -359,7 +387,7 @@ npm i react-native-config
 Standard process.env works:
 
 ```tsx
-const apiUrl = process.env.REACT_APP_API_URL
+const apiUrl = process.env.REACT_APP_API_URL;
 ```
 
 ## Next Steps

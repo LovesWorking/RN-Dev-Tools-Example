@@ -59,8 +59,8 @@ export function ReactQueryModalHeader({
     return (
       <ModalHeader>
         <ModalHeader.Navigation onBack={onBack} onClose={onClose} />
-        <ModalHeader.Content 
-          title={getItemText(selectedQuery ?? selectedMutation!)} 
+        <ModalHeader.Content
+          title={getItemText(selectedQuery ?? selectedMutation!)}
         />
       </ModalHeader>
     );

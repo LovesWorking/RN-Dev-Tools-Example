@@ -48,13 +48,13 @@ class AsyncStorageListener {
   private listeners: AsyncStorageEventListener[] = [];
   private isListening = false;
   private isInitialized = false;
-  
+
   // Keys to ignore for dev tools to prevent self-triggering
   private ignoredKeys = new Set([
-    '@devtools_diff_mode',
-    '@devtools_diff_options',
-    'REACT_QUERY_OFFLINE_CACHE',
-    '@devtools_'  // Prefix check for all dev tools keys
+    "@devtools_diff_mode",
+    "@devtools_diff_options",
+    "REACT_QUERY_OFFLINE_CACHE",
+    "@devtools_", // Prefix check for all dev tools keys
   ]);
 
   // Store original methods
@@ -69,16 +69,16 @@ class AsyncStorageListener {
   constructor() {
     console.log("[AsyncStorageListener] Initializing listener singleton");
   }
-  
+
   private shouldIgnoreKey(key: string): boolean {
     // Check exact matches
     if (this.ignoredKeys.has(key)) return true;
-    
+
     // Check prefix matches
     for (const ignoredKey of this.ignoredKeys) {
       if (key.startsWith(ignoredKey)) return true;
     }
-    
+
     return false;
   }
 
@@ -97,11 +97,11 @@ class AsyncStorageListener {
     }
 
     // Check if methods are already swizzled by checking the function name
-    if (AsyncStorageModule.setItem.name === 'swizzled_setItem') {
+    if (AsyncStorageModule.setItem.name === "swizzled_setItem") {
       console.error(
         "[AsyncStorageListener] CRITICAL: AsyncStorage methods are already swizzled! " +
-        "This means another instance of AsyncStorageListener is already running. " +
-        "This should not happen with singleton pattern."
+          "This means another instance of AsyncStorageListener is already running. " +
+          "This should not happen with singleton pattern.",
       );
       // Don't store swizzled methods as originals
       return false;
@@ -124,7 +124,7 @@ class AsyncStorageListener {
 
     console.log("[AsyncStorageListener] Original methods stored successfully");
     this.isInitialized = true;
-    
+
     return true;
   }
 
@@ -151,7 +151,7 @@ class AsyncStorageListener {
     if (this.listeners.length === 0) {
       console.log(
         `[AsyncStorageListener] Skipping event emission (no listeners): ${event.action}`,
-        event.data?.key || event.data?.keys || ''
+        event.data?.key || event.data?.keys || "",
       );
       return;
     }
@@ -174,7 +174,9 @@ class AsyncStorageListener {
   // Start listening to AsyncStorage operations
   async startListening() {
     if (this.isListening) {
-      console.warn("[AsyncStorageListener] Already listening - skipping re-initialization");
+      console.warn(
+        "[AsyncStorageListener] Already listening - skipping re-initialization",
+      );
       return;
     }
 
@@ -187,8 +189,10 @@ class AsyncStorageListener {
     }
 
     // Check if methods are already swizzled (this can happen if initialize was called twice somehow)
-    if (AsyncStorageModule.setItem.name === 'swizzled_setItem') {
-      console.warn("[AsyncStorageListener] Methods already swizzled - restoring originals first");
+    if (AsyncStorageModule.setItem.name === "swizzled_setItem") {
+      console.warn(
+        "[AsyncStorageListener] Methods already swizzled - restoring originals first",
+      );
       this.restoreOriginalMethods();
     }
 
@@ -201,7 +205,7 @@ class AsyncStorageListener {
       console.log(
         `[AsyncStorageListener] Intercepted setItem: key="${key}", value="${value?.substring(0, 100)}..."`,
       );
-      
+
       // Only emit event if key is not ignored
       if (!this.shouldIgnoreKey(key)) {
         this.emit({
@@ -212,10 +216,12 @@ class AsyncStorageListener {
       } else {
         console.log(`[AsyncStorageListener] Ignoring setItem for key: ${key}`);
       }
-      
+
       return this.originalSetItem(key, value);
     };
-    Object.defineProperty(swizzled_setItem, 'name', { value: 'swizzled_setItem' });
+    Object.defineProperty(swizzled_setItem, "name", {
+      value: "swizzled_setItem",
+    });
     AsyncStorageModule.setItem = swizzled_setItem;
 
     // Swizzle removeItem
@@ -223,7 +229,7 @@ class AsyncStorageListener {
       console.log(
         `[AsyncStorageListener] Intercepted removeItem: key="${key}"`,
       );
-      
+
       // Only emit event if key is not ignored
       if (!this.shouldIgnoreKey(key)) {
         this.emit({
@@ -232,9 +238,11 @@ class AsyncStorageListener {
           data: { key },
         });
       } else {
-        console.log(`[AsyncStorageListener] Ignoring removeItem for key: ${key}`);
+        console.log(
+          `[AsyncStorageListener] Ignoring removeItem for key: ${key}`,
+        );
       }
-      
+
       return this.originalRemoveItem(key);
     };
 
@@ -243,7 +251,7 @@ class AsyncStorageListener {
       console.log(
         `[AsyncStorageListener] Intercepted mergeItem: key="${key}", value="${value?.substring(0, 100)}..."`,
       );
-      
+
       // Only emit event if key is not ignored
       if (!this.shouldIgnoreKey(key)) {
         this.emit({
@@ -252,9 +260,11 @@ class AsyncStorageListener {
           data: { key, value },
         });
       } else {
-        console.log(`[AsyncStorageListener] Ignoring mergeItem for key: ${key}`);
+        console.log(
+          `[AsyncStorageListener] Ignoring mergeItem for key: ${key}`,
+        );
       }
-      
+
       return this.originalMergeItem(key, value);
     };
 
@@ -275,10 +285,12 @@ class AsyncStorageListener {
       console.log(
         `[AsyncStorageListener] Intercepted multiSet: ${keyValuePairs.length} pairs`,
       );
-      
+
       // Filter out ignored keys
-      const filteredPairs = keyValuePairs.filter(([key]) => !this.shouldIgnoreKey(key));
-      
+      const filteredPairs = keyValuePairs.filter(
+        ([key]) => !this.shouldIgnoreKey(key),
+      );
+
       if (filteredPairs.length > 0) {
         this.emit({
           action: "multiSet",
@@ -288,7 +300,7 @@ class AsyncStorageListener {
       } else {
         console.log(`[AsyncStorageListener] All keys in multiSet are ignored`);
       }
-      
+
       return this.originalMultiSet(keyValuePairs);
     };
 
@@ -297,10 +309,10 @@ class AsyncStorageListener {
       console.log(
         `[AsyncStorageListener] Intercepted multiRemove: ${keys.length} keys`,
       );
-      
+
       // Filter out ignored keys
-      const filteredKeys = keys.filter(key => !this.shouldIgnoreKey(key));
-      
+      const filteredKeys = keys.filter((key) => !this.shouldIgnoreKey(key));
+
       if (filteredKeys.length > 0) {
         this.emit({
           action: "multiRemove",
@@ -308,9 +320,11 @@ class AsyncStorageListener {
           data: { keys: filteredKeys as string[] },
         });
       } else {
-        console.log(`[AsyncStorageListener] All keys in multiRemove are ignored`);
+        console.log(
+          `[AsyncStorageListener] All keys in multiRemove are ignored`,
+        );
       }
-      
+
       return this.originalMultiRemove(keys);
     };
 
@@ -322,10 +336,12 @@ class AsyncStorageListener {
         console.log(
           `[AsyncStorageListener] Intercepted multiMerge: ${keyValuePairs.length} pairs`,
         );
-        
+
         // Filter out ignored keys
-        const filteredPairs = keyValuePairs.filter(([key]) => !this.shouldIgnoreKey(key));
-        
+        const filteredPairs = keyValuePairs.filter(
+          ([key]) => !this.shouldIgnoreKey(key),
+        );
+
         if (filteredPairs.length > 0) {
           this.emit({
             action: "multiMerge",
@@ -333,9 +349,11 @@ class AsyncStorageListener {
             data: { pairs: filteredPairs as Array<[string, string]> },
           });
         } else {
-          console.log(`[AsyncStorageListener] All keys in multiMerge are ignored`);
+          console.log(
+            `[AsyncStorageListener] All keys in multiMerge are ignored`,
+          );
         }
-        
+
         return this.originalMultiMerge(keyValuePairs);
       };
     }

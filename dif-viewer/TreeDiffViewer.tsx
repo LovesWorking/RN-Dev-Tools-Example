@@ -146,7 +146,7 @@ function isEqual(a: any, b: any): boolean {
 function computeDiff(
   oldValue: any,
   newValue: any,
-  path: string[] = []
+  path: string[] = [],
 ): DiffNode[] {
   const result: DiffNode[] = [];
 
@@ -166,8 +166,8 @@ function computeDiff(
             oldValue === undefined
               ? "added"
               : newValue === undefined
-              ? "removed"
-              : "changed",
+                ? "removed"
+                : "changed",
           oldValue,
           newValue,
         },
@@ -208,7 +208,7 @@ function computeDiff(
                 children: computeDiff(
                   Array.isArray(newItem) ? [] : {},
                   newItem,
-                  itemPath
+                  itemPath,
                 ),
                 expanded: false,
               }
@@ -227,7 +227,7 @@ function computeDiff(
                 children: computeDiff(
                   oldItem,
                   Array.isArray(oldItem) ? [] : {},
-                  itemPath
+                  itemPath,
                 ),
                 expanded: false,
               }
@@ -302,7 +302,7 @@ function computeDiff(
               children: computeDiff(
                 Array.isArray(newVal) ? [] : {},
                 newVal,
-                keyPath
+                keyPath,
               ),
               expanded: false,
             }
@@ -321,7 +321,7 @@ function computeDiff(
               children: computeDiff(
                 oldVal,
                 Array.isArray(oldVal) ? [] : {},
-                keyPath
+                keyPath,
               ),
               expanded: false,
             }
@@ -398,7 +398,7 @@ function stringifyValue(value: any, compact: boolean = true): string {
   if (Array.isArray(value)) {
     if (compact) {
       const count = value.length;
-      return count === 0 ? "[ ]" : `[ ${count} item${count !== 1 ? 's' : ''} ]`;
+      return count === 0 ? "[ ]" : `[ ${count} item${count !== 1 ? "s" : ""} ]`;
     }
     return JSON.stringify(value, null, 2);
   }
@@ -406,7 +406,7 @@ function stringifyValue(value: any, compact: boolean = true): string {
   if (isObject(value)) {
     if (compact) {
       const keys = Object.keys(value).length;
-      return keys === 0 ? "{ }" : `{ ${keys} key${keys !== 1 ? 's' : ''} }`;
+      return keys === 0 ? "{ }" : `{ ${keys} key${keys !== 1 ? "s" : ""} }`;
     }
     return JSON.stringify(value, null, 2);
   }
@@ -482,7 +482,7 @@ export default function TreeDiffViewer({
 
   const renderDiffNode = (
     node: DiffNode,
-    depth: number = 0
+    depth: number = 0,
   ): React.ReactNode => {
     if (!showUnchanged && node.type === "unchanged") {
       return null;
@@ -768,7 +768,7 @@ export default function TreeDiffViewer({
   };
 
   const countChanges = (
-    nodes: DiffNode[]
+    nodes: DiffNode[],
   ): { added: number; removed: number; changed: number } => {
     let added = 0,
       removed = 0,
@@ -802,23 +802,53 @@ export default function TreeDiffViewer({
           <View style={styles.summaryContainer}>
             {stats.added > 0 && (
               <View style={[styles.summaryItem, styles.summaryAdded]}>
-                <Text style={[styles.summaryIcon, { color: theme.addedText }]}>+</Text>
-                <Text style={[styles.summaryCount, { color: theme.addedText }]}>{stats.added}</Text>
-                <Text style={[styles.summaryLabel, { color: theme.addedText }]}>new</Text>
+                <Text style={[styles.summaryIcon, { color: theme.addedText }]}>
+                  +
+                </Text>
+                <Text style={[styles.summaryCount, { color: theme.addedText }]}>
+                  {stats.added}
+                </Text>
+                <Text style={[styles.summaryLabel, { color: theme.addedText }]}>
+                  new
+                </Text>
               </View>
             )}
             {stats.removed > 0 && (
               <View style={[styles.summaryItem, styles.summaryRemoved]}>
-                <Text style={[styles.summaryIcon, { color: theme.removedText }]}>−</Text>
-                <Text style={[styles.summaryCount, { color: theme.removedText }]}>{stats.removed}</Text>
-                <Text style={[styles.summaryLabel, { color: theme.removedText }]}>gone</Text>
+                <Text
+                  style={[styles.summaryIcon, { color: theme.removedText }]}
+                >
+                  −
+                </Text>
+                <Text
+                  style={[styles.summaryCount, { color: theme.removedText }]}
+                >
+                  {stats.removed}
+                </Text>
+                <Text
+                  style={[styles.summaryLabel, { color: theme.removedText }]}
+                >
+                  gone
+                </Text>
               </View>
             )}
             {stats.changed > 0 && (
               <View style={[styles.summaryItem, styles.summaryChanged]}>
-                <Text style={[styles.summaryIcon, { color: theme.changedText }]}>≈</Text>
-                <Text style={[styles.summaryCount, { color: theme.changedText }]}>{stats.changed}</Text>
-                <Text style={[styles.summaryLabel, { color: theme.changedText }]}>modified</Text>
+                <Text
+                  style={[styles.summaryIcon, { color: theme.changedText }]}
+                >
+                  ≈
+                </Text>
+                <Text
+                  style={[styles.summaryCount, { color: theme.changedText }]}
+                >
+                  {stats.changed}
+                </Text>
+                <Text
+                  style={[styles.summaryLabel, { color: theme.changedText }]}
+                >
+                  modified
+                </Text>
               </View>
             )}
           </View>
@@ -913,7 +943,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(255, 255, 255, 0.02)',
+    borderBottomColor: "rgba(255, 255, 255, 0.02)",
   },
   lineNumber: {
     width: 32,
@@ -976,7 +1006,7 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 11,
     fontFamily: "monospace",
-    maxWidth: '80%',
+    maxWidth: "80%",
   },
   arrow: {
     fontSize: 12,

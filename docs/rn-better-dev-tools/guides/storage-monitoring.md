@@ -21,22 +21,25 @@ Storage Monitoring provides complete visibility into your app's local storage, a
 
 High-performance key-value storage:
 
-[//]: # 'MMKVStorage'
-```tsx
-import { MMKV } from 'react-native-mmkv'
+[//]: # "MMKVStorage"
 
-const storage = new MMKV()
+```tsx
+import { MMKV } from "react-native-mmkv";
+
+const storage = new MMKV();
 
 // Store data
-storage.set('user.name', 'John Doe')
-storage.set('app.theme', 'dark')
-storage.set('cache.timestamp', Date.now())
+storage.set("user.name", "John Doe");
+storage.set("app.theme", "dark");
+storage.set("cache.timestamp", Date.now());
 
 // All visible in dev tools instantly
 ```
-[//]: # 'MMKVStorage'
+
+[//]: # "MMKVStorage"
 
 Features:
+
 - **Synchronous API** - No async/await needed
 - **Type-safe** - Automatic serialization
 - **Performance** - 30x faster than AsyncStorage
@@ -48,21 +51,27 @@ Features:
 
 Standard React Native storage:
 
-[//]: # 'AsyncStorage'
+[//]: # "AsyncStorage"
+
 ```tsx
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Store data
-await AsyncStorage.setItem('user_preferences', JSON.stringify({
-  theme: 'dark',
-  notifications: true
-}))
+await AsyncStorage.setItem(
+  "user_preferences",
+  JSON.stringify({
+    theme: "dark",
+    notifications: true,
+  }),
+);
 
 // Appears in storage browser
 ```
-[//]: # 'AsyncStorage'
+
+[//]: # "AsyncStorage"
 
 Features:
+
 - **Async API** - Promise-based
 - **JSON serialization** - Store complex objects
 - **Cross-platform** - Works everywhere
@@ -72,19 +81,22 @@ Features:
 
 Encrypted storage for sensitive data:
 
-[//]: # 'SecureStorage'
+[//]: # "SecureStorage"
+
 ```tsx
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from "expo-secure-store";
 
 // Store sensitive data
-await SecureStore.setItemAsync('auth_token', 'secret-token-123')
-await SecureStore.setItemAsync('user_pin', '1234')
+await SecureStore.setItemAsync("auth_token", "secret-token-123");
+await SecureStore.setItemAsync("user_pin", "1234");
 
 // Shows in dev tools with security indicator
 ```
-[//]: # 'SecureStorage'
+
+[//]: # "SecureStorage"
 
 Features:
+
 - **Encryption** - Hardware-backed encryption
 - **Biometric protection** - Optional biometric auth
 - **Keychain/Keystore** - Uses platform secure storage
@@ -136,7 +148,8 @@ Tap any storage entry to view:
 
 Modify storage values in real-time:
 
-[//]: # 'EditingData'
+[//]: # "EditingData"
+
 ```tsx
 // 1. Tap a storage entry
 // 2. Select "Edit"
@@ -145,9 +158,11 @@ Modify storage values in real-time:
 
 // Changes immediately reflect in your app
 ```
-[//]: # 'EditingData'
+
+[//]: # "EditingData"
 
 Editing features:
+
 - **JSON editor** - Syntax highlighting for JSON
 - **Validation** - Ensures valid JSON before saving
 - **Type preservation** - Maintains original data type
@@ -163,7 +178,8 @@ Add new storage entries:
 4. Enter value (JSON supported)
 5. Save to storage
 
-[//]: # 'CreatingEntries'
+[//]: # "CreatingEntries"
+
 ```tsx
 // Example: Create test data
 Key: "test_user"
@@ -174,7 +190,8 @@ Value: {
   "role": "admin"
 }
 ```
-[//]: # 'CreatingEntries'
+
+[//]: # "CreatingEntries"
 
 ### Deleting Entries
 
@@ -185,6 +202,7 @@ Remove storage entries:
 3. Entry is immediately removed
 
 Bulk operations:
+
 - **Clear storage type** - Remove all entries from one backend
 - **Clear all** - Wipe all storage (with confirmation)
 
@@ -194,32 +212,34 @@ Bulk operations:
 
 Monitor critical storage keys:
 
-[//]: # 'RequiredKeys'
+[//]: # "RequiredKeys"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
   requiredStorageKeys={[
-    { 
-      key: 'auth_token', 
-      type: 'secure',
-      description: 'User authentication token'
-    },
-    { 
-      key: 'user_preferences', 
-      type: 'async',
-      description: 'App settings and preferences'
+    {
+      key: "auth_token",
+      type: "secure",
+      description: "User authentication token",
     },
     {
-      key: 'cache_version',
-      type: 'mmkv',
-      description: 'Cache versioning',
-      optional: true
-    }
+      key: "user_preferences",
+      type: "async",
+      description: "App settings and preferences",
+    },
+    {
+      key: "cache_version",
+      type: "mmkv",
+      description: "Cache versioning",
+      optional: true,
+    },
   ]}
 />
 ```
-[//]: # 'RequiredKeys'
+
+[//]: # "RequiredKeys"
 
 ### Validation Indicators
 
@@ -234,7 +254,8 @@ Required keys show validation status:
 
 Real-time storage event monitoring:
 
-[//]: # 'StorageEvents'
+[//]: # "StorageEvents"
+
 ```tsx
 // Feature in development
 // Will show live storage operations:
@@ -243,7 +264,8 @@ Real-time storage event monitoring:
 // - clear events
 // - With timestamps and values
 ```
-[//]: # 'StorageEvents'
+
+[//]: # "StorageEvents"
 
 > Note: Storage events listener exists but not yet integrated into the bubble menu
 
@@ -251,7 +273,8 @@ Real-time storage event monitoring:
 
 Storage entries used by React Query are accessible:
 
-[//]: # 'ReactQueryIntegration'
+[//]: # "ReactQueryIntegration"
+
 ```tsx
 // React Query persisted cache appears as:
 // Key: "react-query-cache"
@@ -259,7 +282,8 @@ Storage entries used by React Query are accessible:
 
 // View and modify cached queries directly
 ```
-[//]: # 'ReactQueryIntegration'
+
+[//]: # "ReactQueryIntegration"
 
 ## Performance Considerations
 
@@ -275,13 +299,13 @@ For apps with many storage entries:
 
 Be aware of platform limits:
 
-| Storage Type | iOS Limit | Android Limit |
-|-------------|-----------|---------------|
-| MMKV | Unlimited* | Unlimited* |
-| AsyncStorage | Unlimited | ~6MB |
-| SecureStorage | ~2KB/entry | ~2KB/entry |
+| Storage Type  | iOS Limit   | Android Limit |
+| ------------- | ----------- | ------------- |
+| MMKV          | Unlimited\* | Unlimited\*   |
+| AsyncStorage  | Unlimited   | ~6MB          |
+| SecureStorage | ~2KB/entry  | ~2KB/entry    |
 
-*Limited by device storage
+\*Limited by device storage
 
 ## Common Use Cases
 
@@ -289,40 +313,46 @@ Be aware of platform limits:
 
 Monitor auth tokens and session data:
 
-[//]: # 'AuthMonitoring'
+[//]: # "AuthMonitoring"
+
 ```tsx
 // Check stored auth tokens
 // Key: "auth_token" (SecureStorage)
 // Key: "refresh_token" (SecureStorage)
 // Key: "user_session" (AsyncStorage)
 ```
-[//]: # 'AuthMonitoring'
+
+[//]: # "AuthMonitoring"
 
 ### App Settings
 
 View and modify user preferences:
 
-[//]: # 'AppSettings'
+[//]: # "AppSettings"
+
 ```tsx
 // Common settings keys
 // Key: "app_theme" - dark/light mode
 // Key: "notification_settings" - push preferences
 // Key: "language_preference" - app language
 ```
-[//]: # 'AppSettings'
+
+[//]: # "AppSettings"
 
 ### Cache Management
 
 Inspect and clear cached data:
 
-[//]: # 'CacheManagement'
+[//]: # "CacheManagement"
+
 ```tsx
 // Cache-related keys
 // Key: "api_cache_*" - API response cache
 // Key: "image_cache_*" - Downloaded images
 // Key: "cache_timestamp" - Cache validity
 ```
-[//]: # 'CacheManagement'
+
+[//]: # "CacheManagement"
 
 ## Best Practices
 
@@ -330,26 +360,29 @@ Inspect and clear cached data:
 
 Use consistent, hierarchical key names:
 
-[//]: # 'KeyNaming'
+[//]: # "KeyNaming"
+
 ```tsx
 // Good naming patterns
-"user.profile.name"
-"user.settings.theme"
-"cache.api.users"
-"temp.form.draft"
+"user.profile.name";
+"user.settings.theme";
+"cache.api.users";
+"temp.form.draft";
 
 // Avoid
-"data1"
-"key123"
-"x"
+"data1";
+"key123";
+"x";
 ```
-[//]: # 'KeyNaming'
+
+[//]: # "KeyNaming"
 
 ### Data Organization
 
 Structure data logically:
 
-[//]: # 'DataOrganization'
+[//]: # "DataOrganization"
+
 ```tsx
 // Store related data together
 {
@@ -365,13 +398,15 @@ Structure data logically:
 "user.name": "John"
 "user.email": "john@example.com"
 ```
-[//]: # 'DataOrganization'
+
+[//]: # "DataOrganization"
 
 ### Security
 
 Store sensitive data appropriately:
 
-[//]: # 'SecurityBestPractices'
+[//]: # "SecurityBestPractices"
+
 ```tsx
 // Use SecureStorage for:
 - Authentication tokens
@@ -385,7 +420,8 @@ Store sensitive data appropriately:
 - Cached data
 - Non-sensitive info
 ```
-[//]: # 'SecurityBestPractices'
+
+[//]: # "SecurityBestPractices"
 
 ## Troubleshooting
 
@@ -412,6 +448,7 @@ When edits don't persist:
 ### Expo Go Limitations
 
 In Expo Go:
+
 - MMKV is mocked with AsyncStorage
 - Some SecureStorage features limited
 - Use development builds for full features
@@ -419,6 +456,7 @@ In Expo Go:
 ### Web Support
 
 On React Native Web:
+
 - MMKV falls back to localStorage
 - SecureStorage not available
 - AsyncStorage uses browser storage

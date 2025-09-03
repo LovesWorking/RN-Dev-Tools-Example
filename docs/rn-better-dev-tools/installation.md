@@ -17,12 +17,15 @@ Complete installation guide for RN Better Dev Tools across different React Nativ
 ```bash
 npm i rn-better-dev-tools @tanstack/react-query
 ```
+
 ```bash
 pnpm add rn-better-dev-tools @tanstack/react-query
 ```
+
 ```bash
 yarn add rn-better-dev-tools @tanstack/react-query
 ```
+
 ```bash
 bun add rn-better-dev-tools @tanstack/react-query
 ```
@@ -33,23 +36,25 @@ bun add rn-better-dev-tools @tanstack/react-query
 
 No additional setup required. The package works out of the box:
 
-[//]: # 'ReactNativeCLI'
-```tsx
-import { RnBetterDevToolsBubble } from 'rn-better-dev-tools'
-import { QueryClient } from '@tanstack/react-query'
+[//]: # "ReactNativeCLI"
 
-const queryClient = new QueryClient()
+```tsx
+import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
+import { QueryClient } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <RnBetterDevToolsBubble 
+    <RnBetterDevToolsBubble
       queryClient={queryClient}
       environment="development"
     />
-  )
+  );
 }
 ```
-[//]: # 'ReactNativeCLI'
+
+[//]: # "ReactNativeCLI"
 
 ### Expo
 
@@ -57,15 +62,14 @@ function App() {
 
 Works directly without additional configuration. Storage monitoring uses mock implementations for compatibility:
 
-[//]: # 'ExpoGo'
+[//]: # "ExpoGo"
+
 ```tsx
 // In Expo Go, MMKV is automatically mocked with AsyncStorage
-<RnBetterDevToolsBubble 
-  queryClient={queryClient}
-  environment="development"
-/>
+<RnBetterDevToolsBubble queryClient={queryClient} environment="development" />
 ```
-[//]: # 'ExpoGo'
+
+[//]: # "ExpoGo"
 
 > Note: For full MMKV support, use a development build
 
@@ -87,19 +91,22 @@ npm i @react-native-async-storage/async-storage
 
 Configure webpack or your bundler to alias native modules:
 
-[//]: # 'WebConfig'
+[//]: # "WebConfig"
+
 ```js
 // webpack.config.js
 module.exports = {
   resolve: {
     alias: {
-      'react-native$': 'react-native-web',
-      '@react-native-async-storage/async-storage': '@react-native-async-storage/async-storage/lib/commonjs/AsyncStorage.web.js'
-    }
-  }
-}
+      "react-native$": "react-native-web",
+      "@react-native-async-storage/async-storage":
+        "@react-native-async-storage/async-storage/lib/commonjs/AsyncStorage.web.js",
+    },
+  },
+};
 ```
-[//]: # 'WebConfig'
+
+[//]: # "WebConfig"
 
 ## Optional Dependencies
 
@@ -140,17 +147,19 @@ npm i react-query-external-sync
 
 3. Configure the connection:
 
-[//]: # 'DesktopSync'
+[//]: # "DesktopSync"
+
 ```tsx
-import { setupDevToolsSync } from 'react-query-external-sync'
+import { setupDevToolsSync } from "react-query-external-sync";
 
 // In your app initialization
 setupDevToolsSync({
   queryClient,
-  port: 8097 // Default port
-})
+  port: 8097, // Default port
+});
 ```
-[//]: # 'DesktopSync'
+
+[//]: # "DesktopSync"
 
 ## iOS Setup
 
@@ -185,7 +194,8 @@ android {
 
 Add types to your `tsconfig.json`:
 
-[//]: # 'TypeScriptConfig'
+[//]: # "TypeScriptConfig"
+
 ```json
 {
   "compilerOptions": {
@@ -193,18 +203,23 @@ Add types to your `tsconfig.json`:
   }
 }
 ```
-[//]: # 'TypeScriptConfig'
+
+[//]: # "TypeScriptConfig"
 
 ## Production Builds
 
 RN Better Dev Tools automatically disables itself in production builds. No additional configuration needed:
 
-[//]: # 'ProductionSafety'
+[//]: # "ProductionSafety"
+
 ```tsx
 // This is handled automatically, but you can be explicit:
-{__DEV__ && <RnBetterDevToolsBubble {...props} />}
+{
+  __DEV__ && <RnBetterDevToolsBubble {...props} />;
+}
 ```
-[//]: # 'ProductionSafety'
+
+[//]: # "ProductionSafety"
 
 ## Troubleshooting
 
@@ -245,16 +260,18 @@ npx react-native run-android
 
 For custom Metro configurations, ensure these extensions are included:
 
-[//]: # 'MetroConfig'
+[//]: # "MetroConfig"
+
 ```js
 // metro.config.js
 module.exports = {
   resolver: {
-    sourceExts: ['jsx', 'js', 'ts', 'tsx', 'json']
-  }
-}
+    sourceExts: ["jsx", "js", "ts", "tsx", "json"],
+  },
+};
 ```
-[//]: # 'MetroConfig'
+
+[//]: # "MetroConfig"
 
 ## Verifying Installation
 

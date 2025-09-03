@@ -5,6 +5,7 @@
 The WiFi icon in the original consists of:
 
 ### Visual Elements:
+
 1. **Three Arc Waves**
    - Top arc: Widest, spans almost the full width (~20 units)
    - Middle arc: Medium width (~14 units)
@@ -26,11 +27,13 @@ The WiFi icon in the original consists of:
 ## Current Implementation Issues
 
 ### Problem 1: Arc Rendering
+
 - Currently using `borderTopLeftRadius` and `borderTopRightRadius` with only `borderTopWidth`
 - This creates a different visual than smooth arc curves
 - The corners where the arc meets the sides are visible
 
 ### Problem 2: Arc Shape
+
 - Need to simulate arc paths, not border radius
 - Original uses Path with arc commands like "M2 8.82a15 15 0 0 1 20 0"
 - This creates a smooth parabolic curve
@@ -38,16 +41,19 @@ The WiFi icon in the original consists of:
 ## Pure React Native Solutions
 
 ### Approach 1: Multiple Small Lines (Current Best)
+
 - Break each arc into multiple small line segments
 - Position them to create a curved appearance
 - More complex but accurate
 
 ### Approach 2: Border Radius Refinement
+
 - Use overlapping views to hide unwanted portions
 - Create arc effect by masking parts of circles
 - Simpler but less accurate
 
 ### Approach 3: Transform & Scale
+
 - Create full circles and scale them vertically
 - Clip the bottom half
 - Use transforms to create arc effect
@@ -71,11 +77,13 @@ The WiFi icon in the original consists of:
 ## Blockers & Challenges
 
 ### Technical Limitations:
+
 1. **No Native Curves**: React Native View doesn't support SVG path-like curves
 2. **Performance**: Multiple views for one icon may impact performance
 3. **Precision**: Hard to match exact curve of original
 
 ### Solutions Needed:
+
 1. Mathematical formula for arc curve points
 2. Optimal number of segments for smooth appearance
 3. Consistent spacing algorithm

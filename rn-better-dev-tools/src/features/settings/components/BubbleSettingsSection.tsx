@@ -255,8 +255,8 @@ export function BubbleSettingsDetail({
                 {themeName === "cyberpunk"
                   ? "Cyberpunk theme with glitch effects"
                   : themeName === "dark"
-                  ? "Clean dark theme"
-                  : "Clean light theme"}
+                    ? "Clean dark theme"
+                    : "Clean light theme"}
               </Text>
             </View>
             <TouchableOpacity
@@ -269,8 +269,14 @@ export function BubbleSettingsDetail({
                 },
               ]}
             >
-              <Text style={[styles.themeToggleText, { color: theme.colors.text }]}>
-                {themeName === "cyberpunk" ? "CYBER" : themeName === "dark" ? "DARK" : "LIGHT"}
+              <Text
+                style={[styles.themeToggleText, { color: theme.colors.text }]}
+              >
+                {themeName === "cyberpunk"
+                  ? "CYBER"
+                  : themeName === "dark"
+                    ? "DARK"
+                    : "LIGHT"}
               </Text>
             </TouchableOpacity>
           </View>

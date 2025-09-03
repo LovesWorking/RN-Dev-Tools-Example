@@ -89,7 +89,6 @@ export function SentryLogsModal({
     clearSentryEvents();
   };
 
-
   const persistenceKey = enableSharedModalDimensions
     ? devToolsStorageKeys.modal.root()
     : devToolsStorageKeys.sentry.modal();
@@ -101,71 +100,80 @@ export function SentryLogsModal({
       persistenceKey={persistenceKey}
       header={{
         showToggleButton: true,
-        customContent: (selectedEntry || showFilterView) ? (
-          <ModalHeader>
-            <ModalHeader.Navigation onBack={handleBackPress} onClose={onClose} />
-            <ModalHeader.Content title={selectedEntry ? "Event Details" : "Filters"} />
-          </ModalHeader>
-        ) : (
-          <ModalHeader>
-            {onBack && <ModalHeader.Navigation onBack={handleBackPress} />}
-            <ModalHeader.Content 
-              title="Sentry Events"
-              subtitle={`${filteredEntries.length} of ${totalCount}${(selectedTypes.size > 0 || selectedLevels.size > 0) ? " (filtered)" : ""}`}
-            />
-            <ModalHeader.Actions onClose={onClose}>
-              <TouchableOpacity
-                sentry-label="ignore devtools sentry filter open"
-                onPress={() => setShowFilterView(true)}
-                style={[
-                  styles.iconButton,
-                  (selectedTypes.size > 0 || selectedLevels.size > 0) &&
-                    styles.activeFilterButton,
-                ]}
-                accessibilityLabel="Open filters"
-              >
-                <Filter
-                  size={16}
-                  color={
-                    selectedTypes.size > 0 || selectedLevels.size > 0
-                      ? gameUIColors.optional
-                      : gameUIColors.secondary
+        customContent:
+          selectedEntry || showFilterView ? (
+            <ModalHeader>
+              <ModalHeader.Navigation
+                onBack={handleBackPress}
+                onClose={onClose}
+              />
+              <ModalHeader.Content
+                title={selectedEntry ? "Event Details" : "Filters"}
+              />
+            </ModalHeader>
+          ) : (
+            <ModalHeader>
+              {onBack && <ModalHeader.Navigation onBack={handleBackPress} />}
+              <ModalHeader.Content
+                title="Sentry Events"
+                subtitle={`${filteredEntries.length} of ${totalCount}${selectedTypes.size > 0 || selectedLevels.size > 0 ? " (filtered)" : ""}`}
+              />
+              <ModalHeader.Actions onClose={onClose}>
+                <TouchableOpacity
+                  sentry-label="ignore devtools sentry filter open"
+                  onPress={() => setShowFilterView(true)}
+                  style={[
+                    styles.iconButton,
+                    (selectedTypes.size > 0 || selectedLevels.size > 0) &&
+                      styles.activeFilterButton,
+                  ]}
+                  accessibilityLabel="Open filters"
+                >
+                  <Filter
+                    size={16}
+                    color={
+                      selectedTypes.size > 0 || selectedLevels.size > 0
+                        ? gameUIColors.optional
+                        : gameUIColors.secondary
+                    }
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  sentry-label="ignore devtools sentry pause logging"
+                  onPress={() => setIsLoggingEnabled(!isLoggingEnabled)}
+                  style={[
+                    styles.iconButton,
+                    isLoggingEnabled && styles.activeButton,
+                  ]}
+                  accessibilityLabel={
+                    isLoggingEnabled ? "Pause logging" : "Resume logging"
                   }
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                sentry-label="ignore devtools sentry pause logging"
-                onPress={() => setIsLoggingEnabled(!isLoggingEnabled)}
-                style={[styles.iconButton, isLoggingEnabled && styles.activeButton]}
-                accessibilityLabel={
-                  isLoggingEnabled ? "Pause logging" : "Resume logging"
-                }
-              >
-                {isLoggingEnabled ? (
-                  <Pause size={16} color={gameUIColors.success} />
-                ) : (
-                  <Play size={16} color={gameUIColors.success} />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                sentry-label="ignore devtools sentry generate test events"
-                onPress={generateTestLogs}
-                style={styles.iconButton}
-                accessibilityLabel="Generate test Sentry events"
-              >
-                <FlaskConical size={16} color={gameUIColors.info} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                sentry-label="ignore devtools sentry clear events"
-                onPress={clearLogs}
-                style={styles.iconButton}
-                accessibilityLabel="Clear Sentry events"
-              >
-                <Trash size={16} color={gameUIColors.error} />
-              </TouchableOpacity>
-            </ModalHeader.Actions>
-          </ModalHeader>
-        ),
+                >
+                  {isLoggingEnabled ? (
+                    <Pause size={16} color={gameUIColors.success} />
+                  ) : (
+                    <Play size={16} color={gameUIColors.success} />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  sentry-label="ignore devtools sentry generate test events"
+                  onPress={generateTestLogs}
+                  style={styles.iconButton}
+                  accessibilityLabel="Generate test Sentry events"
+                >
+                  <FlaskConical size={16} color={gameUIColors.info} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  sentry-label="ignore devtools sentry clear events"
+                  onPress={clearLogs}
+                  style={styles.iconButton}
+                  accessibilityLabel="Clear Sentry events"
+                >
+                  <Trash size={16} color={gameUIColors.error} />
+                </TouchableOpacity>
+              </ModalHeader.Actions>
+            </ModalHeader>
+          ),
       }}
       onModeChange={handleModeChange}
       enablePersistence={true}

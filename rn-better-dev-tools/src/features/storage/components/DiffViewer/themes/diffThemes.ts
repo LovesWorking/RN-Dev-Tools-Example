@@ -47,7 +47,7 @@ export interface DiffTheme {
   // Borders and dividers
   borderColor: string;
   dividerColor: string;
-  
+
   // Additional theme properties
   glowColor?: string;
   neonIntensity?: number;
@@ -115,7 +115,6 @@ export const gitClassicTheme: DiffTheme = {
   separatorBackground: "#F6F8FA",
   separatorText: "#586069",
 };
-
 
 /**
  * Dev Tools Default Theme

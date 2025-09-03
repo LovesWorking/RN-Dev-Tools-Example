@@ -1,6 +1,12 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
-import { computeLineDiff, DiffType, LineDiffInfo, WordDiff, DiffComputeOptions } from "../../../utils/lineDiff";
+import {
+  computeLineDiff,
+  DiffType,
+  LineDiffInfo,
+  WordDiff,
+  DiffComputeOptions,
+} from "../../../utils/lineDiff";
 import { DiffSummary } from "../components/DiffSummary";
 import { DiffOptions } from "../DiffOptionsPanel";
 import { DiffTheme } from "../themes/diffThemes";
@@ -105,7 +111,7 @@ export function ThemedSplitView({
     content: string | WordDiff[] | undefined,
     type: DiffType,
     marker: string,
-    isEmpty: boolean = false
+    isEmpty: boolean = false,
   ) => {
     if (isEmpty) {
       return (
@@ -189,7 +195,7 @@ export function ThemedSplitView({
   const renderDiffRow = (
     diff: LineDiffInfo,
     idx: number,
-    diffs: LineDiffInfo[]
+    diffs: LineDiffInfo[],
   ) => {
     const isRemoved = diff.type === DiffType.REMOVED;
     const isAdded = diff.type === DiffType.ADDED;
@@ -211,14 +217,14 @@ export function ThemedSplitView({
                   diff.leftLineNumber,
                   diff.leftContent,
                   isModified ? DiffType.REMOVED : diff.type,
-                  isRemoved || isModified ? "-" : " "
+                  isRemoved || isModified ? "-" : " ",
                 )
               : renderLineSide(
                   undefined,
                   undefined,
                   DiffType.DEFAULT,
                   " ",
-                  true
+                  true,
                 )}
           </View>
 
@@ -232,14 +238,14 @@ export function ThemedSplitView({
                   diff.rightLineNumber,
                   diff.rightContent,
                   isModified ? DiffType.ADDED : diff.type,
-                  isAdded || isModified ? "+" : " "
+                  isAdded || isModified ? "+" : " ",
                 )
               : renderLineSide(
                   undefined,
                   undefined,
                   DiffType.DEFAULT,
                   " ",
-                  true
+                  true,
                 )}
           </View>
         </View>
@@ -258,14 +264,14 @@ export function ThemedSplitView({
             theme.neonIntensity && theme.neonIntensity > 0.7
               ? 0.5
               : theme.neonIntensity && theme.neonIntensity > 0.3
-              ? 0.3
-              : 0.1,
+                ? 0.3
+                : 0.1,
           shadowRadius:
             theme.neonIntensity && theme.neonIntensity > 0.7
               ? 10
               : theme.neonIntensity && theme.neonIntensity > 0.3
-              ? 5
-              : 2,
+                ? 5
+                : 2,
         },
       ]}
     >

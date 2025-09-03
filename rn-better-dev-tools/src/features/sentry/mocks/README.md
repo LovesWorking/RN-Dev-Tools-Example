@@ -36,10 +36,7 @@ The mock is automatically used when Sentry is not available. Just use the dev to
 import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
 
 // The Sentry button will work automatically with mock or real client
-<RnBetterDevToolsBubble 
-  queryClient={queryClient}
-  environment="development"
-/>
+<RnBetterDevToolsBubble queryClient={queryClient} environment="development" />;
 ```
 
 ### Manual Configuration (Optional)
@@ -47,7 +44,10 @@ import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
 If you want to explicitly use the mock client for testing:
 
 ```tsx
-import { configureSentryClient, getMockSentryClient } from "rn-better-dev-tools/sentry";
+import {
+  configureSentryClient,
+  getMockSentryClient,
+} from "rn-better-dev-tools/sentry";
 
 // Configure to use mock client
 configureSentryClient(() => getMockSentryClient());
@@ -75,12 +75,14 @@ mockClient.startMockEventGeneration();
 ## Event Types Generated
 
 ### HTTP Events
+
 - Random endpoints: `/api/users`, `/api/posts`, `/api/auth/login`, etc.
 - Various HTTP methods: GET, POST, PUT, DELETE, PATCH
 - Status codes: 200, 201, 400, 401, 404, 500
 - Includes timing data and request/response sizes
 
 ### Error Events
+
 - TypeError: "Cannot read property 'data' of undefined"
 - NetworkError: "Failed to fetch"
 - ReferenceError: "variable is not defined"
@@ -88,10 +90,12 @@ mockClient.startMockEventGeneration();
 - RangeError: "Maximum call stack size exceeded"
 
 ### Navigation Events
+
 - Route transitions between common app screens
 - Includes from/to route information
 
 ### Transaction Events
+
 - Complete transactions with multiple child spans
 - HTTP spans nested within transactions
 - Realistic timing data
@@ -99,6 +103,7 @@ mockClient.startMockEventGeneration();
 ## Testing
 
 The mock client is perfect for:
+
 - Testing in Expo Go without native modules
 - Development without Sentry setup
 - UI/UX testing with predictable events
@@ -107,6 +112,7 @@ The mock client is perfect for:
 ## Differences from Real Sentry
 
 The mock client:
+
 - Generates synthetic events (not from real app activity)
 - Doesn't send data to any external service
 - Events are stored only in memory
@@ -148,7 +154,7 @@ interface MockSentryClient {
 ### Event Types
 
 ```typescript
-type MockEventType = 
+type MockEventType =
   | "session"
   | "breadcrumb-http"
   | "breadcrumb-navigation"

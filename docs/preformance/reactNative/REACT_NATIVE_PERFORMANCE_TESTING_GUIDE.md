@@ -164,7 +164,7 @@ const mobileObserver = new PerformanceObserver((list) => {
     if (entry.duration > 16.67) {
       // 60fps threshold
       console.warn(
-        `Frame drop detected: ${entry.name} took ${entry.duration}ms`
+        `Frame drop detected: ${entry.name} took ${entry.duration}ms`,
       );
     }
 
@@ -269,7 +269,7 @@ function MyComponent() {
 // Performance decorator for functions
 function measurePerformance<T extends (...args: any[]) => any>(
   fn: T,
-  name: string
+  name: string,
 ): T {
   return ((...args: Parameters<T>) => {
     performance.mark(`${name}-start`);
@@ -377,7 +377,7 @@ class PerformanceComparator {
   async runTest(
     name: string,
     fn: () => void | Promise<void>,
-    options: BenchmarkOptions = {}
+    options: BenchmarkOptions = {},
   ): Promise<{ name: string; samples: number[]; stats: Stats }> {
     const warmup = options.warmupIterations ?? 10;
     const iterations = options.iterations ?? 100;
@@ -410,7 +410,7 @@ class PerformanceComparator {
   async compareFunctions(
     a: { name: string; fn: () => void | Promise<void> },
     b: { name: string; fn: () => void | Promise<void> },
-    options?: BenchmarkOptions
+    options?: BenchmarkOptions,
   ) {
     const resultA = await this.runTest(a.name, a.fn, options);
     const resultB = await this.runTest(b.name, b.fn, options);
@@ -435,7 +435,7 @@ class PerformanceComparator {
 
   getResults() {
     return Array.from(this.results.values()).sort(
-      (a, b) => a.stats.median - b.stats.median
+      (a, b) => a.stats.median - b.stats.median,
     );
   }
 
@@ -666,7 +666,7 @@ class MobileMemoryProfiler {
       if (increase > 20) {
         // 20MB increase is significant on mobile
         console.error(
-          `Memory leak detected on mobile: ${increase.toFixed(2)}MB increase`
+          `Memory leak detected on mobile: ${increase.toFixed(2)}MB increase`,
         );
 
         performance.mark("mobile-memory-leak", {
@@ -855,11 +855,11 @@ class MobileFPSMonitor {
       // Mobile-specific FPS warnings
       if (this.fps < this.JANK_THRESHOLD) {
         console.error(
-          `Severe jank on ${Platform.OS}: ${this.fps.toFixed(1)} FPS`
+          `Severe jank on ${Platform.OS}: ${this.fps.toFixed(1)} FPS`,
         );
       } else if (this.fps < this.MIN_ACCEPTABLE_FPS) {
         console.warn(
-          `Poor performance on ${Platform.OS}: ${this.fps.toFixed(1)} FPS`
+          `Poor performance on ${Platform.OS}: ${this.fps.toFixed(1)} FPS`,
         );
       }
 
@@ -895,7 +895,7 @@ class MobileFPSMonitor {
   getAverageFPS(): number {
     if (this.fpsHistory.length === 0) return 0;
     return Math.round(
-      this.fpsHistory.reduce((a, b) => a + b, 0) / this.fpsHistory.length
+      this.fpsHistory.reduce((a, b) => a + b, 0) / this.fpsHistory.length,
     );
   }
 
@@ -949,12 +949,12 @@ class MobileTouchPerformanceMonitor {
             if (responseTime > 100) {
               console.error(
                 `Slow touch response on ${Platform.OS}: ${responseTime.toFixed(
-                  2
-                )}ms`
+                  2,
+                )}ms`,
               );
             } else if (responseTime > 50) {
               console.warn(
-                `Touch delay detected: ${responseTime.toFixed(2)}ms`
+                `Touch delay detected: ${responseTime.toFixed(2)}ms`,
               );
             }
 
@@ -1040,8 +1040,8 @@ class MobileGesturePerformanceTracker {
             // Severe drop < 30fps
             console.warn(
               `Gesture jank on ${Platform.OS}: ${timeSinceLastMove.toFixed(
-                2
-              )}ms`
+                2,
+              )}ms`,
             );
           }
         }
@@ -1074,7 +1074,7 @@ class MobileGesturePerformanceTracker {
         // Alert if gesture performance is poor
         if (this.frameDrops > 5) {
           console.error(
-            `Poor gesture performance: ${this.frameDrops} frame drops`
+            `Poor gesture performance: ${this.frameDrops} frame drops`,
           );
         }
       },
@@ -1272,12 +1272,12 @@ class MobilePerformanceBudgetManager {
       if (severity === "critical") {
         console.error(
           `Critical performance violation on ${Platform.OS}:`,
-          violation
+          violation,
         );
       } else {
         console.warn(
           `Performance budget exceeded on ${Platform.OS}:`,
-          violation
+          violation,
         );
       }
 
@@ -1302,7 +1302,7 @@ class MobilePerformanceBudgetManager {
 
           this.violations.push(violation);
           console.error(
-            `Memory budget exceeded on ${Platform.OS}: ${usedMB.toFixed(2)}MB`
+            `Memory budget exceeded on ${Platform.OS}: ${usedMB.toFixed(2)}MB`,
           );
         }
       }

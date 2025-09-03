@@ -19,11 +19,7 @@ interface DetailViewProps {
 }
 
 export function DetailView({ children, style }: DetailViewProps) {
-  return (
-    <View style={[styles.container, style]}>
-      {children}
-    </View>
-  );
+  return <View style={[styles.container, style]}>{children}</View>;
 }
 
 interface HeaderProps {
@@ -34,12 +30,12 @@ interface HeaderProps {
   actions?: React.ReactNode;
 }
 
-DetailView.Header = function Header({ 
-  title, 
-  subtitle, 
-  onClose, 
+DetailView.Header = function Header({
+  title,
+  subtitle,
+  onClose,
   onBack,
-  actions 
+  actions,
 }: HeaderProps) {
   return (
     <ModalHeader>
@@ -60,10 +56,10 @@ interface SectionProps {
   badge?: string | number;
 }
 
-DetailView.Section = function Section({ 
-  title, 
+DetailView.Section = function Section({
+  title,
   icon: Icon,
-  children, 
+  children,
   defaultOpen = true,
   collapsible = true,
   style,
@@ -83,9 +79,7 @@ DetailView.Section = function Section({
             </View>
           )}
         </View>
-        <View style={styles.sectionContent}>
-          {children}
-        </View>
+        <View style={styles.sectionContent}>{children}</View>
       </View>
     );
   }
@@ -106,11 +100,7 @@ DetailView.Section = function Section({
           )}
         </View>
       </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.sectionContent}>
-          {children}
-        </View>
-      )}
+      {isOpen && <View style={styles.sectionContent}>{children}</View>}
     </View>
   );
 };
@@ -124,17 +114,18 @@ interface RowProps {
   valueStyle?: any;
 }
 
-DetailView.Row = function Row({ 
-  label, 
+DetailView.Row = function Row({
+  label,
   value,
   copyable = false,
   style,
   labelStyle,
   valueStyle,
 }: RowProps) {
-  const stringValue = typeof value === "string" || typeof value === "number" 
-    ? String(value) 
-    : null;
+  const stringValue =
+    typeof value === "string" || typeof value === "number"
+      ? String(value)
+      : null;
 
   return (
     <View style={[styles.row, style]}>
@@ -179,9 +170,7 @@ DetailView.DataSection = function DataSection({
     >
       <View style={styles.dataContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <Text style={styles.dataText}>
-            {JSON.stringify(data, null, 2)}
-          </Text>
+          <Text style={styles.dataText}>{JSON.stringify(data, null, 2)}</Text>
         </ScrollView>
       </View>
     </DetailView.Section>
@@ -194,10 +183,10 @@ interface StatusBarProps {
   style?: any;
 }
 
-DetailView.StatusBar = function StatusBar({ 
-  status, 
+DetailView.StatusBar = function StatusBar({
+  status,
   message,
-  style 
+  style,
 }: StatusBarProps) {
   const statusColors = {
     success: gameUIColors.success,
@@ -210,16 +199,16 @@ DetailView.StatusBar = function StatusBar({
   const color = statusColors[status];
 
   return (
-    <View style={[
-      styles.statusBar,
-      { backgroundColor: color + "20", borderColor: color + "40" },
-      style,
-    ]}>
+    <View
+      style={[
+        styles.statusBar,
+        { backgroundColor: color + "20", borderColor: color + "40" },
+        style,
+      ]}
+    >
       <View style={[styles.statusDot, { backgroundColor: color }]} />
       {message && (
-        <Text style={[styles.statusMessage, { color }]}>
-          {message}
-        </Text>
+        <Text style={[styles.statusMessage, { color }]}>{message}</Text>
       )}
     </View>
   );
@@ -257,23 +246,15 @@ interface ContentProps {
   style?: any;
 }
 
-DetailView.Content = function Content({ 
-  children, 
+DetailView.Content = function Content({
+  children,
   scrollable = true,
-  style 
+  style,
 }: ContentProps) {
   if (scrollable) {
-    return (
-      <ScrollView style={[styles.content, style]}>
-        {children}
-      </ScrollView>
-    );
+    return <ScrollView style={[styles.content, style]}>{children}</ScrollView>;
   }
-  return (
-    <View style={[styles.content, style]}>
-      {children}
-    </View>
-  );
+  return <View style={[styles.content, style]}>{children}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -297,8 +278,7 @@ const styles = StyleSheet.create({
     padding: 12,
     gap: 8,
   },
-  sectionHeaderTouchable: {
-  },
+  sectionHeaderTouchable: {},
   sectionTitle: {
     flex: 1,
     fontSize: 14,

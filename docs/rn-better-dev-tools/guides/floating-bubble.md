@@ -16,16 +16,18 @@ The floating bubble appears on the right side of your screen when dev tools are 
 Shows current app environment:
 
 - **DEV (Green)** - Development environment
-- **STAGING (Yellow)** - Staging environment  
+- **STAGING (Yellow)** - Staging environment
 - **PROD (Red)** - Production environment
 
-[//]: # 'EnvironmentIndicator'
+[//]: # "EnvironmentIndicator"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   environment="development" // Controls the badge color
 />
 ```
-[//]: # 'EnvironmentIndicator'
+
+[//]: # "EnvironmentIndicator"
 
 ### User Status
 
@@ -35,14 +37,16 @@ Displays current user role:
 - **ADMIN** - Administrator role
 - **DEV** - Developer role
 
-[//]: # 'UserStatus'
+[//]: # "UserStatus"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   userRole="admin" // Shows role badge
   hideUserStatus={false} // Toggle visibility
 />
 ```
-[//]: # 'UserStatus'
+
+[//]: # "UserStatus"
 
 ### Menu Buttons
 
@@ -76,6 +80,7 @@ The bubble remembers its position:
 ### Default Position
 
 Initial position:
+
 - **44px** from right edge
 - **708px** from bottom
 - Adjusts for different screen sizes
@@ -86,7 +91,8 @@ Initial position:
 
 Futuristic cyberpunk-themed interface:
 
-[//]: # 'GameUIMenu'
+[//]: # "GameUIMenu"
+
 ```tsx
 // Activated by pressing 'G' button
 // Features:
@@ -95,13 +101,15 @@ Futuristic cyberpunk-themed interface:
 // - Gaming-inspired design
 // - Holographic effects
 ```
-[//]: # 'GameUIMenu'
+
+[//]: # "GameUIMenu"
 
 ### Claude Theme
 
 AI assistant-inspired design:
 
-[//]: # 'ClaudeMenu'
+[//]: # "ClaudeMenu"
+
 ```tsx
 // Activated by pressing 'C' button
 // Features:
@@ -110,13 +118,15 @@ AI assistant-inspired design:
 // - Professional appearance
 // - Gradient effects
 ```
-[//]: # 'ClaudeMenu'
+
+[//]: # "ClaudeMenu"
 
 ### Dial Menu
 
 Classic radial menu design:
 
-[//]: # 'DialMenu'
+[//]: # "DialMenu"
+
 ```tsx
 // Activated by pressing 'D' button
 // Features:
@@ -125,7 +135,8 @@ Classic radial menu design:
 // - Icon-focused design
 // - Smooth transitions
 ```
-[//]: # 'DialMenu'
+
+[//]: # "DialMenu"
 
 ## Menu Sections
 
@@ -169,55 +180,64 @@ All menus provide access to:
 
 Control which tools appear:
 
-[//]: # 'HidingSections'
+[//]: # "HidingSections"
+
 ```tsx
-<RnBetterDevToolsBubble 
+<RnBetterDevToolsBubble
   queryClient={queryClient}
   environment="development"
-  
   // Hide specific sections
-  hideQueryButton={false}    // React Query tools
-  hideEnvButton={false}       // Environment variables
-  hideStorageButton={false}   // Storage browser
-  hideSentryButton={true}     // Sentry events
-  hideWifiToggle={false}      // Network toggle
+  hideQueryButton={false} // React Query tools
+  hideEnvButton={false} // Environment variables
+  hideStorageButton={false} // Storage browser
+  hideSentryButton={true} // Sentry events
+  hideWifiToggle={false} // Network toggle
 />
 ```
-[//]: # 'HidingSections'
+
+[//]: # "HidingSections"
 
 ### Conditional Display
 
 Show bubble only in development:
 
-[//]: # 'ConditionalDisplay'
+[//]: # "ConditionalDisplay"
+
 ```tsx
-{__DEV__ && (
-  <RnBetterDevToolsBubble 
-    queryClient={queryClient}
-    environment="development"
-  />
-)}
+{
+  __DEV__ && (
+    <RnBetterDevToolsBubble
+      queryClient={queryClient}
+      environment="development"
+    />
+  );
+}
 ```
-[//]: # 'ConditionalDisplay'
+
+[//]: # "ConditionalDisplay"
 
 ### Environment-Based
 
 Different configs per environment:
 
-[//]: # 'EnvironmentBased'
-```tsx
-const isDev = process.env.NODE_ENV === 'development'
-const isAdmin = user?.role === 'admin'
+[//]: # "EnvironmentBased"
 
-{(isDev || isAdmin) && (
-  <RnBetterDevToolsBubble 
-    queryClient={queryClient}
-    environment={process.env.NODE_ENV}
-    userRole={user?.role}
-  />
-)}
+```tsx
+const isDev = process.env.NODE_ENV === "development";
+const isAdmin = user?.role === "admin";
+
+{
+  (isDev || isAdmin) && (
+    <RnBetterDevToolsBubble
+      queryClient={queryClient}
+      environment={process.env.NODE_ENV}
+      userRole={user?.role}
+    />
+  );
+}
 ```
-[//]: # 'EnvironmentBased'
+
+[//]: # "EnvironmentBased"
 
 ## Interaction Patterns
 
@@ -230,6 +250,7 @@ const isAdmin = user?.role === 'admin'
 ### Closing Tools
 
 Multiple ways to close:
+
 - **X button** in modal header
 - **Swipe down** on modal
 - **Tap outside** modal area
@@ -238,6 +259,7 @@ Multiple ways to close:
 ### Quick Actions
 
 Some actions available directly:
+
 - **WiFi toggle** - No modal needed
 - **Environment badge** - Shows current env
 - **User status** - Tap for details
@@ -247,6 +269,7 @@ Some actions available directly:
 ### Active State
 
 When tools are in use:
+
 - Bubble remains visible
 - Position locked
 - Menus accessible
@@ -254,6 +277,7 @@ When tools are in use:
 ### Hidden State
 
 Bubble hides when:
+
 - Any modal is open
 - Prevents visual overlap
 - Returns when modal closes
@@ -261,6 +285,7 @@ Bubble hides when:
 ### Loading State
 
 During initialization:
+
 - Bubble appears immediately
 - Tools load asynchronously
 - No delay in visibility
@@ -289,18 +314,21 @@ The bubble is optimized for:
 
 While not directly themeable, choose menu style:
 
-[//]: # 'VisualTheming'
+[//]: # "VisualTheming"
+
 ```tsx
 // Users can switch between themes using buttons:
 // G - Cyberpunk/Gaming theme
-// C - Clean/Professional theme  
+// C - Clean/Professional theme
 // D - Classic/Traditional theme
 ```
-[//]: # 'VisualTheming'
+
+[//]: # "VisualTheming"
 
 ### Size and Scale
 
 Bubble adapts to screen size:
+
 - Scales on tablets
 - Adjusts for orientation
 - Responsive to screen density
@@ -310,6 +338,7 @@ Bubble adapts to screen size:
 ### Touch Targets
 
 All interactive elements:
+
 - Minimum 44x44 points
 - 8-point hit slop
 - Clear visual feedback
@@ -317,6 +346,7 @@ All interactive elements:
 ### Visual Indicators
 
 Status communication:
+
 - Color coding for states
 - Icons for sections
 - Text labels for clarity
@@ -361,7 +391,8 @@ If menus don't work:
 
 Standardize for team:
 
-[//]: # 'TeamSettings'
+[//]: # "TeamSettings"
+
 ```tsx
 // Shared configuration
 const devToolsConfig = {
@@ -375,23 +406,28 @@ const devToolsConfig = {
 
 <RnBetterDevToolsBubble {...devToolsConfig} />
 ```
-[//]: # 'TeamSettings'
+
+[//]: # "TeamSettings"
 
 ### Production Safety
 
 Ensure production safety:
 
-[//]: # 'ProductionSafety'
+[//]: # "ProductionSafety"
+
 ```tsx
 // Multiple safety checks
-const showDevTools = 
+const showDevTools =
   __DEV__ || // Development build
   user?.isInternalUser || // Internal users
-  flags?.enableDebugMode // Feature flag
+  flags?.enableDebugMode; // Feature flag
 
-{showDevTools && <RnBetterDevToolsBubble {...props} />}
+{
+  showDevTools && <RnBetterDevToolsBubble {...props} />;
+}
 ```
-[//]: # 'ProductionSafety'
+
+[//]: # "ProductionSafety"
 
 ## Platform Notes
 

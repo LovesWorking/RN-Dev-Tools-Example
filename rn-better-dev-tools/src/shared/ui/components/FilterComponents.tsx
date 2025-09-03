@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+} from "react-native";
 import type { ReactNode } from "react";
 import { X, Plus } from "rn-better-dev-tools/icons";
 
@@ -20,11 +26,11 @@ interface FilterBadgeProps {
   color?: string;
 }
 
-export function FilterBadge({ 
-  filter, 
-  onRemove, 
+export function FilterBadge({
+  filter,
+  onRemove,
   active = true,
-  color = "#E5E7EB" 
+  color = "#E5E7EB",
 }: FilterBadgeProps) {
   const backgroundColor = active ? `${color}15` : "transparent";
   const borderColor = active ? `${color}40` : `${color}20`;
@@ -91,7 +97,10 @@ interface AddFilterButtonProps {
   color?: string;
 }
 
-export function AddFilterButton({ onPress, color = "#E5E7EB" }: AddFilterButtonProps) {
+export function AddFilterButton({
+  onPress,
+  color = "#E5E7EB",
+}: AddFilterButtonProps) {
   return (
     <TouchableOpacity
       style={[styles.addButton, { borderColor: `${color}40` }]}

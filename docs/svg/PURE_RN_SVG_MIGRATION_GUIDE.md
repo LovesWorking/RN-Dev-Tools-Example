@@ -7,6 +7,7 @@ This guide analyzes what's possible when creating SVG-like graphics using only P
 ## 🎯 Quick Summary
 
 ### ✅ What's Possible with Pure React Native
+
 - Basic shapes (rectangles, squares)
 - Simple lines (horizontal/vertical)
 - Basic circles (using borderRadius)
@@ -16,6 +17,7 @@ This guide analyzes what's possible when creating SVG-like graphics using only P
 - Simple animations
 
 ### ❌ What Requires Native Code
+
 - Complex path drawing
 - Bezier curves
 - True SVG text rendering
@@ -32,8 +34,9 @@ This guide analyzes what's possible when creating SVG-like graphics using only P
 ### 1. Rect → View with styles
 
 #### react-native-svg
+
 ```javascript
-import { Rect } from 'react-native-svg';
+import { Rect } from "react-native-svg";
 
 <Rect
   x={10}
@@ -45,26 +48,27 @@ import { Rect } from 'react-native-svg';
   strokeWidth={2}
   rx={5}
   ry={5}
-/>
+/>;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 <View
   style={{
-    position: 'absolute',
+    position: "absolute",
     left: 10,
     top: 20,
     width: 100,
     height: 50,
-    backgroundColor: 'blue',
-    borderColor: 'red',
+    backgroundColor: "blue",
+    borderColor: "red",
     borderWidth: 2,
     borderRadius: 5,
   }}
-/>
+/>;
 ```
 
 ---
@@ -72,37 +76,32 @@ import { View } from 'react-native';
 ### 2. Circle → View with borderRadius
 
 #### react-native-svg
-```javascript
-import { Circle } from 'react-native-svg';
 
-<Circle
-  cx={50}
-  cy={50}
-  r={30}
-  fill="green"
-  stroke="black"
-  strokeWidth={1}
-/>
+```javascript
+import { Circle } from "react-native-svg";
+
+<Circle cx={50} cy={50} r={30} fill="green" stroke="black" strokeWidth={1} />;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 const radius = 30;
 <View
   style={{
-    position: 'absolute',
+    position: "absolute",
     left: 50 - radius, // cx - r
-    top: 50 - radius,  // cy - r
+    top: 50 - radius, // cy - r
     width: radius * 2,
     height: radius * 2,
     borderRadius: radius,
-    backgroundColor: 'green',
-    borderColor: 'black',
+    backgroundColor: "green",
+    borderColor: "black",
     borderWidth: 1,
   }}
-/>
+/>;
 ```
 
 ---
@@ -110,36 +109,32 @@ const radius = 30;
 ### 3. Ellipse → View with borderRadius + transform
 
 #### react-native-svg
-```javascript
-import { Ellipse } from 'react-native-svg';
 
-<Ellipse
-  cx={100}
-  cy={60}
-  rx={50}
-  ry={30}
-  fill="yellow"
-/>
+```javascript
+import { Ellipse } from "react-native-svg";
+
+<Ellipse cx={100} cy={60} rx={50} ry={30} fill="yellow" />;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 const rx = 50;
 const ry = 30;
 <View
   style={{
-    position: 'absolute',
+    position: "absolute",
     left: 100 - rx,
     top: 60 - ry,
     width: rx * 2,
     height: ry * 2,
     borderRadius: rx,
-    backgroundColor: 'yellow',
+    backgroundColor: "yellow",
     transform: [{ scaleY: ry / rx }],
   }}
-/>
+/>;
 ```
 
 ---
@@ -147,40 +142,38 @@ const ry = 30;
 ### 4. Line → View with rotation
 
 #### react-native-svg
-```javascript
-import { Line } from 'react-native-svg';
 
-<Line
-  x1={10}
-  y1={10}
-  x2={100}
-  y2={100}
-  stroke="purple"
-  strokeWidth={3}
-/>
+```javascript
+import { Line } from "react-native-svg";
+
+<Line x1={10} y1={10} x2={100} y2={100} stroke="purple" strokeWidth={3} />;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 // Calculate line properties
-const x1 = 10, y1 = 10, x2 = 100, y2 = 100;
+const x1 = 10,
+  y1 = 10,
+  x2 = 100,
+  y2 = 100;
 const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
 <View
   style={{
-    position: 'absolute',
+    position: "absolute",
     left: x1,
     top: y1,
     width: length,
     height: 3, // strokeWidth
-    backgroundColor: 'purple',
-    transformOrigin: 'left center',
+    backgroundColor: "purple",
+    transformOrigin: "left center",
     transform: [{ rotate: `${angle}deg` }],
   }}
-/>
+/>;
 ```
 
 ---
@@ -188,20 +181,22 @@ const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 ### 5. Polygon → Multiple Views (limited)
 
 #### react-native-svg
+
 ```javascript
-import { Polygon } from 'react-native-svg';
+import { Polygon } from "react-native-svg";
 
 <Polygon
   points="50,5 95,97 5,97"
   fill="lime"
   stroke="purple"
   strokeWidth={1}
-/>
+/>;
 ```
 
 #### Pure React Native (Triangle approximation)
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 // Can only approximate with CSS triangles
 <View
@@ -211,12 +206,12 @@ import { View } from 'react-native';
     borderLeftWidth: 45,
     borderRightWidth: 45,
     borderBottomWidth: 92,
-    borderStyle: 'solid',
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'lime',
+    borderStyle: "solid",
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "lime",
   }}
-/>
+/>;
 ```
 
 ---
@@ -224,31 +219,29 @@ import { View } from 'react-native';
 ### 6. G (Group) → View container
 
 #### react-native-svg
+
 ```javascript
-import { G, Circle, Rect } from 'react-native-svg';
+import { G, Circle, Rect } from "react-native-svg";
 
 <G transform="translate(50, 50) rotate(45)">
   <Circle r={20} fill="red" />
   <Rect width={40} height={40} fill="blue" />
-</G>
+</G>;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 <View
   style={{
-    transform: [
-      { translateX: 50 },
-      { translateY: 50 },
-      { rotate: '45deg' }
-    ],
+    transform: [{ translateX: 50 }, { translateY: 50 }, { rotate: "45deg" }],
   }}
 >
   <View style={circleStyle} />
   <View style={rectStyle} />
-</View>
+</View>;
 ```
 
 ---
@@ -256,6 +249,7 @@ import { View } from 'react-native';
 ### 7. LinearGradient → react-native-linear-gradient (requires Expo)
 
 #### react-native-svg
+
 ```javascript
 import { LinearGradient, Stop, Rect, Defs } from 'react-native-svg';
 
@@ -269,20 +263,21 @@ import { LinearGradient, Stop, Rect, Defs } from 'react-native-svg';
 ```
 
 #### Pure React Native (Approximation)
+
 ```javascript
-import { View } from 'react-native';
+import { View } from "react-native";
 
 // Basic gradient simulation with multiple views
 const GradientView = () => {
   const steps = 10;
   return (
-    <View style={{ flexDirection: 'row' }}>
+    <View style={{ flexDirection: "row" }}>
       {Array.from({ length: steps }).map((_, i) => (
         <View
           key={i}
           style={{
             flex: 1,
-            backgroundColor: `rgb(255, ${255 - (255 * i / steps)}, 0)`,
+            backgroundColor: `rgb(255, ${255 - (255 * i) / steps}, 0)`,
           }}
         />
       ))}
@@ -296,8 +291,9 @@ const GradientView = () => {
 ### 8. Text → Text component (limited SVG features)
 
 #### react-native-svg
+
 ```javascript
-import { Text as SvgText } from 'react-native-svg';
+import { Text as SvgText } from "react-native-svg";
 
 <SvgText
   x={50}
@@ -308,31 +304,32 @@ import { Text as SvgText } from 'react-native-svg';
   transform="rotate(45 50 50)"
 >
   Hello World
-</SvgText>
+</SvgText>;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { Text, View } from 'react-native';
+import { Text, View } from "react-native";
 
 <View
   style={{
-    position: 'absolute',
+    position: "absolute",
     left: 50,
     top: 50,
-    transform: [{ rotate: '45deg' }],
+    transform: [{ rotate: "45deg" }],
   }}
 >
   <Text
     style={{
       fontSize: 20,
-      color: 'black',
-      textAlign: 'center',
+      color: "black",
+      textAlign: "center",
     }}
   >
     Hello World
   </Text>
-</View>
+</View>;
 ```
 
 ---
@@ -340,34 +337,36 @@ import { Text, View } from 'react-native';
 ### 9. Image → Image component
 
 #### react-native-svg
+
 ```javascript
-import { Image as SvgImage } from 'react-native-svg';
+import { Image as SvgImage } from "react-native-svg";
 
 <SvgImage
   x={10}
   y={10}
   width={100}
   height={100}
-  href={require('./image.png')}
+  href={require("./image.png")}
   preserveAspectRatio="xMidYMid slice"
-/>
+/>;
 ```
 
 #### Pure React Native
+
 ```javascript
-import { Image } from 'react-native';
+import { Image } from "react-native";
 
 <Image
-  source={require('./image.png')}
+  source={require("./image.png")}
   style={{
-    position: 'absolute',
+    position: "absolute",
     left: 10,
     top: 10,
     width: 100,
     height: 100,
   }}
   resizeMode="cover"
-/>
+/>;
 ```
 
 ---
@@ -375,20 +374,20 @@ import { Image } from 'react-native';
 ### 10. Transform → transform style
 
 #### react-native-svg
+
 ```javascript
-<G transform="translate(50 100) rotate(45) scale(1.5)">
-  {/* children */}
-</G>
+<G transform="translate(50 100) rotate(45) scale(1.5)">{/* children */}</G>
 ```
 
 #### Pure React Native
+
 ```javascript
 <View
   style={{
     transform: [
       { translateX: 50 },
       { translateY: 100 },
-      { rotate: '45deg' },
+      { rotate: "45deg" },
       { scale: 1.5 },
     ],
   }}
@@ -402,6 +401,7 @@ import { Image } from 'react-native';
 ## 🚫 APIs Not Possible Without Native Code
 
 ### 1. Path ❌
+
 ```javascript
 // react-native-svg
 <Path d="M10 10 L90 90 Q50 50 90 10 Z" />
@@ -411,6 +411,7 @@ import { Image } from 'react-native';
 ```
 
 ### 2. ClipPath ❌
+
 ```javascript
 // react-native-svg
 <ClipPath id="clip">
@@ -422,6 +423,7 @@ import { Image } from 'react-native';
 ```
 
 ### 3. Mask ❌
+
 ```javascript
 // react-native-svg
 <Mask id="mask">
@@ -433,6 +435,7 @@ import { Image } from 'react-native';
 ```
 
 ### 4. Pattern ❌
+
 ```javascript
 // react-native-svg
 <Pattern id="pattern" patternUnits="userSpaceOnUse">
@@ -444,6 +447,7 @@ import { Image } from 'react-native';
 ```
 
 ### 5. Filters (Blur, ColorMatrix, etc.) ❌
+
 ```javascript
 // react-native-svg
 <FeGaussianBlur stdDeviation={5} />
@@ -454,6 +458,7 @@ import { Image } from 'react-native';
 ```
 
 ### 6. Gradients (Complex) ❌
+
 ```javascript
 // react-native-svg
 <RadialGradient>
@@ -466,17 +471,17 @@ import { Image } from 'react-native';
 ```
 
 ### 7. TextPath ❌
+
 ```javascript
 // react-native-svg
-<TextPath href="#path">
-  Text along a path
-</TextPath>
+<TextPath href="#path">Text along a path</TextPath>
 
 // Pure RN: ❌ Cannot curve text along paths
 // Workaround: None
 ```
 
 ### 8. Markers ❌
+
 ```javascript
 // react-native-svg
 <Marker id="arrow" markerWidth={10} markerHeight={10}>
@@ -488,6 +493,7 @@ import { Image } from 'react-native';
 ```
 
 ### 9. Symbol & Use ❌
+
 ```javascript
 // react-native-svg
 <Symbol id="icon" viewBox="0 0 20 20">
@@ -500,6 +506,7 @@ import { Image } from 'react-native';
 ```
 
 ### 10. ForeignObject ❌
+
 ```javascript
 // react-native-svg
 <ForeignObject x={10} y={10}>
@@ -515,13 +522,14 @@ import { Image } from 'react-native';
 ## 🛠 Utility Functions for Pure RN SVG
 
 ### Calculate Line Properties
+
 ```javascript
 function calculateLine(x1, y1, x2, y2) {
   const dx = x2 - x1;
   const dy = y2 - y1;
   const length = Math.sqrt(dx * dx + dy * dy);
   const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-  
+
   return {
     length,
     angle,
@@ -532,57 +540,54 @@ function calculateLine(x1, y1, x2, y2) {
 ```
 
 ### Create Star Shape
+
 ```javascript
 function createStar(cx, cy, spikes, outerRadius, innerRadius) {
   const views = [];
   const step = Math.PI / spikes;
-  
+
   for (let i = 0; i < spikes * 2; i++) {
     const radius = i % 2 === 0 ? outerRadius : innerRadius;
     const angle = i * step - Math.PI / 2;
     const x = cx + Math.cos(angle) * radius;
     const y = cy + Math.sin(angle) * radius;
-    
+
     // Create line from center to point
-    views.push(
-      <View
-        key={i}
-        style={createLineStyle(cx, cy, x, y)}
-      />
-    );
+    views.push(<View key={i} style={createLineStyle(cx, cy, x, y)} />);
   }
-  
+
   return views;
 }
 ```
 
 ### Simulate Arc
+
 ```javascript
 function createArc(cx, cy, radius, startAngle, endAngle, segments = 20) {
   const views = [];
   const angleStep = (endAngle - startAngle) / segments;
-  
+
   for (let i = 0; i < segments; i++) {
     const angle = startAngle + angleStep * i;
     const x = cx + Math.cos(angle) * radius;
     const y = cy + Math.sin(angle) * radius;
-    
+
     views.push(
       <View
         key={i}
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: x - 1,
           top: y - 1,
           width: 2,
           height: 2,
-          backgroundColor: 'black',
+          backgroundColor: "black",
           borderRadius: 1,
         }}
-      />
+      />,
     );
   }
-  
+
   return views;
 }
 ```
@@ -591,62 +596,63 @@ function createArc(cx, cy, radius, startAngle, endAngle, segments = 20) {
 
 ## 📊 Feature Comparison Table
 
-| Feature | react-native-svg | Pure React Native | Workaround |
-|---------|-----------------|-------------------|------------|
-| **Shapes** |
-| Rectangle | ✅ Full support | ✅ View | Perfect match |
-| Circle | ✅ Full support | ✅ borderRadius | Perfect for circles |
-| Ellipse | ✅ Full support | ⚠️ Transform scale | Good approximation |
-| Line | ✅ Full support | ⚠️ Rotated View | Works for straight lines |
-| Polyline | ✅ Full support | ❌ Multiple Views | Complex implementation |
-| Polygon | ✅ Full support | ❌ CSS triangles only | Very limited |
-| Path | ✅ Full support | ❌ Not possible | Pre-render as image |
-| **Styling** |
-| Fill | ✅ Any color/gradient | ✅ backgroundColor | Solid colors only |
-| Stroke | ✅ Full support | ⚠️ border | Limited to all sides |
-| StrokeWidth | ✅ Full support | ✅ borderWidth | All sides only |
-| StrokeDasharray | ✅ Full support | ❌ Not possible | No dashed borders |
-| Opacity | ✅ Full support | ✅ opacity | Perfect match |
-| **Gradients** |
-| Linear | ✅ Full support | ⚠️ Multiple views | Basic simulation |
-| Radial | ✅ Full support | ❌ Not possible | Multiple circles |
-| **Transforms** |
-| Translate | ✅ Full support | ✅ translateX/Y | Perfect match |
-| Rotate | ✅ Full support | ✅ rotate | Perfect match |
-| Scale | ✅ Full support | ✅ scale | Perfect match |
-| Skew | ✅ Full support | ✅ skewX/Y | iOS only |
-| Matrix | ✅ Full support | ✅ transform matrix | Advanced usage |
-| **Text** |
-| Basic Text | ✅ Full support | ✅ Text component | Different positioning |
-| Text Path | ✅ Full support | ❌ Not possible | No workaround |
-| TSpan | ✅ Full support | ❌ Text nesting | Limited support |
-| **Advanced** |
-| Clipping | ✅ Full support | ❌ overflow only | Rectangular only |
-| Masking | ✅ Full support | ❌ Not possible | No workaround |
-| Filters | ✅ Full support | ❌ Not possible | Pre-process images |
-| Patterns | ✅ Full support | ❌ Not possible | Background images |
-| Markers | ✅ Full support | ❌ Not possible | Manual positioning |
+| Feature         | react-native-svg      | Pure React Native     | Workaround               |
+| --------------- | --------------------- | --------------------- | ------------------------ |
+| **Shapes**      |
+| Rectangle       | ✅ Full support       | ✅ View               | Perfect match            |
+| Circle          | ✅ Full support       | ✅ borderRadius       | Perfect for circles      |
+| Ellipse         | ✅ Full support       | ⚠️ Transform scale    | Good approximation       |
+| Line            | ✅ Full support       | ⚠️ Rotated View       | Works for straight lines |
+| Polyline        | ✅ Full support       | ❌ Multiple Views     | Complex implementation   |
+| Polygon         | ✅ Full support       | ❌ CSS triangles only | Very limited             |
+| Path            | ✅ Full support       | ❌ Not possible       | Pre-render as image      |
+| **Styling**     |
+| Fill            | ✅ Any color/gradient | ✅ backgroundColor    | Solid colors only        |
+| Stroke          | ✅ Full support       | ⚠️ border             | Limited to all sides     |
+| StrokeWidth     | ✅ Full support       | ✅ borderWidth        | All sides only           |
+| StrokeDasharray | ✅ Full support       | ❌ Not possible       | No dashed borders        |
+| Opacity         | ✅ Full support       | ✅ opacity            | Perfect match            |
+| **Gradients**   |
+| Linear          | ✅ Full support       | ⚠️ Multiple views     | Basic simulation         |
+| Radial          | ✅ Full support       | ❌ Not possible       | Multiple circles         |
+| **Transforms**  |
+| Translate       | ✅ Full support       | ✅ translateX/Y       | Perfect match            |
+| Rotate          | ✅ Full support       | ✅ rotate             | Perfect match            |
+| Scale           | ✅ Full support       | ✅ scale              | Perfect match            |
+| Skew            | ✅ Full support       | ✅ skewX/Y            | iOS only                 |
+| Matrix          | ✅ Full support       | ✅ transform matrix   | Advanced usage           |
+| **Text**        |
+| Basic Text      | ✅ Full support       | ✅ Text component     | Different positioning    |
+| Text Path       | ✅ Full support       | ❌ Not possible       | No workaround            |
+| TSpan           | ✅ Full support       | ❌ Text nesting       | Limited support          |
+| **Advanced**    |
+| Clipping        | ✅ Full support       | ❌ overflow only      | Rectangular only         |
+| Masking         | ✅ Full support       | ❌ Not possible       | No workaround            |
+| Filters         | ✅ Full support       | ❌ Not possible       | Pre-process images       |
+| Patterns        | ✅ Full support       | ❌ Not possible       | Background images        |
+| Markers         | ✅ Full support       | ❌ Not possible       | Manual positioning       |
 | **Interaction** |
-| Touch Events | ✅ Full support | ✅ TouchableOpacity | Perfect match |
-| Gestures | ✅ Full support | ✅ PanResponder | Perfect match |
-| **Animation** |
-| Basic | ✅ Full support | ✅ Animated API | Perfect match |
-| Path Morph | ✅ Full support | ❌ Not possible | No workaround |
+| Touch Events    | ✅ Full support       | ✅ TouchableOpacity   | Perfect match            |
+| Gestures        | ✅ Full support       | ✅ PanResponder       | Perfect match            |
+| **Animation**   |
+| Basic           | ✅ Full support       | ✅ Animated API       | Perfect match            |
+| Path Morph      | ✅ Full support       | ❌ Not possible       | No workaround            |
 | **Performance** |
-| Hardware Accel | ✅ Native rendering | ✅ View rendering | Both optimized |
-| Virtualization | ⚠️ Manual | ✅ FlatList | Better in RN |
+| Hardware Accel  | ✅ Native rendering   | ✅ View rendering     | Both optimized           |
+| Virtualization  | ⚠️ Manual             | ✅ FlatList           | Better in RN             |
 
 ---
 
 ## 🎯 Best Practices for Pure RN SVG
 
 ### 1. Use Composition
+
 ```javascript
 // Create reusable shape components
 const Circle = ({ cx, cy, r, fill, stroke, strokeWidth }) => (
   <View
     style={{
-      position: 'absolute',
+      position: "absolute",
       left: cx - r,
       top: cy - r,
       width: r * 2,
@@ -661,37 +667,38 @@ const Circle = ({ cx, cy, r, fill, stroke, strokeWidth }) => (
 ```
 
 ### 2. Optimize Renders
+
 ```javascript
 // Use React.memo for static shapes
-const StaticShape = React.memo(({ style }) => (
-  <View style={style} />
-));
+const StaticShape = React.memo(({ style }) => <View style={style} />);
 ```
 
 ### 3. Handle Responsive Sizing
+
 ```javascript
 // Use dimensions for scaling
-import { Dimensions } from 'react-native';
+import { Dimensions } from "react-native";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const scale = width / 375; // Base width
 
 const scaledSize = (size) => size * scale;
 ```
 
 ### 4. Create SVG-like API
+
 ```javascript
 // Wrapper component for SVG-like syntax
 const Svg = ({ width, height, viewBox, children }) => {
-  const [vx, vy, vw, vh] = viewBox ? viewBox.split(' ').map(Number) : [0, 0, width, height];
+  const [vx, vy, vw, vh] = viewBox
+    ? viewBox.split(" ").map(Number)
+    : [0, 0, width, height];
   const scaleX = width / vw;
   const scaleY = height / vh;
-  
+
   return (
-    <View style={{ width, height, overflow: 'hidden' }}>
-      <View style={{ transform: [{ scaleX }, { scaleY }] }}>
-        {children}
-      </View>
+    <View style={{ width, height, overflow: "hidden" }}>
+      <View style={{ transform: [{ scaleX }, { scaleY }] }}>{children}</View>
     </View>
   );
 };
@@ -702,21 +709,19 @@ const Svg = ({ width, height, viewBox, children }) => {
 ## 🚀 Example: Complete Pure RN SVG Implementation
 
 ```javascript
-import React from 'react';
-import { View, Text, Animated } from 'react-native';
+import React from "react";
+import { View, Text, Animated } from "react-native";
 
 // Pure RN SVG-like components
 const PureSvg = {
   Svg: ({ width, height, children }) => (
-    <View style={{ width, height, overflow: 'hidden' }}>
-      {children}
-    </View>
+    <View style={{ width, height, overflow: "hidden" }}>{children}</View>
   ),
-  
+
   Rect: ({ x, y, width, height, fill, stroke, strokeWidth, rx = 0 }) => (
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: x,
         top: y,
         width,
@@ -728,11 +733,11 @@ const PureSvg = {
       }}
     />
   ),
-  
+
   Circle: ({ cx, cy, r, fill, stroke, strokeWidth }) => (
     <View
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: cx - r,
         top: cy - r,
         width: r * 2,
@@ -744,31 +749,31 @@ const PureSvg = {
       }}
     />
   ),
-  
+
   Line: ({ x1, y1, x2, y2, stroke, strokeWidth }) => {
     const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-    
+
     return (
       <View
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: x1,
           top: y1 - strokeWidth / 2,
           width: length,
           height: strokeWidth,
           backgroundColor: stroke,
           transform: [{ rotate: `${angle}deg` }],
-          transformOrigin: 'left center',
+          transformOrigin: "left center",
         }}
       />
     );
   },
-  
+
   Text: ({ x, y, fontSize, fill, children }) => (
     <Text
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: x,
         top: y,
         fontSize,
@@ -778,37 +783,33 @@ const PureSvg = {
       {children}
     </Text>
   ),
-  
+
   G: ({ transform, children }) => {
     // Parse transform string (simplified)
     const transforms = [];
     if (transform) {
-      if (transform.includes('translate')) {
+      if (transform.includes("translate")) {
         const match = transform.match(/translate\(([^,]+),([^)]+)\)/);
         if (match) {
           transforms.push({ translateX: parseFloat(match[1]) });
           transforms.push({ translateY: parseFloat(match[2]) });
         }
       }
-      if (transform.includes('rotate')) {
+      if (transform.includes("rotate")) {
         const match = transform.match(/rotate\(([^)]+)\)/);
         if (match) {
           transforms.push({ rotate: `${match[1]}deg` });
         }
       }
-      if (transform.includes('scale')) {
+      if (transform.includes("scale")) {
         const match = transform.match(/scale\(([^)]+)\)/);
         if (match) {
           transforms.push({ scale: parseFloat(match[1]) });
         }
       }
     }
-    
-    return (
-      <View style={{ transform: transforms }}>
-        {children}
-      </View>
-    );
+
+    return <View style={{ transform: transforms }}>{children}</View>;
   },
 };
 
@@ -841,12 +842,7 @@ const ExampleSVG = () => (
       stroke="red"
       strokeWidth={3}
     />
-    <PureSvg.Text
-      x={100}
-      y={100}
-      fontSize={16}
-      fill="black"
-    >
+    <PureSvg.Text x={100} y={100} fontSize={16} fill="black">
       Pure RN
     </PureSvg.Text>
   </PureSvg.Svg>
@@ -860,6 +856,7 @@ export default ExampleSVG;
 ## 📝 Summary
 
 ### ✅ Use Pure RN When:
+
 - Building simple shapes (rectangles, circles)
 - Need to work in Expo Go
 - Don't want native dependencies
@@ -867,6 +864,7 @@ export default ExampleSVG;
 - Need basic animations and transforms
 
 ### ❌ Use react-native-svg When:
+
 - Need complex path drawing
 - Require bezier curves
 - Need text along paths
@@ -876,7 +874,9 @@ export default ExampleSVG;
 - Want full SVG compatibility
 
 ### 🎯 Recommended Approach for Dev Tool:
+
 For a dev tool that needs to work without native dependencies, focus on:
+
 1. **Basic shapes**: Rect, Circle, Line
 2. **Simple transforms**: translate, rotate, scale
 3. **Touch interactions**: Using TouchableOpacity
@@ -885,6 +885,7 @@ For a dev tool that needs to work without native dependencies, focus on:
 6. **Image display**: Using Image component
 
 Avoid trying to implement:
+
 - Complex paths
 - Filters
 - Gradients (beyond basic)

@@ -3,9 +3,11 @@
 ## Current Understanding (As of Initial Analysis)
 
 ### Component Purpose
+
 A virtualized, read-only data viewer for efficiently rendering large, nested JSON data structures in React Native dev tools. Uses FlashList for virtualization to handle massive datasets without performance issues.
 
 ### Key Features Identified
+
 1. **Virtualization** - Only renders visible items using FlashList
 2. **Nested Data Support** - Expanding/collapsing nested objects/arrays
 3. **Type Indicators** - Color-coded values based on type
@@ -18,6 +20,7 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
 ## Current Execution Order (2-Level Nested Object)
 
 ### Initial Mount Flow:
+
 1. **Component Mount** → VirtualizedDataExplorer receives props
 2. **State Initialization** → useState for isExpanded (based on rawMode)
 3. **useDataFlattening Hook Called** →
@@ -28,7 +31,6 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
 4. **useEffect in useDataFlattening Triggers** →
    - InteractionManager.runAfterInteractions scheduled
    - flattenData called with root data
-   
 5. **flattenData Execution (root level)** →
    - Check depth limit (0 < maxDepth)
    - Build path: ["root"]
@@ -68,6 +70,7 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
     - VirtualizedItem renders each row
 
 ### User Interaction Flow (Expanding Item):
+
 1. **User Taps Row** → TouchableOpacity.onPress
 2. **handlePress in VirtualizedItem** → calls onToggleExpanded(item.id)
 3. **toggleExpanded in useDataFlattening** →
@@ -79,16 +82,19 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
 ## Problems Identified
 
 ### 1. Single Responsibility Violations
+
 - `useDataFlattening` does: state management, data processing, circular detection, chunking
 - `VirtualizedItem` does: rendering, interaction handling, layout decisions
 - `flattenData` does: flattening, circular detection, type checking, limiting
 
 ### 2. Complex Functions
+
 - `flattenData` is 100+ lines doing multiple things
 - `VirtualizedItem` has complex conditional rendering logic
 - Main component has multiple render paths
 
 ### 3. Mixed Concerns
+
 - Business logic mixed with UI logic
 - Data processing mixed with state management
 - Type detection mixed with formatting
@@ -96,34 +102,40 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
 ## Refactoring Plan
 
 ### Phase 1: Extract Pure Utility Functions
+
 1. Type detection utilities
-2. Value formatting utilities  
+2. Value formatting utilities
 3. Color mapping utilities
 4. Path building utilities
 
 ### Phase 2: Extract Data Processing
+
 1. Circular reference detection
 2. Data flattening logic
 3. Children processing
 4. Depth limiting
 
 ### Phase 3: Extract State Management
+
 1. Expanded items management
 2. Processing state management
 3. Initial state computation
 
 ### Phase 4: Extract UI Components
+
 1. Tree line rendering
 2. Expander component
 3. Type legend component
 4. Item content rendering
 
 ### Phase 5: Reorganize Main Component
+
 1. Separate container logic
 2. Separate raw mode logic
 3. Clean render methods
 
 ## Notes
+
 - Must maintain exact same behavior
 - Keep all optimizations in place
 - Add clear comments for understanding
@@ -175,6 +187,7 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
    - Comments explain each section's purpose
 
 ### Performance Benchmark Results Expected:
+
 - Small nested objects: < 10ms render time
 - Large flat objects (500 items): < 20ms render time
 - Deep nested objects: < 30ms render time
@@ -182,6 +195,7 @@ A virtualized, read-only data viewer for efficiently rendering large, nested JSO
 - Complex mixed data: < 25ms render time
 
 ### Behavior Verification:
+
 ✅ Same data flattening logic
 ✅ Same expand/collapse behavior
 ✅ Same rendering output

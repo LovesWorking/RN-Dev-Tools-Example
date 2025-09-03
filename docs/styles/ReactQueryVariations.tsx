@@ -8,58 +8,74 @@ const activeGlow = "#FF3366";
 // Variation 1: Single filled hexagon (simpler approach)
 const ReactQueryV1: React.FC<{ size: number }> = ({ size }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size, position: "relative" }}>
       {/* Orbital lines first (behind) */}
       {/* Horizontal line */}
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.25 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1.25 * scale,
-        opacity: 0.8,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.25 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1.25 * scale,
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
+
       {/* Top-right line (60deg) */}
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.25 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1.25 * scale,
-        transform: [{ rotate: "60deg" }],
-        opacity: 0.8,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.25 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1.25 * scale,
+            transform: [{ rotate: "60deg" }],
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
+
       {/* Top-left line (-60deg) */}
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.25 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1.25 * scale,
-        transform: [{ rotate: "-60deg" }],
-        opacity: 0.8,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.25 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1.25 * scale,
+            transform: [{ rotate: "-60deg" }],
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
+
       {/* Hexagon - using 6 triangular segments */}
-      <View style={{
-        position: "absolute",
-        width: 10 * scale,
-        height: 10 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 5 * scale,
-        top: size / 2 - 5 * scale,
-        transform: [{ rotate: "45deg" }],
-      } as ViewStyle} />
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 10 * scale,
+            height: 10 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 5 * scale,
+            top: size / 2 - 5 * scale,
+            transform: [{ rotate: "45deg" }],
+          } as ViewStyle
+        }
+      />
     </View>
   );
 };
@@ -67,74 +83,98 @@ const ReactQueryV1: React.FC<{ size: number }> = ({ size }) => {
 // Variation 2: Thinner lines with better hexagon
 const ReactQueryV2: React.FC<{ size: number }> = ({ size }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size, position: "relative" }}>
       {/* Thinner orbital lines */}
-      <View style={{
-        position: "absolute",
-        width: 22 * scale,
-        height: 1.8 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 0.9 * scale,
-        left: size / 2 - 11 * scale,
-        top: size / 2 - 0.9 * scale,
-        opacity: 0.9,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 22 * scale,
-        height: 1.8 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 0.9 * scale,
-        left: size / 2 - 11 * scale,
-        top: size / 2 - 0.9 * scale,
-        transform: [{ rotate: "60deg" }],
-        opacity: 0.9,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 22 * scale,
-        height: 1.8 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 0.9 * scale,
-        left: size / 2 - 11 * scale,
-        top: size / 2 - 0.9 * scale,
-        transform: [{ rotate: "-60deg" }],
-        opacity: 0.9,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 22 * scale,
+            height: 1.8 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 0.9 * scale,
+            left: size / 2 - 11 * scale,
+            top: size / 2 - 0.9 * scale,
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 22 * scale,
+            height: 1.8 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 0.9 * scale,
+            left: size / 2 - 11 * scale,
+            top: size / 2 - 0.9 * scale,
+            transform: [{ rotate: "60deg" }],
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 22 * scale,
+            height: 1.8 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 0.9 * scale,
+            left: size / 2 - 11 * scale,
+            top: size / 2 - 0.9 * scale,
+            transform: [{ rotate: "-60deg" }],
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
       {/* Better hexagon using wider rectangles */}
-      <View style={{
-        position: "absolute",
-        width: 9 * scale,
-        height: 3 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4.5 * scale,
-        top: size / 2 - 1.5 * scale,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 9 * scale,
-        height: 3 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4.5 * scale,
-        top: size / 2 - 1.5 * scale,
-        transform: [{ rotate: "60deg" }],
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 9 * scale,
-        height: 3 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4.5 * scale,
-        top: size / 2 - 1.5 * scale,
-        transform: [{ rotate: "-60deg" }],
-      } as ViewStyle} />
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 9 * scale,
+            height: 3 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4.5 * scale,
+            top: size / 2 - 1.5 * scale,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 9 * scale,
+            height: 3 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4.5 * scale,
+            top: size / 2 - 1.5 * scale,
+            transform: [{ rotate: "60deg" }],
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 9 * scale,
+            height: 3 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4.5 * scale,
+            top: size / 2 - 1.5 * scale,
+            transform: [{ rotate: "-60deg" }],
+          } as ViewStyle
+        }
+      />
     </View>
   );
 };
@@ -142,74 +182,98 @@ const ReactQueryV2: React.FC<{ size: number }> = ({ size }) => {
 // Variation 3: Smaller hexagon, longer lines
 const ReactQueryV3: React.FC<{ size: number }> = ({ size }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size, position: "relative" }}>
       {/* Longer orbital lines */}
-      <View style={{
-        position: "absolute",
-        width: 24 * scale,
-        height: 2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1 * scale,
-        left: 0,
-        top: size / 2 - 1 * scale,
-        opacity: 0.85,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 24 * scale,
-        height: 2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1 * scale,
-        left: 0,
-        top: size / 2 - 1 * scale,
-        transform: [{ rotate: "60deg" }],
-        opacity: 0.85,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 24 * scale,
-        height: 2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1 * scale,
-        left: 0,
-        top: size / 2 - 1 * scale,
-        transform: [{ rotate: "-60deg" }],
-        opacity: 0.85,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 24 * scale,
+            height: 2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: 0,
+            top: size / 2 - 1 * scale,
+            opacity: 0.85,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 24 * scale,
+            height: 2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: 0,
+            top: size / 2 - 1 * scale,
+            transform: [{ rotate: "60deg" }],
+            opacity: 0.85,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 24 * scale,
+            height: 2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: 0,
+            top: size / 2 - 1 * scale,
+            transform: [{ rotate: "-60deg" }],
+            opacity: 0.85,
+          } as ViewStyle
+        }
+      />
+
       {/* Smaller hexagon */}
-      <View style={{
-        position: "absolute",
-        width: 7 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 3.5 * scale,
-        top: size / 2 - 1.25 * scale,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 7 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 3.5 * scale,
-        top: size / 2 - 1.25 * scale,
-        transform: [{ rotate: "60deg" }],
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 7 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 3.5 * scale,
-        top: size / 2 - 1.25 * scale,
-        transform: [{ rotate: "-60deg" }],
-      } as ViewStyle} />
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 7 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 3.5 * scale,
+            top: size / 2 - 1.25 * scale,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 7 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 3.5 * scale,
+            top: size / 2 - 1.25 * scale,
+            transform: [{ rotate: "60deg" }],
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 7 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 3.5 * scale,
+            top: size / 2 - 1.25 * scale,
+            transform: [{ rotate: "-60deg" }],
+          } as ViewStyle
+        }
+      />
     </View>
   );
 };
@@ -217,55 +281,71 @@ const ReactQueryV3: React.FC<{ size: number }> = ({ size }) => {
 // Variation 4: Circle center instead of hexagon (simplified)
 const ReactQueryV4: React.FC<{ size: number }> = ({ size }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size, position: "relative" }}>
       {/* Orbital lines */}
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2.2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.1 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1.1 * scale,
-        opacity: 0.9,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2.2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.1 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1.1 * scale,
-        transform: [{ rotate: "60deg" }],
-        opacity: 0.9,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2.2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.1 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1.1 * scale,
-        transform: [{ rotate: "-60deg" }],
-        opacity: 0.9,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2.2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1.1 * scale,
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2.2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1.1 * scale,
+            transform: [{ rotate: "60deg" }],
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2.2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1.1 * scale,
+            transform: [{ rotate: "-60deg" }],
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
       {/* Circle center (simpler than hexagon) */}
-      <View style={{
-        position: "absolute",
-        width: 8 * scale,
-        height: 8 * scale,
-        borderRadius: 4 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4 * scale,
-        top: size / 2 - 4 * scale,
-      } as ViewStyle} />
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 8 * scale,
+            height: 8 * scale,
+            borderRadius: 4 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4 * scale,
+            top: size / 2 - 4 * scale,
+          } as ViewStyle
+        }
+      />
     </View>
   );
 };
@@ -273,74 +353,98 @@ const ReactQueryV4: React.FC<{ size: number }> = ({ size }) => {
 // Variation 5: Using borders for hexagon outline
 const ReactQueryV5: React.FC<{ size: number }> = ({ size }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size, position: "relative" }}>
       {/* Orbital lines */}
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1 * scale,
-        opacity: 0.8,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1 * scale,
-        transform: [{ rotate: "60deg" }],
-        opacity: 0.8,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 20 * scale,
-        height: 2 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1 * scale,
-        left: size / 2 - 10 * scale,
-        top: size / 2 - 1 * scale,
-        transform: [{ rotate: "-60deg" }],
-        opacity: 0.8,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1 * scale,
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1 * scale,
+            transform: [{ rotate: "60deg" }],
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 20 * scale,
+            height: 2 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1 * scale,
+            left: size / 2 - 10 * scale,
+            top: size / 2 - 1 * scale,
+            transform: [{ rotate: "-60deg" }],
+            opacity: 0.8,
+          } as ViewStyle
+        }
+      />
+
       {/* Hexagon with thicker overlap */}
-      <View style={{
-        position: "absolute",
-        width: 10 * scale,
-        height: 4 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 5 * scale,
-        top: size / 2 - 2 * scale,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 10 * scale,
-        height: 4 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 5 * scale,
-        top: size / 2 - 2 * scale,
-        transform: [{ rotate: "60deg" }],
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 10 * scale,
-        height: 4 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 5 * scale,
-        top: size / 2 - 2 * scale,
-        transform: [{ rotate: "-60deg" }],
-      } as ViewStyle} />
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 10 * scale,
+            height: 4 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 5 * scale,
+            top: size / 2 - 2 * scale,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 10 * scale,
+            height: 4 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 5 * scale,
+            top: size / 2 - 2 * scale,
+            transform: [{ rotate: "60deg" }],
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 10 * scale,
+            height: 4 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 5 * scale,
+            top: size / 2 - 2 * scale,
+            transform: [{ rotate: "-60deg" }],
+          } as ViewStyle
+        }
+      />
     </View>
   );
 };
@@ -348,74 +452,98 @@ const ReactQueryV5: React.FC<{ size: number }> = ({ size }) => {
 // Variation 6: Adjusted proportions
 const ReactQueryV6: React.FC<{ size: number }> = ({ size }) => {
   const scale = size / 24;
-  
+
   return (
     <View style={{ width: size, height: size, position: "relative" }}>
       {/* Orbital lines with better proportions */}
-      <View style={{
-        position: "absolute",
-        width: 18 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.25 * scale,
-        left: size / 2 - 9 * scale,
-        top: size / 2 - 1.25 * scale,
-        opacity: 0.9,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 18 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.25 * scale,
-        left: size / 2 - 9 * scale,
-        top: size / 2 - 1.25 * scale,
-        transform: [{ rotate: "60deg" }],
-        opacity: 0.9,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 18 * scale,
-        height: 2.5 * scale,
-        backgroundColor: activeColor,
-        borderRadius: 1.25 * scale,
-        left: size / 2 - 9 * scale,
-        top: size / 2 - 1.25 * scale,
-        transform: [{ rotate: "-60deg" }],
-        opacity: 0.9,
-      } as ViewStyle} />
-      
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 18 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.25 * scale,
+            left: size / 2 - 9 * scale,
+            top: size / 2 - 1.25 * scale,
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 18 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.25 * scale,
+            left: size / 2 - 9 * scale,
+            top: size / 2 - 1.25 * scale,
+            transform: [{ rotate: "60deg" }],
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 18 * scale,
+            height: 2.5 * scale,
+            backgroundColor: activeColor,
+            borderRadius: 1.25 * scale,
+            left: size / 2 - 9 * scale,
+            top: size / 2 - 1.25 * scale,
+            transform: [{ rotate: "-60deg" }],
+            opacity: 0.9,
+          } as ViewStyle
+        }
+      />
+
       {/* Hexagon with adjusted dimensions */}
-      <View style={{
-        position: "absolute",
-        width: 8 * scale,
-        height: 3.5 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4 * scale,
-        top: size / 2 - 1.75 * scale,
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 8 * scale,
-        height: 3.5 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4 * scale,
-        top: size / 2 - 1.75 * scale,
-        transform: [{ rotate: "60deg" }],
-      } as ViewStyle} />
-      
-      <View style={{
-        position: "absolute",
-        width: 8 * scale,
-        height: 3.5 * scale,
-        backgroundColor: activeColor,
-        left: size / 2 - 4 * scale,
-        top: size / 2 - 1.75 * scale,
-        transform: [{ rotate: "-60deg" }],
-      } as ViewStyle} />
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 8 * scale,
+            height: 3.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4 * scale,
+            top: size / 2 - 1.75 * scale,
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 8 * scale,
+            height: 3.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4 * scale,
+            top: size / 2 - 1.75 * scale,
+            transform: [{ rotate: "60deg" }],
+          } as ViewStyle
+        }
+      />
+
+      <View
+        style={
+          {
+            position: "absolute",
+            width: 8 * scale,
+            height: 3.5 * scale,
+            backgroundColor: activeColor,
+            left: size / 2 - 4 * scale,
+            top: size / 2 - 1.75 * scale,
+            transform: [{ rotate: "-60deg" }],
+          } as ViewStyle
+        }
+      />
     </View>
   );
 };
@@ -425,7 +553,9 @@ export const ReactQueryVariations: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>REACT QUERY VARIATIONS</Text>
-      <Text style={styles.subtitle}>Choose the best match for the original</Text>
+      <Text style={styles.subtitle}>
+        Choose the best match for the original
+      </Text>
 
       <View style={styles.grid}>
         <View style={styles.box}>
@@ -474,10 +604,8 @@ export const ReactQueryVariations: React.FC = () => {
       <View style={styles.notesSection}>
         <Text style={styles.notesTitle}>ADJUSTMENTS TO TRY:</Text>
         <Text style={styles.notesText}>
-          • Hexagon width/height ratio{'\n'}
-          • Line thickness (thinner might look better){'\n'}
-          • Line length vs hexagon size{'\n'}
-          • Opacity values{'\n'}
+          • Hexagon width/height ratio{"\n"}• Line thickness (thinner might look
+          better){"\n"}• Line length vs hexagon size{"\n"}• Opacity values{"\n"}
           • Border radius on lines for rounder ends
         </Text>
       </View>

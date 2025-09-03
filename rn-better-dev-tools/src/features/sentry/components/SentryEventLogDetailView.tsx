@@ -105,7 +105,7 @@ export const SentryEventLogDetailView = ({
           { key: "message", label: "Message" },
           { key: "eventData", label: "Event Data" },
           { key: "rawData", label: "Raw Data" },
-          { key: "debugInfo", label: "Debug" }
+          { key: "debugInfo", label: "Debug" },
         ]}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as TabType)}

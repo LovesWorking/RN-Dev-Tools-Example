@@ -27,7 +27,10 @@ import {
 } from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
-import { InlineCopyButton, ToolbarCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
+import {
+  InlineCopyButton,
+  ToolbarCopyButton,
+} from "@/rn-better-dev-tools/src/shared/ui/components";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 
@@ -318,16 +321,17 @@ export function StorageEventDetailModal({
   const renderHeaderContent = () => (
     <ModalHeader>
       <ModalHeader.Navigation onBack={onBack} />
-      <ModalHeader.Content 
-        title="Key Overview"
-        subtitle={event?.data?.key}
-      />
+      <ModalHeader.Content title="Key Overview" subtitle={event?.data?.key} />
       <ModalHeader.Actions onClose={onClose}>
         <ToolbarCopyButton
           value={getAllData()}
           buttonStyle={styles.copyButton}
-          onCopySuccess={() => Alert.alert("Copied", "All storage data copied to clipboard")}
-          onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+          onCopySuccess={() =>
+            Alert.alert("Copied", "All storage data copied to clipboard")
+          }
+          onCopyError={() =>
+            Alert.alert("Error", "Failed to copy to clipboard")
+          }
         />
       </ModalHeader.Actions>
     </ModalHeader>
@@ -614,8 +618,12 @@ export function StorageEventDetailModal({
                 <InlineCopyButton
                   value={getValueChanges()}
                   buttonStyle={styles.copyButton}
-                  onCopySuccess={() => Alert.alert("Copied", "Value changes copied to clipboard")}
-                  onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+                  onCopySuccess={() =>
+                    Alert.alert("Copied", "Value changes copied to clipboard")
+                  }
+                  onCopyError={() =>
+                    Alert.alert("Error", "Failed to copy to clipboard")
+                  }
                 />
                 {showValueChanges ? (
                   <ChevronUp size={16} color="#6B7280" />
@@ -672,8 +680,15 @@ export function StorageEventDetailModal({
                 <InlineCopyButton
                   value={getHistory()}
                   buttonStyle={styles.copyButton}
-                  onCopySuccess={() => Alert.alert("Copied", "Operation history copied to clipboard")}
-                  onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+                  onCopySuccess={() =>
+                    Alert.alert(
+                      "Copied",
+                      "Operation history copied to clipboard",
+                    )
+                  }
+                  onCopyError={() =>
+                    Alert.alert("Error", "Failed to copy to clipboard")
+                  }
                 />
                 {showOperationHistory ? (
                   <ChevronUp size={16} color="#6B7280" />
@@ -738,42 +753,52 @@ export function StorageEventDetailModal({
         )}
 
         {/* Filter Button */}
-        {event?.data?.key && (() => {
-          const key = event.data.key;
-          const isKeyIgnored = Array.from(ignoredPatterns).some(pattern => 
-            key.includes(pattern)
-          );
+        {event?.data?.key &&
+          (() => {
+            const key = event.data.key;
+            const isKeyIgnored = Array.from(ignoredPatterns).some((pattern) =>
+              key.includes(pattern),
+            );
 
-          return (
-            <View style={[styles.filterSection, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-              <TouchableOpacity
+            return (
+              <View
                 style={[
-                  styles.filterButton,
-                  isKeyIgnored && styles.filterButtonActive,
+                  styles.filterSection,
+                  { paddingBottom: Math.max(insets.bottom, 16) },
                 ]}
-                onPress={() => onTogglePattern(key)}
-                activeOpacity={0.7}
-                sentry-label="ignore toggle key filter"
               >
-                <Filter 
-                  size={14} 
-                  color={isKeyIgnored ? "#F59E0B" : "#3B82F6"} 
-                />
-                <Text style={[
-                  styles.filterButtonText,
-                  isKeyIgnored && styles.filterButtonTextActive
-                ]}>
-                  {isKeyIgnored ? "Stop Ignoring This Key" : "Ignore Events from This Key"}
-                </Text>
-              </TouchableOpacity>
-              {!isKeyIgnored && (
-                <Text style={styles.filterHintText}>
-                  Events from this key will be hidden from the list
-                </Text>
-              )}
-            </View>
-          );
-        })()}
+                <TouchableOpacity
+                  style={[
+                    styles.filterButton,
+                    isKeyIgnored && styles.filterButtonActive,
+                  ]}
+                  onPress={() => onTogglePattern(key)}
+                  activeOpacity={0.7}
+                  sentry-label="ignore toggle key filter"
+                >
+                  <Filter
+                    size={14}
+                    color={isKeyIgnored ? "#F59E0B" : "#3B82F6"}
+                  />
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      isKeyIgnored && styles.filterButtonTextActive,
+                    ]}
+                  >
+                    {isKeyIgnored
+                      ? "Stop Ignoring This Key"
+                      : "Ignore Events from This Key"}
+                  </Text>
+                </TouchableOpacity>
+                {!isKeyIgnored && (
+                  <Text style={styles.filterHintText}>
+                    Events from this key will be hidden from the list
+                  </Text>
+                )}
+              </View>
+            );
+          })()}
       </ScrollView>
     </ClaudeModal60FPSClean>
   );
@@ -1070,7 +1095,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontFamily: "monospace",
   },
-  
+
   // Filter Button
   filterSection: {
     paddingHorizontal: 16,

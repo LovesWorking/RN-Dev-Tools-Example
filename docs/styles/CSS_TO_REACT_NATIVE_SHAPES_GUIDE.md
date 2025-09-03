@@ -5,11 +5,13 @@
 ## 📚 Table of Contents
 
 ### Core Concepts
+
 - [Understanding the Differences](#understanding-the-differences)
 - [Key Conversion Principles](#key-conversion-principles)
 - [Transform Limitations & Workarounds](#transform-limitations--workarounds)
 
 ### CSS to React Native Mappings
+
 - [Border Tricks → Triangle Shapes](#1-border-tricks--triangle-shapes)
 - [Border Radius → Circles & Ovals](#2-border-radius--circles--ovals)
 - [Transform → Rotation & Skew](#3-transform--rotation--skew)
@@ -20,6 +22,7 @@
 - [Multiple Shadows → Layered Views](#8-multiple-shadows--layered-views)
 
 ### Advanced Shape Patterns
+
 - [Complex Shapes with Composition](#9-complex-shapes-with-composition)
 - [Icon Creation Techniques](#10-icon-creation-techniques)
 - [WiFi Symbol Example](#11-wifi-symbol-example)
@@ -28,6 +31,7 @@
 - [Geometric Polygons](#14-geometric-polygons)
 
 ### Complete Shape Library
+
 - [Basic Shapes](#basic-shapes)
 - [Triangles & Arrows](#triangles--arrows)
 - [Stars & Polygons](#stars--polygons)
@@ -41,24 +45,25 @@
 
 ### CSS vs React Native Style System
 
-| CSS Feature | React Native Equivalent | Notes |
-|------------|------------------------|-------|
-| `::before`, `::after` | Multiple `<View>` components | Use absolute positioning |
-| `border-radius: 50%` | `borderRadius: width/2` | Must use absolute values |
-| `transform-origin` | Limited support | Use positioning workarounds |
-| `clip-path` | Not supported | Use overflow: 'hidden' |
-| `background: linear-gradient()` | Not native | Use libraries or multiple views |
-| `box-shadow` | `shadowX` (iOS) / `elevation` (Android) | Platform differences |
-| `border-radius: X / Y` | Not supported | Use `scaleX/Y` with circular radius |
-| `content: ""` | Separate `<View>` | No pseudo-elements |
-| `radial-gradient()` | Not supported | Use concentric circles |
-| `border-style: dotted/dashed` | `borderStyle: 'dotted'/'dashed'` | Limited support |
+| CSS Feature                     | React Native Equivalent                 | Notes                               |
+| ------------------------------- | --------------------------------------- | ----------------------------------- |
+| `::before`, `::after`           | Multiple `<View>` components            | Use absolute positioning            |
+| `border-radius: 50%`            | `borderRadius: width/2`                 | Must use absolute values            |
+| `transform-origin`              | Limited support                         | Use positioning workarounds         |
+| `clip-path`                     | Not supported                           | Use overflow: 'hidden'              |
+| `background: linear-gradient()` | Not native                              | Use libraries or multiple views     |
+| `box-shadow`                    | `shadowX` (iOS) / `elevation` (Android) | Platform differences                |
+| `border-radius: X / Y`          | Not supported                           | Use `scaleX/Y` with circular radius |
+| `content: ""`                   | Separate `<View>`                       | No pseudo-elements                  |
+| `radial-gradient()`             | Not supported                           | Use concentric circles              |
+| `border-style: dotted/dashed`   | `borderStyle: 'dotted'/'dashed'`        | Limited support                     |
 
 ---
 
 ## Key Conversion Principles
 
 ### 1. **Zero Dimensions with Borders = Triangles**
+
 ```css
 /* CSS Triangle */
 .triangle {
@@ -87,6 +92,7 @@ triangle: {
 ```
 
 ### 2. **Pseudo Elements = Multiple Views**
+
 ```css
 /* CSS with pseudo element */
 .shape::before {
@@ -105,6 +111,7 @@ triangle: {
 ```
 
 ### 3. **Percentage Border Radius = Calculated Values**
+
 ```css
 /* CSS */
 .circle {
@@ -130,6 +137,7 @@ circle: {
 ## 1. Border Tricks → Triangle Shapes
 
 ### Pattern Recognition
+
 When you see `width: 0`, `height: 0` with colored borders, it creates triangles.
 
 ```javascript
@@ -182,6 +190,7 @@ triangleCorner: {
 ## 2. Border Radius → Circles & Ovals
 
 ### Circle Creation
+
 ```javascript
 // Perfect Circle
 circle: {
@@ -216,30 +225,28 @@ egg: {
 ## 3. Transform → Rotation & Skew
 
 ### Transform Conversions
+
 ```javascript
 // CSS: transform: rotate(45deg)
 // React Native:
-transform: [{ rotate: '45deg' }]
+transform: [{ rotate: "45deg" }];
 
 // CSS: transform: skew(20deg)
-// React Native: 
-transform: [{ skewX: '20deg' }]
+// React Native:
+transform: [{ skewX: "20deg" }];
 
 // CSS: transform: scale(1.5)
 // React Native:
-transform: [{ scale: 1.5 }]
+transform: [{ scale: 1.5 }];
 
 // Combined transforms (order matters!)
-transform: [
-  { rotate: '45deg' },
-  { scaleX: 2 },
-  { translateY: 20 }
-]
+transform: [{ rotate: "45deg" }, { scaleX: 2 }, { translateY: 20 }];
 ```
 
 ## 4. Pseudo Elements → Multiple Views
 
 ### Converting ::before and ::after
+
 ```javascript
 // CSS Heart Shape with pseudo elements
 const Heart = () => (
@@ -255,41 +262,42 @@ const styles = StyleSheet.create({
   heartContainer: {
     width: 100,
     height: 90,
-    position: 'relative'
+    position: "relative",
   },
   heartShape: {
-    position: 'relative',
+    position: "relative",
     width: 100,
-    height: 90
+    height: 90,
   },
   heartBefore: {
-    position: 'absolute',
+    position: "absolute",
     width: 52,
     height: 80,
     left: 50,
     top: 0,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    transform: [{ rotate: '-45deg' }]
+    transform: [{ rotate: "-45deg" }],
   },
   heartAfter: {
-    position: 'absolute',
+    position: "absolute",
     width: 52,
     height: 80,
     left: 0,
     top: 0,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    transform: [{ rotate: '45deg' }]
-  }
+    transform: [{ rotate: "45deg" }],
+  },
 });
 ```
 
 ## 5. Box Shadow → Shadow/Elevation
 
 ### Platform-Specific Shadows
+
 ```javascript
 // iOS Shadow
 iosShadow: {
@@ -326,28 +334,76 @@ shadow: {
 ## 6. Gradients → Alternative Approaches
 
 ### Gradient Alternatives
+
 Since React Native doesn't support CSS gradients natively, use these approaches:
 
 ```javascript
 // 1. Multiple Layered Views (for simple gradients)
 const GradientSimulation = () => (
   <View style={styles.gradientContainer}>
-    <View style={[styles.gradientLayer, { opacity: 1, backgroundColor: '#FF0000' }]} />
-    <View style={[styles.gradientLayer, { opacity: 0.8, backgroundColor: '#FF3333' }]} />
-    <View style={[styles.gradientLayer, { opacity: 0.6, backgroundColor: '#FF6666' }]} />
-    <View style={[styles.gradientLayer, { opacity: 0.4, backgroundColor: '#FF9999' }]} />
-    <View style={[styles.gradientLayer, { opacity: 0.2, backgroundColor: '#FFCCCC' }]} />
+    <View
+      style={[styles.gradientLayer, { opacity: 1, backgroundColor: "#FF0000" }]}
+    />
+    <View
+      style={[
+        styles.gradientLayer,
+        { opacity: 0.8, backgroundColor: "#FF3333" },
+      ]}
+    />
+    <View
+      style={[
+        styles.gradientLayer,
+        { opacity: 0.6, backgroundColor: "#FF6666" },
+      ]}
+    />
+    <View
+      style={[
+        styles.gradientLayer,
+        { opacity: 0.4, backgroundColor: "#FF9999" },
+      ]}
+    />
+    <View
+      style={[
+        styles.gradientLayer,
+        { opacity: 0.2, backgroundColor: "#FFCCCC" },
+      ]}
+    />
   </View>
 );
 
 // 2. Concentric Circles (for radial gradients)
 const RadialGradient = () => (
   <View style={styles.radialContainer}>
-    <View style={[styles.radialCircle, { width: 100, height: 100, backgroundColor: '#FF0000' }]} />
-    <View style={[styles.radialCircle, { width: 80, height: 80, backgroundColor: '#FF3333' }]} />
-    <View style={[styles.radialCircle, { width: 60, height: 60, backgroundColor: '#FF6666' }]} />
-    <View style={[styles.radialCircle, { width: 40, height: 40, backgroundColor: '#FF9999' }]} />
-    <View style={[styles.radialCircle, { width: 20, height: 20, backgroundColor: '#FFCCCC' }]} />
+    <View
+      style={[
+        styles.radialCircle,
+        { width: 100, height: 100, backgroundColor: "#FF0000" },
+      ]}
+    />
+    <View
+      style={[
+        styles.radialCircle,
+        { width: 80, height: 80, backgroundColor: "#FF3333" },
+      ]}
+    />
+    <View
+      style={[
+        styles.radialCircle,
+        { width: 60, height: 60, backgroundColor: "#FF6666" },
+      ]}
+    />
+    <View
+      style={[
+        styles.radialCircle,
+        { width: 40, height: 40, backgroundColor: "#FF9999" },
+      ]}
+    />
+    <View
+      style={[
+        styles.radialCircle,
+        { width: 20, height: 20, backgroundColor: "#FFCCCC" },
+      ]}
+    />
   </View>
 );
 
@@ -355,31 +411,32 @@ const styles = StyleSheet.create({
   gradientContainer: {
     height: 100,
     width: 200,
-    position: 'relative'
+    position: "relative",
   },
   gradientLayer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
   },
   radialContainer: {
     width: 100,
     height: 100,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center",
   },
   radialCircle: {
-    position: 'absolute',
-    borderRadius: 50
-  }
+    position: "absolute",
+    borderRadius: 50,
+  },
 });
 ```
 
 ## 7. Clip Path → View Masking
 
 ### Overflow Hidden Technique
+
 ```javascript
 // Diamond shape using rotation and overflow
 diamond: {
@@ -402,14 +459,15 @@ curvedCorner: {
 ## 8. Multiple Shadows → Layered Views
 
 ### Space Invader Example (Multiple box-shadows)
+
 ```css
 /* CSS with multiple box-shadows */
 .space-invader {
-  box-shadow: 
+  box-shadow:
     0 0 0 1em red,
     0 1em 0 1em red,
-    -2.5em 1.5em 0 .5em red,
-    /* ... many more ... */
+    -2.5em 1.5em 0 0.5em red;
+  /* ... many more ... */
 }
 ```
 
@@ -428,14 +486,14 @@ const styles = StyleSheet.create({
   spaceInvaderContainer: {
     width: 100,
     height: 100,
-    position: 'relative'
+    position: "relative",
   },
   pixel: {
-    position: 'absolute',
+    position: "absolute",
     width: 16,
     height: 16,
-    backgroundColor: 'red'
-  }
+    backgroundColor: "red",
+  },
 });
 ```
 
@@ -446,6 +504,7 @@ const styles = StyleSheet.create({
 ## 9. Complex Shapes with Composition
 
 ### Star Shape (5-pointed)
+
 ```javascript
 const Star = () => (
   <View style={styles.starContainer}>
@@ -459,62 +518,63 @@ const styles = StyleSheet.create({
   starContainer: {
     width: 100,
     height: 100,
-    position: 'relative'
+    position: "relative",
   },
   starMain: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderLeftWidth: 100,
     borderRightWidth: 100,
     borderBottomWidth: 70,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    transform: [{ rotate: '35deg' }],
-    position: 'absolute',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    transform: [{ rotate: "35deg" }],
+    position: "absolute",
     top: 0,
-    left: 0
+    left: 0,
   },
   starBefore: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderLeftWidth: 30,
     borderRightWidth: 30,
     borderBottomWidth: 80,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    position: 'absolute',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    position: "absolute",
     top: -45,
     left: -65,
-    transform: [{ rotate: '-35deg' }]
+    transform: [{ rotate: "-35deg" }],
   },
   starAfter: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderLeftWidth: 100,
     borderRightWidth: 100,
     borderBottomWidth: 70,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    position: 'absolute',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    position: "absolute",
     top: 3,
     left: -105,
-    transform: [{ rotate: '-70deg' }]
-  }
+    transform: [{ rotate: "-70deg" }],
+  },
 });
 ```
 
 ## 10. Icon Creation Techniques
 
 ### Hamburger Menu Icon
+
 ```javascript
 hamburgerMenu: {
   width: 30,
@@ -536,6 +596,7 @@ hamburgerLine: {
 ```
 
 ### Play Button
+
 ```javascript
 playButton: {
   width: 0,
@@ -552,6 +613,7 @@ playButton: {
 ```
 
 ### Close (X) Icon
+
 ```javascript
 closeIcon: {
   width: 30,
@@ -596,14 +658,19 @@ closeLine2: {
   background-color: transparent;
 }
 .wifi:before {
-  width: .7em;
-  height: .7em;
-  background-image: radial-gradient(circle at 0 100%,
-    currentcolor 0, currentcolor 17%, transparent 17%,
-    transparent 28%, currentcolor 28%, currentcolor 36%, 
-    transparent 36%, /* ... */
+  width: 0.7em;
+  height: 0.7em;
+  background-image: radial-gradient(
+    circle at 0 100%,
+    currentcolor 0,
+    currentcolor 17%,
+    transparent 17%,
+    transparent 28%,
+    currentcolor 28%,
+    currentcolor 36%,
+    transparent 36% /* ... */
   );
-  transform: translate(-50%,-50%) rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 ```
 
@@ -613,7 +680,7 @@ const WifiIcon = () => (
   <View style={styles.wifiContainer}>
     {/* Signal dot */}
     <View style={styles.wifiDot} />
-    
+
     {/* Signal waves */}
     <View style={styles.wifiWave1} />
     <View style={styles.wifiWave2} />
@@ -625,60 +692,61 @@ const styles = StyleSheet.create({
   wifiContainer: {
     width: 60,
     height: 60,
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'flex-end'
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   wifiDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#000',
-    position: 'absolute',
-    bottom: 0
+    backgroundColor: "#000",
+    position: "absolute",
+    bottom: 0,
   },
   wifiWave1: {
-    position: 'absolute',
+    position: "absolute",
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 3,
-    borderColor: '#000',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-    transform: [{ rotate: '-45deg' }],
-    bottom: 8
+    borderColor: "#000",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent",
+    transform: [{ rotate: "-45deg" }],
+    bottom: 8,
   },
   wifiWave2: {
-    position: 'absolute',
+    position: "absolute",
     width: 35,
     height: 35,
     borderRadius: 17.5,
     borderWidth: 3,
-    borderColor: '#000',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-    transform: [{ rotate: '-45deg' }],
-    bottom: 15
+    borderColor: "#000",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent",
+    transform: [{ rotate: "-45deg" }],
+    bottom: 15,
   },
   wifiWave3: {
-    position: 'absolute',
+    position: "absolute",
     width: 50,
     height: 50,
     borderRadius: 25,
     borderWidth: 3,
-    borderColor: '#000',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-    transform: [{ rotate: '-45deg' }],
-    bottom: 22
-  }
+    borderColor: "#000",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent",
+    transform: [{ rotate: "-45deg" }],
+    bottom: 22,
+  },
 });
 ```
 
 ## 12. Arrow Patterns
 
 ### Various Arrow Types
+
 ```javascript
 // Right Arrow
 arrowRight: {
@@ -741,6 +809,7 @@ const styles = {
 ## 13. Badge & Ribbon Shapes
 
 ### Badge with Ribbon
+
 ```javascript
 const BadgeRibbon = () => (
   <View style={styles.badgeContainer}>
@@ -756,59 +825,60 @@ const styles = StyleSheet.create({
   badgeContainer: {
     width: 100,
     height: 100,
-    position: 'relative',
-    alignItems: 'center'
+    position: "relative",
+    alignItems: "center",
   },
   badgeCircle: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'gold',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2
+    backgroundColor: "gold",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
   },
   badgeText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white'
+    fontWeight: "bold",
+    color: "white",
   },
   ribbonLeft: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -20,
     left: 10,
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 40,
     borderRightWidth: 40,
     borderBottomWidth: 70,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    transform: [{ rotate: '-140deg' }]
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    transform: [{ rotate: "-140deg" }],
   },
   ribbonRight: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -20,
     right: 10,
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 40,
     borderRightWidth: 40,
     borderBottomWidth: 70,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    transform: [{ rotate: '140deg' }]
-  }
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    transform: [{ rotate: "140deg" }],
+  },
 });
 ```
 
 ## 14. Geometric Polygons
 
 ### Pentagon
+
 ```javascript
 const Pentagon = () => (
   <View style={styles.pentagonContainer}>
@@ -820,38 +890,39 @@ const Pentagon = () => (
 const styles = StyleSheet.create({
   pentagonContainer: {
     width: 54,
-    position: 'relative'
+    position: "relative",
   },
   pentagonTop: {
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 45,
     borderRightWidth: 45,
     borderBottomWidth: 35,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    position: 'absolute',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    position: "absolute",
     top: 0,
-    left: -18
+    left: -18,
   },
   pentagonBottom: {
     width: 54,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderTopWidth: 50,
     borderLeftWidth: 18,
     borderRightWidth: 18,
-    borderTopColor: 'red',
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    marginTop: 35
-  }
+    borderTopColor: "red",
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    marginTop: 35,
+  },
 });
 ```
 
 ### Hexagon
+
 ```javascript
 const Hexagon = () => (
   <View style={styles.hexagonContainer}>
@@ -865,41 +936,41 @@ const styles = StyleSheet.create({
   hexagonContainer: {
     width: 100,
     height: 55,
-    position: 'relative'
+    position: "relative",
   },
   hexagonMain: {
     width: 100,
     height: 55,
-    backgroundColor: 'red'
+    backgroundColor: "red",
   },
   hexagonBefore: {
-    position: 'absolute',
+    position: "absolute",
     top: -25,
     left: 0,
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderBottomWidth: 25,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red'
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
   },
   hexagonAfter: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -25,
     left: 0,
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderTopWidth: 25,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: 'red'
-  }
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderTopColor: "red",
+  },
 });
 ```
 
@@ -915,48 +986,48 @@ const basicShapes = StyleSheet.create({
   square: {
     width: 100,
     height: 100,
-    backgroundColor: 'red'
+    backgroundColor: "red",
   },
-  
+
   // Rectangle
   rectangle: {
     width: 200,
     height: 100,
-    backgroundColor: 'blue'
+    backgroundColor: "blue",
   },
-  
+
   // Circle
   circle: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: 'green'
+    backgroundColor: "green",
   },
-  
+
   // Oval
   oval: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: 'orange',
-    transform: [{ scaleX: 2 }]
+    backgroundColor: "orange",
+    transform: [{ scaleX: 2 }],
   },
-  
+
   // Rounded Rectangle
   roundedRect: {
     width: 200,
     height: 100,
     borderRadius: 20,
-    backgroundColor: 'purple'
+    backgroundColor: "purple",
   },
-  
+
   // Pill Shape
   pill: {
     width: 200,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'cyan'
-  }
+    backgroundColor: "cyan",
+  },
 });
 ```
 
@@ -968,41 +1039,41 @@ const triangleShapes = StyleSheet.create({
   triangleUp: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderBottomWidth: 100,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red'
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
   },
-  
+
   // Equilateral Triangle
   equilateralTriangle: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderBottomWidth: 86.6, // height = width * √3/2
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'blue'
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "blue",
   },
-  
+
   // Right-angled Triangle
   rightTriangle: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderRightWidth: 100,
     borderTopWidth: 100,
-    borderRightColor: 'transparent',
-    borderTopColor: 'green'
-  }
+    borderRightColor: "transparent",
+    borderTopColor: "green",
+  },
 });
 ```
 
@@ -1021,36 +1092,36 @@ const styles = StyleSheet.create({
   starSixContainer: {
     width: 100,
     height: 100,
-    position: 'relative'
+    position: "relative",
   },
   starSixTop: {
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderBottomWidth: 100,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'red',
-    position: 'absolute',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    position: "absolute",
     top: 0,
-    left: 0
+    left: 0,
   },
   starSixBottom: {
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 50,
     borderRightWidth: 50,
     borderTopWidth: 100,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: 'red',
-    position: 'absolute',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderTopColor: "red",
+    position: "absolute",
     top: 30,
-    left: 0
-  }
+    left: 0,
+  },
 });
 ```
 
@@ -1074,87 +1145,85 @@ const Infinity = () => (
 );
 
 // Pac-Man
-const PacMan = () => (
-  <View style={styles.pacman} />
-);
+const PacMan = () => <View style={styles.pacman} />;
 
 const styles = StyleSheet.create({
   heart: {
-    position: 'relative',
+    position: "relative",
     width: 100,
-    height: 90
+    height: 90,
   },
   heartLeft: {
-    position: 'absolute',
+    position: "absolute",
     width: 52,
     height: 80,
     left: 50,
     top: 0,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    transform: [{ rotate: '-45deg' }]
+    transform: [{ rotate: "-45deg" }],
   },
   heartRight: {
-    position: 'absolute',
+    position: "absolute",
     width: 52,
     height: 80,
     left: 0,
     top: 0,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    transform: [{ rotate: '45deg' }]
+    transform: [{ rotate: "45deg" }],
   },
   infinityContainer: {
     width: 212,
     height: 100,
-    position: 'relative'
+    position: "relative",
   },
   infinityLeft: {
-    position: 'absolute',
+    position: "absolute",
     width: 60,
     height: 60,
     borderWidth: 20,
-    borderColor: 'red',
+    borderColor: "red",
     borderRadius: 50,
     borderTopLeftRadius: 50,
     borderBottomLeftRadius: 50,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 50,
-    transform: [{ rotate: '-45deg' }],
+    transform: [{ rotate: "-45deg" }],
     left: 0,
-    top: 0
+    top: 0,
   },
   infinityRight: {
-    position: 'absolute',
+    position: "absolute",
     width: 60,
     height: 60,
     borderWidth: 20,
-    borderColor: 'red',
+    borderColor: "red",
     borderRadius: 50,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 50,
     borderTopRightRadius: 50,
     borderBottomRightRadius: 50,
-    transform: [{ rotate: '45deg' }],
+    transform: [{ rotate: "45deg" }],
     right: 0,
-    top: 0
+    top: 0,
   },
   pacman: {
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderRightWidth: 60,
     borderTopWidth: 60,
     borderLeftWidth: 60,
     borderBottomWidth: 60,
-    borderRightColor: 'transparent',
-    borderTopColor: 'yellow',
-    borderLeftColor: 'yellow',
-    borderBottomColor: 'yellow',
-    borderRadius: 60
-  }
+    borderRightColor: "transparent",
+    borderTopColor: "yellow",
+    borderLeftColor: "yellow",
+    borderBottomColor: "yellow",
+    borderRadius: 60,
+  },
 });
 ```
 
@@ -1179,64 +1248,62 @@ const ToggleSwitch = ({ isOn }) => (
 );
 
 // Loading Spinner (using animation)
-const Spinner = () => (
-  <View style={styles.spinner} />
-);
+const Spinner = () => <View style={styles.spinner} />;
 
 const styles = StyleSheet.create({
   speechBubbleContainer: {
-    position: 'relative'
+    position: "relative",
   },
   speechBubble: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     padding: 10,
     borderRadius: 10,
     minWidth: 100,
-    minHeight: 40
+    minHeight: 40,
   },
   speechBubbleTail: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -10,
     left: 20,
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 10,
     borderRightWidth: 10,
     borderTopWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#f0f0f0'
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderTopColor: "#f0f0f0",
   },
   switchContainer: {
     width: 50,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#ccc',
-    padding: 2
+    backgroundColor: "#ccc",
+    padding: 2,
   },
   switchOn: {
-    backgroundColor: '#4CAF50'
+    backgroundColor: "#4CAF50",
   },
   switchThumb: {
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: 'white',
-    transform: [{ translateX: 0 }]
+    backgroundColor: "white",
+    transform: [{ translateX: 0 }],
   },
   switchThumbOn: {
-    transform: [{ translateX: 20 }]
+    transform: [{ translateX: 20 }],
   },
   spinner: {
     width: 40,
     height: 40,
     borderRadius: 20,
     borderWidth: 4,
-    borderColor: '#f0f0f0',
-    borderTopColor: '#3498db'
+    borderColor: "#f0f0f0",
+    borderTopColor: "#3498db",
     // Add animation with Animated API
-  }
+  },
 });
 ```
 
@@ -1270,78 +1337,78 @@ const styles = StyleSheet.create({
   facebookContainer: {
     width: 40,
     height: 40,
-    backgroundColor: '#3b5998',
+    backgroundColor: "#3b5998",
     borderRadius: 5,
-    position: 'relative',
-    overflow: 'hidden'
+    position: "relative",
+    overflow: "hidden",
   },
   facebookF: {
-    position: 'absolute',
+    position: "absolute",
     width: 20,
     height: 35,
     right: 8,
     top: 8,
     borderWidth: 3,
-    borderColor: 'white',
+    borderColor: "white",
     borderBottomWidth: 0,
     borderLeftWidth: 0,
-    borderTopRightRadius: 5
+    borderTopRightRadius: 5,
   },
   facebookBar: {
-    position: 'absolute',
+    position: "absolute",
     width: 12,
     height: 3,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     top: 20,
-    right: 8
+    right: 8,
   },
   twitterContainer: {
     width: 50,
     height: 40,
-    position: 'relative'
+    position: "relative",
   },
   twitterBody: {
     width: 40,
     height: 30,
-    backgroundColor: '#1DA1F2',
+    backgroundColor: "#1DA1F2",
     borderRadius: 20,
-    position: 'absolute',
+    position: "absolute",
     top: 5,
-    left: 5
+    left: 5,
   },
   twitterBeak: {
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 10,
     borderTopWidth: 5,
     borderBottomWidth: 5,
-    borderLeftColor: '#1DA1F2',
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-    position: 'absolute',
+    borderLeftColor: "#1DA1F2",
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+    position: "absolute",
     left: 0,
-    top: 15
+    top: 15,
   },
   youtubeContainer: {
     width: 60,
     height: 42,
-    backgroundColor: '#FF0000',
+    backgroundColor: "#FF0000",
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   youtubePlay: {
     width: 0,
     height: 0,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderLeftWidth: 15,
     borderTopWidth: 10,
     borderBottomWidth: 10,
-    borderLeftColor: 'white',
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent'
-  }
+    borderLeftColor: "white",
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+  },
 });
 ```
 
@@ -1351,20 +1418,20 @@ const styles = StyleSheet.create({
 
 ### Quick Reference Table
 
-| CSS Pattern | React Native Approach | Key Differences |
-|------------|----------------------|-----------------|
-| `width: 0; height: 0; border: ...` | Same, but split border properties | Must specify each border property separately |
-| `border-radius: 50%` | `borderRadius: width/2` | Use absolute values |
-| `::before, ::after` | Multiple `<View>` components | Use absolute positioning |
-| `transform-origin` | Position adjustments | No direct equivalent |
-| `box-shadow` | iOS: shadow props, Android: elevation | Platform-specific |
-| `linear-gradient()` | Library or multiple views | No native support |
-| `clip-path` | `overflow: 'hidden'` | Limited support |
-| `border: X / Y` | Transform with scaleX/Y | No elliptical radius |
-| `transform: multiple` | `transform: [{...}, {...}]` | Array of objects |
-| `position: fixed` | Not supported | Use absolute |
-| `cursor` | Not needed | Touch-based |
-| `transition` | Animated API | Different system |
+| CSS Pattern                        | React Native Approach                 | Key Differences                              |
+| ---------------------------------- | ------------------------------------- | -------------------------------------------- |
+| `width: 0; height: 0; border: ...` | Same, but split border properties     | Must specify each border property separately |
+| `border-radius: 50%`               | `borderRadius: width/2`               | Use absolute values                          |
+| `::before, ::after`                | Multiple `<View>` components          | Use absolute positioning                     |
+| `transform-origin`                 | Position adjustments                  | No direct equivalent                         |
+| `box-shadow`                       | iOS: shadow props, Android: elevation | Platform-specific                            |
+| `linear-gradient()`                | Library or multiple views             | No native support                            |
+| `clip-path`                        | `overflow: 'hidden'`                  | Limited support                              |
+| `border: X / Y`                    | Transform with scaleX/Y               | No elliptical radius                         |
+| `transform: multiple`              | `transform: [{...}, {...}]`           | Array of objects                             |
+| `position: fixed`                  | Not supported                         | Use absolute                                 |
+| `cursor`                           | Not needed                            | Touch-based                                  |
+| `transition`                       | Animated API                          | Different system                             |
 
 ### Common Gotchas
 
@@ -1390,13 +1457,14 @@ const styles = StyleSheet.create({
 ## Example: Complete CSS to RN Conversion
 
 ### Original CSS Shape
+
 ```css
 .complex-shape {
   width: 100px;
   height: 100px;
   background: linear-gradient(45deg, red, blue);
   border-radius: 50% 0 50% 0;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   transform: rotate(45deg) scale(1.2);
   position: relative;
 }
@@ -1413,13 +1481,14 @@ const styles = StyleSheet.create({
 ```
 
 ### React Native Conversion
+
 ```javascript
 const ComplexShape = () => (
   <View style={styles.complexShapeContainer}>
     {/* Gradient simulation with two views */}
     <View style={styles.gradientLayer1} />
     <View style={styles.gradientLayer2} />
-    
+
     {/* Main shape */}
     <View style={styles.complexShape}>
       {/* Inner circle (::before equivalent) */}
@@ -1432,56 +1501,56 @@ const styles = StyleSheet.create({
   complexShapeContainer: {
     width: 120,
     height: 120,
-    position: 'relative'
+    position: "relative",
   },
   gradientLayer1: {
-    position: 'absolute',
+    position: "absolute",
     width: 100,
     height: 100,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderTopLeftRadius: 50,
     borderBottomLeftRadius: 50,
-    transform: [{ rotate: '45deg' }, { scale: 1.2 }],
-    opacity: 0.5
+    transform: [{ rotate: "45deg" }, { scale: 1.2 }],
+    opacity: 0.5,
   },
   gradientLayer2: {
-    position: 'absolute',
+    position: "absolute",
     width: 100,
     height: 100,
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     borderTopRightRadius: 50,
     borderBottomRightRadius: 50,
-    transform: [{ rotate: '45deg' }, { scale: 1.2 }],
-    opacity: 0.5
+    transform: [{ rotate: "45deg" }, { scale: 1.2 }],
+    opacity: 0.5,
   },
   complexShape: {
     width: 100,
     height: 100,
-    backgroundColor: 'rgba(255,0,0,0.5)',
+    backgroundColor: "rgba(255,0,0,0.5)",
     borderTopLeftRadius: 50,
     borderBottomRightRadius: 50,
-    transform: [{ rotate: '45deg' }, { scale: 1.2 }],
+    transform: [{ rotate: "45deg" }, { scale: 1.2 }],
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.3,
-        shadowRadius: 10
+        shadowRadius: 10,
       },
       android: {
-        elevation: 10
-      }
-    })
+        elevation: 10,
+      },
+    }),
   },
   innerCircle: {
-    position: 'absolute',
+    position: "absolute",
     width: 50,
     height: 50,
-    backgroundColor: 'yellow',
+    backgroundColor: "yellow",
     borderRadius: 25,
     top: 25,
-    left: 25
-  }
+    left: 25,
+  },
 });
 ```
 
@@ -1490,20 +1559,23 @@ const styles = StyleSheet.create({
 ## Resources & Tools
 
 ### Helpful Resources
+
 - [React Native StyleSheet Docs](https://reactnative.dev/docs/stylesheet)
 - [CSS Shapes Reference](https://css-tricks.com/the-shapes-of-css/)
 - [Transform Origin Workarounds](https://github.com/facebook/react-native/issues/1964)
 
 ### Testing Tools
+
 - Use React Native Debugger to inspect computed styles
 - Expo Snack for quick prototyping
 - Device simulators for platform-specific testing
 
 ### Performance Optimization
+
 - Use `react-native-svg` for very complex shapes
 - Consider `react-native-reanimated` for animated shapes
 - Profile with React DevTools
 
 ---
 
-*This guide provides comprehensive patterns for converting CSS shapes to React Native. Remember that while pure styles can create many shapes, sometimes using SVG or image assets might be more performant for very complex designs.*
+_This guide provides comprehensive patterns for converting CSS shapes to React Native. Remember that while pure styles can create many shapes, sometimes using SVG or image assets might be more performant for very complex designs._

@@ -28,9 +28,7 @@ module.exports = defineConfig([
     },
   },
   {
-    files: [
-      "rn-better-dev-tools/src/features/env/hooks/useDynamicEnv.ts",
-    ],
+    files: ["rn-better-dev-tools/src/features/env/hooks/useDynamicEnv.ts"],
     rules: {
       "expo/no-dynamic-env-var": "off",
     },

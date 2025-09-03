@@ -1,11 +1,13 @@
 # Lucide Icons Status Tracker
 
 ## Overview
+
 This document tracks the status of all Lucide icons in the rn-better-dev-tools package. Icons are marked as either ✅ Approved or 🔧 Needs Work.
 
 ## Icon Status
 
 ### ✅ APPROVED ICONS (Good to use)
+
 These icons have been reviewed and approved. They look good and are simple/minimal:
 
 - [x] **WifiIcon** - Clean WiFi signal bars
@@ -45,6 +47,7 @@ These icons have been reviewed and approved. They look good and are simple/minim
 - [x] **BarChart3Icon** - Bar chart with axes
 
 ### 🔧 NEEDS WORK (To be fixed)
+
 These icons need to be redesigned to be more minimal and cleaner:
 
 - [ ] **WifiOffIcon** - Needs simpler design
@@ -83,7 +86,9 @@ These icons need to be redesigned to be more minimal and cleaner:
 - [ ] **PowerIcon** - Power symbol unclear
 
 ## Design Principles
+
 When fixing icons, follow these principles:
+
 1. **Minimal shapes** - Use basic geometric shapes
 2. **Clear silhouettes** - Icon should be recognizable at small sizes
 3. **Consistent stroke width** - Match the strokeWidth parameter
@@ -91,6 +96,7 @@ When fixing icons, follow these principles:
 5. **Use Pure components** - PureLine, PureCircle, PureRect, View shapes
 
 ## Implementation Notes
+
 - All icons use Pure React Native components (no SVG)
 - Icons should scale properly with the `size` prop
 - Color should be customizable via `color` prop

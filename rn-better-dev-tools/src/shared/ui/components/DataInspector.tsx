@@ -120,18 +120,19 @@ export function DataInspector({
               </TouchableOpacity>
             )}
             {isEditing && (
-              <TouchableOpacity style={styles.cancelButton} onPress={cancelEdit}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={cancelEdit}
+              >
                 <X size={14} color={gameUIColors.error} />
               </TouchableOpacity>
             )}
-            {!isEditing && (
-              <CopyButton value={formattedData} size={12} />
-            )}
+            {!isEditing && <CopyButton value={formattedData} size={12} />}
           </View>
         </View>
       )}
-      
-      <ScrollView 
+
+      <ScrollView
         style={styles.scrollView}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -148,7 +149,9 @@ export function DataInspector({
             />
           ) : (
             <Text style={styles.codeText}>
-              {searchQuery ? highlightSearch(formattedData) as any : formattedData}
+              {searchQuery
+                ? (highlightSearch(formattedData) as any)
+                : formattedData}
             </Text>
           )}
         </ScrollView>
@@ -163,7 +166,11 @@ interface JsonViewerProps {
   style?: ViewStyle;
 }
 
-DataInspector.Json = function JsonViewer({ data, searchable, style }: JsonViewerProps) {
+DataInspector.Json = function JsonViewer({
+  data,
+  searchable,
+  style,
+}: JsonViewerProps) {
   return (
     <DataInspector
       data={data}
@@ -181,14 +188,13 @@ interface EditableProps {
   style?: ViewStyle;
 }
 
-DataInspector.Editable = function Editable({ data, onSave, style }: EditableProps) {
+DataInspector.Editable = function Editable({
+  data,
+  onSave,
+  style,
+}: EditableProps) {
   return (
-    <DataInspector
-      data={data}
-      mode="edit"
-      onEdit={onSave}
-      style={style}
-    />
+    <DataInspector data={data} mode="edit" onEdit={onSave} style={style} />
   );
 };
 
@@ -198,34 +204,51 @@ interface DiffViewProps {
   style?: ViewStyle;
 }
 
-DataInspector.Diff = function DiffView({ oldData, newData, style }: DiffViewProps) {
+DataInspector.Diff = function DiffView({
+  oldData,
+  newData,
+  style,
+}: DiffViewProps) {
   const [showMode, setShowMode] = useState<"old" | "new" | "diff">("diff");
 
   return (
     <View style={style}>
       <View style={styles.diffControls}>
         <TouchableOpacity
-          style={[styles.diffButton, showMode === "old" && styles.diffButtonActive]}
+          style={[
+            styles.diffButton,
+            showMode === "old" && styles.diffButtonActive,
+          ]}
           onPress={() => setShowMode("old")}
         >
           <Text style={styles.diffButtonText}>Old</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.diffButton, showMode === "new" && styles.diffButtonActive]}
+          style={[
+            styles.diffButton,
+            showMode === "new" && styles.diffButtonActive,
+          ]}
           onPress={() => setShowMode("new")}
         >
           <Text style={styles.diffButtonText}>New</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.diffButton, showMode === "diff" && styles.diffButtonActive]}
+          style={[
+            styles.diffButton,
+            showMode === "diff" && styles.diffButtonActive,
+          ]}
           onPress={() => setShowMode("diff")}
         >
           <Text style={styles.diffButtonText}>Diff</Text>
         </TouchableOpacity>
       </View>
-      
-      {showMode === "old" && <DataInspector data={oldData} searchable={false} />}
-      {showMode === "new" && <DataInspector data={newData} searchable={false} />}
+
+      {showMode === "old" && (
+        <DataInspector data={oldData} searchable={false} />
+      )}
+      {showMode === "new" && (
+        <DataInspector data={newData} searchable={false} />
+      )}
       {showMode === "diff" && (
         <View style={styles.diffContainer}>
           <View style={styles.diffPane}>

@@ -129,7 +129,15 @@ export function GameUICompactStats({
               style={[styles.statCard, { borderColor: stat.color + "30" }]}
             >
               <View style={styles.cardContent}>
-                <View style={[styles.iconBadge, { backgroundColor: stat.color + "1A", borderColor: stat.color + "33" }]}>
+                <View
+                  style={[
+                    styles.iconBadge,
+                    {
+                      backgroundColor: stat.color + "1A",
+                      borderColor: stat.color + "33",
+                    },
+                  ]}
+                >
                   <IconComponent size={12} color={stat.color} />
                 </View>
                 <View style={styles.cardInfo}>
@@ -141,7 +149,9 @@ export function GameUICompactStats({
                     {stat.value.toString().padStart(2, "0")}
                   </Text>
                   {totalCount ? (
-                    <Text style={styles.percentText}>{Math.round(percentage)}%</Text>
+                    <Text style={styles.percentText}>
+                      {Math.round(percentage)}%
+                    </Text>
                   ) : null}
                 </View>
               </View>
@@ -327,12 +337,12 @@ const styles = StyleSheet.create({
     minWidth: 28,
   },
   valueBlock: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   percentText: {
     fontSize: 9,
     color: gameUIColors.secondary,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   statBar: {
     height: 3,
@@ -379,7 +389,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

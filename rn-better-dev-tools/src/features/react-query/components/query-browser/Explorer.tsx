@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import { JsonValue } from "../../types/types";
 import { Query, QueryKey, useQueryClient } from "@tanstack/react-query";
 import { updateNestedDataByPath } from "../../utils/updateNestedDataByPath";
@@ -79,7 +85,11 @@ const CopyButton = React.memo(
       <SharedCopyButton
         value={value}
         isFocused={isFocused}
-        buttonStyle={isFocused ? { ...styles.buttonStyle, ...styles.buttonStyleFocused } : styles.buttonStyle}
+        buttonStyle={
+          isFocused
+            ? { ...styles.buttonStyle, ...styles.buttonStyleFocused }
+            : styles.buttonStyle
+        }
       />
     );
   },
@@ -196,13 +206,8 @@ const ToggleValueButton = React.memo(
     const handleClick = useCallback(() => {
       if (!activeQuery) return;
       const oldData = activeQuery.state.data as unknown as JsonValue;
-      const currentValue =
-        typeof value === "boolean" ? value : false;
-      const newData = updateNestedDataByPath(
-        oldData,
-        dataPath,
-        !currentValue,
-      );
+      const currentValue = typeof value === "boolean" ? value : false;
+      const newData = updateNestedDataByPath(oldData, dataPath, !currentValue);
       queryClient.setQueryData(activeQuery.queryKey, newData);
     }, [queryClient, activeQuery, dataPath, value]);
 
@@ -260,14 +265,17 @@ export default function Explorer({
 }: Props) {
   const queryClient = useQueryClient();
   const [isRowFocused, setIsRowFocused] = useState(false);
-  
-  
+
   // Local state for input value to handle typing properly
   const [localInputValue, setLocalInputValue] = useState<string>("");
-  
+
   // Sync local state with prop value
   useEffect(() => {
-    if (value !== null && value !== undefined && (typeof value === "string" || typeof value === "number")) {
+    if (
+      value !== null &&
+      value !== undefined &&
+      (typeof value === "string" || typeof value === "number")
+    ) {
       const newValue = value.toString();
       if (newValue !== localInputValue) {
         setLocalInputValue(newValue);
@@ -374,19 +382,19 @@ export default function Explorer({
     (isNumber: boolean, newValue: string) => {
       // Update local state immediately for responsive typing
       setLocalInputValue(newValue);
-      
+
       if (!activeQueryRef.current) return;
       const oldData = activeQueryRef.current.state.data as unknown as JsonValue;
       if (isNumber && isNaN(Number(newValue))) return;
       const updatedValue =
         valueTypeRef.current === "number" ? Number(newValue) : newValue;
-      
+
       const newData = updateNestedDataByPath(
         oldData,
         dataPathRef.current,
         updatedValue,
       );
-      
+
       queryClient.setQueryData(activeQueryRef.current.queryKey, newData);
     },
     [queryClient, setLocalInputValue],

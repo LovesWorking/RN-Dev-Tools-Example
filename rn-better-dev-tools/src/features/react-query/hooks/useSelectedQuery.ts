@@ -45,16 +45,16 @@ export function useGetQueryByQueryKey(queryKey?: QueryKey) {
           // Check if the event is for our query by comparing the stringified keys
           const eventQueryKeyString = JSON.stringify(event.query.queryKey);
           const isOurQuery = eventQueryKeyString === queryHashRef.current;
-          
+
           if (isOurQuery) {
             if (event.type === "removed") {
               setQueryState({ query: undefined, version: 0 });
             } else {
               // For 'updated' and 'added' events, use the query from the event
               // Update both the query and increment version to force re-renders
-              setQueryState(prev => ({
+              setQueryState((prev) => ({
                 query: event.query,
-                version: prev.version + 1
+                version: prev.version + 1,
               }));
             }
           }

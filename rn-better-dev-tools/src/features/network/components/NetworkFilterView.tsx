@@ -60,14 +60,22 @@ function getContentType(event: NetworkEvent): { type: string; color: string } {
   const contentType =
     headers?.["content-type"] || headers?.["Content-Type"] || "";
 
-  if (contentType.includes("json")) return { type: "JSON", color: gameUIColors.info };
-  if (contentType.includes("xml")) return { type: "XML", color: gameUIColors.network };
-  if (contentType.includes("html")) return { type: "HTML", color: gameUIColors.warning };
-  if (contentType.includes("text")) return { type: "TEXT", color: gameUIColors.success };
-  if (contentType.includes("image")) return { type: "IMAGE", color: gameUIColors.error };
-  if (contentType.includes("video")) return { type: "VIDEO", color: gameUIColors.critical };
-  if (contentType.includes("audio")) return { type: "AUDIO", color: gameUIColors.optional };
-  if (contentType.includes("form")) return { type: "FORM", color: gameUIColors.query };
+  if (contentType.includes("json"))
+    return { type: "JSON", color: gameUIColors.info };
+  if (contentType.includes("xml"))
+    return { type: "XML", color: gameUIColors.network };
+  if (contentType.includes("html"))
+    return { type: "HTML", color: gameUIColors.warning };
+  if (contentType.includes("text"))
+    return { type: "TEXT", color: gameUIColors.success };
+  if (contentType.includes("image"))
+    return { type: "IMAGE", color: gameUIColors.error };
+  if (contentType.includes("video"))
+    return { type: "VIDEO", color: gameUIColors.critical };
+  if (contentType.includes("audio"))
+    return { type: "AUDIO", color: gameUIColors.optional };
+  if (contentType.includes("form"))
+    return { type: "FORM", color: gameUIColors.query };
   return { type: "OTHER", color: gameUIColors.muted };
 }
 
@@ -83,11 +91,10 @@ export function NetworkFilterView({
   onAddUrl = () => {},
   activeTab: controlledActiveTab,
 }: NetworkFilterViewProps) {
-  const [internalActiveTab, setInternalActiveTab] = useState<TabType>(
-    "filters",
-  );
+  const [internalActiveTab, setInternalActiveTab] =
+    useState<TabType>("filters");
   const activeTab = controlledActiveTab ?? internalActiveTab;
-  
+
   // Use filter managers for domains and URLs
   const domainFilterManager = useFilterManager(ignoredDomains);
   const urlFilterManager = useFilterManager(ignoredUrls);
@@ -202,7 +209,7 @@ export function NetworkFilterView({
       domainFilterManager.addFilter(domainFilterManager.newFilter);
     }
   };
-  
+
   const handleAddUrlPattern = () => {
     if (urlFilterManager.newFilter.trim()) {
       onAddUrl(urlFilterManager.newFilter.trim());
@@ -272,7 +279,9 @@ export function NetworkFilterView({
       >
         <Filter
           size={14}
-          color={activeTab === "filters" ? gameUIColors.network : gameUIColors.muted}
+          color={
+            activeTab === "filters" ? gameUIColors.network : gameUIColors.muted
+          }
         />
         <Text
           style={[
@@ -297,7 +306,9 @@ export function NetworkFilterView({
       >
         <Globe
           size={14}
-          color={activeTab === "domains" ? gameUIColors.network : gameUIColors.muted}
+          color={
+            activeTab === "domains" ? gameUIColors.network : gameUIColors.muted
+          }
         />
         <Text
           style={[
@@ -325,7 +336,12 @@ export function NetworkFilterView({
             : styles.tabButtonInactive,
         ]}
       >
-        <Link size={14} color={activeTab === "urls" ? gameUIColors.network : gameUIColors.muted} />
+        <Link
+          size={14}
+          color={
+            activeTab === "urls" ? gameUIColors.network : gameUIColors.muted
+          }
+        />
         <Text
           style={[
             styles.tabButtonText,
@@ -526,9 +542,11 @@ export function NetworkFilterView({
     const suggestedPatterns = available.filter(
       (pattern) => !currentPatterns.has(pattern),
     );
-    
-    const filterManager = type === "domains" ? domainFilterManager : urlFilterManager;
-    const handleAddPattern = type === "domains" ? handleAddDomainPattern : handleAddUrlPattern;
+
+    const filterManager =
+      type === "domains" ? domainFilterManager : urlFilterManager;
+    const handleAddPattern =
+      type === "domains" ? handleAddDomainPattern : handleAddUrlPattern;
 
     return (
       <View style={styles.ignoreSection}>

@@ -2,7 +2,13 @@ import { View, Text, StyleSheet } from "react-native";
 import type { ReactNode } from "react";
 
 // Badge variants
-export type BadgeVariant = "default" | "status" | "count" | "type" | "method" | "outline";
+export type BadgeVariant =
+  | "default"
+  | "status"
+  | "count"
+  | "type"
+  | "method"
+  | "outline";
 export type BadgeSize = "small" | "medium" | "large";
 
 // Color mapping for common statuses
@@ -57,7 +63,11 @@ interface StatusBadgeProps {
   style?: any;
 }
 
-export function StatusBadge({ status, size = "medium", style }: StatusBadgeProps) {
+export function StatusBadge({
+  status,
+  size = "medium",
+  style,
+}: StatusBadgeProps) {
   const color = STATUS_COLORS[status.toLowerCase()] || "#6B7280";
   const badgeStyles = getBadgeStyles("status", color, size);
 
@@ -87,7 +97,8 @@ export function CountBadge({
   style,
   maxCount = 99,
 }: CountBadgeProps) {
-  const displayCount = typeof count === "number" && count > maxCount ? `${maxCount}+` : count;
+  const displayCount =
+    typeof count === "number" && count > maxCount ? `${maxCount}+` : count;
   const badgeStyles = getBadgeStyles("count", color, size);
 
   return (
@@ -105,7 +116,12 @@ interface TypeBadgeProps {
   style?: any;
 }
 
-export function TypeBadge({ type, color, size = "small", style }: TypeBadgeProps) {
+export function TypeBadge({
+  type,
+  color,
+  size = "small",
+  style,
+}: TypeBadgeProps) {
   const typeColor = color || getTypeColor(type);
   const badgeStyles = getBadgeStyles("type", typeColor, size);
 
@@ -123,7 +139,11 @@ interface MethodBadgeProps {
   style?: any;
 }
 
-export function MethodBadge({ method, size = "medium", style }: MethodBadgeProps) {
+export function MethodBadge({
+  method,
+  size = "medium",
+  style,
+}: MethodBadgeProps) {
   const color = METHOD_COLORS[method.toUpperCase()] || "#6B7280";
   const badgeStyles = getBadgeStyles("method", color, size);
 
