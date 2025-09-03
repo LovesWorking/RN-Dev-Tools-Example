@@ -1,7 +1,6 @@
 // @ts-nocheck
 import * as React from "react";
-import * as PropTypes from "prop-types";
-import cn from "classnames";
+import cn from "./classnames";
 
 import {
   computeLineInformation,
@@ -15,9 +14,18 @@ import computeStyles, {
   ReactDiffViewerStyles,
 } from "./styles";
 
-const m = require("memoize-one");
-
-const memoize = m.default || m;
+// Simple memoize implementation for React Native
+const memoize = (fn: any) => {
+  let lastArgs: any[] = [];
+  let lastResult: any;
+  return (...args: any[]) => {
+    if (args.length !== lastArgs.length || args.some((arg, i) => arg !== lastArgs[i])) {
+      lastArgs = args;
+      lastResult = fn(...args);
+    }
+    return lastResult;
+  };
+};
 
 export enum LineNumberPrefix {
   LEFT = "L",
@@ -94,23 +102,6 @@ class DiffViewer extends React.Component<
     linesOffset: 0,
   };
 
-  public static propTypes = {
-    oldValue: PropTypes.string.isRequired,
-    newValue: PropTypes.string.isRequired,
-    splitView: PropTypes.bool,
-    disableWordDiff: PropTypes.bool,
-    compareMethod: PropTypes.oneOf(Object.values(DiffMethod)),
-    renderContent: PropTypes.func,
-    onLineNumberClick: PropTypes.func,
-    extraLinesSurroundingDiff: PropTypes.number,
-    styles: PropTypes.object,
-    hideLineNumbers: PropTypes.bool,
-    showDiffOnly: PropTypes.bool,
-    highlightLines: PropTypes.arrayOf(PropTypes.string),
-    leftTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    rightTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-    linesOffset: PropTypes.number,
-  };
 
   public constructor(props: ReactDiffViewerProps) {
     super(props);

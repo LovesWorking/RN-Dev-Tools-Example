@@ -16,7 +16,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { Theme, ThemeName, getTheme, cyberpunkTheme } from "./devToolsThemes";
+import { Theme, ThemeName, getTheme } from "./devToolsThemes";
 
 // ============================================================================
 // Context Types
@@ -143,9 +143,9 @@ export function DevToolsThemeProvider({
     setThemeState(getTheme(newThemeName));
   };
 
-  // Toggle between themes (cycle: cyberpunk -> dark -> light -> cyberpunk)
+  // Toggle between themes (cycle: cyberpunk -> dark -> cyberpunk)
   const toggleTheme = () => {
-    const order: ThemeName[] = ["cyberpunk", "dark", "light"];
+    const order: ThemeName[] = ["cyberpunk", "dark"];
     const idx = order.indexOf(themeName);
     const next = order[(idx + 1) % order.length];
     setTheme(next);

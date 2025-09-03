@@ -20,6 +20,7 @@ import { ErrorBoundary } from "@/rn-better-dev-tools/src/shared/ui/components/Er
 import {
   ReactQueryModal,
   useModalManager,
+  useWifiState,
 } from "@/rn-better-dev-tools/src/features/react-query";
 // DevToolsSectionListModal removed - using Dial2 directly
 import { ClaudeGridMenu } from "./ClaudeGridMenu";
@@ -77,9 +78,10 @@ export function RnBetterDevToolsBubble({
   onOpenPerformanceTest,
 }: RnBetterDevToolsBubbleProps) {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
-  const [isWifiEnabled, setIsWifiEnabled] = useState(true);
-  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const { settings: devToolsSettings, refreshSettings } = useDevToolsSettings();
+  
+  // Use persisted WiFi state
+  const { isOnline: isWifiEnabled, handleWifiToggle } = useWifiState();
 
   // Menu type selection
   type MenuType = "claude" | "dial" | "dial2";
@@ -130,6 +132,7 @@ export function RnBetterDevToolsBubble({
     isModalOpen,
     isEnvModalOpen,
     isStorageModalOpen,
+    isNetworkModalOpen,
     selectedQueryKey,
     activeFilter,
     activeTab,
@@ -138,10 +141,12 @@ export function RnBetterDevToolsBubble({
     handleModalDismiss,
     handleEnvModalDismiss,
     handleStorageModalDismiss,
+    handleNetworkModalDismiss,
     handleQuerySelect,
     handleQueryPress,
     handleEnvPress,
     handleStoragePress,
+    handleNetworkPress,
     handleTabChange,
     handleMutationSelect,
   } = useModalManager();
@@ -221,7 +226,7 @@ export function RnBetterDevToolsBubble({
             {devToolsSettings.floatingTools.wifi && !hideWifiToggle && (
               <TouchableOpacity
                 accessibilityLabel="Toggle WiFi online/offline"
-                onPress={() => setIsWifiEnabled(!isWifiEnabled)}
+                onPress={handleWifiToggle}
                 style={styles.fab}
               >
                 <WifiCircuitIcon
@@ -238,7 +243,7 @@ export function RnBetterDevToolsBubble({
             {devToolsSettings.floatingTools.network && (
               <TouchableOpacity
                 accessibilityLabel="Open Network Monitor"
-                onPress={() => setIsNetworkModalOpen(true)}
+                onPress={handleNetworkPress}
                 style={styles.fab}
               >
                 <Globe size={16} color={gameUIColors.network} />
@@ -275,12 +280,10 @@ export function RnBetterDevToolsBubble({
                   onOpenPerformanceTest();
                 }
               },
-              onWifiToggle: () => {
-                setIsWifiEnabled(!isWifiEnabled);
-              },
+              onWifiToggle: handleWifiToggle,
               onNetworkPress: () => {
                 setShowFloatingMenu(false);
-                setIsNetworkModalOpen(true);
+                handleNetworkPress();
               },
               onClose: () => {
                 setShowFloatingMenu(false);
@@ -352,7 +355,7 @@ export function RnBetterDevToolsBubble({
         <NetworkModal
           key="network-modal"
           visible={isNetworkModalOpen}
-          onClose={() => setIsNetworkModalOpen(false)}
+          onClose={handleNetworkModalDismiss}
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
 

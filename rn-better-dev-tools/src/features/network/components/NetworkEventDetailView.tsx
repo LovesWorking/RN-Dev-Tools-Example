@@ -15,12 +15,12 @@ import {
   ChevronUp,
   Lock,
   Unlock,
-  Copy,
   FileJson,
   Filter,
   Globe,
   Link,
 } from "rn-better-dev-tools/icons";
+import { InlineCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import type { NetworkEvent } from "../types";
 import {
@@ -75,11 +75,6 @@ const CollapsibleSection: React.FC<{
 
 // URL breakdown component matching Sentry style
 const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
-  const handleCopy = (text: string) => {
-    // Clipboard functionality temporarily disabled due to deprecated API
-    console.log("Copy to clipboard:", text);
-  };
-
   const parseUrl = (urlString: string) => {
     try {
       const urlObj = new URL(urlString);
@@ -123,13 +118,7 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
         <Text style={styles.urlProtocol}>
           ({urlParts.protocol.toUpperCase()})
         </Text>
-        <TouchableOpacity
-          sentry-label="ignore url copy button"
-          onPress={() => handleCopy(url)}
-          style={styles.copyButton}
-        >
-          <Copy size={12} color={gameUIColors.muted} />
-        </TouchableOpacity>
+        <InlineCopyButton value={url} buttonStyle={styles.copyButton} />
       </View>
       <View style={styles.urlPathRow}>
         <Text style={styles.urlPath}>{urlParts.pathname}</Text>

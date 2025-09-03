@@ -12,9 +12,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  ScrollView,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   HardDrive,
   Database,
@@ -23,10 +21,6 @@ import {
   Trash2,
   Filter,
   Activity,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  Key,
 } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
@@ -97,12 +91,108 @@ export function StorageModalWithTabs({
   );
   const lastEventRef = useRef<AsyncStorageEvent | null>(null);
   const hasLoadedFilters = useRef(false);
+  const hasLoadedTabState = useRef(false);
+  const hasLoadedMonitoringState = useRef(false);
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
   }, []);
 
   // Timer removed - using useTickEveryMinute hook instead
+
+  // Load persisted tab state on mount
+  useEffect(() => {
+    if (!visible || hasLoadedTabState.current) return;
+
+    const loadTabState = async () => {
+      try {
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+        const storedTab = await AsyncStorage.getItem(
+          devToolsStorageKeys.storage.activeTab()
+        );
+        if (storedTab && (storedTab === "browser" || storedTab === "events")) {
+          setActiveTab(storedTab as TabType);
+        }
+        hasLoadedTabState.current = true;
+      } catch (error) {
+        console.warn("Failed to load storage tab state:", error);
+      }
+    };
+
+    loadTabState();
+  }, [visible]);
+
+  // Load persisted monitoring state on mount
+  useEffect(() => {
+    if (!visible || hasLoadedMonitoringState.current) return;
+
+    const loadMonitoringState = async () => {
+      try {
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+        const storedMonitoring = await AsyncStorage.getItem(
+          devToolsStorageKeys.storage.isMonitoring()
+        );
+        if (storedMonitoring !== null) {
+          const shouldMonitor = storedMonitoring === "true";
+          if (shouldMonitor && !checkIsListening()) {
+            await startListening();
+            setIsListening(true);
+          }
+        }
+        hasLoadedMonitoringState.current = true;
+      } catch (error) {
+        console.warn("Failed to load monitoring state:", error);
+      }
+    };
+
+    loadMonitoringState();
+  }, [visible]);
+
+  // Save tab state when it changes
+  useEffect(() => {
+    if (!hasLoadedTabState.current) return; // Don't save on initial load
+
+    const saveTabState = async () => {
+      try {
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+        await AsyncStorage.setItem(
+          devToolsStorageKeys.storage.activeTab(),
+          activeTab
+        );
+      } catch (error) {
+        console.warn("Failed to save tab state:", error);
+      }
+    };
+
+    saveTabState();
+  }, [activeTab]);
+
+  // Save monitoring state when it changes
+  useEffect(() => {
+    if (!hasLoadedMonitoringState.current) return; // Don't save on initial load
+
+    const saveMonitoringState = async () => {
+      try {
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+        await AsyncStorage.setItem(
+          devToolsStorageKeys.storage.isMonitoring(),
+          isListening.toString()
+        );
+      } catch (error) {
+        console.warn("Failed to save monitoring state:", error);
+      }
+    };
+
+    saveMonitoringState();
+  }, [isListening]);
 
   // Load persisted filters on mount
   useEffect(() => {
@@ -334,7 +424,6 @@ export function StorageModalWithTabs({
   };
 
   // FlatList optimization constants
-  const ESTIMATED_ITEM_SIZE = 80;
   const END_REACHED_THRESHOLD = 0.8;
 
   // Stable keyExtractor for FlatList

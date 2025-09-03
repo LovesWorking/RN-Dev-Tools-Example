@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   StyleSheet,
   ScrollView,
@@ -8,7 +8,6 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
-  Switch,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -27,12 +26,17 @@ import {
   envVar,
 } from "@/rn-better-dev-tools/src/features/env";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
-import { IconShowcase } from "@/docs/svg/IconShowCase";
-import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
+// import { IconShowcase } from "@/docs/svg/IconShowCase";
+// import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
 import { StorageDiffTest } from "@/components/StorageDiffTest";
 // import { AutoDiffTest } from "@/components/AutoDiffTest";
-import { DiffThemeShowcase } from "@/rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffThemeShowcase";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+// import { DiffThemeShowcase } from "@/rn-better-dev-tools/src/features/storage/components/DiffViewer/DiffThemeShowcase";
+// import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+
+// Import TestStorageDiff for testing
+// import { TestStorageDiff } from "@/components/TestStorageDiff";
+// Import TestDiffViewer for testing diff viewer fixes
+// import { TestDiffViewer } from "@/components/TestDiffViewer";
 
 // Import PureModalExample for testing
 // import PureModalExample from "@/rn-better-dev-tools/src/components/modals/PureModal/PureModalExample";
@@ -45,17 +49,20 @@ function getRandomPokemonNames(count: number): string[] {
   return shuffled.slice(0, count);
 }
 
-// Temporarily replace with DiffThemeShowcase for testing
+// Temporarily replace with TestStorageDiff for testing
 export default function TestScreen() {
-  // return <DiffThemeShowcase />;
+  // return <StorageDiffTest />; // Storage diff test component
   // return <PureModalExample />;
-  return <PokemonScreen />;
+  // return <TestDiffViewer />; // Testing diff viewer fixes
+  return <PokemonScreen />; // Testing WiFi toggle persistence
 }
 
 // ---------------------------------------------------------------------------
 // DevTools Filter Buttons Variations Showcase
 // ---------------------------------------------------------------------------
 
+// Commented out unused code to fix linting
+/*
 type ToolKey = "query" | "env" | "sentry" | "storage" | "wifi" | "network";
 
 const TOOL_META: Record<
@@ -93,7 +100,10 @@ const TOOL_META: Record<
     color: gameUIColors.network,
   },
 };
+*/
 
+// Commented out unused component
+/*
 interface CardVariantProps {
   label: string;
   desc: string;
@@ -342,7 +352,7 @@ const ToolCardVariant = memo(function ToolCardVariant({
               padding: 14,
             }}
           >
-            {/* Cut corners */}
+            // Cut corners
             <View
               style={{
                 position: "absolute",
@@ -380,7 +390,7 @@ const ToolCardVariant = memo(function ToolCardVariant({
               borderColor: `${color}44`,
             }}
           >
-            {/* Ticket notches */}
+            // Ticket notches
             <View
               style={{
                 position: "absolute",
@@ -695,23 +705,23 @@ const ToolCardVariant = memo(function ToolCardVariant({
 
   return container;
 });
-
-function VariantRow({ title, variant }: { title: string; variant: number }) {
-  const m = TOOL_META.query; // Showcase using QUERY tool for consistency
-  return (
-    <View style={{ marginBottom: 12 }}>
-      <Text style={{ color: "#8EA2C8", fontSize: 12, marginBottom: 6 }}>
-        {title}
-      </Text>
-      <ToolCardVariant
-        label={m.title}
-        desc={m.desc}
-        color={m.color}
-        variant={variant}
-      />
-    </View>
-  );
-}
+*/
+// function VariantRow({ title, variant }: { title: string; variant: number }) {
+//   const m = TOOL_META.query; // Showcase using QUERY tool for consistency
+//   return (
+//     <View style={{ marginBottom: 12 }}>
+//       <Text style={{ color: "#8EA2C8", fontSize: 12, marginBottom: 6 }}>
+//         {title}
+//       </Text>
+//       <ToolCardVariant
+//         label={m.title}
+//         desc={m.desc}
+//         color={m.color}
+//         variant={variant}
+//       />
+//     </View>
+//   );
+// }
 
 // Original PokemonScreen component
 // export default function PokemonScreen() {
@@ -976,7 +986,6 @@ function PokemonScreen() {
         userRole={userRole}
         requiredEnvVars={requiredEnvVars}
       />
-
       {/* Premium Animated Background */}
       <LinearGradient
         colors={["#0A0E27", "#1a1f3a", "#2d1b69"]}
@@ -1086,6 +1095,7 @@ function PokemonScreen() {
 
         {/* <ReactNativeShapesShowcase />
         <IconShowcase /> */}
+        <StorageDiffTest />
 
         {/* Icon Variations Gallery */}
         {/* <IconVariationsGallery /> */}

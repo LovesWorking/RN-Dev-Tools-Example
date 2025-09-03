@@ -55,6 +55,37 @@ const defaultTheme = {
     secondary: "#FF00FF",
     tertiary: "#4AFF9F",
   },
+
+  // Diff Viewer Colors - Exact from devToolsDefaultTheme
+  diff: {
+    // Line backgrounds
+    addedBackground: "rgba(74, 255, 159, 0.1)", // Green-cyan for additions
+    removedBackground: "rgba(255, 82, 82, 0.1)", // Red for removals
+    modifiedBackground: "rgba(0, 184, 230, 0.1)", // Cyan for modifications
+    unchangedBackground: "transparent",
+    contextBackground: "rgba(255, 255, 255, 0.02)",
+
+    // Text colors
+    addedText: "#4AFF9F", // Bright green-cyan
+    removedText: "#FF5252", // Bright red
+    modifiedText: "#00B8E6", // Bright cyan
+    unchangedText: "#B8BFC9", // Muted text
+
+    // Word-level highlights (darker than line backgrounds)
+    addedWordHighlight: "rgba(74, 255, 159, 0.3)",
+    removedWordHighlight: "rgba(255, 82, 82, 0.3)",
+
+    // Line numbers
+    lineNumberBackground: "#0A0E1A",
+    lineNumberText: "#7A8599",
+    lineNumberBorder: "#1F2937",
+
+    // Markers (+/-)
+    markerAddedBackground: "rgba(74, 255, 159, 0.2)",
+    markerRemovedBackground: "rgba(255, 82, 82, 0.2)",
+    markerModifiedBackground: "rgba(0, 184, 230, 0.2)",
+    markerText: "#7A8599",
+  },
 };
 
 const cyanTheme = {

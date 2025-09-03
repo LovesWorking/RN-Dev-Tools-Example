@@ -5,8 +5,8 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
-import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
@@ -20,7 +20,6 @@ import {
   Clock,
   AlertCircle,
   CheckCircle,
-  Copy,
   Edit3,
   Info,
   ChevronDown,
@@ -35,6 +34,7 @@ import {
   Touchpad,
   Zap,
 } from "rn-better-dev-tools/icons";
+import { InlineCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
 import {
   extractHttpDataFromSentryEvent,
   HttpRequestInfo,
@@ -94,11 +94,6 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
     return <Text style={styles.urlText}>{url}</Text>;
   }
 
-  const handleCopy = (text: string) => {
-    // Clipboard functionality not implemented
-    // This function is reserved for future clipboard integration
-  };
-
   return (
     <View style={styles.urlBreakdown}>
       <View style={styles.urlRow}>
@@ -111,13 +106,12 @@ const UrlBreakdown: React.FC<{ url: string }> = ({ url }) => {
         <Text style={styles.urlProtocol}>
           ({urlParts.protocol.toUpperCase()})
         </Text>
-        <TouchableOpacity
-          sentry-label="ignore url copy button"
-          onPress={() => handleCopy(url)}
-          style={styles.copyButton}
-        >
-          <Copy size={12} color={gameUIColors.muted} />
-        </TouchableOpacity>
+        <InlineCopyButton
+          value={url}
+          buttonStyle={styles.copyButton}
+          onCopySuccess={() => Alert.alert("Copied", "URL copied to clipboard")}
+          onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+        />
       </View>
       <View style={styles.urlPathRow}>
         <Text style={styles.urlPath}>{urlParts.pathname}</Text>
@@ -552,8 +546,8 @@ export function SentryEventDetailView({
 }: SentryEventDetailViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>("details");
 
-  // Filter out Sentry-specific metadata (eventData currently unused but may be used in future)
-  const { _sentryRawData, ..._eventData } = entry.metadata;
+  // Filter out Sentry-specific metadata
+  const { _sentryRawData } = entry.metadata;
 
   // Extract data
   const httpRequests = extractAllHttpRequests(entry);

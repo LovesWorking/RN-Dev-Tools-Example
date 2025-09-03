@@ -23,12 +23,11 @@ import {
   ChevronUp,
   CheckCircle,
   XCircle,
-  Copy,
   Filter,
 } from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
-// import Clipboard from "@react-native-clipboard/clipboard"; // Removed due to missing dependency
+import { InlineCopyButton, ToolbarCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 
@@ -269,10 +268,10 @@ export function StorageEventDetailModal({
     ? devToolsStorageKeys.modal.root()
     : `${devToolsStorageKeys.storage.eventsModal()}_detail`;
 
-  const handleCopyAll = () => {
-    if (!keyStats) return;
+  const getAllData = () => {
+    if (!keyStats) return null;
 
-    const allData = {
+    return {
       key: event?.data?.key,
       currentValue: keyStats.currentValue,
       statistics: {
@@ -294,38 +293,26 @@ export function StorageEventDetailModal({
         timestamp: item.timestamp.toISOString(),
       })),
     };
-
-    // Clipboard.setString(JSON.stringify(allData, null, 2));
-    console.log("Copy to clipboard:", JSON.stringify(allData, null, 2));
-    Alert.alert("Copied", "All storage data copied to clipboard");
   };
 
-  const handleCopyHistory = () => {
-    if (!keyStats) return;
+  const getHistory = () => {
+    if (!keyStats) return null;
 
-    const history = keyStats.history.map((item) => ({
+    return keyStats.history.map((item) => ({
       action: item.action,
       value: item.value,
       timestamp: item.timestamp.toISOString(),
     }));
-
-    // Clipboard.setString(JSON.stringify(history, null, 2));
-    console.log("Copy to clipboard:", JSON.stringify(history, null, 2));
-    Alert.alert("Copied", "Operation history copied to clipboard");
   };
 
-  const handleCopyValueChanges = () => {
-    if (!keyStats) return;
+  const getValueChanges = () => {
+    if (!keyStats) return null;
 
-    const changes = keyStats.valueChanges.map((change) => ({
+    return keyStats.valueChanges.map((change) => ({
       from: change.from,
       to: change.to,
       timestamp: change.timestamp.toISOString(),
     }));
-
-    // Clipboard.setString(JSON.stringify(changes, null, 2));
-    console.log("Copy to clipboard:", JSON.stringify(changes, null, 2));
-    Alert.alert("Copied", "Value changes copied to clipboard");
   };
 
   const renderHeaderContent = () => (
@@ -341,13 +328,12 @@ export function StorageEventDetailModal({
           </Text>
         )}
       </View>
-      <TouchableOpacity
-        onPress={handleCopyAll}
-        style={styles.copyButton}
-        sentry-label="ignore copy all data"
-      >
-        <Copy size={14} color="#3B82F6" />
-      </TouchableOpacity>
+      <ToolbarCopyButton
+        value={getAllData()}
+        buttonStyle={styles.copyButton}
+        onCopySuccess={() => Alert.alert("Copied", "All storage data copied to clipboard")}
+        onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+      />
     </View>
   );
 
@@ -629,13 +615,12 @@ export function StorageEventDetailModal({
                 </Text>
               </View>
               <View style={styles.headerActions}>
-                <TouchableOpacity
-                  onPress={handleCopyValueChanges}
-                  style={styles.copyButton}
-                  sentry-label="ignore copy value changes"
-                >
-                  <Copy size={12} color="#3B82F6" />
-                </TouchableOpacity>
+                <InlineCopyButton
+                  value={getValueChanges()}
+                  buttonStyle={styles.copyButton}
+                  onCopySuccess={() => Alert.alert("Copied", "Value changes copied to clipboard")}
+                  onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+                />
                 {showValueChanges ? (
                   <ChevronUp size={16} color="#6B7280" />
                 ) : (
@@ -688,13 +673,12 @@ export function StorageEventDetailModal({
                 </Text>
               </View>
               <View style={styles.headerActions}>
-                <TouchableOpacity
-                  onPress={handleCopyHistory}
-                  style={styles.copyButton}
-                  sentry-label="ignore copy operation history"
-                >
-                  <Copy size={12} color="#3B82F6" />
-                </TouchableOpacity>
+                <InlineCopyButton
+                  value={getHistory()}
+                  buttonStyle={styles.copyButton}
+                  onCopySuccess={() => Alert.alert("Copied", "Operation history copied to clipboard")}
+                  onCopyError={() => Alert.alert("Error", "Failed to copy to clipboard")}
+                />
                 {showOperationHistory ? (
                   <ChevronUp size={16} color="#6B7280" />
                 ) : (

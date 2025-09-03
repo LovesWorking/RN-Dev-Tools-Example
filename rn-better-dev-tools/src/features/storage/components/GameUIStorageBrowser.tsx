@@ -43,7 +43,7 @@ import {
   type IssueItem,
   type StatCardConfig,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { getAutoDetectedClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/autoDetectClipboard";
+import { copyToClipboard as copyToClipboardUtil } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
 
 // Custom alert states for Storage specific needs
 const STORAGE_ALERT_STATES = {
@@ -428,8 +428,12 @@ export function GameUIStorageBrowser({
 
   // Copy to clipboard helper
   const copyToClipboard = useCallback(async (text: string, label: string) => {
-    await getAutoDetectedClipboard()(text);
-    Alert.alert("Copied!", `${label} copied to clipboard`);
+    const success = await copyToClipboardUtil(text);
+    if (success) {
+      Alert.alert("Copied!", `${label} copied to clipboard`);
+    } else {
+      Alert.alert("Error", "Failed to copy to clipboard");
+    }
   }, []);
 
   // Transform issues for GameUIIssuesList

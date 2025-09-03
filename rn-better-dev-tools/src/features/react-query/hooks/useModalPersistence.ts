@@ -14,6 +14,7 @@ interface UseModalPersistenceProps {
   isEnvModalOpen?: boolean;
   isSentryModalOpen?: boolean;
   isStorageModalOpen?: boolean;
+  isNetworkModalOpen?: boolean;
   selectedQueryKey?: QueryKey;
   selectedSection?: string | null;
   activeFilter?: string | null; // React Query filter state
@@ -39,6 +40,7 @@ export function useModalPersistence({
   isEnvModalOpen = false,
   isSentryModalOpen = false,
   isStorageModalOpen = false,
+  isNetworkModalOpen = false,
   selectedQueryKey,
   selectedSection,
   activeFilter,
@@ -53,6 +55,7 @@ export function useModalPersistence({
       isEnvModalOpen,
       isSentryModalOpen,
       isStorageModalOpen,
+      isNetworkModalOpen,
       selectedQueryKey: selectedQueryKey
         ? JSON.stringify(selectedQueryKey)
         : undefined,
@@ -70,6 +73,7 @@ export function useModalPersistence({
     isEnvModalOpen,
     isSentryModalOpen,
     isStorageModalOpen,
+    isNetworkModalOpen,
     selectedQueryKey,
     selectedSection,
     activeFilter,
@@ -99,7 +103,8 @@ export function useModalPersistence({
       isDebugModalOpen ||
       isEnvModalOpen ||
       isSentryModalOpen ||
-      isStorageModalOpen
+      isStorageModalOpen ||
+      isNetworkModalOpen
     ) {
       saveCurrentState();
     } else {
@@ -112,6 +117,7 @@ export function useModalPersistence({
     isEnvModalOpen,
     isSentryModalOpen,
     isStorageModalOpen,
+    isNetworkModalOpen,
     selectedQueryKey,
     selectedSection,
     activeFilter,

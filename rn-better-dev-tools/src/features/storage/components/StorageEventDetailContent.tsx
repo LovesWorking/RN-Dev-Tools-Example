@@ -13,6 +13,7 @@ import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { ThemedSplitView } from "./DiffViewer/modes/ThemedSplitView";
 import { diffThemes } from "./DiffViewer/themes/diffThemes";
 import { computeLineDiff, DiffType } from "../utils/lineDiff";
+import { TreeDiffViewer } from "./DiffViewer/TreeDiffViewer";
 
 interface StorageKeyConversation {
   key: string;
@@ -51,6 +52,7 @@ export function StorageEventDetailContent({
   const [rightIndex, setRightIndex] = useState<number>(selectedEventIndex);
   const [isLeftPickerOpen, setIsLeftPickerOpen] = useState(false);
   const [isRightPickerOpen, setIsRightPickerOpen] = useState(false);
+  const [diffViewerTab, setDiffViewerTab] = useState<'split' | 'tree'>('tree');
   const parseValue = (value: unknown): unknown => {
     if (value === null || value === undefined) return value;
     if (typeof value === "string") {
@@ -179,6 +181,26 @@ export function StorageEventDetailContent({
 
     return (
       <View style={styles.fullPageSection}>
+        {/* Diff Viewer Tabs */}
+        <View style={styles.diffViewerTabs}>
+          <TouchableOpacity
+            style={[styles.diffViewerTab, diffViewerTab === 'split' && styles.diffViewerTabActive]}
+            onPress={() => setDiffViewerTab('split')}
+          >
+            <Text style={[styles.diffViewerTabText, diffViewerTab === 'split' && styles.diffViewerTabTextActive]}>
+              SPLIT VIEW
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.diffViewerTab, diffViewerTab === 'tree' && styles.diffViewerTabActive]}
+            onPress={() => setDiffViewerTab('tree')}
+          >
+            <Text style={[styles.diffViewerTabText, diffViewerTab === 'tree' && styles.diffViewerTabTextActive]}>
+              TREE VIEW
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Compare picker row */}
         {totalEvents > 0 && (
           <View style={styles.compareBar}>
@@ -246,21 +268,32 @@ export function StorageEventDetailContent({
           </View>
         )}
 
-        <ThemedSplitView
-          oldValue={parseValue(previousValue)}
-          newValue={parseValue(currentValue)}
-          differences={[]}
-          theme={diffThemes.devToolsDefault}
-          options={{
-            hideLineNumbers: false,
-            disableWordDiff: false,
-            showDiffOnly: false,
-            compareMethod: "words",
-            contextLines: 3,
-            lineOffset: 0,
-          }}
-          showThemeName={false}
-        />
+        {diffViewerTab === 'split' && (
+          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator>
+            <ThemedSplitView
+              oldValue={parseValue(previousValue)}
+              newValue={parseValue(currentValue)}
+              differences={[]}
+              theme={diffThemes.devToolsDefault}
+              options={{
+                hideLineNumbers: false,
+                disableWordDiff: false,
+                showDiffOnly: false,
+                compareMethod: "words",
+                contextLines: 3,
+                lineOffset: 0,
+              }}
+              showThemeName={false}
+            />
+          </ScrollView>
+        )}
+
+        {diffViewerTab === 'tree' && (
+          <TreeDiffViewer
+            oldValue={parseValue(previousValue)}
+            newValue={parseValue(currentValue)}
+          />
+        )}
       </View>
     );
   };
@@ -530,6 +563,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   fullPageSection: {
+    flex: 1,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
@@ -792,5 +826,41 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'monospace',
     fontWeight: '700',
+  },
+  diffViewerTabs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: gameUIColors.panel + "40",
+    borderWidth: 1,
+    borderColor: gameUIColors.border + "20",
+    borderRadius: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    marginBottom: 8,
+    gap: 4,
+  },
+  diffViewerTab: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  diffViewerTabActive: {
+    backgroundColor: gameUIColors.primary + "20",
+    borderWidth: 1,
+    borderColor: gameUIColors.primary + "40",
+  },
+  diffViewerTabText: {
+    fontSize: 11,
+    fontFamily: 'monospace',
+    fontWeight: '600',
+    color: gameUIColors.secondary,
+    letterSpacing: 0.5,
+  },
+  diffViewerTabTextActive: {
+    color: gameUIColors.primary,
   },
 });

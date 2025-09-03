@@ -14,6 +14,7 @@ export function useModalManager() {
   const [isEnvModalOpen, setIsEnvModalOpen] = useState(false);
   const [isSentryModalOpen, setIsSentryModalOpen] = useState(false);
   const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const [selectedQueryKey, setSelectedQueryKey] = useState<
     QueryKey | undefined
   >(undefined);
@@ -35,6 +36,7 @@ export function useModalManager() {
     isEnvModalOpen,
     isSentryModalOpen,
     isStorageModalOpen,
+    isNetworkModalOpen,
     selectedQueryKey,
     selectedSection,
     activeFilter,
@@ -58,6 +60,7 @@ export function useModalManager() {
           setIsEnvModalOpen(savedState.isEnvModalOpen || false);
           setIsSentryModalOpen(savedState.isSentryModalOpen || false);
           setIsStorageModalOpen(savedState.isStorageModalOpen || false);
+          setIsNetworkModalOpen(savedState.isNetworkModalOpen || false);
 
           if (savedState.selectedQueryKey) {
             try {
@@ -142,6 +145,14 @@ export function useModalManager() {
     setIsStorageModalOpen(false);
   };
 
+  const handleNetworkPress = () => {
+    setIsNetworkModalOpen(true);
+  };
+
+  const handleNetworkModalDismiss = () => {
+    setIsNetworkModalOpen(false);
+  };
+
   const handleMutationSelect = (mutation: Mutation | undefined) => {
     setSelectedMutationId(mutation?.mutationId);
   };
@@ -162,6 +173,7 @@ export function useModalManager() {
     isEnvModalOpen,
     isSentryModalOpen,
     isStorageModalOpen,
+    isNetworkModalOpen,
     selectedQueryKey,
     selectedSection,
     activeFilter,
@@ -176,12 +188,14 @@ export function useModalManager() {
     handleEnvModalDismiss,
     handleSentryModalDismiss,
     handleStorageModalDismiss,
+    handleNetworkModalDismiss,
     handleQuerySelect,
     handleQueryPress,
     handleStatusPress,
     handleEnvPress,
     handleSentryPress,
     handleStoragePress,
+    handleNetworkPress,
     handleTabChange,
     handleMutationSelect,
   };

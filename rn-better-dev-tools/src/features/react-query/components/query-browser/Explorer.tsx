@@ -6,7 +6,7 @@ import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValu
 import deleteItem from "../../utils/actions/deleteItem";
 import Svg, { Path } from "react-native-svg";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
+import { CopyButton as SharedCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
 import { CyberpunkInput } from "../shared/CyberpunkInput";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
@@ -72,88 +72,15 @@ const Expander = React.memo(
   },
 );
 Expander.displayName = "Expander";
-type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
-
-// Memoized CopyButton component optimized with ref pattern [[memory:4875251]]
+// Local wrapper for the shared CopyButton to maintain backward compatibility
 const CopyButton = React.memo(
   ({ value, isFocused = false }: { value: JsonValue; isFocused?: boolean }) => {
-    const [copyState, setCopyState] = useState<CopyState>("NoCopy");
-    const valueRef = useRef(value);
-    valueRef.current = value;
-
-    const handleCopy = useCallback(async () => {
-      try {
-        // Use ref to avoid stale closures [[memory:4875251]]
-        const copied = await copyToClipboard(valueRef.current);
-        if (copied) {
-          setCopyState("SuccessCopy");
-          setTimeout(() => setCopyState("NoCopy"), 1500);
-        } else {
-          setCopyState("ErrorCopy");
-          setTimeout(() => setCopyState("NoCopy"), 1500);
-        }
-      } catch (error) {
-        setCopyState("ErrorCopy");
-        setTimeout(() => setCopyState("NoCopy"), 1500);
-      }
-    }, []); // No dependencies needed anymore
-
     return (
-      <TouchableOpacity
-        sentry-label="ignore devtools copy button"
-        style={[styles.buttonStyle, isFocused && styles.buttonStyleFocused]}
-        aria-label={
-          copyState === "NoCopy"
-            ? "Copy object to clipboard"
-            : copyState === "SuccessCopy"
-              ? "Object copied to clipboard"
-              : "Error copying object to clipboard"
-        }
-        onPress={copyState === "NoCopy" ? handleCopy : undefined}
-        hitSlop={HIT_SLOP_OPTIMIZED}
-        activeOpacity={0.7}
-      >
-        {copyState === "NoCopy" && (
-          <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-            <Path
-              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              stroke={isFocused ? gameUIColors.info : gameUIColors.secondary}
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </Svg>
-        )}
-        {copyState === "SuccessCopy" && (
-          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-            <Path
-              d="M9 11l3 3 8-8"
-              stroke={gameUIColors.success}
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <Path
-              d="M20 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h9"
-              stroke={gameUIColors.success}
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </Svg>
-        )}
-        {copyState === "ErrorCopy" && (
-          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-            <Path
-              d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"
-              stroke={gameUIColors.error}
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </Svg>
-        )}
-      </TouchableOpacity>
+      <SharedCopyButton
+        value={value}
+        isFocused={isFocused}
+        buttonStyle={isFocused ? { ...styles.buttonStyle, ...styles.buttonStyleFocused } : styles.buttonStyle}
+      />
     );
   },
 );

@@ -51,6 +51,7 @@ export interface ModalVisibilityState {
   isEnvModalOpen?: boolean;
   isSentryModalOpen?: boolean;
   isStorageModalOpen?: boolean;
+  isNetworkModalOpen?: boolean;
   selectedQueryKey?: string; // JSON stringified QueryKey
   selectedSection?: string; // For DevTools sections
   activeFilter?: string | null; // React Query filter state: "fresh", "stale", "fetching", "paused", "inactive"
