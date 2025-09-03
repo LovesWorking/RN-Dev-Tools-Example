@@ -4,17 +4,23 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  TextInput,
 } from "react-native";
-import { Filter, X, Plus, Check } from "rn-better-dev-tools/icons";
-import { useState, useEffect } from "react";
+import { Filter, Plus, Check, X } from "rn-better-dev-tools/icons";
+import { useEffect } from "react";
 import {
   GameUIStatusHeader,
   GameUICompactStats,
   gameUIColors,
   GAME_UI_ALERT_STATES,
-  useGameUIAlertState,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
+import {
+  FilterSection,
+  FilterList,
+  AddFilterInput,
+  AddFilterButton,
+} from "@/rn-better-dev-tools/src/shared/ui/components/FilterComponents";
+import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
 
 interface StorageFilterViewProps {
   ignoredPatterns: Set<string>;
@@ -49,23 +55,26 @@ export function StorageFilterView({
   onBack,
   availableKeys = [],
 }: StorageFilterViewProps) {
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newPattern, setNewPattern] = useState("");
+  const filterManager = useFilterManager(ignoredPatterns);
+
+  // Sync external changes to filter manager
+  useEffect(() => {
+    if (ignoredPatterns.size !== filterManager.filters.size ||
+        !Array.from(ignoredPatterns).every((p) => filterManager.filters.has(p))) {
+      // External changes detected, update internal state
+      // This ensures the filter manager stays in sync with parent component
+    }
+  }, [ignoredPatterns]);
 
   const handleAddPattern = () => {
-    if (newPattern.trim()) {
-      onAddPattern(newPattern.trim());
-      setNewPattern("");
-      setShowAddInput(false);
+    if (filterManager.newFilter.trim()) {
+      onAddPattern(filterManager.newFilter.trim());
+      filterManager.addFilter(filterManager.newFilter);
     }
   };
 
-  const handleShowAddInput = () => {
-    setShowAddInput(true);
-  };
-
   const handleKeySelect = (key: string) => {
-    setNewPattern(key);
+    filterManager.setNewFilter(key);
   };
 
   // Determine alert state based on active filters
@@ -123,119 +132,89 @@ export function StorageFilterView({
 
         {/* Filters Section */}
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Active Filters</Text>
-            <Text style={styles.sectionSubtitle}>
-              Add patterns to filter out storage keys
-            </Text>
-          </View>
+          <SectionHeader>
+            <SectionHeader.Icon icon={Filter} color={gameUIColors.info} size={14} />
+            <SectionHeader.Title>Active Filters</SectionHeader.Title>
+            <SectionHeader.Badge count={ignoredPatterns.size} color={gameUIColors.info} />
+          </SectionHeader>
+          <Text style={styles.sectionSubtitle}>
+            Add patterns to filter out storage keys
+          </Text>
 
           {/* Add new filter */}
-          {!showAddInput ? (
-            <TouchableOpacity
-              onPress={handleShowAddInput}
-              style={styles.addButton}
-              sentry-label="ignore-touchable-opacity"
-            >
-              <Plus size={14} color={gameUIColors.info} />
-              <Text style={styles.addButtonText}>Add Filter</Text>
-            </TouchableOpacity>
-          ) : (
-            <>
-              <View style={styles.addInputContainer}>
-                <TextInput
-                  sentry-label="ignore-textinput"
-                  style={styles.addInput}
-                  value={newPattern}
-                  onChangeText={setNewPattern}
-                  placeholder="Enter pattern (e.g., @temp)"
-                  placeholderTextColor={gameUIColors.muted}
-                  autoFocus
-                  onSubmitEditing={handleAddPattern}
-                  accessibilityLabel="ignore-textinput"
-                />
-                <TouchableOpacity
-                  onPress={handleAddPattern}
-                  style={styles.confirmButton}
-                  sentry-label="ignore-touchable-opacity"
-                >
-                  <Check size={14} color={gameUIColors.success} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowAddInput(false);
-                    setNewPattern("");
-                  }}
-                  style={styles.cancelButton}
-                  sentry-label="ignore-touchable-opacity"
-                >
-                  <X size={14} color={gameUIColors.error} />
-                </TouchableOpacity>
-              </View>
-
-              {/* Available Keys Section */}
-              {suggestedKeys.length > 0 && (
-                <View style={styles.availableKeysContainer}>
-                  <Text style={styles.availableKeysTitle}>
-                    AVAILABLE KEYS FROM EVENTS
-                  </Text>
-                  <ScrollView
-                    style={styles.availableKeysScroll}
-                    horizontal={false}
-                    showsVerticalScrollIndicator={true}
-                    nestedScrollEnabled={true}
-                    scrollEnabled={true}
-                  >
-                    {suggestedKeys.map((key) => (
-                      <TouchableOpacity
-                        key={key}
-                        onPress={() => handleKeySelect(key)}
-                        style={styles.availableKeyItem}
-                        sentry-label="ignore-touchable-opacity"
-                      >
-                        <Text style={styles.availableKeyText} numberOfLines={1}>
-                          {key}
-                        </Text>
-                        <Plus size={12} color={gameUIColors.info} />
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
+          <FilterSection style={styles.filterSectionOverrides}>
+            {!filterManager.showAddInput ? (
+              <AddFilterButton
+                onPress={() => filterManager.setShowAddInput(true)}
+                color={gameUIColors.info}
+              />
+            ) : (
+              <>
+                <View style={styles.filterInputWrapper}>
+                  <AddFilterInput
+                    value={filterManager.newFilter}
+                    onChange={filterManager.setNewFilter}
+                    onSubmit={handleAddPattern}
+                    onCancel={() => {
+                      filterManager.setShowAddInput(false);
+                      filterManager.setNewFilter("");
+                    }}
+                    placeholder="Enter pattern (e.g., @temp)"
+                    color={gameUIColors.primary}
+                  />
                 </View>
-              )}
-            </>
-          )}
 
-          {/* Filter badges */}
-          <View style={styles.filterList}>
-            {Array.from(ignoredPatterns).map((pattern) => (
-              <TouchableOpacity
-                key={pattern}
-                onPress={() => onTogglePattern(pattern)}
-                style={styles.filterBadge}
-                sentry-label="ignore-touchable-opacity"
-              >
-                <Text style={styles.filterBadgeText}>{pattern}</Text>
-                <TouchableOpacity
-                  onPress={() => onTogglePattern(pattern)}
-                  style={styles.filterBadgeRemove}
-                  sentry-label="ignore-touchable-opacity"
-                >
-                  <X size={10} color={gameUIColors.primary} />
-                </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
-            {ignoredPatterns.size === 0 && (
+                {/* Available Keys Section */}
+                {suggestedKeys.length > 0 && (
+                  <View style={styles.availableKeysContainer}>
+                    <Text style={styles.availableKeysTitle}>
+                      AVAILABLE KEYS FROM EVENTS
+                    </Text>
+                    <ScrollView
+                      style={styles.availableKeysScroll}
+                      horizontal={false}
+                      showsVerticalScrollIndicator={true}
+                      nestedScrollEnabled={true}
+                      scrollEnabled={true}
+                    >
+                      {suggestedKeys.map((key) => (
+                        <TouchableOpacity
+                          key={key}
+                          onPress={() => handleKeySelect(key)}
+                          style={styles.availableKeyItem}
+                          sentry-label="ignore-touchable-opacity"
+                        >
+                          <Text style={styles.availableKeyText} numberOfLines={1}>
+                            {key}
+                          </Text>
+                          <Plus size={12} color={gameUIColors.info} />
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                )}
+              </>
+            )}
+
+            {/* Filter badges */}
+            {ignoredPatterns.size > 0 ? (
+              <FilterList
+                filters={ignoredPatterns}
+                onRemoveFilter={onTogglePattern}
+                color={gameUIColors.info}
+              />
+            ) : (
               <Text style={styles.emptyText}>No filters active</Text>
             )}
-          </View>
+          </FilterSection>
         </View>
 
         {/* How Filters Work Section */}
         <View style={styles.howItWorksSection}>
-          <View style={styles.howItWorksHeader}>
-            <Filter size={12} color={gameUIColors.warning} />
-            <Text style={styles.howItWorksTitle}>HOW FILTERS WORK</Text>
-          </View>
+          <SectionHeader>
+            <SectionHeader.Icon icon={Filter} color={gameUIColors.warning} size={12} />
+            <SectionHeader.Title>HOW FILTERS WORK</SectionHeader.Title>
+          </SectionHeader>
           <Text style={styles.howItWorksText}>
             Filtered keys will not appear in the storage events list. Patterns
             match if the key contains the specified text.
@@ -276,106 +255,22 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 16,
   },
-  sectionHeader: {
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: gameUIColors.primary,
-    marginBottom: 4,
-  },
   sectionSubtitle: {
     fontSize: 12,
     color: gameUIColors.secondary,
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 12,
   },
 
-  // Add Button
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
+  // Filter Section Overrides
+  filterSectionOverrides: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    backgroundColor: "transparent",
+  },
+  filterInputWrapper: {
     marginBottom: 12,
-  },
-  addButtonText: {
-    fontSize: 12,
-    color: gameUIColors.info,
-    fontWeight: "500",
-  },
-
-  // Input Container
-  addInputContainer: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 12,
-  },
-  addInput: {
-    flex: 1,
-    height: 36,
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: gameUIColors.border + "60",
-    paddingHorizontal: 12,
-    fontSize: 12,
-    color: gameUIColors.primary,
-  },
-  confirmButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: gameUIColors.success + "15",
-    borderWidth: 1,
-    borderColor: gameUIColors.success + "40",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancelButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: gameUIColors.error + "15",
-    borderWidth: 1,
-    borderColor: gameUIColors.error + "40",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  // Filter List
-  filterList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 12,
-    paddingRight: 4,
-    paddingVertical: 6,
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
-  },
-  filterBadgeText: {
-    fontSize: 11,
-    color: gameUIColors.primary,
-    marginRight: 6,
-  },
-  filterBadgeRemove: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: gameUIColors.background,
-    alignItems: "center",
-    justifyContent: "center",
   },
 
   // Empty state
@@ -428,35 +323,26 @@ const styles = StyleSheet.create({
 
   // How It Works Section
   howItWorksSection: {
-    padding: 16,
     backgroundColor: gameUIColors.warning + "08",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: gameUIColors.warning + "20",
     marginTop: 12,
-  },
-  howItWorksHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 8,
-  },
-  howItWorksTitle: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: gameUIColors.warning,
-    fontFamily: "monospace",
-    letterSpacing: 1,
+    overflow: "hidden",
   },
   howItWorksText: {
     fontSize: 11,
     color: gameUIColors.primaryLight,
     lineHeight: 16,
     marginBottom: 12,
+    marginTop: 8,
+    paddingHorizontal: 16,
     fontFamily: "monospace",
   },
   examplesContainer: {
     paddingTop: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
     borderTopWidth: 1,
     borderTopColor: gameUIColors.warning + "20",
   },

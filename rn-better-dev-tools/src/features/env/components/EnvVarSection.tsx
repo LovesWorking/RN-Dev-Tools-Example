@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { EnvVarInfo } from "../types";
 import { CyberpunkEnvVarCard } from "./CyberpunkEnvVarCard";
+import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 
 interface EnvVarSectionProps {
   title: string;
@@ -33,10 +34,10 @@ export function EnvVarSection({
   if (vars.length === 0 && title === "Required Variables") {
     return (
       <View style={styles.sectionContainer}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{title}</Text>
-          <Text style={styles.sectionCount}>0</Text>
-        </View>
+        <SectionHeader>
+          <SectionHeader.Title>{title}</SectionHeader.Title>
+          <SectionHeader.Badge count={0} color="#00FFFF" />
+        </SectionHeader>
         <View style={styles.emptySection}>
           <Text style={styles.emptySectionText}>{emptyMessage}</Text>
         </View>
@@ -49,10 +50,10 @@ export function EnvVarSection({
   return (
     <View style={styles.sectionContainer}>
       {title !== "" && (
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{title}</Text>
-          <Text style={styles.sectionCount}>{count}</Text>
-        </View>
+        <SectionHeader>
+          <SectionHeader.Title>{title}</SectionHeader.Title>
+          <SectionHeader.Badge count={count} color="#00FFFF" />
+        </SectionHeader>
       )}
       <View style={styles.sectionContent}>
         {vars.map((envVar, index) => (
@@ -72,38 +73,6 @@ export function EnvVarSection({
 const styles = StyleSheet.create({
   sectionContainer: {
     gap: 8,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0, 255, 255, 0.15)",
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    color: "#00FFFF",
-    fontSize: 15,
-    fontWeight: "600",
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-    textShadowColor: "#00FFFF",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-    opacity: 0.95,
-  },
-  sectionCount: {
-    color: "#00FFFF",
-    fontSize: 12,
-    fontWeight: "600",
-    backgroundColor: "rgba(0, 255, 255, 0.12)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "rgba(0, 255, 255, 0.25)",
-    fontFamily: "monospace",
   },
   sectionContent: {
     gap: 8,

@@ -4,17 +4,22 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  TextInput,
 } from "react-native";
 import { useState } from "react";
+import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
+import {
+  FilterSection,
+  FilterList,
+  AddFilterInput,
+  AddFilterButton,
+} from "@/rn-better-dev-tools/src/shared/ui/components/FilterComponents";
+import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
 import {
   X,
   CheckCircle,
   XCircle,
   Clock,
   Globe,
-  Upload,
-  Download,
   FileJson,
   FileText,
   Image,
@@ -37,7 +42,6 @@ interface NetworkFilterViewProps {
     searchText?: string;
   };
   onFilterChange: (filter: any) => void;
-  onClose: () => void;
   ignoredDomains?: Set<string>;
   ignoredUrls?: Set<string>;
   onToggleDomain?: (domain: string) => void;
@@ -71,7 +75,6 @@ export function NetworkFilterView({
   events,
   filter,
   onFilterChange,
-  onClose,
   ignoredDomains = new Set(),
   ignoredUrls = new Set(),
   onToggleDomain = () => {},
@@ -84,8 +87,10 @@ export function NetworkFilterView({
     "filters",
   );
   const activeTab = controlledActiveTab ?? internalActiveTab;
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newPattern, setNewPattern] = useState("");
+  
+  // Use filter managers for domains and URLs
+  const domainFilterManager = useFilterManager(ignoredDomains);
+  const urlFilterManager = useFilterManager(ignoredUrls);
 
   // Calculate counts for each filter option
   const statusCounts = {
@@ -191,15 +196,17 @@ export function NetworkFilterView({
     }
   };
 
-  const handleAddPattern = () => {
-    if (newPattern.trim()) {
-      if (activeTab === "domains") {
-        onAddDomain(newPattern.trim());
-      } else {
-        onAddUrl(newPattern.trim());
-      }
-      setNewPattern("");
-      setShowAddInput(false);
+  const handleAddDomainPattern = () => {
+    if (domainFilterManager.newFilter.trim()) {
+      onAddDomain(domainFilterManager.newFilter.trim());
+      domainFilterManager.addFilter(domainFilterManager.newFilter);
+    }
+  };
+  
+  const handleAddUrlPattern = () => {
+    if (urlFilterManager.newFilter.trim()) {
+      onAddUrl(urlFilterManager.newFilter.trim());
+      urlFilterManager.addFilter(urlFilterManager.newFilter);
     }
   };
 
@@ -342,11 +349,9 @@ export function NetworkFilterView({
     <View style={styles.filtersContainer}>
       {/* Status Filters */}
       <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionLine} />
-          <Text style={styles.sectionTitle}>Status</Text>
-          <View style={styles.sectionLine} />
-        </View>
+        <SectionHeader>
+          <SectionHeader.Title>STATUS</SectionHeader.Title>
+        </SectionHeader>
         <View style={styles.filterGrid}>
           {(["all", "success", "error", "pending"] as const).map((status) => {
             const Icon = getStatusIcon(status);
@@ -425,11 +430,9 @@ export function NetworkFilterView({
       {/* Method Filters */}
       {Object.keys(methodCounts).length > 0 && (
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionLine} />
-            <Text style={styles.sectionTitle}>Method</Text>
-            <View style={styles.sectionLine} />
-          </View>
+          <SectionHeader>
+            <SectionHeader.Title>METHOD</SectionHeader.Title>
+          </SectionHeader>
           <View style={styles.filterGrid}>
             {Object.entries(methodCounts).map(([method, count]) => {
               const isActive = filter.method?.includes(method);
@@ -466,11 +469,9 @@ export function NetworkFilterView({
       {/* Content Type Filters */}
       {Object.keys(contentTypeCounts).length > 0 && (
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionLine} />
-            <Text style={styles.sectionTitle}>Content Type</Text>
-            <View style={styles.sectionLine} />
-          </View>
+          <SectionHeader>
+            <SectionHeader.Title>CONTENT TYPE</SectionHeader.Title>
+          </SectionHeader>
           <View style={styles.filterGrid}>
             {Object.entries(contentTypeCounts).map(([type, count]) => {
               const Icon = getContentTypeIcon(type);
@@ -525,146 +526,125 @@ export function NetworkFilterView({
     const suggestedPatterns = available.filter(
       (pattern) => !currentPatterns.has(pattern),
     );
+    
+    const filterManager = type === "domains" ? domainFilterManager : urlFilterManager;
+    const handleAddPattern = type === "domains" ? handleAddDomainPattern : handleAddUrlPattern;
 
     return (
       <View style={styles.ignoreSection}>
         {/* Add new pattern */}
-        {!showAddInput ? (
-          <TouchableOpacity
-            onPress={() => setShowAddInput(true)}
-            style={styles.addButton}
-          >
-            <Plus size={14} color="#8B5CF6" />
-            <Text style={styles.addButtonText}>
-              Add {type === "domains" ? "Domain" : "URL Pattern"}
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.addInputContainer}>
-            <TextInput
-              style={styles.addInput}
-              value={newPattern}
-              onChangeText={setNewPattern}
+        <FilterSection style={styles.filterSectionOverrides}>
+          {!filterManager.showAddInput ? (
+            <AddFilterButton
+              onPress={() => filterManager.setShowAddInput(true)}
+              color={gameUIColors.network}
+            />
+          ) : (
+            <AddFilterInput
+              value={filterManager.newFilter}
+              onChange={filterManager.setNewFilter}
+              onSubmit={handleAddPattern}
+              onCancel={() => {
+                filterManager.setShowAddInput(false);
+                filterManager.setNewFilter("");
+              }}
               placeholder={
                 type === "domains"
                   ? "Enter domain (e.g., api.example.com)"
                   : "Enter URL pattern (e.g., /analytics)"
               }
-              placeholderTextColor="#6B7280"
-              autoFocus
-              onSubmitEditing={handleAddPattern}
+              color={gameUIColors.primaryLight}
             />
-            <TouchableOpacity
-              onPress={handleAddPattern}
-              style={styles.confirmButton}
-            >
-              <Check size={14} color="#10B981" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setShowAddInput(false);
-                setNewPattern("");
-              }}
-              style={styles.cancelButton}
-            >
-              <X size={14} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
-        )}
+          )}
 
-        {/* Suggested patterns - Always show if we have suggestions */}
-        {suggestedPatterns.length > 0 ? (
-          <View
-            style={[
-              styles.suggestedContainer,
-              !showAddInput && { marginTop: 12 },
-            ]}
-          >
-            <Text style={styles.suggestedTitle}>
-              {type === "domains"
-                ? "DOMAINS FROM REQUESTS"
-                : "URLS FROM REQUESTS"}
-            </Text>
-            <ScrollView
-              style={styles.suggestedScroll}
-              showsVerticalScrollIndicator={true}
-              nestedScrollEnabled={true}
+          {/* Suggested patterns - Always show if we have suggestions */}
+          {suggestedPatterns.length > 0 ? (
+            <View
+              style={[
+                styles.suggestedContainer,
+                !filterManager.showAddInput && { marginTop: 12 },
+              ]}
             >
-              {suggestedPatterns.length > 0 ? (
-                suggestedPatterns.map((pattern) => (
-                  <TouchableOpacity
-                    key={pattern}
-                    onPress={() => {
-                      if (showAddInput) {
-                        setNewPattern(pattern);
-                      } else {
-                        onToggle(pattern);
-                      }
-                    }}
-                    style={styles.suggestedItem}
-                  >
-                    {type === "domains" ? (
-                      <Globe size={14} color="#9CA3AF" />
-                    ) : (
-                      <Link size={14} color="#9CA3AF" />
-                    )}
-                    <Text style={styles.suggestedText} numberOfLines={1}>
-                      {pattern}
-                    </Text>
+              <Text style={styles.suggestedTitle}>
+                {type === "domains"
+                  ? "DOMAINS FROM REQUESTS"
+                  : "URLS FROM REQUESTS"}
+              </Text>
+              <ScrollView
+                style={styles.suggestedScroll}
+                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled={true}
+              >
+                {suggestedPatterns.length > 0 ? (
+                  suggestedPatterns.map((pattern) => (
                     <TouchableOpacity
+                      key={pattern}
                       onPress={() => {
-                        if (showAddInput) {
-                          setNewPattern(pattern);
+                        if (filterManager.showAddInput) {
+                          filterManager.setNewFilter(pattern);
                         } else {
                           onToggle(pattern);
                         }
                       }}
-                      style={styles.addIconButton}
+                      style={styles.suggestedItem}
                     >
-                      <Plus size={16} color="#8B5CF6" />
+                      {type === "domains" ? (
+                        <Globe size={14} color="#9CA3AF" />
+                      ) : (
+                        <Link size={14} color="#9CA3AF" />
+                      )}
+                      <Text style={styles.suggestedText} numberOfLines={1}>
+                        {pattern}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (filterManager.showAddInput) {
+                            filterManager.setNewFilter(pattern);
+                          } else {
+                            onToggle(pattern);
+                          }
+                        }}
+                        style={styles.addIconButton}
+                      >
+                        <Plus size={16} color="#8B5CF6" />
+                      </TouchableOpacity>
                     </TouchableOpacity>
-                  </TouchableOpacity>
-                ))
-              ) : (
-                <Text style={styles.emptyText}>No suggestions available</Text>
-              )}
-            </ScrollView>
-          </View>
-        ) : (
-          // Show a message if no patterns available
-          available.length === 0 && (
-            <View style={[styles.suggestedContainer, { marginTop: 12 }]}>
-              <Text style={styles.suggestedTitle}>
-                {type === "domains"
-                  ? "NO DOMAINS AVAILABLE"
-                  : "NO URLS AVAILABLE"}
-              </Text>
-              <Text style={styles.emptyText}>
-                Make some network requests to see{" "}
-                {type === "domains" ? "domains" : "URLs"} here
-              </Text>
+                  ))
+                ) : (
+                  <Text style={styles.emptyText}>No suggestions available</Text>
+                )}
+              </ScrollView>
             </View>
-          )
-        )}
+          ) : (
+            // Show a message if no patterns available
+            available.length === 0 && (
+              <View style={[styles.suggestedContainer, { marginTop: 12 }]}>
+                <Text style={styles.suggestedTitle}>
+                  {type === "domains"
+                    ? "NO DOMAINS AVAILABLE"
+                    : "NO URLS AVAILABLE"}
+                </Text>
+                <Text style={styles.emptyText}>
+                  Make some network requests to see{" "}
+                  {type === "domains" ? "domains" : "URLs"} here
+                </Text>
+              </View>
+            )
+          )}
 
-        {/* Active patterns */}
-        <View style={styles.patternsContainer}>
-          {Array.from(currentPatterns).map((pattern) => (
-            <TouchableOpacity
-              key={pattern}
-              onPress={() => onToggle(pattern)}
-              style={styles.patternBadge}
-            >
-              <Text style={styles.patternText}>{pattern}</Text>
-              <X size={12} color="#E5E7EB" />
-            </TouchableOpacity>
-          ))}
-          {currentPatterns.size === 0 && (
+          {/* Active patterns */}
+          {currentPatterns.size > 0 ? (
+            <FilterList
+              filters={currentPatterns}
+              onRemoveFilter={onToggle}
+              color={gameUIColors.network}
+            />
+          ) : (
             <Text style={styles.emptyText}>
               No {type === "domains" ? "domains" : "URL patterns"} ignored
             </Text>
           )}
-        </View>
+        </FilterSection>
       </View>
     );
   };
@@ -756,24 +736,6 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 32,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    gap: 12,
-  },
-  sectionLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: `${gameUIColors.network}1A`,
-  },
-  sectionTitle: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: gameUIColors.muted,
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-  },
   filterGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -843,58 +805,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 8,
   },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    padding: 10,
-    backgroundColor: `${gameUIColors.network}1A`,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: `${gameUIColors.network}4D`,
-    marginBottom: 16,
-  },
-  addButtonText: {
-    fontSize: 12,
-    color: gameUIColors.network,
-    fontWeight: "600",
-  },
-  addInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 16,
-  },
-  addInput: {
-    flex: 1,
-    height: 36,
-    paddingHorizontal: 12,
-    backgroundColor: gameUIColors.blackTint3,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: `${gameUIColors.network}4D`,
-    color: gameUIColors.primaryLight,
-    fontSize: 12,
-  },
-  confirmButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: "rgba(16, 185, 129, 0.15)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(16, 185, 129, 0.3)",
-  },
-  cancelButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: "rgba(239, 68, 68, 0.15)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(239, 68, 68, 0.3)",
+  filterSectionOverrides: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    backgroundColor: "transparent",
   },
   suggestedContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.03)",
@@ -933,28 +847,6 @@ const styles = StyleSheet.create({
     color: "#E5E7EB",
     fontFamily: "monospace",
     marginLeft: 4,
-  },
-  patternsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 12,
-  },
-  patternBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(139, 92, 246, 0.15)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "rgba(139, 92, 246, 0.3)",
-  },
-  patternText: {
-    fontSize: 11,
-    color: "#8B5CF6",
-    fontWeight: "600",
   },
   emptyText: {
     fontSize: 11,

@@ -1,5 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { AlertCircle, CheckCircle, Clock } from "rn-better-dev-tools/icons";
+import { ListItem } from "../../../shared/ui/components";
+import { MethodBadge } from "../../../shared/ui/components/Badge";
 import type { NetworkEvent } from "../types";
 import { formatBytes, formatDuration } from "../utils/formatting";
 
@@ -18,47 +20,26 @@ function getStatusColor(status?: number, error?: string) {
   return "#6B7280";
 }
 
-function getMethodColor(method: string) {
-  switch (method) {
-    case "GET":
-      return "#10B981";
-    case "POST":
-      return "#3B82F6";
-    case "PUT":
-      return "#F59E0B";
-    case "DELETE":
-      return "#EF4444";
-    case "PATCH":
-      return "#8B5CF6";
-    default:
-      return "#6B7280";
-  }
-}
-
 export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
   const statusColor = getStatusColor(event.status, event.error);
-  const methodColor = getMethodColor(event.method);
   const isPending = !event.status && !event.error;
 
   // Extract just the path for compact display
   const displayUrl = event.path || event.url.replace(/^https?:\/\/[^/]+/, "");
 
+  // Determine if we need to show size info
+  const showSizeInfo =
+    (event.requestSize && event.requestSize > 1024) ||
+    (event.responseSize && event.responseSize > 1024);
+
   return (
-    <TouchableOpacity
-      sentry-label="ignore network event item"
-      style={styles.container}
+    <ListItem
       onPress={() => onPress(event)}
+      style={styles.listItem}
     >
-      {/* Compact single row layout */}
-      <View style={styles.row}>
+      <View style={styles.mainRow}>
         {/* Method badge */}
-        <View
-          style={[styles.methodBadge, { backgroundColor: `${methodColor}15` }]}
-        >
-          <Text style={[styles.methodText, { color: methodColor }]}>
-            {event.method}
-          </Text>
-        </View>
+        <MethodBadge method={event.method} size="small" />
 
         {/* URL */}
         <Text style={styles.urlText} numberOfLines={1}>
@@ -100,13 +81,12 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
         </Text>
       ) : null}
 
-      {/* Size info on second row for important requests */}
-      {(event.requestSize && event.requestSize > 1024) ||
-      (event.responseSize && event.responseSize > 1024) ? (
+      {/* Size and timestamp info */}
+      {showSizeInfo ? (
         <View style={styles.sizeRow}>
-          <Text style={styles.timestampText}>
+          <ListItem.Metadata>
             {new Date(event.timestamp).toLocaleTimeString()}
-          </Text>
+          </ListItem.Metadata>
           <View style={styles.sizeContainer}>
             {event.requestSize ? (
               <Text style={styles.sizeText}>
@@ -121,12 +101,12 @@ export function NetworkEventItem({ event, onPress }: NetworkEventItemProps) {
           </View>
         </View>
       ) : null}
-    </TouchableOpacity>
+    </ListItem>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  listItem: {
     backgroundColor: "rgba(255, 255, 255, 0.02)",
     borderRadius: 6,
     padding: 8,
@@ -134,22 +114,10 @@ const styles = StyleSheet.create({
     borderLeftWidth: 2,
     borderLeftColor: "rgba(139, 92, 246, 0.3)",
   },
-  row: {
+  mainRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  methodBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 3,
-    minWidth: 40,
-    alignItems: "center",
-  },
-  methodText: {
-    fontSize: 10,
-    fontWeight: "600",
-    fontFamily: "monospace",
   },
   urlText: {
     fontSize: 12,
@@ -187,10 +155,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 4,
     marginLeft: 48,
-  },
-  timestampText: {
-    fontSize: 9,
-    color: "#6B7280",
   },
   sizeContainer: {
     flexDirection: "row",

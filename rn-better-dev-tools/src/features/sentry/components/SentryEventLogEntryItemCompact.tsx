@@ -1,8 +1,10 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { ChevronRight } from "rn-better-dev-tools/icons";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
+import { ListItem } from "../../../shared/ui/components";
+import { TypeBadge } from "../../../shared/ui/components/Badge";
 import {
   getLevelBorderColor,
   getTypeIcon,
@@ -27,65 +29,47 @@ export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
     const levelColor = getLevelBorderColor(entry.level);
 
     return (
-      <TouchableOpacity
-        sentry-label={`ignore sentry log entry ${entry.message}`}
-        accessibilityLabel={`Sentry log entry: ${entry.message}`}
-        accessibilityHint="View full sentry log entry details"
-        accessibilityRole="button"
+      <ListItem
         onPress={() => onSelectEntry(entry)}
         style={[styles.container, { borderLeftColor: levelColor }]}
       >
         {/* Left section: Type icon only */}
-        <View
-          style={styles.leftSection}
-          sentry-label="ignore devtools sentry entry left section"
-        >
+        <View style={styles.leftSection}>
           <View
             style={[styles.typeIcon, { backgroundColor: `${typeColor}15` }]}
-            sentry-label="ignore devtools sentry entry type icon"
           >
             {IconComponent && <IconComponent size={14} color={typeColor} />}
           </View>
         </View>
 
         {/* Middle section: Message only */}
-        <View
-          style={styles.middleSection}
-          sentry-label="ignore devtools sentry entry middle section"
-        >
+        <View style={styles.middleSection}>
           <Text
             style={styles.message}
             numberOfLines={2}
-            sentry-label="ignore devtools sentry entry message"
           >
             {formatEventMessage(entry)}
           </Text>
         </View>
 
         {/* Right section: Badge, timestamp and chevron */}
-        <View
-          style={styles.rightSection}
-          sentry-label="ignore devtools sentry entry right section"
-        >
+        <View style={styles.rightSection}>
           <View style={styles.rightContent}>
             {entry.metadata.sentryEventType ? (
-              <Text
+              <TypeBadge 
+                type={String(entry.metadata.sentryEventType)} 
+                color={gameUIColors.storage}
+                size="small"
                 style={styles.badge}
-                sentry-label="ignore devtools sentry entry badge"
-              >
-                {String(entry.metadata.sentryEventType)}
-              </Text>
+              />
             ) : null}
-            <Text
-              style={styles.timestamp}
-              sentry-label="ignore devtools sentry entry timestamp"
-            >
+            <ListItem.Metadata>
               {formatRelativeTime(entry.timestamp, tick)}
-            </Text>
+            </ListItem.Metadata>
           </View>
           <ChevronRight size={14} color={gameUIColors.muted} />
         </View>
-      </TouchableOpacity>
+      </ListItem>
     );
   },
 );
@@ -121,19 +105,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   badge: {
-    color: gameUIColors.storage,
-    fontSize: 9,
-    fontWeight: "600",
-    backgroundColor: gameUIColors.storage + "26",
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 3,
-    overflow: "hidden",
     marginBottom: 2,
     alignSelf: "flex-end",
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
   },
   message: {
     color: gameUIColors.primaryLight,
@@ -149,10 +122,5 @@ const styles = StyleSheet.create({
   rightContent: {
     alignItems: "flex-end",
     justifyContent: "center",
-  },
-  timestamp: {
-    color: gameUIColors.muted,
-    fontSize: 10,
-    fontFamily: "monospace",
   },
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import {
   ChevronRight,
   Upload,
@@ -7,6 +7,8 @@ import {
   Clock,
   AlertCircle,
 } from "rn-better-dev-tools/icons";
+import { ListItem } from "../../../shared/ui/components";
+import { MethodBadge, TypeBadge } from "../../../shared/ui/components/Badge";
 import type { NetworkEvent } from "../types";
 import { formatBytes, formatDuration } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
@@ -28,36 +30,18 @@ function getStatusColor(status?: number, error?: string) {
   return gameUIColors.muted;
 }
 
-// Get method color
-function getMethodColor(method: string) {
-  switch (method) {
-    case "GET":
-      return gameUIColors.success;
-    case "POST":
-      return gameUIColors.info;
-    case "PUT":
-      return gameUIColors.warning;
-    case "DELETE":
-      return gameUIColors.error;
-    case "PATCH":
-      return gameUIColors.network;
-    default:
-      return gameUIColors.muted;
-  }
-}
-
 // Get content type badge with color
 function getContentTypeBadge(headers: Record<string, string>) {
   const contentType =
     headers?.["content-type"] || headers?.["Content-Type"] || "";
-  if (contentType.includes("json")) return { type: "JSON", color: gameUIColors.info };
-  if (contentType.includes("xml")) return { type: "XML", color: gameUIColors.network };
-  if (contentType.includes("html")) return { type: "HTML", color: gameUIColors.warning };
-  if (contentType.includes("text")) return { type: "TEXT", color: gameUIColors.success };
-  if (contentType.includes("image")) return { type: "IMG", color: gameUIColors.error };
-  if (contentType.includes("video")) return { type: "VIDEO", color: gameUIColors.critical };
-  if (contentType.includes("audio")) return { type: "AUDIO", color: gameUIColors.optional };
-  if (contentType.includes("form")) return { type: "FORM", color: gameUIColors.query };
+  if (contentType.includes("json")) return "JSON";
+  if (contentType.includes("xml")) return "XML";
+  if (contentType.includes("html")) return "HTML";
+  if (contentType.includes("text")) return "TEXT";
+  if (contentType.includes("image")) return "IMG";
+  if (contentType.includes("video")) return "VIDEO";
+  if (contentType.includes("audio")) return "AUDIO";
+  if (contentType.includes("form")) return "FORM";
   return null;
 }
 
@@ -133,7 +117,6 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
   ({ event, onPress }) => {
     const tick = useTickEveryMinute();
     const statusColor = getStatusColor(event.status, event.error);
-    const methodColor = getMethodColor(event.method);
     const isPending = !event.status && !event.error;
     const contentType = getContentTypeBadge(event.responseHeaders);
 
@@ -150,23 +133,13 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
     const relativeTime = formatRelativeTime(event.timestamp, tick);
 
     return (
-      <TouchableOpacity
-        sentry-label="ignore network event item"
+      <ListItem
         onPress={() => onPress(event)}
         style={[styles.container, { borderLeftColor: statusColor }]}
       >
         {/* Left section: Method badge and size indicators */}
         <View style={styles.leftSection}>
-          <View
-            style={[
-              styles.methodBadge,
-              { backgroundColor: `${methodColor}15` },
-            ]}
-          >
-            <Text style={[styles.methodText, { color: methodColor }]}>
-              {event.method}
-            </Text>
-          </View>
+          <MethodBadge method={event.method} size="small" />
           <SizeIndicators
             requestSize={event.requestSize}
             responseSize={event.responseSize}
@@ -196,32 +169,23 @@ export const NetworkEventItemCompact = React.memo<NetworkEventItemCompactProps>(
               </Text>
             ) : null}
 
-            {/* Content type badge with custom color */}
+            {/* Content type badge */}
             {contentType ? (
-              <View
-                style={[
-                  styles.typeBadge,
-                  { backgroundColor: `${contentType.color}15` },
-                ]}
-              >
-                <Text style={[styles.typeText, { color: contentType.color }]}>
-                  {contentType.type}
-                </Text>
-              </View>
+              <TypeBadge type={contentType} size="small" />
             ) : null}
           </View>
 
           {/* Bottom row: Time and size */}
           <View style={styles.rightBottomRow}>
-            <Text style={styles.timestamp}>
+            <ListItem.Metadata>
               {timeString} ({relativeTime})
-            </Text>
+            </ListItem.Metadata>
           </View>
         </View>
 
         {/* Chevron */}
         <ChevronRight size={14} color={gameUIColors.muted} />
-      </TouchableOpacity>
+      </ListItem>
     );
   },
 );
@@ -245,18 +209,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     alignItems: "flex-start",
     paddingTop: 2,
-  },
-  methodBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 3,
-    minWidth: 38,
-    alignItems: "center",
-  },
-  methodText: {
-    fontSize: 9,
-    fontWeight: "700",
-    letterSpacing: 0.3,
   },
   middleSection: {
     flex: 1,
@@ -325,20 +277,6 @@ const styles = StyleSheet.create({
   durationText: {
     fontSize: 9,
     color: gameUIColors.secondary,
-  },
-  typeBadge: {
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 3,
-  },
-  typeText: {
-    fontSize: 8,
-    fontWeight: "600",
-    letterSpacing: 0.3,
-  },
-  timestamp: {
-    fontSize: 9,
-    color: gameUIColors.muted,
   },
   sizeRow: {
     flexDirection: "row",

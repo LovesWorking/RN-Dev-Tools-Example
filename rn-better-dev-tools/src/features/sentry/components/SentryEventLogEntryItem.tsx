@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { ConsoleTransportEntry } from "@/rn-better-dev-tools/src/shared/logger/types";
+import { ListItem } from "../../../shared/ui/components";
 
 import { LogEntryHeader } from "@/rn-better-dev-tools/src/features/log-dump/components/LogEntryHeader";
 import { LogEntrySentryBadge } from "./LogEntrySentryBadge";
@@ -17,36 +18,29 @@ interface SentryEventLogEntryItemProps {
 export const SentryEventLogEntryItem = React.memo<SentryEventLogEntryItemProps>(
   ({ entry, onSelectEntry }) => {
     return (
-      <View
-        style={styles.container}
-        sentry-label="ignore devtools sentry entry item container"
+      <ListItem
+        onPress={() => onSelectEntry(entry)}
+        style={styles.listItem}
       >
-        <TouchableOpacity
-          sentry-label={`ignore view sentry log entry ${entry.id} details`}
-          accessibilityLabel={`Sentry log entry: ${entry.message}`}
-          accessibilityHint="View full sentry log entry details"
-          accessibilityRole="button"
-          onPress={() => onSelectEntry(entry)}
-          style={styles.touchable}
-        >
+        <ListItem.Header>
           <LogEntryHeader entry={entry} />
+        </ListItem.Header>
+        
+        <ListItem.Content>
           <LogEntrySentryBadge metadata={entry.metadata} />
           <SentryEventMessage entry={entry} />
-        </TouchableOpacity>
-      </View>
+        </ListItem.Content>
+      </ListItem>
     );
   },
 );
 
 const styles = StyleSheet.create({
-  container: {
+  listItem: {
     backgroundColor: gameUIColors.panel,
     borderRadius: 8,
-    overflow: "hidden",
+    padding: 16,
     marginBottom: 8,
     marginHorizontal: 16,
-  },
-  touchable: {
-    padding: 16,
   },
 });

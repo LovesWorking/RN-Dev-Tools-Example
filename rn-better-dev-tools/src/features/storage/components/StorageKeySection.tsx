@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { StorageKeyInfo } from "../types";
 import { StorageKeyCard } from "./StorageKeyCard";
+import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 
 interface StorageKeySectionProps {
   title: string;
@@ -43,21 +44,10 @@ export function StorageKeySection({
   if (keys.length === 0 && title === "Required Keys") {
     return (
       <View style={styles.sectionContainer}>
-        <View style={styles.sectionHeader}>
-          <Text
-            style={[styles.sectionTitle, headerColor && { color: headerColor }]}
-          >
-            {title}
-          </Text>
-          <Text
-            style={[
-              styles.sectionCount,
-              headerColor && { color: headerColor, opacity: 0.8 },
-            ]}
-          >
-            0
-          </Text>
-        </View>
+        <SectionHeader>
+          <SectionHeader.Title>{title}</SectionHeader.Title>
+          <SectionHeader.Badge count={0} color={headerColor} />
+        </SectionHeader>
         <View style={styles.emptySection}>
           <Text style={styles.emptySectionText}>{emptyMessage}</Text>
         </View>
@@ -70,23 +60,12 @@ export function StorageKeySection({
   return (
     <View style={styles.sectionContainer}>
       {title && (
-        <View style={styles.sectionHeader}>
-          <Text
-            style={[styles.sectionTitle, headerColor && { color: headerColor }]}
-          >
-            {title}
-          </Text>
+        <SectionHeader>
+          <SectionHeader.Title>{title}</SectionHeader.Title>
           {count >= 0 && (
-            <Text
-              style={[
-                styles.sectionCount,
-                headerColor && { color: headerColor, opacity: 0.8 },
-              ]}
-            >
-              {count}
-            </Text>
+            <SectionHeader.Badge count={count} color={headerColor} />
           )}
-        </View>
+        </SectionHeader>
       )}
       <View style={styles.sectionContent}>
         {keys.map((storageKey) => (
@@ -105,24 +84,6 @@ export function StorageKeySection({
 const styles = StyleSheet.create({
   sectionContainer: {
     gap: 8,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    color: "#9CA3AF",
-    fontWeight: "500",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-  sectionCount: {
-    fontSize: 11,
-    color: "#6B7280",
-    fontWeight: "500",
   },
   sectionContent: {
     gap: 6,

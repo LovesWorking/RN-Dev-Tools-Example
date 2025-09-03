@@ -516,7 +516,6 @@ function NetworkModalInner({
             events={events}
             filter={filter}
             onFilterChange={setFilter}
-            onClose={() => setShowFilterView(false)}
             activeTab={filterViewTab}
             ignoredDomains={ignoredDomains}
             ignoredUrls={ignoredUrls}

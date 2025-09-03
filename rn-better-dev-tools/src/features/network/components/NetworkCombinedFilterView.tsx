@@ -15,7 +15,7 @@ import {
   Link,
   Activity,
 } from "rn-better-dev-tools/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   GameUIStatusHeader,
   GameUICompactStats,
@@ -23,6 +23,14 @@ import {
   GAME_UI_ALERT_STATES,
   useGameUIAlertState,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import {
+  FilterSection,
+  FilterList,
+  AddFilterInput,
+  AddFilterButton,
+} from "@/rn-better-dev-tools/src/shared/ui/components/FilterComponents";
+import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
+import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
 
 interface NetworkCombinedFilterViewProps {
   ignoredDomains: Set<string>;
@@ -68,25 +76,30 @@ export function NetworkCombinedFilterView({
   availableUrls = [],
 }: NetworkCombinedFilterViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>("domains");
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newPattern, setNewPattern] = useState("");
+
+  // Create two separate filter managers for domains and URLs
+  // We'll use them just for the UI state (showAddInput, newFilter) and let the parent manage the actual filters
+  const domainFilterManager = useFilterManager(new Set());
+  const urlFilterManager = useFilterManager(new Set());
+
+  // Get the current filter manager and handlers based on active tab
+  const currentFilterManager = activeTab === "domains" ? domainFilterManager : urlFilterManager;
+  const currentFilters = activeTab === "domains" ? ignoredDomains : ignoredUrls;
+  const currentOnAdd = activeTab === "domains" ? onAddDomain : onAddUrl;
+  const currentOnToggle = activeTab === "domains" ? onToggleDomain : onToggleUrl;
 
   const totalFilters = ignoredDomains.size + ignoredUrls.size;
 
   const handleAddPattern = () => {
-    if (newPattern.trim()) {
-      if (activeTab === "domains") {
-        onAddDomain(newPattern.trim());
-      } else {
-        onAddUrl(newPattern.trim());
-      }
-      setNewPattern("");
-      setShowAddInput(false);
+    if (currentFilterManager.newFilter.trim()) {
+      currentOnAdd(currentFilterManager.newFilter.trim());
+      currentFilterManager.setNewFilter("");
+      currentFilterManager.setShowAddInput(false);
     }
   };
 
   const handlePatternSelect = (pattern: string) => {
-    setNewPattern(pattern);
+    currentFilterManager.setNewFilter(pattern);
   };
 
   // Determine alert state based on active filters
@@ -99,16 +112,12 @@ export function NetworkCombinedFilterView({
   const alertAnimatedStyle = {};
 
   // Get current patterns and available options based on tab
-  const currentPatterns =
-    activeTab === "domains" ? ignoredDomains : ignoredUrls;
   const availablePatterns =
     activeTab === "domains" ? availableDomains : availableUrls;
-  const onTogglePattern =
-    activeTab === "domains" ? onToggleDomain : onToggleUrl;
 
   // Filter out already filtered patterns from suggestions
   const suggestedPatterns = availablePatterns.filter((pattern) => {
-    return !Array.from(currentPatterns).some((ignored) =>
+    return !Array.from(currentFilters).some((ignored) =>
       pattern.includes(ignored),
     );
   });
@@ -126,79 +135,19 @@ export function NetworkCombinedFilterView({
   ).length;
   const customDomainCount = ignoredDomains.size - commonDomainCount;
 
+  const tabs = [
+    { key: "domains", label: `Domains${ignoredDomains.size > 0 ? ` (${ignoredDomains.size})` : ''}` },
+    { key: "urls", label: `URLs${ignoredUrls.size > 0 ? ` (${ignoredUrls.size})` : ''}` },
+  ];
+
   const renderHeaderContent = () => {
     return (
       <View style={styles.headerContainer}>
-        {/* Tab buttons */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            onPress={() => setActiveTab("domains")}
-            style={[
-              styles.tabButton,
-              activeTab === "domains"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive,
-            ]}
-          >
-            <Globe
-              size={14}
-              color={
-                activeTab === "domains"
-                  ? gameUIColors.network
-                  : gameUIColors.secondary
-              }
-            />
-            <Text
-              style={[
-                styles.tabButtonText,
-                activeTab === "domains"
-                  ? styles.tabButtonTextActive
-                  : styles.tabButtonTextInactive,
-              ]}
-            >
-              Domains
-            </Text>
-            {ignoredDomains.size > 0 && (
-              <View style={styles.tabBadge}>
-                <Text style={styles.tabBadgeText}>{ignoredDomains.size}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setActiveTab("urls")}
-            style={[
-              styles.tabButton,
-              activeTab === "urls"
-                ? styles.tabButtonActive
-                : styles.tabButtonInactive,
-            ]}
-          >
-            <Link
-              size={14}
-              color={
-                activeTab === "urls"
-                  ? gameUIColors.network
-                  : gameUIColors.secondary
-              }
-            />
-            <Text
-              style={[
-                styles.tabButtonText,
-                activeTab === "urls"
-                  ? styles.tabButtonTextActive
-                  : styles.tabButtonTextInactive,
-              ]}
-            >
-              URLs
-            </Text>
-            {ignoredUrls.size > 0 && (
-              <View style={styles.tabBadge}>
-                <Text style={styles.tabBadgeText}>{ignoredUrls.size}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
+        <TabSelector 
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(tab) => setActiveTab(tab as TabType)}
+        />
       </View>
     );
   };
@@ -250,7 +199,7 @@ export function NetworkCombinedFilterView({
         />
 
         {/* Filters Section */}
-        <View style={styles.section}>
+        <FilterSection>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
               {activeTab === "domains"
@@ -265,48 +214,28 @@ export function NetworkCombinedFilterView({
           </View>
 
           {/* Add new filter */}
-          {!showAddInput ? (
-            <TouchableOpacity
-              onPress={() => setShowAddInput(true)}
-              style={styles.addButton}
-            >
-              <Plus size={14} color={gameUIColors.network} />
-              <Text style={styles.addButtonText}>
-                Add {activeTab === "domains" ? "Domain" : "URL Pattern"}
-              </Text>
-            </TouchableOpacity>
+          {!currentFilterManager.showAddInput ? (
+            <AddFilterButton
+              onPress={() => currentFilterManager.setShowAddInput(true)}
+              color={gameUIColors.network}
+            />
           ) : (
             <>
-              <View style={styles.addInputContainer}>
-                <TextInput
-                  style={styles.addInput}
-                  value={newPattern}
-                  onChangeText={setNewPattern}
-                  placeholder={
-                    activeTab === "domains"
-                      ? "Enter domain (e.g., api.example.com)"
-                      : "Enter URL pattern (e.g., /analytics)"
-                  }
-                  placeholderTextColor={gameUIColors.muted}
-                  autoFocus
-                  onSubmitEditing={handleAddPattern}
-                />
-                <TouchableOpacity
-                  onPress={handleAddPattern}
-                  style={styles.confirmButton}
-                >
-                  <Check size={14} color={gameUIColors.success} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowAddInput(false);
-                    setNewPattern("");
-                  }}
-                  style={styles.cancelButton}
-                >
-                  <X size={14} color={gameUIColors.error} />
-                </TouchableOpacity>
-              </View>
+              <AddFilterInput
+                value={currentFilterManager.newFilter}
+                onChange={currentFilterManager.setNewFilter}
+                onSubmit={handleAddPattern}
+                onCancel={() => {
+                  currentFilterManager.setShowAddInput(false);
+                  currentFilterManager.setNewFilter("");
+                }}
+                placeholder={
+                  activeTab === "domains"
+                    ? "Enter domain (e.g., api.example.com)"
+                    : "Enter URL pattern (e.g., /analytics)"
+                }
+                color={gameUIColors.network}
+              />
 
               {/* Available Patterns Section */}
               {suggestedPatterns.length > 0 && (
@@ -345,31 +274,20 @@ export function NetworkCombinedFilterView({
             </>
           )}
 
-          {/* Filter badges */}
-          <View style={styles.filterList}>
-            {Array.from(currentPatterns).map((pattern) => (
-              <TouchableOpacity
-                key={pattern}
-                onPress={() => onTogglePattern(pattern)}
-                style={styles.filterBadge}
-              >
-                <Text style={styles.filterBadgeText}>{pattern}</Text>
-                <TouchableOpacity
-                  onPress={() => onTogglePattern(pattern)}
-                  style={styles.filterBadgeRemove}
-                >
-                  <X size={10} color={gameUIColors.primary} />
-                </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
-            {currentPatterns.size === 0 && (
-              <Text style={styles.emptyText}>
-                No {activeTab === "domains" ? "domains" : "URL patterns"}{" "}
-                filtered
-              </Text>
-            )}
-          </View>
-        </View>
+          {/* Filter List */}
+          <FilterList
+            filters={currentFilters}
+            onRemoveFilter={currentOnToggle}
+            color={gameUIColors.network}
+          />
+          
+          {currentFilters.size === 0 && (
+            <Text style={styles.emptyText}>
+              No {activeTab === "domains" ? "domains" : "URL patterns"}{" "}
+              filtered
+            </Text>
+          )}
+        </FilterSection>
 
         {/* How Filters Work Section */}
         <View style={styles.howItWorksSection}>
@@ -427,64 +345,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: gameUIColors.border,
   },
-  tabContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  tabButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-  },
-  tabButtonActive: {
-    backgroundColor: gameUIColors.network + "1A",
-    borderColor: gameUIColors.network + "66",
-  },
-  tabButtonInactive: {
-    backgroundColor: gameUIColors.panel,
-    borderColor: gameUIColors.border,
-  },
-  tabButtonText: {
-    fontSize: 11,
-    fontFamily: "monospace",
-    fontWeight: "600",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-  tabButtonTextActive: {
-    color: gameUIColors.network,
-  },
-  tabButtonTextInactive: {
-    color: gameUIColors.secondary,
-  },
-  tabBadge: {
-    backgroundColor: gameUIColors.network + "33",
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 8,
-    minWidth: 20,
-    alignItems: "center",
-  },
-  tabBadgeText: {
-    fontSize: 9,
-    color: gameUIColors.network,
-    fontFamily: "monospace",
-    fontWeight: "700",
-  },
   content: {
     flex: 1,
   },
   scrollContent: {
     paddingBottom: 24,
-  },
-  section: {
-    padding: 16,
   },
   sectionHeader: {
     marginBottom: 12,
@@ -502,61 +367,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: gameUIColors.secondary,
     fontFamily: "monospace",
-  },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    padding: 10,
-    backgroundColor: gameUIColors.network + "1A",
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: gameUIColors.network + "33",
-    marginBottom: 12,
-  },
-  addButtonText: {
-    fontSize: 11,
-    color: gameUIColors.network,
-    fontFamily: "monospace",
-    fontWeight: "600",
-  },
-  addInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
-  },
-  addInput: {
-    flex: 1,
-    height: 36,
-    paddingHorizontal: 12,
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: gameUIColors.network + "66",
-    color: gameUIColors.primary,
-    fontSize: 12,
-    fontFamily: "monospace",
-  },
-  confirmButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: gameUIColors.success + "1A",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: gameUIColors.success + "33",
-  },
-  cancelButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: gameUIColors.error + "1A",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: gameUIColors.error + "33",
   },
   availableContainer: {
     backgroundColor: gameUIColors.panel,
@@ -593,36 +403,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: gameUIColors.primary,
     fontFamily: "monospace",
-  },
-  filterList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: gameUIColors.network + "1A",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: gameUIColors.network + "33",
-  },
-  filterBadgeText: {
-    fontSize: 11,
-    color: gameUIColors.network,
-    fontFamily: "monospace",
-    fontWeight: "600",
-  },
-  filterBadgeRemove: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: gameUIColors.background + "66",
-    alignItems: "center",
-    justifyContent: "center",
   },
   emptyText: {
     fontSize: 11,

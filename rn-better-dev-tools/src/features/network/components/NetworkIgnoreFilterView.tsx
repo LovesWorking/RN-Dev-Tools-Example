@@ -4,10 +4,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  TextInput,
 } from "react-native";
-import { Filter, X, Plus, Check, Globe } from "rn-better-dev-tools/icons";
-import { useState } from "react";
+import { Filter, Plus, Globe } from "rn-better-dev-tools/icons";
+import {
+  FilterSection,
+  FilterList,
+  AddFilterInput,
+  AddFilterButton,
+} from "@/rn-better-dev-tools/src/shared/ui/components/FilterComponents";
+import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
 import {
   GameUIStatusHeader,
   GameUICompactStats,
@@ -49,19 +54,17 @@ export function NetworkIgnoreFilterView({
   onBack,
   availableDomains = [],
 }: NetworkIgnoreFilterViewProps) {
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newPattern, setNewPattern] = useState("");
+  const filterManager = useFilterManager(ignoredPatterns);
 
   const handleAddPattern = () => {
-    if (newPattern.trim()) {
-      onAddPattern(newPattern.trim());
-      setNewPattern("");
-      setShowAddInput(false);
+    if (filterManager.newFilter.trim()) {
+      onAddPattern(filterManager.newFilter.trim());
+      filterManager.addFilter(filterManager.newFilter);
     }
   };
 
   const handleDomainSelect = (domain: string) => {
-    setNewPattern(domain);
+    filterManager.setNewFilter(domain);
   };
 
   // Determine alert state based on active filters
@@ -133,107 +136,73 @@ export function NetworkIgnoreFilterView({
           </View>
 
           {/* Add new filter */}
-          {!showAddInput ? (
-            <TouchableOpacity
-              onPress={() => setShowAddInput(true)}
-              style={styles.addButton}
-              sentry-label="ignore-touchable-opacity"
-            >
-              <Plus size={14} color={gameUIColors.network} />
-              <Text style={styles.addButtonText}>Add Filter</Text>
-            </TouchableOpacity>
-          ) : (
-            <>
-              <View style={styles.addInputContainer}>
-                <TextInput
-                  sentry-label="ignore-textinput"
-                  style={styles.addInput}
-                  value={newPattern}
-                  onChangeText={setNewPattern}
-                  placeholder="Enter domain or URL pattern"
-                  placeholderTextColor={gameUIColors.muted}
-                  autoFocus
-                  onSubmitEditing={handleAddPattern}
-                  accessibilityLabel="ignore-textinput"
-                />
-                <TouchableOpacity
-                  onPress={handleAddPattern}
-                  style={styles.confirmButton}
-                  sentry-label="ignore-touchable-opacity"
-                >
-                  <Check size={14} color={gameUIColors.success} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowAddInput(false);
-                    setNewPattern("");
+          <FilterSection style={styles.filterSectionOverrides}>
+            {!filterManager.showAddInput ? (
+              <AddFilterButton
+                onPress={() => filterManager.setShowAddInput(true)}
+                color={gameUIColors.network}
+              />
+            ) : (
+              <>
+                <AddFilterInput
+                  value={filterManager.newFilter}
+                  onChange={filterManager.setNewFilter}
+                  onSubmit={handleAddPattern}
+                  onCancel={() => {
+                    filterManager.setShowAddInput(false);
+                    filterManager.setNewFilter("");
                   }}
-                  style={styles.cancelButton}
-                  sentry-label="ignore-touchable-opacity"
-                >
-                  <X size={14} color={gameUIColors.error} />
-                </TouchableOpacity>
-              </View>
+                  placeholder="Enter domain or URL pattern"
+                  color={gameUIColors.primary}
+                />
 
-              {/* Available Domains Section */}
-              {suggestedDomains.length > 0 && (
-                <View style={styles.availableDomainsContainer}>
-                  <Text style={styles.availableDomainsTitle}>
-                    DOMAINS FROM RECENT REQUESTS
-                  </Text>
-                  <ScrollView
-                    style={styles.availableDomainsScroll}
-                    horizontal={false}
-                    showsVerticalScrollIndicator={true}
-                    nestedScrollEnabled={true}
-                    scrollEnabled={true}
-                  >
-                    {suggestedDomains.map((domain) => (
-                      <TouchableOpacity
-                        key={domain}
-                        onPress={() => handleDomainSelect(domain)}
-                        style={styles.availableDomainItem}
-                        sentry-label="ignore-touchable-opacity"
-                      >
-                        <Globe size={12} color={gameUIColors.secondary} />
-                        <Text
-                          style={styles.availableDomainText}
-                          numberOfLines={1}
+                {/* Available Domains Section */}
+                {suggestedDomains.length > 0 && (
+                  <View style={styles.availableDomainsContainer}>
+                    <Text style={styles.availableDomainsTitle}>
+                      DOMAINS FROM RECENT REQUESTS
+                    </Text>
+                    <ScrollView
+                      style={styles.availableDomainsScroll}
+                      horizontal={false}
+                      showsVerticalScrollIndicator={true}
+                      nestedScrollEnabled={true}
+                      scrollEnabled={true}
+                    >
+                      {suggestedDomains.map((domain) => (
+                        <TouchableOpacity
+                          key={domain}
+                          onPress={() => handleDomainSelect(domain)}
+                          style={styles.availableDomainItem}
+                          sentry-label="ignore-touchable-opacity"
                         >
-                          {domain}
-                        </Text>
-                        <Plus size={12} color={gameUIColors.network} />
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-            </>
-          )}
+                          <Globe size={12} color={gameUIColors.secondary} />
+                          <Text
+                            style={styles.availableDomainText}
+                            numberOfLines={1}
+                          >
+                            {domain}
+                          </Text>
+                          <Plus size={12} color={gameUIColors.network} />
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                )}
+              </>
+            )}
 
-          {/* Filter badges */}
-          <View style={styles.filterList}>
-            {Array.from(ignoredPatterns).map((pattern) => (
-              <TouchableOpacity
-                key={pattern}
-                onPress={() => onTogglePattern(pattern)}
-                style={styles.filterBadge}
-                sentry-label="ignore-touchable-opacity"
-              >
-                <Text style={styles.filterBadgeText}>{pattern}</Text>
-                <TouchableOpacity
-                  onPress={() => onTogglePattern(pattern)}
-                  style={styles.filterBadgeRemove}
-                  sentry-label="ignore-touchable-opacity"
-                >
-                  <X size={10} color={gameUIColors.primary} />
-                </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
-            {ignoredPatterns.size === 0 && (
+            {/* Filter badges */}
+            {ignoredPatterns.size > 0 ? (
+              <FilterList
+                filters={ignoredPatterns}
+                onRemoveFilter={onTogglePattern}
+                color={gameUIColors.network}
+              />
+            ) : (
               <Text style={styles.emptyText}>No filters active</Text>
             )}
-          </View>
+          </FilterSection>
         </View>
 
         {/* How Filters Work Section */}
@@ -295,60 +264,10 @@ const styles = StyleSheet.create({
     color: gameUIColors.secondary,
     fontFamily: "monospace",
   },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    padding: 10,
-    backgroundColor: gameUIColors.network + "1A",
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: gameUIColors.network + "33",
-    marginBottom: 12,
-  },
-  addButtonText: {
-    fontSize: 11,
-    color: gameUIColors.network,
-    fontFamily: "monospace",
-    fontWeight: "600",
-  },
-  addInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
-  },
-  addInput: {
-    flex: 1,
-    height: 36,
-    paddingHorizontal: 12,
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: gameUIColors.network + "66",
-    color: gameUIColors.primary,
-    fontSize: 12,
-    fontFamily: "monospace",
-  },
-  confirmButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: gameUIColors.success + "1A",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: gameUIColors.success + "33",
-  },
-  cancelButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: gameUIColors.error + "1A",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: gameUIColors.error + "33",
+  filterSectionOverrides: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    backgroundColor: "transparent",
   },
   availableDomainsContainer: {
     backgroundColor: gameUIColors.panel,
@@ -385,36 +304,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: gameUIColors.primary,
     fontFamily: "monospace",
-  },
-  filterList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: gameUIColors.network + "1A",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: gameUIColors.network + "33",
-  },
-  filterBadgeText: {
-    fontSize: 11,
-    color: gameUIColors.network,
-    fontFamily: "monospace",
-    fontWeight: "600",
-  },
-  filterBadgeRemove: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: gameUIColors.background + "66",
-    alignItems: "center",
-    justifyContent: "center",
   },
   emptyText: {
     fontSize: 11,
