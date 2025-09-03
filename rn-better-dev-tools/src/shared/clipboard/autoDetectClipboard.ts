@@ -32,7 +32,6 @@ export function createAutoDetectedClipboard(): ClipboardFunction | null {
           return false;
         }
       };
-      console.log("[RnBetterDevTools] Auto-detected Expo Clipboard");
       return cachedClipboard;
     }
   } catch {

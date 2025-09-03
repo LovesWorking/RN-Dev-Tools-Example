@@ -71,7 +71,6 @@ export function StorageActions({
       if (success) {
         setCopyStatus("success");
         setTimeout(() => setCopyStatus("idle"), 2000);
-        console.log("[Storage] Full export copied to clipboard");
       } else {
         throw new Error("Failed to copy to clipboard");
       }
@@ -97,7 +96,6 @@ export function StorageActions({
       if (success) {
         setCopyStatus("success");
         setTimeout(() => setCopyStatus("idle"), 2000);
-        console.log("[Storage] Simple export copied to clipboard");
       } else {
         throw new Error("Failed to copy to clipboard");
       }
@@ -129,7 +127,6 @@ export function StorageActions({
     try {
       await onClearAll();
       await onRefresh(); // Auto-refresh after clearing
-      console.log("[Storage] App data cleared successfully");
     } catch (error) {
       console.error("Failed to clear storage:", error);
       Alert.alert("Error", `Failed to clear storage: ${error}`);
@@ -141,7 +138,6 @@ export function StorageActions({
     try {
       await clearAllStorageIncludingDevTools();
       await onRefresh(); // Auto-refresh after clearing
-      console.log("[Storage] All storage cleared including dev tools");
 
       // Show success message briefly
       Alert.alert(

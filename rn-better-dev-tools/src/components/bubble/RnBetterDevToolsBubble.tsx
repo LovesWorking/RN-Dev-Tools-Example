@@ -115,10 +115,7 @@ export function RnBetterDevToolsBubble({
   
   // Initialize Sentry event listeners on mount
   useEffect(() => {
-    const success = setupSentryEventListeners();
-    if (success) {
-      console.log("✅ Sentry event listeners initialized for dev tools");
-    }
+    setupSentryEventListeners();
   }, []);
 
   // Modal management hook with persistence - extracted from main component logic

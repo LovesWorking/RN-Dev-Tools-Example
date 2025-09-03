@@ -222,7 +222,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
         break;
     }
 
-    console.log(`[DialDevTools] Icon ${icon.name} enabled: ${isEnabled}`);
 
     // Return empty spot for disabled tools
     if (!isEnabled) {
@@ -237,10 +236,6 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
     return icon;
   });
 
-  console.log(
-    "[DialDevTools] Final icons array:",
-    icons.map((i) => i.name)
-  );
 
   // Initialize animations on mount
   useEffect(() => {
@@ -615,15 +610,8 @@ const DialDevTools: React.FC<DialDevToolsProps> = ({
           refreshSettings(); // Refresh from storage
         }}
         onSettingsChange={(newSettings) => {
-          console.log(
-            "[DialDevTools] onSettingsChange called with:",
-            newSettings
-          );
           // Immediately update local settings for instant feedback
           setLocalSettings(newSettings);
-          console.log(
-            "[DialDevTools] Called setLocalSettings with new settings"
-          );
         }}
       />
     </View>
