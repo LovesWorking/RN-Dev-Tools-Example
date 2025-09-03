@@ -1,12 +1,7 @@
-import { Dispatch, SetStateAction } from "react";
 import { Mutation } from "@tanstack/react-query";
-import { View, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import {
-  ListItem,
-  StatusBadge,
-} from "@/rn-better-dev-tools/src/shared/ui/components";
 
 const getMutationText = (mutation: Mutation) => {
   if (!mutation.options.mutationKey) return "Anonymous Mutation";
@@ -23,7 +18,9 @@ const getMutationText = (mutation: Mutation) => {
 
 interface Props {
   mutation: Mutation;
-  setSelectedMutation: Dispatch<SetStateAction<Mutation | undefined>>;
+  setSelectedMutation: React.Dispatch<
+    React.SetStateAction<Mutation | undefined>
+  >;
   selected: Mutation | undefined;
 }
 export default function MutationButton({
@@ -67,38 +64,89 @@ export default function MutationButton({
 
   const statusInfo = getStatusInfo();
 
-  const isSelected = selected?.mutationId === mutation.mutationId;
-
   return (
-    <ListItem
+    <TouchableOpacity
+      sentry-label="ignore devtools mutation button"
       onPress={() =>
         setSelectedMutation(mutation === selected ? undefined : mutation)
       }
-      style={[isSelected && styles.selected]}
+      style={[
+        styles.button,
+        selected?.mutationId === mutation.mutationId && styles.selected,
+      ]}
     >
-      <ListItem.Header>
-        <View
-          style={[styles.statusDot, { backgroundColor: statusInfo.color }]}
-        />
-        <StatusBadge status={statusInfo.status} />
-      </ListItem.Header>
+      <View style={styles.rowContent}>
+        <View style={styles.statusSection}>
+          <View
+            style={[styles.statusDot, { backgroundColor: statusInfo.color }]}
+          />
+          <View style={styles.statusInfo}>
+            <Text style={[styles.statusLabel, { color: statusInfo.color }]}>
+              {statusInfo.status}
+            </Text>
+            <Text style={styles.submittedText}>{submittedAt}</Text>
+          </View>
+        </View>
 
-      <ListItem.Content>
-        <ListItem.Title>{getMutationText(mutation)}</ListItem.Title>
-        <ListItem.Metadata>{submittedAt}</ListItem.Metadata>
-      </ListItem.Content>
-    </ListItem>
+        <View style={styles.mutationSection}>
+          <Text style={styles.mutationKey}>{getMutationText(mutation)}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: gameUIColors.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: gameUIColors.border + "40",
+    marginHorizontal: 8,
+    marginVertical: 3,
+    padding: 12,
+  },
   selected: {
     backgroundColor: gameUIColors.info + "15",
     borderColor: gameUIColors.info + "50",
+  },
+  rowContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  statusSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
   },
   statusDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
+  },
+  statusInfo: {
+    flex: 1,
+  },
+  statusLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    lineHeight: 14,
+  },
+  submittedText: {
+    fontSize: 10,
+    color: gameUIColors.muted,
+    marginTop: 1,
+  },
+  mutationSection: {
+    flex: 2,
+    paddingHorizontal: 12,
+  },
+  mutationKey: {
+    fontFamily: "monospace",
+    fontSize: 12,
+    color: gameUIColors.primary,
+    lineHeight: 16,
   },
 });

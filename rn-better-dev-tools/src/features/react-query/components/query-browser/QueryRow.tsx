@@ -1,11 +1,6 @@
-import { View, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Query } from "@tanstack/react-query";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
-import { ListItem } from "../../../../shared/ui/components";
-import {
-  StatusBadge,
-  CountBadge,
-} from "../../../../shared/ui/components/Badge";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 const getQueryText = (query: Query) => {
@@ -27,41 +22,74 @@ interface QueryRowProps {
   onSelect: (query: Query) => void;
 }
 
-const QueryRow: FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
+const QueryRow: React.FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
+  // Game UI status color mapping
+  const getStatusHexColor = (status: string): string => {
+    switch (status) {
+      case "fresh":
+        return gameUIColors.success;
+      case "stale":
+        return gameUIColors.warning;
+      case "inactive":
+        return gameUIColors.muted;
+      case "fetching":
+        return gameUIColors.info;
+      case "paused":
+        return gameUIColors.storage;
+      default:
+        return gameUIColors.secondary;
+    }
+  };
+
   const status = getQueryStatusLabel(query);
   const observerCount = query.getObserversCount();
   const isDisabled = query.isDisabled();
   const queryHash = getQueryText(query);
 
   return (
-    <ListItem
-      onPress={() => onSelect(query)}
+    <TouchableOpacity
+      sentry-label="ignore devtools query row"
       style={[styles.queryRow, isSelected && styles.selectedQueryRow]}
+      onPress={() => onSelect(query)}
+      activeOpacity={0.8}
+      accessibilityLabel={`Query key ${queryHash}`}
+      accessibilityState={{ selected: isSelected }}
     >
+      {/* Status indicator and content in one row */}
       <View style={styles.rowContent}>
         <View style={styles.statusSection}>
-          <StatusBadge status={status} size="small" />
-          <ListItem.Metadata style={styles.observerText}>
-            {observerCount} observer{observerCount !== 1 ? "s" : ""}
-          </ListItem.Metadata>
+          <View
+            style={[
+              styles.statusDot,
+              { backgroundColor: getStatusHexColor(status) },
+            ]}
+          />
+          <View style={styles.statusInfo}>
+            <Text
+              style={[styles.statusLabel, { color: getStatusHexColor(status) }]}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Text>
+            <Text style={styles.observerText}>
+              {observerCount} observer{observerCount !== 1 ? "s" : ""}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.querySection}>
-          <ListItem.Title style={styles.queryHash} numberOfLines={1}>
-            {queryHash}
-          </ListItem.Title>
-          {isDisabled && (
-            <ListItem.Metadata style={styles.disabledText}>
-              Disabled
-            </ListItem.Metadata>
-          )}
+          <Text style={styles.queryHash}>{queryHash}</Text>
+          {isDisabled && <Text style={styles.disabledText}>Disabled</Text>}
         </View>
 
         <View style={styles.badgeSection}>
-          <CountBadge count={observerCount} size="small" />
+          <Text
+            style={[styles.statusBadge, { color: getStatusHexColor(status) }]}
+          >
+            {observerCount}
+          </Text>
         </View>
       </View>
-    </ListItem>
+    </TouchableOpacity>
   );
 };
 
@@ -97,8 +125,22 @@ const styles = StyleSheet.create({
     gap: 8,
     flex: 1,
   },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusInfo: {
+    flex: 1,
+  },
+  statusLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    lineHeight: 14,
+  },
   observerText: {
     fontSize: 10,
+    color: gameUIColors.muted,
     marginTop: 1,
   },
   querySection: {
@@ -108,12 +150,19 @@ const styles = StyleSheet.create({
   queryHash: {
     fontFamily: "monospace",
     fontSize: 12,
+    color: gameUIColors.primary,
     lineHeight: 16,
   },
   badgeSection: {
     alignItems: "flex-end",
   },
+  statusBadge: {
+    fontSize: 12,
+    fontWeight: "600",
+    fontVariant: ["tabular-nums"],
+  },
   disabledText: {
+    fontSize: 10,
     color: gameUIColors.error,
     fontWeight: "500",
     marginTop: 2,
