@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   valueContent: {
     color: gameUIColors.primaryLight,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   expectedValueContent: {
     color: gameUIColors.primaryLight,

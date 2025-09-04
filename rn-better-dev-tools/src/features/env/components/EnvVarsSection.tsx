@@ -3,6 +3,7 @@ import { Settings } from "rn-better-dev-tools/icons";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
 import { RequiredEnvVar } from "../types";
 import { GameUIEnvContent } from "./GameUIEnvContent";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface EnvVarsSectionProps {
   onPress: () => void;
@@ -38,15 +39,24 @@ export function EnvVarsSection({
  */
 export function EnvVarsDetailContent({
   requiredEnvVars,
+  activeTab,
+  searchQuery = "",
 }: {
   requiredEnvVars: RequiredEnvVar[];
+  activeTab?: string;
+  searchQuery?: string;
 }) {
   return (
     <ScrollView
       sentry-label="ignore devtools env vars section scroll"
-      style={{ flex: 1, backgroundColor: "#2A2A2A" }}
+      style={{ flex: 1, backgroundColor: gameUIColors.background }}
+      contentContainerStyle={{ flexGrow: 1, backgroundColor: gameUIColors.background }}
     >
-      <GameUIEnvContent requiredEnvVars={requiredEnvVars} />
+      <GameUIEnvContent 
+        requiredEnvVars={requiredEnvVars} 
+        activeTab={activeTab}
+        searchQuery={searchQuery}
+      />
     </ScrollView>
   );
 }

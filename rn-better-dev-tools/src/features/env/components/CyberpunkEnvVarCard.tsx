@@ -30,7 +30,7 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
         icon: CheckCircle2,
         color: gameUIColors.success,
         bgColor: gameUIColors.success + "1A",
-        borderColor: gameUIColors.success + "4D",
+        borderColor: gameUIColors.success + "80",
         label: "✓ VALID",
         labelColor: gameUIColors.success,
       };
@@ -39,7 +39,7 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
         icon: AlertCircle,
         color: gameUIColors.error,
         bgColor: gameUIColors.error + "1A",
-        borderColor: gameUIColors.error + "4D",
+        borderColor: gameUIColors.error + "80",
         label: "⚠ MISSING",
         labelColor: gameUIColors.error,
       };
@@ -48,7 +48,7 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
         icon: XCircle,
         color: gameUIColors.warning,
         bgColor: gameUIColors.warning + "1A",
-        borderColor: gameUIColors.warning + "4D",
+        borderColor: gameUIColors.warning + "80",
         label: "⚠ WRONG VALUE",
         labelColor: gameUIColors.warning,
       };
@@ -57,7 +57,7 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
         icon: XCircle,
         color: gameUIColors.info,
         bgColor: gameUIColors.info + "1A",
-        borderColor: gameUIColors.info + "4D",
+        borderColor: gameUIColors.info + "80",
         label: "⚠ WRONG TYPE",
         labelColor: gameUIColors.info,
       };
@@ -66,7 +66,7 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
         icon: Eye,
         color: gameUIColors.optional,
         bgColor: gameUIColors.optional + "1A",
-        borderColor: gameUIColors.optional + "33",
+        borderColor: gameUIColors.optional + "66",
         label: "OPTIONAL",
         labelColor: gameUIColors.optional,
       };
@@ -380,7 +380,7 @@ export function CyberpunkEnvVarCard({
                     styles.iconContainer,
                     {
                       backgroundColor: config.bgColor,
-                      borderColor: `${config.color}40`,
+                      borderColor: `${config.color}70`,
                     },
                   ]}
                 >
@@ -454,7 +454,7 @@ export function CyberpunkEnvVarCard({
                   <View
                     style={[
                       styles.valueBox,
-                      { borderColor: `${config.color}20` },
+                      { borderColor: `${config.color}60` },
                     ]}
                   >
                     <Text style={styles.valueContent} selectable>
@@ -474,7 +474,7 @@ export function CyberpunkEnvVarCard({
                   <View
                     style={[
                       styles.expectedBox,
-                      { borderColor: `${config.color}30` },
+                      { borderColor: `${config.color}70` },
                     ]}
                   >
                     <Text
@@ -491,7 +491,7 @@ export function CyberpunkEnvVarCard({
                 <View
                   style={[
                     styles.emptyWarning,
-                    { borderColor: `${config.color}30` },
+                    { borderColor: `${config.color}60` },
                   ]}
                 >
                   <AlertCircle size={14} color={config.color} />
@@ -726,8 +726,8 @@ const styles = StyleSheet.create({
   },
   dataDots: {
     position: "absolute",
-    right: 12,
-    bottom: 8,
+    right: 6,
+    bottom: 4,
     flexDirection: "row",
     gap: 3,
   },

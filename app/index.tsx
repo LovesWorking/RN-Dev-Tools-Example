@@ -99,7 +99,7 @@ function PokemonScreen() {
         opacity: new Animated.Value(0),
         scale: new Animated.Value(Math.random() * 0.6 + 0.3),
         wobble: new Animated.Value(0),
-      })),
+      }))
   ).current;
 
   useEffect(() => {
@@ -116,7 +116,7 @@ function PokemonScreen() {
           duration: 2500,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Shimmer effect - continuous smooth animation with holographic feel
@@ -133,7 +133,7 @@ function PokemonScreen() {
           useNativeDriver: true,
         }),
         Animated.delay(2000),
-      ]),
+      ])
     ).start();
 
     // Card glow effect
@@ -149,7 +149,7 @@ function PokemonScreen() {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Animate bubbles with simpler logic
@@ -185,7 +185,7 @@ function PokemonScreen() {
             duration: 0,
             useNativeDriver: true,
           }),
-        ]),
+        ])
       ).start();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,7 +269,7 @@ function PokemonScreen() {
       setShowSuggestions(false);
       setSuggestions([]);
     },
-    [pokemonStack],
+    [pokemonStack]
   );
   const userRole: UserRole = "admin";
   const environment: Environment = "local";
@@ -668,12 +668,12 @@ function PokemonScreen() {
         {/* Pokemon Card Stack */}
         <View style={styles.cardStackContainer}>
           <View
-            style={{ 
-              width: width - 60, 
-              height: 430, 
+            style={{
+              width: width - 60,
+              height: 430,
               position: "relative",
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
             }}
           >
             {pokemonStack
