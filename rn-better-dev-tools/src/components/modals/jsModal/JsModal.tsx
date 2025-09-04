@@ -550,10 +550,20 @@ const JsModalComponent: FC<JsModalProps> = ({
 
   // Mode toggle handler
   const toggleMode = useCallback(() => {
+    // Avoid carrying active styling across modes
+    setIsDragging(false);
+    setIsResizing(false);
+    
     const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
     setMode(newMode);
     onModeChange?.(newMode);
   }, [mode, onModeChange]);
+
+  // Belt-and-suspenders: also clear flags when mode changes
+  useEffect(() => {
+    setIsDragging(false);
+    setIsResizing(false);
+  }, [mode]);
 
   // ============================================================================
   // EFFECT: Visibility Animations - All using native driver!

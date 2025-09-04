@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import {
   ReactQueryIcon,
   EnvLaptopIcon,
@@ -16,6 +15,7 @@ import {
   WifiCircuitIcon,
   Globe,
   Info,
+  ChevronRightIcon,
 } from "rn-better-dev-tools/icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { settingsBus } from "./settingsBus";
@@ -335,7 +335,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
             </TouchableOpacity>
 
             {/* Chevron */}
-            <Ionicons name="chevron-forward" size={18} color="#7F91B2" />
+            <ChevronRightIcon size={18} color="#7F91B2" />
           </View>
         </View>
       </TouchableOpacity>
