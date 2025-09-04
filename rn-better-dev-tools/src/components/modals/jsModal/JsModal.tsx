@@ -34,6 +34,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { DraggableHeader } from "@/rn-better-dev-tools/src/shared/ui/components/DraggableHeader";
 
 // ============================================================================
 // CONSTANTS - Modal dimensions and configuration
@@ -257,6 +258,8 @@ const ModalHeader = memo(function ModalHeader({
   }, []);
 
   const headerProps = panHandlers ? panHandlers : {};
+  // Disable tap handling when no panHandlers (i.e., when using DraggableHeader in floating mode)
+  const shouldHandleTap = !!panHandlers;
 
   // If custom content is provided, check if it's a complete replacement
   if (header?.customContent) {
@@ -281,45 +284,61 @@ const ModalHeader = memo(function ModalHeader({
 
     // Otherwise, render custom content within the standard header structure
     // Apply pan handlers to the outer View for dragging in floating mode
+    const headerContent = (
+      <View style={styles.headerInner}>
+        <DragIndicator
+          isResizing={isResizing}
+          mode={mode}
+          hasCustomContent={true}
+        />
+        {header.customContent}
+      </View>
+    );
+
     return (
       <View style={styles.header} {...headerProps}>
-        <TouchableWithoutFeedback onPress={handleHeaderTap}>
-          <View style={styles.headerInner}>
-            <DragIndicator
-              isResizing={isResizing}
-              mode={mode}
-              hasCustomContent={true}
-            />
-            {header.customContent}
-          </View>
-        </TouchableWithoutFeedback>
+        {shouldHandleTap ? (
+          <TouchableWithoutFeedback onPress={handleHeaderTap}>
+            {headerContent}
+          </TouchableWithoutFeedback>
+        ) : (
+          headerContent
+        )}
       </View>
     );
   }
+
+  const headerContent = (
+    <View style={styles.headerInner}>
+      <DragIndicator isResizing={isResizing} mode={mode} />
+      <View style={styles.headerContent}>
+        {header?.title && (
+          <Text style={styles.headerTitle}>{header.title}</Text>
+        )}
+        {header?.subtitle && (
+          <Text style={styles.headerSubtitle}>{header.subtitle}</Text>
+        )}
+      </View>
+      <View style={styles.headerHintText}>
+        <Text style={styles.hintText}>
+          Double tap: Toggle • Triple tap: Close
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
     <View
       style={[styles.header, mode === "floating" && styles.floatingModeHeader]}
       {...headerProps}
     >
-      <TouchableWithoutFeedback onPress={handleHeaderTap}>
-        <View style={styles.headerInner}>
-          <DragIndicator isResizing={isResizing} mode={mode} />
-          <View style={styles.headerContent}>
-            {header?.title && (
-              <Text style={styles.headerTitle}>{header.title}</Text>
-            )}
-            {header?.subtitle && (
-              <Text style={styles.headerSubtitle}>{header.subtitle}</Text>
-            )}
-          </View>
-          <View style={styles.headerHintText}>
-            <Text style={styles.hintText}>
-              Double tap: Toggle • Triple tap: Close
-            </Text>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
+      {shouldHandleTap ? (
+        <TouchableWithoutFeedback onPress={handleHeaderTap}>
+          {headerContent}
+        </TouchableWithoutFeedback>
+      ) : (
+        headerContent
+      )}
     </View>
   );
 });
@@ -633,6 +652,8 @@ const JsModalComponent: FC<JsModalProps> = ({
   // OPTIMIZED PAN RESPONDER: Bottom Sheet Resize
   // Following the documentation pattern for proper resize
   // ============================================================================
+  const headerTouchOffsetRef = useRef(0);
+  
   const bottomSheetPanResponder = useMemo(
     () =>
       PanResponder.create({
@@ -641,34 +662,36 @@ const JsModalComponent: FC<JsModalProps> = ({
         onMoveShouldSetPanResponder: (evt, gestureState) =>
           !isExternallyControlled &&
           mode === "bottomSheet" &&
-          Math.abs(gestureState.dy) > 5,
+          Math.abs(gestureState.dy) > 3,
+        onPanResponderTerminationRequest: () => false,
 
-        onPanResponderGrant: () => {
+        onPanResponderGrant: (evt) => {
           setIsResizing(true);
-          // Store current position at start of drag
-          initialPositionRef.current = currentHeightRef.current;
-          startPositionRef.current = currentHeightRef.current;
+          
+          // Where inside the header the finger grabbed
+          headerTouchOffsetRef.current = evt.nativeEvent.locationY || 0;
+          
+          // Stop any in-flight animations so we start from truth
+          animatedBottomPosition.stopAnimation((val: number) => {
+            currentHeightRef.current = val;
+          });
+          bottomSheetTranslateY.stopAnimation();
         },
 
-        onPanResponderMove: (evt, gestureState) => {
-          // Calculate new position: draggedPosition = initialPosition + translationY
-          // Note: dy is negative when dragging up (to increase height)
-          const draggedPosition = initialPositionRef.current - gestureState.dy;
+        onPanResponderMove: (evt) => {
+          // Absolute finger anchoring: sheet top should match finger (minus header offset)
+          const sheetTop = evt.nativeEvent.pageY - headerTouchOffsetRef.current;
+          // Height is from bottom of screen to sheetTop
+          let targetHeight = SCREEN.height - sheetTop;
 
-          // Clamp between min and max
-          const clampedPosition = Math.max(
-            minHeight,
-            Math.min(draggedPosition, effectiveMaxHeight)
-          );
+          // Clamp
+          targetHeight = Math.max(minHeight, Math.min(targetHeight, effectiveMaxHeight));
 
-          // Update the animated value for height
-          animatedBottomPosition.setValue(clampedPosition);
-          currentHeightRef.current = clampedPosition;
-          setPanelHeight(clampedPosition);
-
-          // If external height is provided, update it too
+          // Push to UI (no React state!)
+          animatedBottomPosition.setValue(targetHeight);
+          currentHeightRef.current = targetHeight;
           if (externalAnimatedHeight) {
-            externalAnimatedHeight.setValue(clampedPosition);
+            externalAnimatedHeight.setValue(targetHeight);
           }
         },
 
@@ -676,17 +699,13 @@ const JsModalComponent: FC<JsModalProps> = ({
           setIsResizing(false);
 
           const finalHeight = currentHeightRef.current;
-          const velocity = gestureState.vy;
 
-          // Close with swipe down: either fast swipe or drag past threshold
-          // Fast swipe: velocity > 0.8 and moving down (dy > 50)
-          // Or drag past threshold: dragged down more than 150px
+          // Optional: close with fast downward swipe
           const shouldClose =
-            (velocity > 0.8 && gestureState.dy > 50) ||
+            (gestureState.vy > 0.8 && gestureState.dy > 50) ||
             (gestureState.dy > 150 && finalHeight <= minHeight);
 
           if (shouldClose) {
-            // Close with smooth animation
             Animated.parallel([
               Animated.timing(visibilityProgress, {
                 toValue: 0,
@@ -699,48 +718,18 @@ const JsModalComponent: FC<JsModalProps> = ({
                 friction: 22,
                 useNativeDriver: true,
               }),
-            ]).start(() => {
-              setTimeout(() => onClose(), 0);
-            });
-          } else {
-            // Spring to final position
-            Animated.spring(animatedBottomPosition, {
-              toValue: finalHeight,
-              tension: 180,
-              friction: 22,
-              useNativeDriver: false, // Must be false for height
-            }).start(() => {
-              setPanelHeight(finalHeight);
-            });
-
-            if (externalAnimatedHeight) {
-              Animated.spring(externalAnimatedHeight, {
-                toValue: finalHeight,
-                tension: 180,
-                friction: 22,
-                useNativeDriver: false,
-              }).start();
-            }
+            ]).start(() => onClose());
+            return;
           }
+
+          // We're already at the finger-tracked height; avoid re-animating it.
+          setPanelHeight(finalHeight);
+          if (externalAnimatedHeight) externalAnimatedHeight.setValue(finalHeight);
         },
 
         onPanResponderTerminate: () => {
           setIsResizing(false);
-          // Spring back to initial position
-          const targetHeight = initialPositionRef.current;
-          Animated.spring(animatedBottomPosition, {
-            toValue: targetHeight,
-            useNativeDriver: false,
-          }).start();
-
-          currentHeightRef.current = targetHeight;
-
-          if (externalAnimatedHeight) {
-            Animated.spring(externalAnimatedHeight, {
-              toValue: targetHeight,
-              useNativeDriver: false,
-            }).start();
-          }
+          // snap back to the last stable height if you want; otherwise no-op
         },
       }),
     [
@@ -757,7 +746,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   );
 
   // ============================================================================
-  // CREATE RESIZE HANDLER: For 4-corner resize in floating mode
+  // CREATE RESIZE HANDLER: For 4-corner resize in floating mode (fixed geometry)
   // ============================================================================
   const createResizeHandler = useCallback(
     (corner: "topLeft" | "topRight" | "bottomLeft" | "bottomRight") => {
@@ -766,146 +755,105 @@ const JsModalComponent: FC<JsModalProps> = ({
         onMoveShouldSetPanResponder: () => mode === "floating",
         onPanResponderGrant: () => {
           const currentDims = currentDimensionsRef.current;
+
+          // If any animation is in-flight, stop and capture final XY to keep math consistent
+          floatingPosition.stopAnimation(({ x, y }: any) => {
+            floatingPosition.setValue({ x, y });
+          });
+
           setIsResizing(true);
+          // Snapshot starting rect
+          startDimensionsRef.current = { ...currentDims };
+
+          // Keep your existing refs up-to-date (not strictly needed now, but harmless)
           sHeight.current = currentDims.height;
           sWidth.current = currentDims.width;
           offsetX.current = currentDims.left;
           offsetY.current = currentDims.top;
-          startDimensionsRef.current = { ...currentDims };
         },
+
         onPanResponderMove: (_evt, gestureState) => {
           const { dx, dy } = gestureState;
+          if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
 
-          if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
-            return;
-          }
+          // Safe-area–aware bounds
+          const minLeft = Math.max(0, insets.left || 0);
+          const maxRight = containerBounds.width - Math.max(0, insets.right || 0);
+          const minTop = Math.max(0, insets.top || 0);
+          const maxBottom = containerBounds.height - Math.max(0, insets.bottom || 0);
 
-          let updatedWidth = sWidth.current;
-          let updatedHeight = sHeight.current;
-          let updatedX = offsetX.current;
-          let updatedY = offsetY.current;
+          const start = startDimensionsRef.current;
+          const startRight = start.left + start.width;
+          const startBottom = start.top + start.height;
+
+          let left = start.left;
+          let top = start.top;
+          let right = startRight;
+          let bottom = startBottom;
 
           switch (corner) {
             case "topLeft": {
-              updatedWidth = Math.max(
-                FLOATING_MIN_WIDTH,
-                Math.min(
-                  sWidth.current - dx,
-                  containerBounds.width - offsetX.current
-                )
-              );
-              updatedHeight = Math.max(
-                FLOATING_MIN_HEIGHT,
-                Math.min(
-                  sHeight.current - dy,
-                  containerBounds.height - updatedY
-                )
-              );
-              if (updatedWidth !== sWidth.current) {
-                updatedX = offsetX.current + (sWidth.current - updatedWidth);
-              }
-              if (updatedHeight !== sHeight.current) {
-                updatedY = Math.max(
-                  insets.top,
-                  Math.min(
-                    offsetY.current + dy,
-                    containerBounds.height - updatedHeight
-                  )
-                );
-              }
+              // Move left & top; anchor right & bottom
+              const newLeft = Math.max(minLeft, Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH));
+              const newTop  = Math.max(minTop,  Math.min(start.top + dy,  startBottom - FLOATING_MIN_HEIGHT));
+              left = newLeft; top = newTop; right = startRight; bottom = startBottom;
               break;
             }
             case "topRight": {
-              updatedWidth = Math.max(
-                FLOATING_MIN_WIDTH,
-                Math.min(
-                  sWidth.current + dx,
-                  containerBounds.width - offsetX.current
-                )
-              );
-              updatedHeight = Math.max(
-                FLOATING_MIN_HEIGHT,
-                Math.min(
-                  sHeight.current - dy,
-                  containerBounds.height - updatedY
-                )
-              );
-              if (updatedHeight !== sHeight.current) {
-                updatedY = Math.max(
-                  insets.top,
-                  Math.min(
-                    offsetY.current + dy,
-                    containerBounds.height - updatedHeight
-                  )
-                );
-              }
+              // Move right & top; anchor left & bottom
+              const newRight = Math.min(maxRight, Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH));
+              const newTop   = Math.max(minTop,  Math.min(start.top + dy,  startBottom - FLOATING_MIN_HEIGHT));
+              left = start.left; top = newTop; right = newRight; bottom = startBottom;
               break;
             }
             case "bottomLeft": {
-              updatedWidth = Math.max(
-                FLOATING_MIN_WIDTH,
-                Math.min(
-                  sWidth.current - dx,
-                  containerBounds.width - offsetX.current
-                )
-              );
-              updatedHeight = Math.max(
-                FLOATING_MIN_HEIGHT,
-                Math.min(
-                  sHeight.current + dy,
-                  containerBounds.height - offsetY.current
-                )
-              );
-              if (updatedWidth !== sWidth.current) {
-                updatedX = offsetX.current + (sWidth.current - updatedWidth);
-              }
+              // Move left & bottom; anchor right & top
+              const newLeft   = Math.max(minLeft,   Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH));
+              const newBottom = Math.min(maxBottom, Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT));
+              left = newLeft; top = start.top; right = startRight; bottom = newBottom;
               break;
             }
             case "bottomRight": {
-              updatedWidth = Math.max(
-                FLOATING_MIN_WIDTH,
-                Math.min(
-                  sWidth.current + dx,
-                  containerBounds.width - offsetX.current
-                )
-              );
-              updatedHeight = Math.max(
-                FLOATING_MIN_HEIGHT,
-                Math.min(
-                  sHeight.current + dy,
-                  containerBounds.height - offsetY.current
-                )
-              );
+              // Move right & bottom; anchor left & top
+              const newRight  = Math.min(maxRight,  Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH));
+              const newBottom = Math.min(maxBottom, Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT));
+              left = start.left; top = start.top; right = newRight; bottom = newBottom;
               break;
             }
           }
 
-          // Update state for real-time visual feedback
+          // Derive width/height from the edges
+          const updatedWidth = Math.max(FLOATING_MIN_WIDTH, right - left);
+          const updatedHeight = Math.max(FLOATING_MIN_HEIGHT, bottom - top);
+
+          // Push to UI
           setDimensions({
             width: updatedWidth,
             height: updatedHeight,
-            left: updatedX,
-            top: updatedY,
+            left,
+            top,
           });
 
-          // Also update animated values for smooth transitions
+          // Keep animated values in sync for your transforms
           animatedWidth.setValue(updatedWidth);
           animatedFloatingHeight.setValue(updatedHeight);
-          floatingPosition.setValue({ x: updatedX, y: updatedY });
+          floatingPosition.setValue({ x: left, y: top });
 
-          // Store current values in ref
+          // Cache
           currentDimensionsRef.current = {
             width: updatedWidth,
             height: updatedHeight,
-            left: updatedX,
-            top: updatedY,
+            left,
+            top,
           };
         },
+
         onPanResponderRelease: () => {
-          const finalDims = currentDimensionsRef.current;
           setIsResizing(false);
-          setDimensions(finalDims);
+          // currentDimensionsRef already holds the last values
+          setDimensions(currentDimensionsRef.current);
         },
+
         onPanResponderTerminate: () => {
           setIsResizing(false);
         },
@@ -914,10 +862,13 @@ const JsModalComponent: FC<JsModalProps> = ({
     [
       mode,
       containerBounds,
+      insets.left,
+      insets.right,
       insets.top,
+      insets.bottom,
+      floatingPosition,
       animatedWidth,
       animatedFloatingHeight,
-      floatingPosition,
     ]
   );
 
@@ -931,64 +882,62 @@ const JsModalComponent: FC<JsModalProps> = ({
   }, [createResizeHandler]);
 
   // ============================================================================
-  // OPTIMIZED PAN RESPONDER: Floating Mode Drag
-  // Using Animated.event for direct native updates
+  // Floating Mode Drag Handlers for DraggableHeader
   // ============================================================================
-  const floatingDragPanResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => mode === "floating",
-        onMoveShouldSetPanResponder: () => mode === "floating",
+  const handleFloatingDragStart = useCallback(() => {
+    setIsDragging(true);
+  }, []);
 
-        onPanResponderGrant: () => {
-          setIsDragging(true);
-          // Extract offset for smooth dragging
-          floatingPosition.extractOffset();
-        },
-
-        onPanResponderMove: (_evt, gestureState) => {
-          // Update animated values
-          floatingPosition.setValue({
-            x: gestureState.dx,
-            y: gestureState.dy,
-          });
-        },
-
-        onPanResponderRelease: () => {
-          setIsDragging(false);
-          floatingPosition.flattenOffset();
-
-          // Get current position and update dimensions
-          const currentX = (floatingPosition.x as any).__getValue();
-          const currentY = (floatingPosition.y as any).__getValue();
-          const currentDims = currentDimensionsRef.current;
-
-          const clampedX = Math.max(
-            0,
-            Math.min(currentX, containerBounds.width - currentDims.width)
-          );
-          const clampedY = Math.max(
-            insets.top,
-            Math.min(currentY, containerBounds.height - currentDims.height)
-          );
-
-          floatingPosition.setValue({ x: clampedX, y: clampedY });
-
-          const newDimensions = {
-            ...currentDims,
-            left: clampedX,
-            top: clampedY,
-          };
-          setDimensions(newDimensions);
-        },
-
-        onPanResponderTerminate: () => {
-          setIsDragging(false);
-          floatingPosition.flattenOffset();
-        },
-      }),
-    [mode, floatingPosition, containerBounds, insets.top]
+  const handleFloatingDragEnd = useCallback(
+    (finalPosition: { x: number; y: number }) => {
+      setIsDragging(false);
+      
+      // Update dimensions state to match final position
+      const currentDims = currentDimensionsRef.current;
+      const newDimensions = {
+        ...currentDims,
+        left: finalPosition.x,
+        top: finalPosition.y,
+      };
+      setDimensions(newDimensions);
+    },
+    []
   );
+
+  // Track taps for double/triple tap functionality
+  const lastTapRef = useRef<number>(0);
+  const tapCountRef = useRef<number>(0);
+  const tapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleFloatingTap = useCallback(() => {
+    const now = Date.now();
+    const timeSinceLastTap = now - lastTapRef.current;
+
+    // Reset tap count if more than 500ms since last tap
+    if (timeSinceLastTap > 500) {
+      tapCountRef.current = 0;
+    }
+
+    tapCountRef.current++;
+    lastTapRef.current = now;
+
+    // Clear existing timeout
+    if (tapTimeoutRef.current) {
+      clearTimeout(tapTimeoutRef.current);
+    }
+
+    // Set timeout to process the tap gesture
+    tapTimeoutRef.current = setTimeout(() => {
+      if (tapCountRef.current === 2) {
+        // Double tap - toggle mode
+        toggleMode();
+      } else if (tapCountRef.current >= 3) {
+        // Triple tap - close modal
+        onClose();
+      }
+      tapCountRef.current = 0;
+    }, 300);
+  }, [toggleMode, onClose]);
 
   // ============================================================================
   // RENDER: Modal UI with transform-based animations
@@ -1018,16 +967,25 @@ const JsModalComponent: FC<JsModalProps> = ({
           customStyles.container,
         ]}
       >
-        <View style={styles.floatingHeader}>
+        <DraggableHeader
+          position={floatingPosition}
+          onDragStart={handleFloatingDragStart}
+          onDragEnd={handleFloatingDragEnd}
+          onTap={handleFloatingTap}
+          containerBounds={containerBounds}
+          elementSize={dimensions}
+          minPosition={{ x: 0, y: insets.top }}
+          style={styles.floatingHeader}
+          enabled={mode === "floating" && !isResizing}
+        >
           <ModalHeader
             header={header}
             onClose={onClose}
             onToggleMode={toggleMode}
             isResizing={isDragging || isResizing}
             mode={mode}
-            panHandlers={floatingDragPanResponder.panHandlers}
           />
-        </View>
+        </DraggableHeader>
 
         <View style={[styles.content, customStyles.content]}>
           {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}
@@ -1051,6 +1009,7 @@ const JsModalComponent: FC<JsModalProps> = ({
         <View
           {...resizeHandlers.topLeft.panHandlers}
           style={[styles.cornerHandleWrapper, { top: 4, left: 4 }]}
+          hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}
         >
           <CornerHandle
             position="topLeft"
@@ -1060,6 +1019,7 @@ const JsModalComponent: FC<JsModalProps> = ({
         <View
           {...resizeHandlers.topRight.panHandlers}
           style={[styles.cornerHandleWrapper, { top: 4, right: 4 }]}
+          hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}
         >
           <CornerHandle
             position="topRight"
@@ -1069,6 +1029,7 @@ const JsModalComponent: FC<JsModalProps> = ({
         <View
           {...resizeHandlers.bottomLeft.panHandlers}
           style={[styles.cornerHandleWrapper, { bottom: 4, left: 4 }]}
+          hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}
         >
           <CornerHandle
             position="bottomLeft"
@@ -1078,6 +1039,7 @@ const JsModalComponent: FC<JsModalProps> = ({
         <View
           {...resizeHandlers.bottomRight.panHandlers}
           style={[styles.cornerHandleWrapper, { bottom: 4, right: 4 }]}
+          hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}
         >
           <CornerHandle
             position="bottomRight"
@@ -1109,15 +1071,14 @@ const JsModalComponent: FC<JsModalProps> = ({
             },
           ]}
         >
-          <View {...bottomSheetPanResponder.panHandlers}>
-            <ModalHeader
-              header={header}
-              onClose={onClose}
-              onToggleMode={toggleMode}
-              isResizing={isResizing}
-              mode={mode}
-            />
-          </View>
+          <ModalHeader
+            header={header}
+            onClose={onClose}
+            onToggleMode={toggleMode}
+            isResizing={isResizing}
+            mode={mode}
+            panHandlers={bottomSheetPanResponder.panHandlers}
+          />
 
           <View style={[styles.content, customStyles.content]}>
             {/* Always wrap in ScrollView with nestedScrollEnabled for FlatList compatibility */}

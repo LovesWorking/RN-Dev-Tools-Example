@@ -12,7 +12,6 @@ import {
 import {
   Animated,
   Dimensions,
-  PanResponder,
   View,
   Text,
   TouchableOpacity,
@@ -24,6 +23,8 @@ import {
   getSafeAreaInsets as getPureJSSafeAreaInsets,
 } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { DraggableHeader } from "@/rn-better-dev-tools/src/shared/ui/components/DraggableHeader";
+
 // Using Views to render grip dots; no react-native-svg dependency
 
 // =============================
@@ -199,7 +200,7 @@ function useFloatingToolsPosition({
         console.warn("[FloatingTools] Failed to save position:", error);
       }
     },
-    [enabled],
+    [enabled]
   );
 
   const debouncedSavePosition = useCallback(
@@ -207,7 +208,7 @@ function useFloatingToolsPosition({
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(() => savePosition(x, y), 500) as any;
     },
-    [savePosition],
+    [savePosition]
   );
 
   const loadPosition = useCallback(async (): Promise<{
@@ -240,7 +241,8 @@ function useFloatingToolsPosition({
       // Allow pushing off-screen to the right so only the grab handle remains visible
       const minX = safeArea.left; // Respect safe area left
       const maxX = screenWidth - visibleHandleWidth; // no right padding, ensure handle is visible
-      const minY = safeArea.top; // Respect safe area top
+      // Add small padding below the safe area top to ensure bubble doesn't go behind notch
+      const minY = safeArea.top + 20; // Ensure bubble is below safe area
       const maxY = screenHeight - bubbleHeight - safeArea.bottom; // Respect safe area bottom
       const clamped = {
         x: Math.max(minX, Math.min(position.x, maxX)),
@@ -248,7 +250,7 @@ function useFloatingToolsPosition({
       } as const;
       return clamped;
     },
-    [visibleHandleWidth, bubbleHeight],
+    [visibleHandleWidth, bubbleHeight]
   );
 
   useEffect(() => {
@@ -257,19 +259,42 @@ function useFloatingToolsPosition({
       const saved = await loadPosition();
       if (saved) {
         const validated = validatePosition(saved);
+        // Check if the saved position is out of bounds
+        const wasOutOfBounds =
+          Math.abs(saved.x - validated.x) > 5 ||
+          Math.abs(saved.y - validated.y) > 5;
+
+        if (wasOutOfBounds) {
+          // Save the corrected position
+          await savePosition(validated.x, validated.y);
+        }
+
         animatedPosition.setValue(validated);
       } else {
-        const { width: screenWidth } = Dimensions.get("window");
+        const { width: screenWidth, height: screenHeight } =
+          Dimensions.get("window");
         const safeArea = getSafeAreaInsets();
+        const defaultY = Math.max(
+          safeArea.top + 20,
+          Math.min(100, screenHeight - bubbleHeight - safeArea.bottom)
+        );
         animatedPosition.setValue({
           x: screenWidth - bubbleWidth - 20,
-          y: Math.max(100, safeArea.top + 20), // Ensure it's below safe area
+          y: defaultY, // Ensure it's within safe area bounds
         });
       }
       isInitialized.current = true;
     };
     restore();
-  }, [enabled, animatedPosition, loadPosition, validatePosition, bubbleWidth]);
+  }, [
+    enabled,
+    animatedPosition,
+    loadPosition,
+    validatePosition,
+    savePosition,
+    bubbleWidth,
+    bubbleHeight,
+  ]);
 
   useEffect(() => {
     if (!enabled || !isInitialized.current) return;
@@ -301,8 +326,6 @@ export function Divider() {
   };
   return <View style={dividerStyle} />;
 }
-
-// EnvironmentIndicator moved to features/env - import from there instead
 
 function getUserStatusConfig(userRole: UserRole) {
   switch (userRole) {
@@ -388,9 +411,7 @@ export function UserStatus({
 // =============================
 // Helpers
 // =============================
-function interleaveWithDividers(
-  childrenArray: ReactNode[],
-): ReactNode[] {
+function interleaveWithDividers(childrenArray: ReactNode[]): ReactNode[] {
   const result: ReactNode[] = [];
   childrenArray.forEach((child, index) => {
     if (child == null || child === false) return;
@@ -419,21 +440,18 @@ export function FloatingTools({
   const [bubbleSize, setBubbleSize] = useState({ width: 100, height: 32 });
   const [isHidden, setIsHidden] = useState(false);
 
-  // Track drag distance to differentiate between click and drag
-  const dragDistanceRef = useRef(0);
-  const isDragRef = useRef(false);
-
   // Store the position before hiding to restore when showing
   const savedPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   const safeAreaInsets = useFloatingToolsSafeArea();
+  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
   // Position persistence (state/IO extracted to hook)
   const { savePosition } = useFloatingToolsPosition({
     animatedPosition,
     bubbleWidth: bubbleSize.width,
     bubbleHeight: bubbleSize.height,
-    enabled: enablePositionPersistence,
+    enabled: enablePositionPersistence && !isDragging, // don't listen while dragging
     visibleHandleWidth: 32,
   });
 
@@ -443,7 +461,6 @@ export function FloatingTools({
 
     const checkHiddenState = () => {
       const currentX = (animatedPosition.x as any).__getValue();
-      const { width: screenWidth } = Dimensions.get("window");
       // Check if bubble is at the hidden position (showing only grabber)
       if (currentX >= screenWidth - 32 - 5) {
         setIsHidden(true);
@@ -452,29 +469,35 @@ export function FloatingTools({
     // Delay check to ensure position is loaded
     const timer = setTimeout(checkHiddenState, 100);
     return () => clearTimeout(timer);
-  }, [enablePositionPersistence, animatedPosition]);
+  }, [enablePositionPersistence, animatedPosition, screenWidth]);
 
   // Default position when persistence disabled
   useEffect(() => {
     if (!enablePositionPersistence) {
-      const { width: screenWidth } = Dimensions.get("window");
+      const defaultY = Math.max(
+        safeAreaInsets.top + 20,
+        Math.min(100, screenHeight - bubbleSize.height - safeAreaInsets.bottom)
+      );
       animatedPosition.setValue({
         x: screenWidth - bubbleSize.width - 20,
-        y: Math.max(100, safeAreaInsets.top + 20), // Ensure it's below safe area
+        y: defaultY,
       });
     }
   }, [
     enablePositionPersistence,
     animatedPosition,
     bubbleSize.width,
+    bubbleSize.height,
     safeAreaInsets.top,
+    safeAreaInsets.bottom,
+    screenWidth,
+    screenHeight,
   ]);
 
   // Toggle hide/show function
   const toggleHideShow = useCallback(() => {
     const currentX = (animatedPosition.x as any).__getValue();
     const currentY = (animatedPosition.y as any).__getValue();
-    const { width: screenWidth } = Dimensions.get("window");
 
     if (isHidden) {
       // Show the bubble - restore to saved position or default visible position
@@ -513,123 +536,55 @@ export function FloatingTools({
         savePosition(hiddenX, currentY);
       });
     }
-  }, [animatedPosition, isHidden, bubbleSize.width, savePosition]);
+  }, [animatedPosition, isHidden, bubbleSize.width, savePosition, screenWidth]);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onPanResponderGrant: () => {
-          // Reset drag tracking
-          dragDistanceRef.current = 0;
-          isDragRef.current = false;
+  const handleDragStart = useCallback(() => {
+    setIsDragging(true);
+  }, []);
 
-          setIsDragging(true);
-          animatedPosition.setOffset({
-            x: (animatedPosition.x as any).__getValue(),
-            y: (animatedPosition.y as any).__getValue(),
-          });
-          animatedPosition.setValue({ x: 0, y: 0 });
-        },
-        onPanResponderMove: (evt, gestureState) => {
-          // Track total drag distance
-          const totalDistance =
-            Math.abs(gestureState.dx) + Math.abs(gestureState.dy);
-          dragDistanceRef.current = totalDistance;
+  const handleDragEnd = useCallback(
+    (finalPosition: { x: number; y: number }) => {
+      let { x: currentX, y: currentY } = finalPosition;
 
-          // Mark as drag if moved more than 5 pixels
-          if (totalDistance > 5) {
-            isDragRef.current = true;
-          }
+      // Check if bubble is more than 50% over the right edge
+      const bubbleMidpoint = currentX + bubbleSize.width / 2;
+      const shouldHide = bubbleMidpoint > screenWidth;
 
-          // Update position
-          animatedPosition.setValue({ x: gestureState.dx, y: gestureState.dy });
-        },
-        onPanResponderRelease: () => {
-          setIsDragging(false);
-          animatedPosition.flattenOffset();
+      if (shouldHide) {
+        // Animate to hidden position (only grabber visible)
+        const hiddenX = screenWidth - 32; // Only show the 32px grabber
+        setIsHidden(true);
+        Animated.timing(animatedPosition, {
+          toValue: { x: hiddenX, y: currentY },
+          duration: 200,
+          useNativeDriver: false,
+        }).start(() => {
+          savePosition(hiddenX, currentY);
+        });
+      } else {
+        // Check if we're in hidden state and user is pulling it back
+        if (isHidden && currentX < screenWidth - 32 - 10) {
+          setIsHidden(false);
+        }
 
-          // Check if it was a click (minimal movement)
-          if (dragDistanceRef.current <= 5 && !isDragRef.current) {
-            // It's a click - toggle hide/show
-            toggleHideShow();
-            return;
-          }
-          let currentX = (animatedPosition.x as any).__getValue();
-          let currentY = (animatedPosition.y as any).__getValue();
-          const { width: screenWidth, height: screenHeight } =
-            Dimensions.get("window");
+        // Update saved position if bubble is in visible area (not hidden)
+        if (currentX < screenWidth - bubbleSize.width / 2) {
+          savedPositionRef.current = { x: currentX, y: currentY };
+        }
 
-          // Prevent dragging off left, top, and bottom edges with safe area
-          const minX = safeAreaInsets.left;
-          const minY = safeAreaInsets.top; // Respect safe area top
-          const maxY = screenHeight - bubbleSize.height - safeAreaInsets.bottom; // Respect safe area bottom
-
-          // Clamp Y position to prevent going off top/bottom
-          currentY = Math.max(minY, Math.min(currentY, maxY));
-
-          // Check if bubble is more than 50% over the right edge
-          const bubbleMidpoint = currentX + bubbleSize.width / 2;
-          const shouldHide = bubbleMidpoint > screenWidth;
-
-          if (shouldHide) {
-            // Animate to hidden position (only grabber visible)
-            const hiddenX = screenWidth - 32; // Only show the 32px grabber
-            setIsHidden(true);
-            Animated.timing(animatedPosition, {
-              toValue: { x: hiddenX, y: currentY },
-              duration: 200,
-              useNativeDriver: false,
-            }).start(() => {
-              savePosition(hiddenX, currentY);
-            });
-          } else {
-            // Clamp X position to prevent going off left edge
-            currentX = Math.max(minX, currentX);
-
-            // Check if we're in hidden state and user is pulling it back
-            if (isHidden && currentX < screenWidth - 32 - 10) {
-              setIsHidden(false);
-            }
-
-            // Update saved position if bubble is in visible area (not hidden)
-            if (currentX < screenWidth - bubbleSize.width / 2) {
-              savedPositionRef.current = { x: currentX, y: currentY };
-            }
-
-            // Animate to the clamped position if needed
-            if (
-              currentX !== (animatedPosition.x as any).__getValue() ||
-              currentY !== (animatedPosition.y as any).__getValue()
-            ) {
-              Animated.timing(animatedPosition, {
-                toValue: { x: currentX, y: currentY },
-                duration: 100,
-                useNativeDriver: false,
-              }).start(() => {
-                savePosition(currentX, currentY);
-              });
-            } else {
-              savePosition(currentX, currentY);
-            }
-          }
-        },
-        onPanResponderTerminate: () => {
-          setIsDragging(false);
-          animatedPosition.flattenOffset();
-        },
-      }),
+        savePosition(currentX, currentY);
+      }
+      setIsDragging(false);
+    },
     [
       animatedPosition,
-      savePosition,
       bubbleSize.width,
-      bubbleSize.height,
       isHidden,
-      safeAreaInsets,
-      toggleHideShow,
-      savedPositionRef,
-    ],
+      savePosition,
+      screenWidth,
+    ]
   );
+
 
   // Stable styles
   const bubbleStyle: Animated.WithAnimatedObject<ViewStyle> = useMemo(
@@ -638,7 +593,7 @@ export function FloatingTools({
       zIndex: 1001,
       transform: animatedPosition.getTranslateTransform(),
     }),
-    [animatedPosition],
+    [animatedPosition]
   );
 
   const containerStyle: ViewStyle = {
@@ -677,7 +632,7 @@ export function FloatingTools({
   // Compose actions row with automatic dividers
   const actions = useMemo(
     () => interleaveWithDividers(Children.toArray(children)),
-    [children],
+    [children]
   );
 
   return (
@@ -685,15 +640,27 @@ export function FloatingTools({
       <View
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         style={containerStyle}
-        {...panResponder.panHandlers}
         onLayout={(event) => {
           const { width, height } = event.nativeEvent.layout;
           setBubbleSize({ width, height });
         }}
       >
-        <View style={dragHandleStyle}>
+        <DraggableHeader
+          position={animatedPosition}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onTap={toggleHideShow}
+          containerBounds={{ width: screenWidth, height: screenHeight }}
+          elementSize={bubbleSize}
+          minPosition={{
+            x: safeAreaInsets.left,
+            y: safeAreaInsets.top + 20,
+          }}
+          style={dragHandleStyle}
+          enabled={true}
+        >
           <GripVerticalIcon size={12} color={gameUIColors.secondary + "CC"} />
-        </View>
+        </DraggableHeader>
         <FloatingToolsContext.Provider value={{ isDragging }}>
           <View style={contentStyle}>{actions}</View>
         </FloatingToolsContext.Provider>

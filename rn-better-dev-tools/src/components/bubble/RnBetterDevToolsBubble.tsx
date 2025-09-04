@@ -101,7 +101,7 @@ export function RnBetterDevToolsBubble({
         "[RnBetterDevToolsBubble] Default visibility props: " +
           propsProvided.join(", ") +
           ". " +
-          "Users can override these in settings.",
+          "Users can override these in settings."
       );
     }
   }, [

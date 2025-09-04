@@ -35,6 +35,7 @@ export {
 export { StatusIndicator } from "./StatusIndicator";
 export { TimeDisplay } from "./TimeDisplay";
 export { DetailView } from "./DetailView";
+export { DraggableHeader } from "./DraggableHeader";
 export { CollapsibleSection } from "./CollapsibleSection";
 export { DataInspector } from "./DataInspector";
 export { SearchBar } from "./SearchBar";
