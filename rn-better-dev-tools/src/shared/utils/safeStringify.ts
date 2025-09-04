@@ -25,6 +25,40 @@ interface SafeStringifyOptions {
 const CIRCULAR_REPLACE_NODE = "[Circular]";
 const LIMIT_REPLACE_NODE = "[...]";
 
+/**
+ * Safely stringifies objects with circular references and special JavaScript types
+ * 
+ * This function provides comprehensive JSON serialization that handles:
+ * - Circular references (replaced with "[Circular]")
+ * - Special JavaScript types (Date, RegExp, Error, Map, Set, etc.)
+ * - Non-serializable values (undefined, functions, symbols, BigInt)
+ * - Depth and edge limits to prevent infinite recursion
+ * - Restoration of original object structure after processing
+ * 
+ * @param obj - The object/value to stringify
+ * @param space - Number of spaces for pretty-printing (optional)
+ * @param options - Configuration options for limits
+ * @param options.depthLimit - Maximum depth to traverse (default: unlimited)
+ * @param options.edgesLimit - Maximum edges per object (default: unlimited)
+ * 
+ * @returns JSON string representation of the object
+ * 
+ * @example
+ * ```typescript
+ * const obj = { name: "test" };
+ * obj.self = obj; // circular reference
+ * 
+ * const result = safeStringify(obj, 2);
+ * // Returns: '{\n  "name": "test",\n  "self": "[Circular]"\n}'
+ * 
+ * // With limits
+ * const limited = safeStringify(deepObject, 2, { depthLimit: 5 });
+ * ```
+ * 
+ * @performance Uses pre-processing approach to handle circular references efficiently
+ * @performance Includes object restoration to maintain original structure integrity
+ * @performance Optimized for arrays and objects with separate handling paths
+ */
 export function safeStringify(
   obj: JsonValue,
   space?: number,

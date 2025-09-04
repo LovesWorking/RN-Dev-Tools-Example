@@ -7,13 +7,16 @@ import {
   TouchableOpacity,
   Text,
   Animated,
+  ViewStyle,
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
 interface CyberpunkInputProps extends TextInputProps {
   label?: string;
-  containerStyle?: any;
+  containerStyle?: ViewStyle;
   showNumberControls?: boolean;
   onIncrement?: () => void;
   onDecrement?: () => void;
@@ -206,14 +209,14 @@ export function CyberpunkInput({
     }
   }, [isFocused, borderGlow, glitchOpacity, glitchX, glitchY, glitchScale]);
 
-  const handleFocus = () => {
+  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(true);
-    props.onFocus?.({} as any);
+    props.onFocus?.(e);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(false);
-    props.onBlur?.({} as any);
+    props.onBlur?.(e);
   };
 
   const containerAnimatedStyle = {

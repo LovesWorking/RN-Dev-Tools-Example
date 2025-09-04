@@ -18,39 +18,43 @@ export function formatEventMessage(entry: ConsoleTransportEntry): string {
     metadata.category === "fetch" ||
     metadata.category === "http"
   ) {
-    const data = (metadata.data || {}) as Record<string, any>;
+    const data = (metadata.data || {}) as Record<string, unknown>;
     const method = metadata.method || data.method || "GET";
     const url = metadata.url || data.url || "";
     const status = metadata.status_code || data.status_code || metadata.status;
     const duration = metadata.duration || data.duration;
 
-    if (url) {
+    if (url && typeof url === 'string') {
       const urlParts = parseUrl(url);
       const path = urlParts?.pathname || url;
       const statusPart = status ? ` • ${status}` : "";
-      const durationPart = duration ? ` • ${formatDuration(duration)}` : "";
+      const durationPart = typeof duration === 'number' ? ` • ${formatDuration(duration)}` : "";
       return `${method} ${path}${statusPart}${durationPart}`;
     }
   }
 
   // Touch Events
-  const touchData = metadata.data as Record<string, any> | undefined;
+  const touchData = metadata.data as Record<string, unknown> | undefined;
   if (metadata.category === "touch" && touchData?.path) {
-    const component =
-      touchData.path[0]?.label || touchData.path[0]?.name || "Component";
+    const pathArray = Array.isArray(touchData.path) ? touchData.path : [];
+    const firstPathItem = pathArray[0] as Record<string, unknown> | undefined;
+    const component = firstPathItem ? 
+      (typeof firstPathItem.label === 'string' ? firstPathItem.label : 
+       typeof firstPathItem.name === 'string' ? firstPathItem.name : "Component") 
+      : "Component";
     const route = touchData.route || metadata.route;
     return `tap ${component}${route ? ` • ${route}` : ""}`;
   }
 
   // Navigation Events
   if (metadata.category === "navigation") {
-    const navData = (metadata.data || {}) as Record<string, any>;
+    const navData = (metadata.data || {}) as Record<string, unknown>;
     const from = navData.from || metadata.from;
     const to = navData.to || metadata.to;
     const duration = metadata.duration || navData.duration;
 
     if (from && to) {
-      const durationPart = duration ? ` • ${formatDuration(duration)}` : "";
+      const durationPart = typeof duration === 'number' ? ` • ${formatDuration(duration)}` : "";
       return `${from} → ${to}${durationPart}`;
     } else if (to) {
       return `Navigate to ${to}`;
@@ -131,11 +135,11 @@ export function extractTouchEventDetails(
 ): TouchEventDetails | null {
   if (entry.metadata.category !== "touch") return null;
 
-  const data = (entry.metadata.data || {}) as Record<string, any>;
+  const data = (entry.metadata.data || {}) as Record<string, unknown>;
 
   return {
-    componentPath: data.path || [],
-    route: data.route,
+    componentPath: Array.isArray(data.path) ? data.path as { name: string; label?: string; file?: string }[] : [],
+    route: typeof data.route === 'string' ? data.route : undefined,
     timestamp: entry.timestamp,
     customizable: {
       labelName: true,
@@ -217,16 +221,21 @@ export function extractNavigationEventDetails(
     return null;
   }
 
-  const data = (entry.metadata.data || entry.metadata) as Record<string, any>;
+  const data = (entry.metadata.data || entry.metadata) as Record<string, unknown>;
 
   return {
-    from: data.from || data["previous_route.name"],
-    to: data.to || data["route.name"] || data.routeName || "Unknown",
-    duration: data.duration,
-    routeKey: data["route.key"] || data.routeKey,
-    hasBeenSeen: data["route.has_been_seen"],
-    actionType: data.actionType,
-    ttid: data.ttid || data.time_to_initial_display,
+    from: typeof data.from === 'string' ? data.from : 
+      typeof data["previous_route.name"] === 'string' ? data["previous_route.name"] : undefined,
+    to: typeof data.to === 'string' ? data.to : 
+      typeof data["route.name"] === 'string' ? data["route.name"] :
+      typeof data.routeName === 'string' ? data.routeName : "Unknown",
+    duration: typeof data.duration === 'number' ? data.duration : undefined,
+    routeKey: typeof data["route.key"] === 'string' ? data["route.key"] :
+      typeof data.routeKey === 'string' ? data.routeKey : undefined,
+    hasBeenSeen: typeof data["route.has_been_seen"] === 'boolean' ? data["route.has_been_seen"] : undefined,
+    actionType: typeof data.actionType === 'string' ? data.actionType : undefined,
+    ttid: typeof data.ttid === 'number' ? data.ttid : 
+      typeof data.time_to_initial_display === 'number' ? data.time_to_initial_display : undefined,
     customizable: {
       routeNames: true,
       ignorePatterns: true,
@@ -268,19 +277,26 @@ export function extractErrorEventDetails(
   const rawData = metadata._sentryRawData as SentryEvent | undefined;
 
   // Try to extract from exception data
-  const exception = (rawData as any)?.exception?.values?.[0];
+  const exception = (rawData as { exception?: { values?: unknown[] } })?.exception?.values?.[0] as { type?: string; value?: string; stacktrace?: { frames?: unknown[] }; mechanism?: { type?: string; handled?: boolean } } | undefined;
 
   return {
-    type: metadata.errorType || exception?.type || metadata.name || "Error",
-    message: metadata.errorMessage || exception?.value || entry.message,
-    stackTrace:
-      metadata.stackTrace ||
+    type: typeof metadata.errorType === 'string' ? metadata.errorType : 
+      typeof exception?.type === 'string' ? exception.type : 
+      typeof metadata.name === 'string' ? metadata.name : "Error",
+    message: typeof metadata.errorMessage === 'string' ? metadata.errorMessage : 
+      typeof exception?.value === 'string' ? exception.value : 
+      typeof entry.message === 'string' ? entry.message : "",
+    stackTrace: typeof metadata.stackTrace === 'string' ? metadata.stackTrace :
       exception?.stacktrace?.frames
-        ?.map(
-          (f: any) =>
-            `  at ${f.function || "anonymous"} (${f.filename}:${f.lineno}:${f.colno})`,
-        )
-        .join("\n"),
+        ? exception.stacktrace.frames
+            .map(
+              (f: unknown) => {
+                const frame = f as { function?: string; filename?: string; lineno?: number; colno?: number };
+                return `  at ${frame.function || "anonymous"} (${frame.filename}:${frame.lineno}:${frame.colno})`;
+              }
+            )
+            .join("\n")
+        : undefined,
     fileName: (metadata.fileName || metadata.file) as string | undefined,
     lineNumber: (metadata.lineNumber || metadata.line) as number | undefined,
     columnNumber: (metadata.columnNumber || metadata.column) as
@@ -351,7 +367,7 @@ export function extractPerformanceEventDetails(
     appStart = {
       type: op.includes("cold") ? "cold" : "warm",
       duration: Number(metadata.duration) || 0,
-      breakdown: rawData?.measurements,
+      breakdown: rawData?.measurements as Record<string, number> | undefined,
     };
   }
 
@@ -362,10 +378,10 @@ export function extractPerformanceEventDetails(
         rawData?.transaction) as string) || "Transaction",
     operation: String(op),
     duration: metadata.duration as number | undefined,
-    status: (metadata.status || (rawData?.contexts?.trace as any)?.status) as
+    status: (metadata.status || (rawData?.contexts?.trace as { status?: unknown })?.status) as
       | string
       | undefined,
-    measurements: rawData?.measurements,
+    measurements: rawData?.measurements as Record<string, { value: number; unit: string }> | undefined,
     spans: rawData?.spans?.map((span) => ({
       op: span.op || "",
       description: span.description || "",
@@ -416,26 +432,30 @@ export function extractDeviceContext(
   if (!rawData?.contexts) return null;
 
   const contexts = rawData.contexts;
+  const app = contexts.app as Record<string, unknown> | undefined;
+  const device = contexts.device as Record<string, unknown> | undefined;
+  const os = contexts.os as Record<string, unknown> | undefined;
+  const runtime = contexts.runtime as Record<string, unknown> | undefined;
 
   return {
     app: {
-      name: contexts.app?.app_name,
-      version: contexts.app?.app_version,
-      build: contexts.app?.app_build,
-      inForeground: contexts.app?.in_foreground,
+      name: typeof app?.app_name === 'string' ? app.app_name : undefined,
+      version: typeof app?.app_version === 'string' ? app.app_version : undefined,
+      build: typeof app?.app_build === 'string' ? app.app_build : undefined,
+      inForeground: typeof app?.in_foreground === 'boolean' ? app.in_foreground : undefined,
     },
     device: {
-      model: contexts.device?.model,
-      manufacturer: contexts.device?.manufacturer,
-      os: contexts.os?.name,
-      osVersion: contexts.os?.version,
-      isEmulator: contexts.device?.simulator,
-      memory: contexts.device?.memory_size,
+      model: typeof device?.model === 'string' ? device.model : undefined,
+      manufacturer: typeof device?.manufacturer === 'string' ? device.manufacturer : undefined,
+      os: typeof os?.name === 'string' ? os.name : undefined,
+      osVersion: typeof os?.version === 'string' ? os.version : undefined,
+      isEmulator: typeof device?.simulator === 'boolean' ? device.simulator : undefined,
+      memory: typeof device?.memory_size === 'number' ? device.memory_size : undefined,
     },
     runtime: {
-      name: contexts.runtime?.name,
-      version: contexts.runtime?.version,
-      engine: contexts.runtime?.engine,
+      name: typeof runtime?.name === 'string' ? runtime.name : undefined,
+      version: typeof runtime?.version === 'string' ? runtime.version : undefined,
+      engine: typeof runtime?.engine === 'string' ? runtime.engine : undefined,
     },
     customizable: false,
   };

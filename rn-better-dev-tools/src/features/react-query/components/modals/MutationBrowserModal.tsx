@@ -1,5 +1,5 @@
 import { Mutation } from "@tanstack/react-query";
-import { useCallback, useState , useRef } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { MutationBrowserMode } from "../MutationBrowserMode";
 import { MutationBrowserFooter } from "./MutationBrowserFooter";
@@ -11,7 +11,6 @@ import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { View, Animated, PanResponder } from "react-native";
 import { SwipeIndicator } from "./SwipeIndicator";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 interface MutationBrowserModalProps {
   visible: boolean;
@@ -35,7 +34,6 @@ export function MutationBrowserModal({
   enableSharedModalDimensions = false,
 }: MutationBrowserModalProps) {
   const selectedMutation = useGetMutationById(selectedMutationId);
-  const theme = useTheme();
   const [internalActiveFilter, setInternalActiveFilter] = useState<
     string | null
   >(null);
@@ -58,7 +56,7 @@ export function MutationBrowserModal({
         onTabChange("queries");
       }
     },
-    [onTabChange],
+    [onTabChange]
   );
 
   const handleModeChange = useCallback((mode: ModalMode) => {
@@ -106,7 +104,7 @@ export function MutationBrowserModal({
           useNativeDriver: true,
         }).start();
       },
-    }),
+    })
   ).current;
 
   if (!visible) return null;
@@ -141,7 +139,7 @@ export function MutationBrowserModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
       footer={footerNode}
       footerHeight={56}

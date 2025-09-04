@@ -16,7 +16,7 @@ import {
 } from "../utils/AsyncStorageListener";
 
 // AsyncStorage will be loaded lazily
-let AsyncStorageModule: any = null;
+let AsyncStorageModule: unknown = null;
 let asyncStorageLoadPromise: Promise<void> | null = null;
 
 const loadAsyncStorage = async () => {
@@ -26,7 +26,7 @@ const loadAsyncStorage = async () => {
     try {
       const module = await import("@react-native-async-storage/async-storage");
       AsyncStorageModule = module.default;
-      console.log("[StorageEventListener] AsyncStorage module loaded");
+      // AsyncStorage module loaded successfully
     } catch (error) {
       console.warn("[StorageEventListener] AsyncStorage not found", error);
     }
@@ -45,15 +45,13 @@ export function StorageEventListener() {
   const [isAsyncStorageAvailable, setIsAsyncStorageAvailable] = useState(false);
 
   useEffect(() => {
-    console.log(
-      "[StorageEventListener] Component mounted, checking AsyncStorage availability",
-    );
+    // Component mounted, checking AsyncStorage availability
 
     // Load AsyncStorage module
     loadAsyncStorage().then(() => {
       if (AsyncStorageModule) {
         setIsAsyncStorageAvailable(true);
-        console.log("[StorageEventListener] AsyncStorage is available");
+        // AsyncStorage is available
       } else {
         console.warn("[StorageEventListener] AsyncStorage not available");
       }
@@ -61,16 +59,10 @@ export function StorageEventListener() {
 
     // Add listener for AsyncStorage events
     const unsubscribe = addListener((event: AsyncStorageEvent) => {
-      console.log(
-        "[StorageEventListener] Received event:",
-        event.action,
-        event.data,
-      );
+      // Received storage event
       setEvents((prev) => {
         const newEvents = [event, ...prev.slice(0, 99)]; // Keep last 100 events
-        console.log(
-          `[StorageEventListener] Total events in state: ${newEvents.length}`,
-        );
+        // Updated events state
         return newEvents;
       });
     });
@@ -78,15 +70,13 @@ export function StorageEventListener() {
     // Check initial listening state
     const initialState = checkIsListening();
     setIsListening(initialState);
-    console.log(
-      `[StorageEventListener] Initial listening state: ${initialState}`,
-    );
+    // Set initial listening state
 
     return () => {
-      console.log("[StorageEventListener] Component unmounting, cleaning up");
+      // Component unmounting, cleaning up
       // Make sure to stop listening when component unmounts
       if (checkIsListening()) {
-        console.log("[StorageEventListener] Stopping listener on unmount");
+        // Stopping listener on unmount
         stopListening();
       }
       unsubscribe();
@@ -100,18 +90,18 @@ export function StorageEventListener() {
     }
 
     if (isListening) {
-      console.log("[StorageEventListener] Stopping listener");
+      // Stopping listener
       stopListening();
       setIsListening(false);
     } else {
-      console.log("[StorageEventListener] Starting listener");
+      // Starting listener
       await startListening();
       setIsListening(true);
     }
   }, [isListening, isAsyncStorageAvailable]);
 
   const handleClearEvents = useCallback(() => {
-    console.log("[StorageEventListener] Clearing all events");
+    // Clearing all events
     setEvents([]);
   }, []);
 

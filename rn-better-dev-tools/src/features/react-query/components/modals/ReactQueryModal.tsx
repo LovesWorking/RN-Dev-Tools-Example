@@ -1,6 +1,4 @@
 import { Mutation, QueryKey, Query } from "@tanstack/react-query";
-import { useGetMutationById } from "../../hooks/useSelectedMutation";
-import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { QueryBrowserModal } from "./QueryBrowserModal";
 import { DataEditorModal } from "./DataEditorModal";
 import { MutationBrowserModal } from "./MutationBrowserModal";

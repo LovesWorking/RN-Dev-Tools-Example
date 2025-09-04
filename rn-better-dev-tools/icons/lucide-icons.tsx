@@ -1,5 +1,5 @@
 import { ComponentType } from "react";
-import { View } from "react-native";
+import { View, ViewStyle, ViewProps } from "react-native";
 // Import all complex icons from original that don't have optimized versions
 import * as OriginalIcons from "./lucide-icons-original-full";
 
@@ -7,11 +7,19 @@ interface IconProps {
   size?: number;
   color?: string;
   strokeWidth?: number;
-  style?: any;
+  style?: ViewStyle;
+}
+
+interface SvgProps extends Omit<ViewProps, 'style'> {
+  width: number;
+  height: number;
+  viewBox: string;
+  children: React.ReactNode;
+  style?: ViewStyle;
 }
 
 // Optimized helper components
-const Svg = ({ width, height, viewBox, children, style, ...props }: any) => {
+const Svg = ({ width, height, viewBox, children, style, ...props }: SvgProps) => {
   const [, , vbWidth, vbHeight] = viewBox.split(" ").map(Number);
   const scaleX = width / vbWidth;
   const scaleY = height / vbHeight;
@@ -38,7 +46,16 @@ const Svg = ({ width, height, viewBox, children, style, ...props }: any) => {
   );
 };
 
-const Line = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }: any) => {
+interface LineProps {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  stroke: string;
+  strokeWidth?: number;
+}
+
+const Line = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }: LineProps) => {
   const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
   return (
@@ -57,7 +74,16 @@ const Line = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }: any) => {
   );
 };
 
-const Circle = ({ cx, cy, r, fill, stroke, strokeWidth = 2 }: any) => (
+interface CircleProps {
+  cx: number;
+  cy: number;
+  r: number;
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+}
+
+const Circle = ({ cx, cy, r, fill, stroke, strokeWidth = 2 }: CircleProps) => (
   <View
     style={{
       position: "absolute",
@@ -73,6 +99,18 @@ const Circle = ({ cx, cy, r, fill, stroke, strokeWidth = 2 }: any) => (
   />
 );
 
+interface RectProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+  rx?: number;
+  ry?: number;
+}
+
 const Rect = ({
   x,
   y,
@@ -82,7 +120,8 @@ const Rect = ({
   stroke,
   strokeWidth = 2,
   rx = 0,
-}: any) => (
+  ry,
+}: RectProps) => (
   <View
     style={{
       position: "absolute",
@@ -90,7 +129,7 @@ const Rect = ({
       top: y,
       width,
       height,
-      borderRadius: rx,
+      borderRadius: ry !== undefined ? Math.max(rx, ry) : rx,
       backgroundColor: fill || "transparent",
       borderColor: stroke,
       borderWidth: stroke ? strokeWidth : 0,

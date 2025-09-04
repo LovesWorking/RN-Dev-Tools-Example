@@ -30,6 +30,8 @@ import {
   Animated,
   ScrollView,
   Text,
+  ViewStyle,
+  GestureResponderHandlers,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
@@ -62,9 +64,21 @@ interface PersistedModalState {
   isVisible?: boolean;
 }
 
+/**
+ * Utility class for persisting modal state to AsyncStorage
+ * 
+ * Handles saving and loading modal state including mode, dimensions,
+ * and position with memory caching for performance.
+ */
 class ModalStorage {
   private static memoryCache: Record<string, PersistedModalState> = {};
 
+  /**
+   * Save modal state to AsyncStorage with memory caching
+   * 
+   * @param key - Storage key for the modal state
+   * @param value - Modal state to persist
+   */
   static async save(key: string, value: PersistedModalState): Promise<void> {
     try {
       this.memoryCache[key] = value;
@@ -74,6 +88,12 @@ class ModalStorage {
     }
   }
 
+  /**
+   * Load modal state from AsyncStorage with memory cache fallback
+   * 
+   * @param key - Storage key for the modal state
+   * @returns Persisted modal state or null if not found
+   */
   static async load(key: string): Promise<PersistedModalState | null> {
     try {
       // Try memory cache first
@@ -109,8 +129,8 @@ interface HeaderConfig {
 }
 
 interface CustomStyles {
-  container?: any;
-  content?: any;
+  container?: ViewStyle;
+  content?: ViewStyle;
 }
 
 interface JsModalProps {
@@ -203,7 +223,7 @@ interface ModalHeaderProps {
   onToggleMode: () => void;
   isResizing: boolean;
   mode: ModalMode;
-  panHandlers?: any;
+  panHandlers?: GestureResponderHandlers;
 }
 
 const ModalHeader = memo(function ModalHeader({
@@ -279,7 +299,7 @@ const ModalHeader = memo(function ModalHeader({
         panHandlers: headerProps,
         showToggleButton: header?.showToggleButton !== false,
         hideCloseButton: header?.hideCloseButton,
-      });
+      } as any);
     }
 
     // Otherwise, render custom content within the standard header structure
@@ -346,6 +366,44 @@ const ModalHeader = memo(function ModalHeader({
 // ============================================================================
 // MAIN COMPONENT - Optimized for 60FPS with transforms and interpolation
 // ============================================================================
+/**
+ * JsModal - Ultra-optimized modal component for true 60FPS performance
+ * 
+ * This modal component is designed for maximum performance using native driver
+ * animations, transforms instead of layout properties, and minimal JavaScript
+ * thread work. It supports two modes: bottom sheet and floating window.
+ * 
+ * Key Performance Features:
+ * - Uses native driver for all animations (useNativeDriver: true)
+ * - Transform-based positioning instead of layout changes
+ * - Interpolation for all calculations on the native thread
+ * - Minimal PanResponder JavaScript work
+ * - State persistence with AsyncStorage
+ * - Drag and resize functionality in both modes
+ * 
+ * @param props - Modal configuration and content
+ * @returns JSX.Element representing the modal
+ * 
+ * @example
+ * ```typescript
+ * <JsModal
+ *   visible={isVisible}
+ *   onClose={() => setVisible(false)}
+ *   header={{
+ *     title: "Settings",
+ *     subtitle: "Configure your preferences"
+ *   }}
+ *   persistenceKey="settings-modal"
+ *   enablePersistence={true}
+ * >
+ *   <SettingsContent />
+ * </JsModal>
+ * ```
+ * 
+ * @performance All animations use native driver for 60FPS performance
+ * @performance Uses transform-based positioning for optimal rendering
+ * @performance Includes state persistence and restoration capabilities
+ */
 const JsModalComponent: FC<JsModalProps> = ({
   visible,
   onClose,
@@ -399,6 +457,68 @@ const JsModalComponent: FC<JsModalProps> = ({
     new Animated.Value(initialHeight)
   ).current;
 
+
+  // Save state with debounce
+  useEffect(() => {
+    if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
+
+    const timeoutId = setTimeout(() => {
+      ModalStorage.save(persistenceKey, {
+        mode,
+        panelHeight: currentHeightRef.current,
+        dimensions,
+        isVisible: visible,
+      });
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    mode,
+    panelHeight,
+    dimensions,
+    visible,
+    persistenceKey,
+    enablePersistence,
+    isStateLoaded,
+  ]);
+
+  // Sync with external height if provided
+  useEffect(() => {
+    // Height sync effect
+    if (externalAnimatedHeight && !isResizing) {
+      currentHeightRef.current = initialHeight;
+      externalAnimatedHeight.setValue(initialHeight);
+      // Set external height
+    }
+  }, [externalAnimatedHeight, initialHeight, isResizing]);
+
+
+  // Update refs when dimensions change
+  useEffect(() => {
+    currentDimensionsRef.current = dimensions;
+  }, [dimensions]);
+
+  // Floating mode animations - use initialFloatingPosition if provided
+  const floatingPosition = useRef(
+    new Animated.ValueXY({
+      x: initialFloatingPosition?.x ?? (SCREEN.width - FLOATING_WIDTH) / 2,
+      y: initialFloatingPosition?.y ?? (SCREEN.height - FLOATING_HEIGHT) / 2,
+    })
+  ).current;
+  const floatingScale = useRef(new Animated.Value(0)).current;
+  const animatedWidth = useRef(new Animated.Value(FLOATING_WIDTH)).current;
+  const animatedFloatingHeight = useRef(
+    new Animated.Value(FLOATING_HEIGHT)
+  ).current;
+
+  // Refs for resize handles
+  const currentDimensionsRef = useRef(dimensions);
+  const startDimensionsRef = useRef(dimensions);
+  const offsetX = useRef(0);
+  const offsetY = useRef(0);
+  const sHeight = useRef(0);
+  const sWidth = useRef(0);
+
   // Load persisted state on mount
   useEffect(() => {
     if (!enablePersistence || !persistenceKey) {
@@ -442,41 +562,15 @@ const JsModalComponent: FC<JsModalProps> = ({
     return () => {
       mounted = false;
     };
-  }, [persistenceKey, enablePersistence]);
-
-  // Save state with debounce
-  useEffect(() => {
-    if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
-
-    const timeoutId = setTimeout(() => {
-      ModalStorage.save(persistenceKey, {
-        mode,
-        panelHeight: currentHeightRef.current,
-        dimensions,
-        isVisible: visible,
-      });
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
   }, [
-    mode,
-    panelHeight,
-    dimensions,
-    visible,
     persistenceKey,
     enablePersistence,
-    isStateLoaded,
+    onModeChange,
+    animatedBottomPosition,
+    animatedFloatingHeight,
+    animatedWidth,
+    floatingPosition,
   ]);
-
-  // Sync with external height if provided
-  useEffect(() => {
-    // Height sync effect
-    if (externalAnimatedHeight && !isResizing) {
-      currentHeightRef.current = initialHeight;
-      externalAnimatedHeight.setValue(initialHeight);
-      // Set external height
-    }
-  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -500,33 +594,8 @@ const JsModalComponent: FC<JsModalProps> = ({
       animatedBottomPosition.setValue(initialHeight);
       currentHeightRef.current = initialHeight;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- All animated values are stable useRef().current
   }, []);
-
-  // Update refs when dimensions change
-  useEffect(() => {
-    currentDimensionsRef.current = dimensions;
-  }, [dimensions]);
-
-  // Floating mode animations - use initialFloatingPosition if provided
-  const floatingPosition = useRef(
-    new Animated.ValueXY({
-      x: initialFloatingPosition?.x ?? (SCREEN.width - FLOATING_WIDTH) / 2,
-      y: initialFloatingPosition?.y ?? (SCREEN.height - FLOATING_HEIGHT) / 2,
-    })
-  ).current;
-  const floatingScale = useRef(new Animated.Value(0)).current;
-  const animatedWidth = useRef(new Animated.Value(FLOATING_WIDTH)).current;
-  const animatedFloatingHeight = useRef(
-    new Animated.Value(FLOATING_HEIGHT)
-  ).current;
-
-  // Refs for resize handles
-  const currentDimensionsRef = useRef(dimensions);
-  const startDimensionsRef = useRef(dimensions);
-  const offsetX = useRef(0);
-  const offsetY = useRef(0);
-  const sHeight = useRef(0);
-  const sWidth = useRef(0);
 
   // ============================================================================
   // INTERPOLATIONS - All math done natively!
@@ -543,12 +612,16 @@ const JsModalComponent: FC<JsModalProps> = ({
   // REFS for values we need to track
   // ============================================================================
   const currentHeightRef = useRef(initialHeight);
-  const initialPositionRef = useRef(initialHeight);
-  const startPositionRef = useRef(initialHeight);
   const isExternallyControlled = !!externalAnimatedHeight;
   const effectiveMaxHeight = maxHeight || SCREEN.height - insets.top;
 
   // Mode toggle handler
+  /**
+   * Toggle between bottom sheet and floating modal modes
+   * 
+   * Clears active dragging and resizing states to prevent visual artifacts
+   * when switching between modes with different interaction patterns.
+   */
   const toggleMode = useCallback(() => {
     // Avoid carrying active styling across modes
     setIsDragging(false);
@@ -758,6 +831,19 @@ const JsModalComponent: FC<JsModalProps> = ({
   // ============================================================================
   // CREATE RESIZE HANDLER: For 4-corner resize in floating mode (fixed geometry)
   // ============================================================================
+  /**
+   * Create a PanResponder for handling corner-based resizing in floating mode
+   * 
+   * This function generates resize handlers for each corner that allow users to
+   * resize the floating modal by dragging from any corner. It includes boundary
+   * checking and minimum size constraints.
+   * 
+   * @param corner - Which corner this handler is for
+   * @returns PanResponder configured for that corner's resize behavior
+   * 
+   * @performance Uses direct animated value updates for smooth resizing
+   * @performance Includes safe area boundary checking for all corners
+   */
   const createResizeHandler = useCallback(
     (corner: "topLeft" | "topRight" | "bottomLeft" | "bottomRight") => {
       return PanResponder.create({
@@ -767,7 +853,7 @@ const JsModalComponent: FC<JsModalProps> = ({
           const currentDims = currentDimensionsRef.current;
 
           // If any animation is in-flight, stop and capture final XY to keep math consistent
-          floatingPosition.stopAnimation(({ x, y }: any) => {
+          floatingPosition.stopAnimation(({ x, y }: { x: number; y: number }) => {
             floatingPosition.setValue({ x, y });
           });
 
@@ -948,6 +1034,15 @@ const JsModalComponent: FC<JsModalProps> = ({
       tapCountRef.current = 0;
     }, 300);
   }, [toggleMode, onClose]);
+
+  // Clean up timeout on unmount for main component tap handler
+  useEffect(() => {
+    return () => {
+      if (tapTimeoutRef.current) {
+        clearTimeout(tapTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // ============================================================================
   // RENDER: Modal UI with transform-based animations

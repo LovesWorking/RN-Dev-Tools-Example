@@ -278,15 +278,15 @@ const extractAllHttpRequests = (
       ) {
         const data = breadcrumb.data || {};
         const httpInfo: HttpRequestInfo = {
-          method: data.method || "GET",
-          url: data.url || "",
-          statusCode: data.status_code,
-          duration: data.duration,
-          requestSize: data.request_body_size,
-          responseSize: data.response_body_size,
-          error: (data.status_code || 0) >= 400,
+          method: typeof data.method === 'string' ? data.method : "GET",
+          url: typeof data.url === 'string' ? data.url : "",
+          statusCode: typeof data.status_code === 'number' ? data.status_code : undefined,
+          duration: typeof data.duration === 'number' ? data.duration : undefined,
+          requestSize: typeof data.request_body_size === 'number' ? data.request_body_size : undefined,
+          responseSize: typeof data.response_body_size === 'number' ? data.response_body_size : undefined,
+          error: typeof data.status_code === 'number' && data.status_code >= 400,
           errorMessage:
-            (data.status_code || 0) >= 400 ? breadcrumb.message : undefined,
+            (typeof data.status_code === 'number' && data.status_code >= 400) ? breadcrumb.message : undefined,
           timestamp: breadcrumb.timestamp
             ? breadcrumb.timestamp * 1000
             : entry.timestamp,

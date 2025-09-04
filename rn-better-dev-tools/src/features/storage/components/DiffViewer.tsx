@@ -9,6 +9,11 @@ import {
   ChevronRight,
 } from "rn-better-dev-tools/icons";
 import { objectDiff, type DiffItem } from "../utils/objectDiff";
+import {
+  formatValue,
+  getTypeColor,
+  formatPath,
+} from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface DiffViewerProps {
   oldValue: unknown;
@@ -18,8 +23,8 @@ interface DiffViewerProps {
 interface FlattenedDiff {
   path: string;
   type: "CREATE" | "REMOVE" | "CHANGE";
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
 }
 
 export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
@@ -59,21 +64,8 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
 
     // Convert to flattened format with readable paths
     const flatDiffs: FlattenedDiff[] = differences.map((diff) => {
-      const pathString =
-        diff.path.length === 0
-          ? "root"
-          : diff.path
-              .map((segment, index) => {
-                if (typeof segment === "number") {
-                  return `[${segment}]`;
-                }
-                // First segment doesn't need a dot
-                return index === 0 ? segment : `.${segment}`;
-              })
-              .join("");
-
       return {
-        path: pathString,
+        path: formatPath(diff.path),
         type: diff.type,
         oldValue: diff.oldValue,
         newValue: diff.value,
@@ -111,41 +103,6 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
         return gameUIColors.warning;
       default:
         return gameUIColors.muted;
-    }
-  };
-
-  const formatValue = (value: any): string => {
-    if (value === null) return "null";
-    if (value === undefined) return "undefined";
-    if (typeof value === "string") return `"${value}"`;
-    if (typeof value === "boolean") return value ? "true" : "false";
-    if (typeof value === "number") return String(value);
-    if (typeof value === "object") {
-      if (Array.isArray(value)) {
-        return `[Array: ${value.length} items]`;
-      }
-      return `{Object: ${Object.keys(value).length} keys}`;
-    }
-    return String(value);
-  };
-
-  const getTypeColor = (value: any): string => {
-    if (value === null) return gameUIColors.dataTypes.null;
-    if (value === undefined) return gameUIColors.dataTypes.undefined;
-    const type = typeof value;
-    switch (type) {
-      case "string":
-        return gameUIColors.dataTypes.string;
-      case "number":
-        return gameUIColors.dataTypes.number;
-      case "boolean":
-        return gameUIColors.dataTypes.boolean;
-      case "object":
-        return Array.isArray(value)
-          ? gameUIColors.dataTypes.array
-          : gameUIColors.dataTypes.object;
-      default:
-        return gameUIColors.primary;
     }
   };
 

@@ -23,7 +23,7 @@ interface DraggableHeaderProps {
 
 /**
  * DraggableHeader - Reusable draggable component based on JsModal's working implementation
- * 
+ *
  * This component provides smooth drag functionality with proper boundary checking.
  * It uses the same proven pattern from JsModal that works reliably.
  */
@@ -47,20 +47,21 @@ export const DraggableHeader = memo(function DraggableHeader({
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () => enabled,
-        onMoveShouldSetPanResponder: (_, g) => enabled && (Math.abs(g.dx) > 1 || Math.abs(g.dy) > 1),
+        onMoveShouldSetPanResponder: (_, g) =>
+          enabled && (Math.abs(g.dx) > 1 || Math.abs(g.dy) > 1),
         onPanResponderTerminationRequest: () => false, // Resist touch steal
 
         onPanResponderGrant: (evt) => {
           isDraggingRef.current = false; // Start as not dragging
           dragDistanceRef.current = 0;
           onDragStart?.();
-          
+
           // Record where inside the bubble the user touched
           touchOffsetRef.current = {
             x: evt.nativeEvent.locationX,
             y: evt.nativeEvent.locationY,
           };
-          
+
           // Stop any running timing/spring and capture final XY
           position.stopAnimation(({ x, y }) => {
             // Use that exact final value as the new offset for the gesture
@@ -97,8 +98,8 @@ export const DraggableHeader = memo(function DraggableHeader({
           }
 
           // Get current position (no need to flattenOffset since we're using absolute positioning)
-          const currentX = (position.x as any).__getValue();
-          const currentY = (position.y as any).__getValue();
+          const currentX = Number(JSON.stringify(position.x));
+          const currentY = Number(JSON.stringify(position.y));
 
           // Apply boundary constraints
           const clampedX = Math.max(

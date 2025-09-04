@@ -1,6 +1,8 @@
+import type { DevToolsSettings } from './DevToolsSettingsModal';
+
 type Listener<T> = (payload: T) => void;
 
-class SimpleEventBus<T = any> {
+class SimpleEventBus<T = DevToolsSettings> {
   private listeners: Set<Listener<T>> = new Set();
 
   emit(payload: T) {
@@ -19,4 +21,4 @@ class SimpleEventBus<T = any> {
   }
 }
 
-export const settingsBus = new SimpleEventBus<any>();
+export const settingsBus = new SimpleEventBus<DevToolsSettings>();

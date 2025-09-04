@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
 import { LucideIcon } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";
@@ -13,7 +15,7 @@ import { CopyButton } from "./CopyButton";
 
 interface DetailViewProps {
   children: ReactNode;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function DetailView({ children, style }: DetailViewProps) {
@@ -50,7 +52,7 @@ interface SectionProps {
   children: ReactNode;
   defaultOpen?: boolean;
   collapsible?: boolean;
-  style?: any;
+  style?: ViewStyle;
   badge?: string | number;
 }
 
@@ -107,9 +109,9 @@ interface RowProps {
   label: string;
   value?: string | number | ReactNode;
   copyable?: boolean;
-  style?: any;
-  labelStyle?: any;
-  valueStyle?: any;
+  style?: ViewStyle;
+  labelStyle?: TextStyle;
+  valueStyle?: TextStyle;
 }
 
 DetailView.Row = function Row({
@@ -146,10 +148,10 @@ DetailView.Row = function Row({
 
 interface DataSectionProps {
   title: string;
-  data: any;
+  data: unknown;
   icon?: LucideIcon;
   defaultOpen?: boolean;
-  style?: any;
+  style?: ViewStyle;
 }
 
 DetailView.DataSection = function DataSection({
@@ -178,7 +180,7 @@ DetailView.DataSection = function DataSection({
 interface StatusBarProps {
   status: "success" | "error" | "warning" | "pending" | "info";
   message?: string;
-  style?: any;
+  style?: ViewStyle;
 }
 
 DetailView.StatusBar = function StatusBar({
@@ -218,7 +220,7 @@ interface TimelineProps {
     value: string;
     status?: "success" | "error" | "pending";
   }[];
-  style?: any;
+  style?: ViewStyle;
 }
 
 DetailView.Timeline = function Timeline({ items, style }: TimelineProps) {
@@ -241,7 +243,7 @@ DetailView.Timeline = function Timeline({ items, style }: TimelineProps) {
 interface ContentProps {
   children: ReactNode;
   scrollable?: boolean;
-  style?: any;
+  style?: ViewStyle;
 }
 
 DetailView.Content = function Content({

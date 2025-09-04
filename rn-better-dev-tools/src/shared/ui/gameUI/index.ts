@@ -38,7 +38,6 @@ export type {
 // Constants
 export {
   gameUIColors,
-  getThemedDialColors,
-  THEME_ACCENT,
+  dialColors,
 } from "./constants/gameUIColors";
 export type { GameUIColorKey } from "./constants/gameUIColors";

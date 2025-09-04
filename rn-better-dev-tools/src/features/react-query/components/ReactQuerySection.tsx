@@ -38,7 +38,7 @@ export function ReactQuerySection({
       id="rn-better-dev-tools"
       title="QUERY"
       subtitle={formatSubtitle()}
-      icon={TanstackIcon as any}
+      icon={TanstackIcon as React.ComponentType<{ size?: number; color?: string }>}
       iconColor={gameUIColors.critical}
       iconBackgroundColor={gameUIColors.critical + "1A"}
       onPress={onPress}

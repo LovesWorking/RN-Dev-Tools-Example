@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -41,7 +41,7 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
   const [entries, setEntries] = useState<ConsoleTransportEntry[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<Set<LogType>>(new Set());
   const [selectedLevels, setSelectedLevels] = useState<Set<LogLevel>>(
-    new Set(),
+    new Set()
   );
   const flatListRef = useRef<FlatList<ConsoleTransportEntry>>(null);
 
@@ -52,19 +52,19 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
       (acc: ConsoleTransportEntry[], entry: ConsoleTransportEntry) => {
         if (
           !acc.some(
-            (existing: ConsoleTransportEntry) => existing.id === entry.id,
+            (existing: ConsoleTransportEntry) => existing.id === entry.id
           )
         ) {
           acc.push(entry);
         }
         return acc;
       },
-      [] as ConsoleTransportEntry[],
+      [] as ConsoleTransportEntry[]
     );
 
     return uniqueEntries.sort(
       (a: ConsoleTransportEntry, b: ConsoleTransportEntry) =>
-        b.timestamp - a.timestamp,
+        b.timestamp - a.timestamp
     );
   };
 
@@ -138,6 +138,13 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
   const keyExtractor = (item: ConsoleTransportEntry, index: number) => {
     return `${item.id}-${index}-${item.timestamp}`;
   };
+
+  const renderItem = useCallback(
+    ({ item }: { item: ConsoleTransportEntry }) => (
+      <LogEntryItem entry={item} onSelectEntry={selectEntry} />
+    ),
+    []
+  );
 
   // Auto-scroll when entries update
   useEffect(() => {
@@ -268,9 +275,7 @@ export function LogDumpModalContent({ onClose }: LogDumpModalContentProps) {
               sentry-label="ignore log entries list"
               ref={flatListRef}
               data={getFilteredEntries()}
-              renderItem={({ item }) => (
-                <LogEntryItem entry={item} onSelectEntry={selectEntry} />
-              )}
+              renderItem={renderItem}
               keyExtractor={keyExtractor}
               inverted
               style={styles.flatList}

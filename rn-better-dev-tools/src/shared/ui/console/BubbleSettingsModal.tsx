@@ -7,7 +7,6 @@ import {
   BubbleSettingsDetail,
   type BubbleVisibilitySettings,
 } from "@/rn-better-dev-tools/src/features/settings";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 
 interface BubbleSettingsModalProps {
@@ -16,7 +15,7 @@ interface BubbleSettingsModalProps {
   onBack?: () => void;
   enableSharedModalDimensions?: boolean;
   onSettingsChange?: (
-    settings: BubbleVisibilitySettings,
+    settings: BubbleVisibilitySettings
   ) => void | Promise<void>;
 }
 
@@ -27,8 +26,6 @@ export function BubbleSettingsModal({
   enableSharedModalDimensions = false,
   onSettingsChange,
 }: BubbleSettingsModalProps) {
-  const theme = useTheme();
-
   const handleModeChange = useCallback((_mode: ModalMode) => {
     // Mode changes handled by JsModal
   }, []);
@@ -61,7 +58,7 @@ export function BubbleSettingsModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <BubbleSettingsDetail onSettingsChange={onSettingsChange} />

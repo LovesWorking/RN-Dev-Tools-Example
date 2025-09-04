@@ -1,7 +1,37 @@
+// AsyncStorage method signatures
+type AsyncStorageSetItem = (key: string, value: string) => Promise<void>;
+type AsyncStorageRemoveItem = (key: string) => Promise<void>;
+type AsyncStorageMergeItem = (key: string, value: string) => Promise<void>;
+type AsyncStorageClear = () => Promise<void>;
+type AsyncStorageMultiSet = (
+  keyValuePairs: [string, string][]
+) => Promise<void>;
+type AsyncStorageMultiRemove = (keys: string[]) => Promise<void>;
+type AsyncStorageMultiMerge = (
+  keyValuePairs: [string, string][]
+) => Promise<void>;
+
+interface AsyncStorageModule {
+  setItem: AsyncStorageSetItem;
+  removeItem: AsyncStorageRemoveItem;
+  mergeItem: AsyncStorageMergeItem;
+  clear: AsyncStorageClear;
+  multiSet: AsyncStorageMultiSet;
+  multiRemove: AsyncStorageMultiRemove;
+  multiMerge?: AsyncStorageMultiMerge;
+}
+
 // AsyncStorage will be loaded lazily
-let AsyncStorageModule: any = null;
+let AsyncStorageModule: AsyncStorageModule | null = null;
 let asyncStorageLoadPromise: Promise<void> | null = null;
 
+/**
+ * Dynamically loads the AsyncStorage module to avoid import errors when not available
+ *
+ * @returns Promise that resolves when module loading is complete
+ *
+ * @internal Uses lazy loading pattern to handle optional dependencies gracefully
+ */
 const loadAsyncStorage = async () => {
   if (asyncStorageLoadPromise) return asyncStorageLoadPromise;
 
@@ -9,13 +39,11 @@ const loadAsyncStorage = async () => {
     try {
       const module = await import("@react-native-async-storage/async-storage");
       AsyncStorageModule = module.default;
-      console.log(
-        "[AsyncStorageListener] AsyncStorage module loaded successfully",
-      );
+      // AsyncStorage module loaded successfully
     } catch (error) {
       console.warn(
         "[AsyncStorageListener] AsyncStorage not found. Listener disabled.",
-        error,
+        error
       );
     }
   })();
@@ -44,6 +72,32 @@ export interface AsyncStorageEvent {
 
 export type AsyncStorageEventListener = (event: AsyncStorageEvent) => void;
 
+/**
+ * Singleton class for intercepting and monitoring AsyncStorage operations
+ *
+ * This class uses method swizzling to intercept all AsyncStorage operations
+ * (setItem, removeItem, mergeItem, clear, multiSet, multiRemove, multiMerge)
+ * and emits events to registered listeners. It maintains the original functionality
+ * while providing observability for debugging and development tools.
+ *
+ * @example
+ * ```typescript
+ * // Start listening to all AsyncStorage operations
+ * startListening();
+ *
+ * // Add a listener for storage events
+ * const unsubscribe = addListener((event) => {
+ *   console.log(`${event.action}:`, event.data);
+ * });
+ *
+ * // Clean up
+ * unsubscribe();
+ * stopListening();
+ * ```
+ *
+ * @performance Uses method interception rather than polling for zero-overhead when inactive
+ * @performance Includes key filtering to prevent dev tools from triggering self-events
+ */
 class AsyncStorageListener {
   private listeners: AsyncStorageEventListener[] = [];
   private isListening = false;
@@ -58,18 +112,23 @@ class AsyncStorageListener {
   ]);
 
   // Store original methods
-  private originalSetItem: any;
-  private originalRemoveItem: any;
-  private originalMergeItem: any;
-  private originalClear: any;
-  private originalMultiSet: any;
-  private originalMultiRemove: any;
-  private originalMultiMerge: any;
+  private originalSetItem: AsyncStorageSetItem | null = null;
+  private originalRemoveItem: AsyncStorageRemoveItem | null = null;
+  private originalMergeItem: AsyncStorageMergeItem | null = null;
+  private originalClear: AsyncStorageClear | null = null;
+  private originalMultiSet: AsyncStorageMultiSet | null = null;
+  private originalMultiRemove: AsyncStorageMultiRemove | null = null;
+  private originalMultiMerge: AsyncStorageMultiMerge | null = null;
 
-  constructor() {
-    console.log("[AsyncStorageListener] Initializing listener singleton");
-  }
-
+  /**
+   * Determines if a storage key should be ignored to prevent infinite loops
+   *
+   * Dev tools often store their own state in AsyncStorage, which would trigger
+   * events and cause infinite loops or unnecessary noise.
+   *
+   * @param key - The storage key to check
+   * @returns True if the key should be ignored, false otherwise
+   */
   private shouldIgnoreKey(key: string): boolean {
     // Check exact matches
     if (this.ignoredKeys.has(key)) return true;
@@ -82,10 +141,19 @@ class AsyncStorageListener {
     return false;
   }
 
-  // Initialize and store original methods
+  /**
+   * Initialize the listener by loading AsyncStorage and storing original methods
+   *
+   * This method performs safety checks to ensure we don't double-initialize
+   * and verifies that AsyncStorage methods haven't already been swizzled.
+   *
+   * @returns Promise<boolean> - True if initialization succeeded, false otherwise
+   *
+   * @throws Will log errors if AsyncStorage is already swizzled by another instance
+   */
   private async initialize() {
     if (this.isInitialized) {
-      console.log("[AsyncStorageListener] Already initialized - skipping");
+      // Already initialized - skipping
       return true;
     }
 
@@ -101,7 +169,7 @@ class AsyncStorageListener {
       console.error(
         "[AsyncStorageListener] CRITICAL: AsyncStorage methods are already swizzled! " +
           "This means another instance of AsyncStorageListener is already running. " +
-          "This should not happen with singleton pattern.",
+          "This should not happen with singleton pattern."
       );
       // Don't store swizzled methods as originals
       return false;
@@ -122,45 +190,59 @@ class AsyncStorageListener {
       ? AsyncStorageModule.multiMerge.bind(AsyncStorageModule)
       : null;
 
-    console.log("[AsyncStorageListener] Original methods stored successfully");
+    // Original methods stored successfully
     this.isInitialized = true;
 
     return true;
   }
 
-  // Restore original AsyncStorage methods
+  /**
+   * Restore original AsyncStorage methods to their unmodified state
+   *
+   * This method undoes the method swizzling by restoring the original
+   * AsyncStorage methods that were saved during initialization.
+   */
   private restoreOriginalMethods() {
     if (!AsyncStorageModule || !this.originalSetItem) {
       return;
     }
 
     AsyncStorageModule.setItem = this.originalSetItem;
-    AsyncStorageModule.removeItem = this.originalRemoveItem;
-    AsyncStorageModule.mergeItem = this.originalMergeItem;
-    AsyncStorageModule.clear = this.originalClear;
-    AsyncStorageModule.multiSet = this.originalMultiSet;
-    AsyncStorageModule.multiRemove = this.originalMultiRemove;
+    if (this.originalRemoveItem) {
+      AsyncStorageModule.removeItem = this.originalRemoveItem;
+    }
+    if (this.originalMergeItem) {
+      AsyncStorageModule.mergeItem = this.originalMergeItem;
+    }
+    if (this.originalClear) {
+      AsyncStorageModule.clear = this.originalClear;
+    }
+    if (this.originalMultiSet) {
+      AsyncStorageModule.multiSet = this.originalMultiSet;
+    }
+    if (this.originalMultiRemove) {
+      AsyncStorageModule.multiRemove = this.originalMultiRemove;
+    }
     if (this.originalMultiMerge) {
       AsyncStorageModule.multiMerge = this.originalMultiMerge;
     }
   }
 
-  // Emit event to all listeners
+  /**
+   * Emit an AsyncStorage event to all registered listeners
+   *
+   * @param event - The AsyncStorage event to emit
+   *
+   * @performance Skips processing when no listeners are registered
+   */
   private emit(event: AsyncStorageEvent) {
     // Skip emitting if there are no listeners
     if (this.listeners.length === 0) {
-      console.log(
-        `[AsyncStorageListener] Skipping event emission (no listeners): ${event.action}`,
-        event.data?.key || event.data?.keys || "",
-      );
+      // Skipping event emission (no listeners)
       return;
     }
 
-    console.log(`[AsyncStorageListener] Emitting event: ${event.action}`, {
-      timestamp: event.timestamp.toISOString(),
-      data: event.data,
-      listenerCount: this.listeners.length,
-    });
+    // Emitting event to listeners
 
     this.listeners.forEach((listener) => {
       try {
@@ -171,11 +253,21 @@ class AsyncStorageListener {
     });
   }
 
-  // Start listening to AsyncStorage operations
+  /**
+   * Start intercepting AsyncStorage operations by swizzling methods
+   *
+   * This method replaces all AsyncStorage methods with wrapped versions
+   * that emit events while preserving the original functionality.
+   *
+   * @throws Will log errors if initialization fails or methods are already swizzled
+   *
+   * @performance Uses method swizzling for minimal runtime overhead
+   * @performance Includes safety checks to prevent double-initialization
+   */
   async startListening() {
     if (this.isListening) {
       console.warn(
-        "[AsyncStorageListener] Already listening - skipping re-initialization",
+        "[AsyncStorageListener] Already listening - skipping re-initialization"
       );
       return;
     }
@@ -183,28 +275,24 @@ class AsyncStorageListener {
     const initialized = await this.initialize();
     if (!initialized) {
       console.error(
-        "[AsyncStorageListener] Failed to initialize - AsyncStorage not available",
+        "[AsyncStorageListener] Failed to initialize - AsyncStorage not available"
       );
       return;
     }
 
     // Check if methods are already swizzled (this can happen if initialize was called twice somehow)
-    if (AsyncStorageModule.setItem.name === "swizzled_setItem") {
+    if (AsyncStorageModule && AsyncStorageModule.setItem.name === "swizzled_setItem") {
       console.warn(
-        "[AsyncStorageListener] Methods already swizzled - restoring originals first",
+        "[AsyncStorageListener] Methods already swizzled - restoring originals first"
       );
       this.restoreOriginalMethods();
     }
 
-    console.log(
-      "[AsyncStorageListener] Starting to listen for AsyncStorage operations",
-    );
+    // Starting to listen for AsyncStorage operations
 
     // Swizzle setItem
     const swizzled_setItem = async (key: string, value: string) => {
-      console.log(
-        `[AsyncStorageListener] Intercepted setItem: key="${key}", value="${value?.substring(0, 100)}..."`,
-      );
+      // Intercepted setItem
 
       // Only emit event if key is not ignored
       if (!this.shouldIgnoreKey(key)) {
@@ -214,43 +302,42 @@ class AsyncStorageListener {
           data: { key, value },
         });
       } else {
-        console.log(`[AsyncStorageListener] Ignoring setItem for key: ${key}`);
+        // Ignoring setItem for ignored key
       }
 
-      return this.originalSetItem(key, value);
+      return this.originalSetItem ? this.originalSetItem(key, value) : Promise.resolve();
     };
     Object.defineProperty(swizzled_setItem, "name", {
       value: "swizzled_setItem",
     });
-    AsyncStorageModule.setItem = swizzled_setItem;
+    if (AsyncStorageModule) {
+      AsyncStorageModule.setItem = swizzled_setItem;
+    }
 
     // Swizzle removeItem
-    AsyncStorageModule.removeItem = async (key: string) => {
-      console.log(
-        `[AsyncStorageListener] Intercepted removeItem: key="${key}"`,
-      );
+    if (AsyncStorageModule) {
+      AsyncStorageModule.removeItem = async (key: string) => {
+        // Intercepted removeItem
 
-      // Only emit event if key is not ignored
-      if (!this.shouldIgnoreKey(key)) {
-        this.emit({
-          action: "removeItem",
-          timestamp: new Date(),
-          data: { key },
-        });
-      } else {
-        console.log(
-          `[AsyncStorageListener] Ignoring removeItem for key: ${key}`,
-        );
-      }
+        // Only emit event if key is not ignored
+        if (!this.shouldIgnoreKey(key)) {
+          this.emit({
+            action: "removeItem",
+            timestamp: new Date(),
+            data: { key },
+          });
+        } else {
+          // Ignoring removeItem for ignored key
+        }
 
-      return this.originalRemoveItem(key);
-    };
+        return this.originalRemoveItem ? this.originalRemoveItem(key) : Promise.resolve();
+      };
+    }
 
     // Swizzle mergeItem
-    AsyncStorageModule.mergeItem = async (key: string, value: string) => {
-      console.log(
-        `[AsyncStorageListener] Intercepted mergeItem: key="${key}", value="${value?.substring(0, 100)}..."`,
-      );
+    if (AsyncStorageModule) {
+      AsyncStorageModule.mergeItem = async (key: string, value: string) => {
+      // Intercepted mergeItem operation
 
       // Only emit event if key is not ignored
       if (!this.shouldIgnoreKey(key)) {
@@ -260,35 +347,35 @@ class AsyncStorageListener {
           data: { key, value },
         });
       } else {
-        console.log(
-          `[AsyncStorageListener] Ignoring mergeItem for key: ${key}`,
-        );
+        // Ignoring mergeItem for ignored key
       }
 
-      return this.originalMergeItem(key, value);
-    };
+        return this.originalMergeItem ? this.originalMergeItem(key, value) : Promise.resolve();
+      };
+    }
 
     // Swizzle clear
-    AsyncStorageModule.clear = async () => {
-      console.log("[AsyncStorageListener] Intercepted clear");
+    if (AsyncStorageModule) {
+      AsyncStorageModule.clear = async () => {
+      // Intercepted clear operation
       this.emit({
         action: "clear",
         timestamp: new Date(),
       });
-      return this.originalClear();
-    };
+        return this.originalClear ? this.originalClear() : Promise.resolve();
+      };
+    }
 
     // Swizzle multiSet
-    AsyncStorageModule.multiSet = async (
-      keyValuePairs: readonly (readonly [string, string])[],
+    if (AsyncStorageModule) {
+      AsyncStorageModule.multiSet = async (
+      keyValuePairs: readonly (readonly [string, string])[]
     ) => {
-      console.log(
-        `[AsyncStorageListener] Intercepted multiSet: ${keyValuePairs.length} pairs`,
-      );
+      // Intercepted multiSet operation with multiple pairs
 
       // Filter out ignored keys
       const filteredPairs = keyValuePairs.filter(
-        ([key]) => !this.shouldIgnoreKey(key),
+        ([key]) => !this.shouldIgnoreKey(key)
       );
 
       if (filteredPairs.length > 0) {
@@ -298,17 +385,17 @@ class AsyncStorageListener {
           data: { pairs: filteredPairs as [string, string][] },
         });
       } else {
-        console.log(`[AsyncStorageListener] All keys in multiSet are ignored`);
+        // All keys in multiSet are ignored
       }
 
-      return this.originalMultiSet(keyValuePairs);
-    };
+        return this.originalMultiSet ? this.originalMultiSet(keyValuePairs as [string, string][]) : Promise.resolve();
+      };
+    }
 
     // Swizzle multiRemove
-    AsyncStorageModule.multiRemove = async (keys: readonly string[]) => {
-      console.log(
-        `[AsyncStorageListener] Intercepted multiRemove: ${keys.length} keys`,
-      );
+    if (AsyncStorageModule) {
+      AsyncStorageModule.multiRemove = async (keys: readonly string[]) => {
+      // Intercepted multiRemove operation with multiple keys
 
       // Filter out ignored keys
       const filteredKeys = keys.filter((key) => !this.shouldIgnoreKey(key));
@@ -320,26 +407,23 @@ class AsyncStorageListener {
           data: { keys: filteredKeys as string[] },
         });
       } else {
-        console.log(
-          `[AsyncStorageListener] All keys in multiRemove are ignored`,
-        );
+        // All keys in multiRemove are ignored
       }
 
-      return this.originalMultiRemove(keys);
-    };
+        return this.originalMultiRemove ? this.originalMultiRemove(keys as string[]) : Promise.resolve();
+      };
+    }
 
     // Swizzle multiMerge if available
-    if (this.originalMultiMerge) {
+    if (this.originalMultiMerge && AsyncStorageModule) {
       AsyncStorageModule.multiMerge = async (
-        keyValuePairs: readonly (readonly [string, string])[],
+        keyValuePairs: readonly (readonly [string, string])[]
       ) => {
-        console.log(
-          `[AsyncStorageListener] Intercepted multiMerge: ${keyValuePairs.length} pairs`,
-        );
+        // Intercepted multiMerge operation with multiple pairs
 
         // Filter out ignored keys
         const filteredPairs = keyValuePairs.filter(
-          ([key]) => !this.shouldIgnoreKey(key),
+          ([key]) => !this.shouldIgnoreKey(key)
         );
 
         if (filteredPairs.length > 0) {
@@ -349,20 +433,23 @@ class AsyncStorageListener {
             data: { pairs: filteredPairs as [string, string][] },
           });
         } else {
-          console.log(
-            `[AsyncStorageListener] All keys in multiMerge are ignored`,
-          );
+          // All keys in multiMerge are ignored
         }
 
-        return this.originalMultiMerge(keyValuePairs);
+        return this.originalMultiMerge ? this.originalMultiMerge(keyValuePairs as [string, string][]) : Promise.resolve();
       };
     }
 
     this.isListening = true;
-    console.log("[AsyncStorageListener] Started listening successfully");
+    // Started listening successfully
   }
 
-  // Stop listening and restore original methods
+  /**
+   * Stop listening and restore original AsyncStorage methods
+   *
+   * This method undoes all method swizzling and restores AsyncStorage
+   * to its original state.
+   */
   stopListening() {
     if (!this.isListening) {
       console.warn("[AsyncStorageListener] Not currently listening");
@@ -374,30 +461,53 @@ class AsyncStorageListener {
       return;
     }
 
-    console.log(
-      "[AsyncStorageListener] Stopping listener and restoring original methods",
-    );
+    // Stopping listener and restoring original methods
 
     // Restore original methods
-    AsyncStorageModule.setItem = this.originalSetItem;
-    AsyncStorageModule.removeItem = this.originalRemoveItem;
-    AsyncStorageModule.mergeItem = this.originalMergeItem;
-    AsyncStorageModule.clear = this.originalClear;
-    AsyncStorageModule.multiSet = this.originalMultiSet;
-    AsyncStorageModule.multiRemove = this.originalMultiRemove;
+    if (this.originalSetItem) {
+      AsyncStorageModule.setItem = this.originalSetItem;
+    }
+    if (this.originalRemoveItem) {
+      AsyncStorageModule.removeItem = this.originalRemoveItem;
+    }
+    if (this.originalMergeItem) {
+      AsyncStorageModule.mergeItem = this.originalMergeItem;
+    }
+    if (this.originalClear) {
+      AsyncStorageModule.clear = this.originalClear;
+    }
+    if (this.originalMultiSet) {
+      AsyncStorageModule.multiSet = this.originalMultiSet;
+    }
+    if (this.originalMultiRemove) {
+      AsyncStorageModule.multiRemove = this.originalMultiRemove;
+    }
     if (this.originalMultiMerge) {
       AsyncStorageModule.multiMerge = this.originalMultiMerge;
     }
 
     this.isListening = false;
-    console.log("[AsyncStorageListener] Stopped listening successfully");
+    // Stopped listening successfully
   }
 
-  // Add event listener
+  /**
+   * Add a listener for AsyncStorage events
+   *
+   * @param listener - Callback function to handle AsyncStorage events
+   * @returns Unsubscribe function to remove the listener
+   *
+   * @example
+   * ```typescript
+   * const unsubscribe = asyncStorageListener.addListener((event) => {
+   *   console.log('Storage operation:', event.action, event.data);
+   * });
+   *
+   * // Later, remove the listener
+   * unsubscribe();
+   * ```
+   */
   addListener(listener: AsyncStorageEventListener) {
-    console.log(
-      `[AsyncStorageListener] Adding listener (total will be: ${this.listeners.length + 1})`,
-    );
+    // Adding new listener
     this.listeners.push(listener);
 
     // Return unsubscribe function
@@ -405,43 +515,100 @@ class AsyncStorageListener {
       const index = this.listeners.indexOf(listener);
       if (index > -1) {
         this.listeners.splice(index, 1);
-        console.log(
-          `[AsyncStorageListener] Removed listener (remaining: ${this.listeners.length})`,
-        );
+        // Removed listener
       }
     };
   }
 
-  // Remove all listeners
+  /**
+   * Remove all registered event listeners
+   *
+   * Clears the internal listeners array, stopping all event notifications.
+   */
   removeAllListeners() {
-    const count = this.listeners.length;
     this.listeners = [];
-    console.log(`[AsyncStorageListener] Removed all ${count} listeners`);
+    // Removed all listeners
   }
 
-  // Check if currently listening
+  /**
+   * Check if the listener is currently active and intercepting operations
+   *
+   * @returns True if currently listening to AsyncStorage operations
+   */
   get isActive() {
     return this.isListening;
   }
 
-  // Get number of active listeners
+  /**
+   * Get the number of currently registered event listeners
+   *
+   * @returns Number of active listeners
+   */
   get listenerCount() {
     return this.listeners.length;
   }
 }
 
-// Create singleton instance
+/**
+ * Singleton instance of AsyncStorageListener
+ *
+ * This ensures only one listener instance exists across the entire application,
+ * preventing conflicts and duplicate event handling.
+ */
 const asyncStorageListener = new AsyncStorageListener();
 
-// Simple API functions
+/**
+ * Start listening to AsyncStorage operations
+ *
+ * @returns Promise that resolves when listening starts successfully
+ */
 export const startListening = () => asyncStorageListener.startListening();
+
+/**
+ * Stop listening to AsyncStorage operations
+ */
 export const stopListening = () => asyncStorageListener.stopListening();
+
+/**
+ * Add an event listener for AsyncStorage operations
+ *
+ * @param listener - Callback function to handle events
+ * @returns Unsubscribe function to remove the listener
+ */
 export const addListener = (listener: AsyncStorageEventListener) =>
   asyncStorageListener.addListener(listener);
+
+/**
+ * Remove all registered event listeners
+ */
 export const removeAllListeners = () =>
   asyncStorageListener.removeAllListeners();
+
+/**
+ * Check if currently listening to AsyncStorage operations
+ *
+ * @returns True if actively intercepting AsyncStorage methods
+ */
 export const isListening = () => asyncStorageListener.isActive;
+
+/**
+ * Get the current number of registered event listeners
+ *
+ * @returns Number of active listeners
+ */
 export const getListenerCount = () => asyncStorageListener.listenerCount;
 
-// Export the instance for advanced usage
+/**
+ * Export the singleton instance for advanced usage
+ *
+ * @example
+ * ```typescript
+ * import asyncStorageListener from './AsyncStorageListener';
+ *
+ * // Access advanced methods directly
+ * if (asyncStorageListener.isActive) {
+ *   console.log(`${asyncStorageListener.listenerCount} listeners active`);
+ * }
+ * ```
+ */
 export default asyncStorageListener;

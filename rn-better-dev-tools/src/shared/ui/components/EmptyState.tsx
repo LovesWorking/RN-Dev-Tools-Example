@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ViewStyle } from "react-native";
 import { LucideIcon } from "rn-better-dev-tools/icons";
 
 interface EmptyStateProps {
@@ -20,7 +20,7 @@ interface EmptyStateProps {
   /** Optional style variant */
   variant?: "default" | "minimal" | "card";
   /** Optional custom styles */
-  style?: any;
+  style?: ViewStyle;
 }
 
 /**

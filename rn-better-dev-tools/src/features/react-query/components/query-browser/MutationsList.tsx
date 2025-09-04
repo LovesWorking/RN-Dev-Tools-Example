@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, Dispatch, SetStateAction } from "react";
+import { useState, useRef, useMemo, useCallback, Dispatch, SetStateAction } from "react";
 import {
   View,
   Text,
@@ -113,13 +113,14 @@ export default function MutationsList({
     }),
   ).current;
 
-  const renderMutation = ({ item }: { item: Mutation }) => (
+  // Optimize FlatList performance - memoize renderItem to prevent re-renders
+  const renderMutation = useCallback(({ item }: { item: Mutation }) => (
     <MutationButton
       selected={selectedMutation}
       setSelectedMutation={setSelectedMutation}
       mutation={item}
     />
-  );
+  ), [selectedMutation, setSelectedMutation]);
 
   return (
     <View style={styles.container}>

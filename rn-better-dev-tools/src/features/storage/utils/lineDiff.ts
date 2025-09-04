@@ -138,7 +138,7 @@ function computeDiffByMethod(
 /**
  * Convert object to formatted JSON lines
  */
-function objectToLines(obj: any): string[] {
+function objectToLines(obj: unknown): string[] {
   if (obj === null || obj === undefined) {
     return [String(obj)];
   }
@@ -259,8 +259,8 @@ function compareLinesWithMethod(
  * Compute line-by-line diff between two objects
  */
 export function computeLineDiff(
-  oldValue: any,
-  newValue: any,
+  oldValue: unknown,
+  newValue: unknown,
   options: DiffComputeOptions = {},
 ): LineDiffInfo[] {
   const {

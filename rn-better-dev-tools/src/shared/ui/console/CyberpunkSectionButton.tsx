@@ -3,7 +3,7 @@ import type { LucideIcon } from "rn-better-dev-tools/icons";
 import { ChevronRight } from "rn-better-dev-tools/icons";
 import { CyberpunkButtonOutline } from "./CyberpunkButtonOutline";
 import { CyberpunkIconContainer } from "./CyberpunkIconContainer";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
+import { theme } from "@/rn-better-dev-tools/src/themes/devToolsTheme";
 
 interface CyberpunkSectionButtonProps {
   id: string;
@@ -11,7 +11,7 @@ interface CyberpunkSectionButtonProps {
   subtitle?: string;
   icon: LucideIcon;
   iconColor: string;
-  iconBackgroundColor: string;
+  iconBackgroundColor?: string; // Made optional to avoid breaking changes
   onPress: () => void;
   index?: number;
 }
@@ -26,8 +26,6 @@ export function CyberpunkSectionButton({
   onPress,
   index = 0,
 }: CyberpunkSectionButtonProps) {
-  const theme = useTheme();
-
   return (
     <CyberpunkButtonOutline
       onPress={onPress}

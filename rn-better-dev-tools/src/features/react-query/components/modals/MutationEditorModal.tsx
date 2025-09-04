@@ -7,15 +7,12 @@ import { useGetMutationById } from "../../hooks/useSelectedMutation";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { MutationEditorMode } from "../MutationEditorMode";
 import { useState, useCallback } from "react";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 interface MutationEditorModalProps {
   visible: boolean;
   selectedMutationId?: number;
   onMutationSelect: (mutation: Mutation | undefined) => void;
   onClose: () => void;
-  activeFilter?: string | null;
-  onFilterChange?: (filter: string | null) => void;
   onTabChange: (tab: "queries" | "mutations") => void;
   enableSharedModalDimensions?: boolean;
 }
@@ -30,7 +27,6 @@ export function MutationEditorModal({
 }: MutationEditorModalProps) {
   const selectedMutation = useGetMutationById(selectedMutationId);
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
-  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -64,7 +60,7 @@ export function MutationEditorModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <MutationEditorMode

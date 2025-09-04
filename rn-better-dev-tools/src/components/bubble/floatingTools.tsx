@@ -32,6 +32,11 @@ import { DraggableHeader } from "@/rn-better-dev-tools/src/shared/ui/components/
 // =============================
 
 // Hook to get safe area insets
+/**
+ * Hook to get safe area insets for floating tools positioning
+ *
+ * @returns Safe area insets object with top, bottom, left, right values
+ */
 function useFloatingToolsSafeArea(): {
   top: number;
   bottom: number;
@@ -41,7 +46,11 @@ function useFloatingToolsSafeArea(): {
   return usePureJSSafeAreaInsets();
 }
 
-// Non-hook version for use outside of components
+/**
+ * Non-hook version for use outside of components
+ *
+ * @returns Safe area insets object with top, bottom, left, right values
+ */
 function getSafeAreaInsets(): {
   top: number;
   bottom: number;
@@ -59,6 +68,17 @@ export type UserRole = "admin" | "internal" | "user";
 // =============================
 // Icons (self-contained)
 // =============================
+/**
+ * Grip icon component for draggable areas
+ *
+ * Renders a vertical grip pattern using View components to avoid SVG dependencies.
+ * Creates two columns of three dots each with responsive sizing.
+ *
+ * @param props - Icon configuration
+ * @param props.size - Size of the icon in pixels (default: 24)
+ * @param props.color - Color of the grip dots (default: gameUIColors.secondary + "CC")
+ * @returns JSX.Element representing the grip icon
+ */
 function GripVerticalIcon({
   size = 24,
   color = gameUIColors.secondary + "CC",
@@ -168,6 +188,24 @@ const STORAGE_KEYS = {
 // Position persistence hook
 // Extracted logic dedicated to state/IO
 // =============================
+/**
+ * Custom hook for managing floating tools position persistence
+ *
+ * Handles loading, saving, and validating the position of the floating tools bubble
+ * with automatic boundary checking and storage management.
+ *
+ * @param props - Configuration for position management
+ * @param props.animatedPosition - Animated.ValueXY for position updates
+ * @param props.bubbleWidth - Width of the bubble for boundary calculations
+ * @param props.bubbleHeight - Height of the bubble for boundary calculations
+ * @param props.enabled - Whether position persistence is enabled
+ * @param props.visibleHandleWidth - Width of visible handle when bubble is hidden
+ *
+ * @returns Object containing position management functions
+ *
+ * @performance Uses debounced saving to avoid excessive storage operations
+ * @performance Validates positions against screen boundaries and safe areas
+ */
 function useFloatingToolsPosition({
   animatedPosition,
   bubbleWidth = 100,
@@ -182,7 +220,9 @@ function useFloatingToolsPosition({
   visibleHandleWidth?: number;
 }) {
   const isInitialized = useRef(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (enabled) initializeStorage();
@@ -206,7 +246,7 @@ function useFloatingToolsPosition({
   const debouncedSavePosition = useCallback(
     (x: number, y: number) => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = setTimeout(() => savePosition(x, y), 500) as any;
+      saveTimeoutRef.current = setTimeout(() => savePosition(x, y), 500);
     },
     [savePosition]
   );
@@ -430,12 +470,42 @@ export type FloatingToolsProps = {
   children?: ReactNode;
 };
 
+/**
+ * FloatingTools - A draggable, resizable bubble for development tools
+ *
+ * This component provides a floating bubble interface that can contain various
+ * development tools and controls. It features:
+ * - Drag and drop positioning with boundary constraints
+ * - Hide/show functionality by dragging to screen edge
+ * - Position persistence across app restarts
+ * - Safe area aware positioning
+ * - Automatic divider insertion between child components
+ *
+ * @param props - Configuration for the floating tools
+ * @param props.enablePositionPersistence - Whether to save/restore position (default: true)
+ * @param props.children - Child components to render in the bubble
+ *
+ * @returns JSX.Element representing the floating tools bubble
+ *
+ * @example
+ * ```typescript
+ * <FloatingTools enablePositionPersistence={true}>
+ *   <UserStatus userRole="admin" onPress={handleUserPress} />
+ *   <ToolButton onPress={openSettings} />
+ * </FloatingTools>
+ * ```
+ *
+ * @performance Uses native driver animations for smooth positioning
+ * @performance Implements efficient boundary checking and position validation
+ * @performance Includes debounced position saving for optimal storage performance
+ */
 export function FloatingTools({
   enablePositionPersistence = true,
   children,
 }: FloatingToolsProps) {
   // Animated position and drag state
   const animatedPosition = useRef(new Animated.ValueXY()).current;
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [bubbleSize, setBubbleSize] = useState({ width: 100, height: 32 });
   const [isHidden, setIsHidden] = useState(false);
@@ -460,7 +530,9 @@ export function FloatingTools({
     if (!enablePositionPersistence) return;
 
     const checkHiddenState = () => {
-      const currentX = (animatedPosition.x as any).__getValue();
+      const currentX = (
+        animatedPosition.x as Animated.Value & { __getValue(): number }
+      ).__getValue();
       // Check if bubble is at the hidden position (showing only grabber)
       if (currentX >= screenWidth - 32 - 5) {
         setIsHidden(true);
@@ -494,10 +566,24 @@ export function FloatingTools({
     screenHeight,
   ]);
 
+  // Cleanup timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   // Toggle hide/show function
   const toggleHideShow = useCallback(() => {
-    const currentX = (animatedPosition.x as any).__getValue();
-    const currentY = (animatedPosition.y as any).__getValue();
+    const currentX = (
+      animatedPosition.x as Animated.Value & { __getValue(): number }
+    ).__getValue();
+    const currentY = (
+      animatedPosition.y as Animated.Value & { __getValue(): number }
+    ).__getValue();
 
     if (isHidden) {
       // Show the bubble - restore to saved position or default visible position
@@ -576,15 +662,8 @@ export function FloatingTools({
       }
       setIsDragging(false);
     },
-    [
-      animatedPosition,
-      bubbleSize.width,
-      isHidden,
-      savePosition,
-      screenWidth,
-    ]
+    [animatedPosition, bubbleSize.width, isHidden, savePosition, screenWidth]
   );
-
 
   // Stable styles
   const bubbleStyle: Animated.WithAnimatedObject<ViewStyle> = useMemo(

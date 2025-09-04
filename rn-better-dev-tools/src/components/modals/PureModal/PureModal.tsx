@@ -10,14 +10,7 @@
  * - Platform optimizations
  */
 
-import {
-  useState,
-  useRef,
-  useEffect,
-  useMemo,
-  useCallback,
-  memo,
-} from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -29,6 +22,7 @@ import {
   ScrollView,
   Text,
   Platform,
+  GestureResponderHandlers,
 } from "react-native";
 
 // ============================================================================
@@ -232,7 +226,7 @@ class ModalStorage {
   static async save(
     key: string,
     value: PersistedModalState,
-    adapter?: StorageAdapter,
+    adapter?: StorageAdapter
   ): Promise<void> {
     try {
       this.memoryCache[key] = value;
@@ -246,7 +240,7 @@ class ModalStorage {
 
   static async load(
     key: string,
-    adapter?: StorageAdapter,
+    adapter?: StorageAdapter
   ): Promise<PersistedModalState | null> {
     try {
       // Try memory cache first
@@ -413,7 +407,7 @@ interface ModalHeaderProps {
   isResizing: boolean;
   mode: ModalMode;
   theme: ModalTheme;
-  panHandlers?: any;
+  panHandlers?: GestureResponderHandlers;
 }
 
 const ModalHeader = memo(function ModalHeader({
@@ -589,21 +583,21 @@ export const PureModal: FC<PureModalProps> = ({
   // Animated values
   const visibilityProgress = useRef(new Animated.Value(0)).current;
   const bottomSheetTranslateY = useRef(
-    new Animated.Value(SCREEN.height),
+    new Animated.Value(SCREEN.height)
   ).current;
   const animatedBottomPosition = useRef(
-    new Animated.Value(DEFAULT_HEIGHT),
+    new Animated.Value(DEFAULT_HEIGHT)
   ).current;
   const floatingPosition = useRef(
     new Animated.ValueXY({
       x: dimensions.left,
       y: dimensions.top,
-    }),
+    })
   ).current;
   const floatingScale = useRef(new Animated.Value(0)).current;
   const animatedWidth = useRef(new Animated.Value(dimensions.width)).current;
   const animatedFloatingHeight = useRef(
-    new Animated.Value(dimensions.height),
+    new Animated.Value(dimensions.height)
   ).current;
 
   // Refs
@@ -622,7 +616,7 @@ export const PureModal: FC<PureModalProps> = ({
     const loadState = async () => {
       const savedState = await ModalStorage.load(
         persistenceKey,
-        storageAdapter,
+        storageAdapter
       );
       if (mounted && savedState) {
         if (savedState.mode) {
@@ -651,7 +645,16 @@ export const PureModal: FC<PureModalProps> = ({
     return () => {
       mounted = false;
     };
-  }, [persistenceKey, enablePersistence]);
+  }, [
+    persistenceKey,
+    enablePersistence,
+    storageAdapter,
+    onModeChange,
+    animatedBottomPosition,
+    animatedWidth,
+    animatedFloatingHeight,
+    floatingPosition,
+  ]);
 
   // Save state with debounce
   useEffect(() => {
@@ -666,7 +669,7 @@ export const PureModal: FC<PureModalProps> = ({
           dimensions,
           isVisible: visible,
         },
-        storageAdapter,
+        storageAdapter
       );
     }, 500);
 
@@ -679,7 +682,13 @@ export const PureModal: FC<PureModalProps> = ({
     persistenceKey,
     enablePersistence,
     isStateLoaded,
+    storageAdapter,
   ]);
+
+  // Refs for tracking timeouts
+  const modeChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   // Mode toggle
   const toggleMode = useCallback(() => {
@@ -689,7 +698,12 @@ export const PureModal: FC<PureModalProps> = ({
 
     // Save state after mode change
     if (enablePersistence && persistenceKey) {
-      setTimeout(() => {
+      // Clear any existing timeout
+      if (modeChangeTimeoutRef.current) {
+        clearTimeout(modeChangeTimeoutRef.current);
+      }
+
+      modeChangeTimeoutRef.current = setTimeout(() => {
         const state: PersistedModalState = {
           mode: newMode as ModalMode,
           dimensions: {
@@ -701,6 +715,7 @@ export const PureModal: FC<PureModalProps> = ({
           panelHeight: panelHeight,
         };
         ModalStorage.save(persistenceKey, state, storageAdapter);
+        modeChangeTimeoutRef.current = null;
       }, 100);
     }
   }, [
@@ -712,6 +727,15 @@ export const PureModal: FC<PureModalProps> = ({
     panelHeight,
     storageAdapter,
   ]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (modeChangeTimeoutRef.current) {
+        clearTimeout(modeChangeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Visibility animations
   useEffect(() => {
@@ -764,7 +788,14 @@ export const PureModal: FC<PureModalProps> = ({
         }).start();
       }
     }
-  }, [visible, currentMode]);
+  }, [
+    visible,
+    currentMode,
+    bottomSheetTranslateY,
+    floatingScale,
+    onOpen,
+    visibilityProgress,
+  ]);
 
   // Bottom sheet pan responder
   const bottomSheetPanResponder = useMemo(
@@ -781,7 +812,7 @@ export const PureModal: FC<PureModalProps> = ({
           const draggedPosition = initialPositionRef.current - gestureState.dy;
           const clampedPosition = Math.max(
             MIN_HEIGHT,
-            Math.min(draggedPosition, SCREEN.height - 100),
+            Math.min(draggedPosition, SCREEN.height - 100)
           );
           animatedBottomPosition.setValue(clampedPosition);
           currentHeightRef.current = clampedPosition;
@@ -824,7 +855,14 @@ export const PureModal: FC<PureModalProps> = ({
           }
         },
       }),
-    [currentMode, enablePanDownToClose],
+    [
+      currentMode,
+      enablePanDownToClose,
+      animatedBottomPosition,
+      bottomSheetTranslateY,
+      onClose,
+      visibilityProgress,
+    ]
   );
 
   // Create resize handlers for corners
@@ -849,11 +887,11 @@ export const PureModal: FC<PureModalProps> = ({
             case "topLeft":
               newWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                currentDims.width - gestureState.dx,
+                currentDims.width - gestureState.dx
               );
               newHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                currentDims.height - gestureState.dy,
+                currentDims.height - gestureState.dy
               );
               newLeft = currentDims.left + (currentDims.width - newWidth);
               newTop = currentDims.top + (currentDims.height - newHeight);
@@ -861,33 +899,33 @@ export const PureModal: FC<PureModalProps> = ({
             case "topRight":
               newWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                currentDims.width + gestureState.dx,
+                currentDims.width + gestureState.dx
               );
               newHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                currentDims.height - gestureState.dy,
+                currentDims.height - gestureState.dy
               );
               newTop = currentDims.top + (currentDims.height - newHeight);
               break;
             case "bottomLeft":
               newWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                currentDims.width - gestureState.dx,
+                currentDims.width - gestureState.dx
               );
               newHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                currentDims.height + gestureState.dy,
+                currentDims.height + gestureState.dy
               );
               newLeft = currentDims.left + (currentDims.width - newWidth);
               break;
             case "bottomRight":
               newWidth = Math.max(
                 FLOATING_MIN_WIDTH,
-                currentDims.width + gestureState.dx,
+                currentDims.width + gestureState.dx
               );
               newHeight = Math.max(
                 FLOATING_MIN_HEIGHT,
-                currentDims.height + gestureState.dy,
+                currentDims.height + gestureState.dy
               );
               break;
           }
@@ -912,7 +950,14 @@ export const PureModal: FC<PureModalProps> = ({
         },
       });
     },
-    [currentMode, resizable, dimensions],
+    [
+      currentMode,
+      resizable,
+      dimensions,
+      animatedFloatingHeight,
+      animatedWidth,
+      floatingPosition,
+    ]
   );
 
   const resizeHandlers = useMemo(
@@ -922,7 +967,7 @@ export const PureModal: FC<PureModalProps> = ({
       bottomLeft: createResizeHandler("bottomLeft"),
       bottomRight: createResizeHandler("bottomRight"),
     }),
-    [createResizeHandler],
+    [createResizeHandler]
   );
 
   // Floating drag pan responder
@@ -946,21 +991,21 @@ export const PureModal: FC<PureModalProps> = ({
         onPanResponderRelease: () => {
           setIsDragging(false);
           floatingPosition.flattenOffset();
-          const currentX = (floatingPosition.x as any).__getValue();
-          const currentY = (floatingPosition.y as any).__getValue();
+          const currentX = Number(JSON.stringify(floatingPosition.x));
+          const currentY = Number(JSON.stringify(floatingPosition.y));
           const clampedX = Math.max(
             0,
             Math.min(
               currentX,
-              SCREEN.width - currentDimensionsRef.current.width,
-            ),
+              SCREEN.width - currentDimensionsRef.current.width
+            )
           );
           const clampedY = Math.max(
             0,
             Math.min(
               currentY,
-              SCREEN.height - currentDimensionsRef.current.height,
-            ),
+              SCREEN.height - currentDimensionsRef.current.height
+            )
           );
           floatingPosition.setValue({ x: clampedX, y: clampedY });
           setDimensions({
@@ -970,7 +1015,7 @@ export const PureModal: FC<PureModalProps> = ({
           });
         },
       }),
-    [currentMode, draggable],
+    [currentMode, draggable, floatingPosition]
   );
 
   // Update refs

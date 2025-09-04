@@ -2,6 +2,12 @@ import { useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { GitBranch, Minus, Plus, Edit3 } from "rn-better-dev-tools/icons";
+import {
+  parseValue,
+  formatValue,
+  getTypeColor,
+  flattenObject,
+} from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface CompactDiffViewerProps {
   oldValue: unknown;
@@ -10,8 +16,8 @@ interface CompactDiffViewerProps {
 
 interface FlattenedItem {
   path: string;
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
   type: "SAME" | "CHANGE" | "CREATE" | "REMOVE";
 }
 
@@ -19,53 +25,6 @@ export function CompactDiffViewer({
   oldValue,
   newValue,
 }: CompactDiffViewerProps) {
-  const parseValue = (value: unknown): unknown => {
-    if (value === null || value === undefined) return value;
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value;
-      }
-    }
-    return value;
-  };
-
-  const flattenObject = (obj: any, prefix = ""): Record<string, any> => {
-    const flattened: Record<string, any> = {};
-
-    if (obj === null || obj === undefined) {
-      return flattened;
-    }
-
-    if (typeof obj !== "object") {
-      flattened[prefix || "root"] = obj;
-      return flattened;
-    }
-
-    if (Array.isArray(obj)) {
-      obj.forEach((item, index) => {
-        const path = prefix ? `${prefix}[${index}]` : `[${index}]`;
-        if (typeof item === "object" && item !== null) {
-          Object.assign(flattened, flattenObject(item, path));
-        } else {
-          flattened[path] = item;
-        }
-      });
-    } else {
-      Object.keys(obj).forEach((key) => {
-        const path = prefix ? `${prefix}.${key}` : key;
-        if (typeof obj[key] === "object" && obj[key] !== null) {
-          Object.assign(flattened, flattenObject(obj[key], path));
-        } else {
-          flattened[path] = obj[key];
-        }
-      });
-    }
-
-    return flattened;
-  };
-
   const { flattenedData, changedPaths } = useMemo(() => {
     const oldParsed = parseValue(oldValue);
     const newParsed = parseValue(newValue);
@@ -111,31 +70,6 @@ export function CompactDiffViewer({
     return { flattenedData: items, changedPaths: changes };
   }, [oldValue, newValue]);
 
-  const formatValue = (value: any): string => {
-    if (value === null) return "null";
-    if (value === undefined) return "undefined";
-    if (typeof value === "string") return `"${value}"`;
-    if (typeof value === "boolean") return value ? "true" : "false";
-    if (typeof value === "number") return String(value);
-    return String(value);
-  };
-
-  const getValueColor = (value: any): string => {
-    if (value === null) return gameUIColors.dataTypes.null;
-    if (value === undefined) return gameUIColors.dataTypes.undefined;
-    const type = typeof value;
-    switch (type) {
-      case "string":
-        return gameUIColors.dataTypes.string;
-      case "number":
-        return gameUIColors.dataTypes.number;
-      case "boolean":
-        return gameUIColors.dataTypes.boolean;
-      default:
-        return gameUIColors.primary;
-    }
-  };
-
   if (changedPaths.size === 0) {
     return null;
   }
@@ -177,7 +111,7 @@ export function CompactDiffViewer({
                   <Text
                     style={[
                       styles.value,
-                      { color: getValueColor(item.oldValue) },
+                      { color: getTypeColor(item.oldValue) },
                       item.type === "REMOVE" && styles.removedValue,
                     ]}
                     numberOfLines={1}
@@ -217,7 +151,7 @@ export function CompactDiffViewer({
                   <Text
                     style={[
                       styles.value,
-                      { color: getValueColor(item.newValue) },
+                      { color: getTypeColor(item.newValue) },
                       item.type === "CREATE" && styles.addedValue,
                     ]}
                     numberOfLines={1}

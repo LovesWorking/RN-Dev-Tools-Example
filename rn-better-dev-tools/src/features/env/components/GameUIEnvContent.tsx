@@ -134,7 +134,7 @@ export function GameUIEnvContent({ requiredEnvVars }: GameUIEnvContentProps) {
       };
     }
     return calculateStats(requiredVars, optionalVars, autoCollectedEnvVars);
-  }, [requiredVars, optionalVars, autoCollectedEnvVars]);
+  }, [requiredEnvVars, requiredVars, optionalVars, autoCollectedEnvVars]);
 
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(

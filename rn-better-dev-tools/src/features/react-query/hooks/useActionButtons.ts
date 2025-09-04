@@ -15,7 +15,7 @@ interface ActionButtonConfig {
 
 export function useActionButtons(
   selectedQuery: Query,
-  queryClient: QueryClient,
+  queryClient: QueryClient
 ): ActionButtonConfig[] {
   const actionButtons = useMemo(() => {
     const queryStatus = selectedQuery.state.status;
@@ -49,7 +49,10 @@ export function useActionButtons(
     ];
 
     return buttons;
+    // Don't touch these dependencies!!!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    selectedQuery,
     queryClient,
     selectedQuery.queryHash,
     selectedQuery.state.status,

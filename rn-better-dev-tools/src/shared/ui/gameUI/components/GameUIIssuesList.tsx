@@ -18,7 +18,7 @@ import { gameUIColors } from "../constants/gameUIColors";
 export interface IssueItem {
   key: string;
   status: "missing" | "wrong_type" | "wrong_value";
-  value?: any;
+  value?: unknown;
   expectedType?: string;
   expectedValue?: string;
   description?: string;

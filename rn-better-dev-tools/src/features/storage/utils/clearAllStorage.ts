@@ -39,7 +39,7 @@ export async function clearAllAppStorage(): Promise<void> {
     const allKeys = await AsyncStorageModule.getAllKeys();
 
     if (!allKeys || allKeys.length === 0) {
-      console.log("[Storage] No keys to clear");
+      // No keys to clear
       return;
     }
 
@@ -49,16 +49,16 @@ export async function clearAllAppStorage(): Promise<void> {
     );
 
     if (keysToRemove.length === 0) {
-      console.log("[Storage] No app keys to clear (only dev tool keys found)");
+      // No app keys to clear (only dev tool keys found)
       return;
     }
 
-    console.log(`[Storage] Clearing ${keysToRemove.length} app storage keys`);
+    // Clearing ${keysToRemove.length} app storage keys
 
     // Remove all non-dev-tool keys
     await AsyncStorageModule.multiRemove(keysToRemove);
 
-    console.log("[Storage] Successfully cleared app storage");
+    // Successfully cleared app storage
   } catch (error) {
     console.error("[Storage] Failed to clear storage:", error);
     throw error;
@@ -80,9 +80,7 @@ export async function clearAllStorageIncludingDevTools(): Promise<void> {
     // Clear everything
     await AsyncStorageModule.clear();
 
-    console.log(
-      "[Storage] Successfully cleared all storage including dev tools",
-    );
+    // Successfully cleared all storage including dev tools
   } catch (error) {
     console.error("[Storage] Failed to clear all storage:", error);
     throw error;

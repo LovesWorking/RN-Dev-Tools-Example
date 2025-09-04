@@ -10,7 +10,6 @@ import { QueryBrowserFooter } from "./QueryBrowserFooter";
 import { useState, useCallback } from "react";
 import { View } from "react-native";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 interface QueryBrowserModalProps {
   visible: boolean;
@@ -38,7 +37,6 @@ export function QueryBrowserModal({
   onTabChange,
 }: QueryBrowserModalProps) {
   const selectedQuery = useGetQueryByQueryKey(selectedQueryKey);
-  const theme = useTheme();
   // Use external filter state if provided (for persistence), otherwise use internal state
   const [internalActiveFilter, setInternalActiveFilter] = useState<
     string | null
@@ -88,7 +86,7 @@ export function QueryBrowserModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
       footer={footerNode}
       footerHeight={56}

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
 import type { ReactNode } from "react";
 
 // Badge variants
@@ -41,7 +41,7 @@ interface BadgeProps {
   variant?: BadgeVariant;
   color?: string;
   size?: BadgeSize;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function Badge({
@@ -60,7 +60,7 @@ export function Badge({
 interface StatusBadgeProps {
   status: string;
   size?: BadgeSize;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function StatusBadge({
@@ -86,7 +86,7 @@ interface CountBadgeProps {
   count: number | string;
   color?: string;
   size?: BadgeSize;
-  style?: any;
+  style?: ViewStyle;
   maxCount?: number;
 }
 
@@ -113,7 +113,7 @@ interface TypeBadgeProps {
   type: string;
   color?: string;
   size?: BadgeSize;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function TypeBadge({
@@ -136,7 +136,7 @@ export function TypeBadge({
 interface MethodBadgeProps {
   method: string;
   size?: BadgeSize;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function MethodBadge({

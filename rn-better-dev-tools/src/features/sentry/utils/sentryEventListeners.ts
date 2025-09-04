@@ -255,7 +255,7 @@ export class SentryEventLogger {
       this.setupNativeBridgeInterception();
 
       this.isSetup = true;
-      console.log("✅ Sentry event logger configured successfully");
+      // Sentry event logger configured successfully
       return true;
     } catch (error) {
       console.error("Failed to setup Sentry event logger:", error);
@@ -553,7 +553,7 @@ export const sentryEventLogger = new SentryEventLogger();
 export function setupSentryEventListeners(): boolean {
   const result = sentryEventLogger.setup();
   if (result && isUsingMockClient()) {
-    console.log("📦 Sentry event logger using mock client");
+    // Sentry event logger using mock client
   }
   return result;
 }
@@ -885,7 +885,5 @@ export function generateTestSentryEvents(): void {
   ];
 
   testEvents.forEach((event) => eventStore.add(event));
-  console.log(
-    `Generated ${testEvents.length} test Sentry events with enhanced HTTP data and insights`,
-  );
+  // Generated test Sentry events with enhanced HTTP data and insights
 }

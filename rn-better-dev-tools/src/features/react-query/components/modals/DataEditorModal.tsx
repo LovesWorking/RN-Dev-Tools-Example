@@ -1,19 +1,16 @@
-import { Query, QueryKey } from "@tanstack/react-query";
+import { QueryKey } from "@tanstack/react-query";
 import { JsModal } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import type { ModalMode } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { useGetQueryByQueryKey } from "../../hooks/useSelectedQuery";
 import { ReactQueryModalHeader } from "./ReactQueryModalHeader";
 import { DataEditorMode, DataEditorActionsFooter } from "../DataEditorMode";
 import { useState, useCallback } from "react";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 interface DataEditorModalProps {
   visible: boolean;
   selectedQueryKey?: QueryKey;
-  onQuerySelect: (query: Query | undefined) => void;
+  onQuerySelect: (query: any) => void;
   onClose: () => void;
-  activeFilter?: string | null;
-  onFilterChange?: (filter: string | null) => void;
   enableSharedModalDimensions?: boolean;
   onTabChange: (tab: "queries" | "mutations") => void;
 }
@@ -32,7 +29,6 @@ export function DataEditorModal({
 }: DataEditorModalProps) {
   const selectedQuery = useGetQueryByQueryKey(selectedQueryKey);
   const [modalMode, setModalMode] = useState<ModalMode>("bottomSheet");
-  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
     setModalMode(mode);
@@ -73,7 +69,7 @@ export function DataEditorModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
       footer={footerNode}
       footerHeight={72}

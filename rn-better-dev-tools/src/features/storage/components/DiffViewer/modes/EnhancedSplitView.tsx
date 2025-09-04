@@ -14,9 +14,9 @@ import {
 import { DiffOptions } from "../DiffOptionsPanel";
 
 interface EnhancedSplitViewProps {
-  oldValue: any;
-  newValue: any;
-  differences: any[]; // From objectDiff, not used in this view
+  oldValue: unknown;
+  newValue: unknown;
+  differences: unknown[]; // From objectDiff, not used in this view
   debugMode?: boolean;
   options?: DiffOptions;
 }

@@ -1,15 +1,7 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { Settings, EyeOff, Database, Palette } from "rn-better-dev-tools/icons";
+import { View, Text, StyleSheet, Switch, ScrollView } from "react-native";
+import { Settings, EyeOff, Database } from "rn-better-dev-tools/icons";
 import { useState, useEffect } from "react";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
-import { useDevToolsTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 
@@ -31,7 +23,7 @@ const loadAsyncStorage = async () => {
       AsyncStorageModule = module.default;
     } catch {
       console.warn(
-        "AsyncStorage not found. Bubble visibility settings will not persist across app restarts.",
+        "AsyncStorage not found. Bubble visibility settings will not persist across app restarts."
       );
     }
   })();
@@ -114,7 +106,6 @@ export function BubbleSettingsDetail({
   const [settings, setSettings] =
     useState<BubbleVisibilitySettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
-  const { theme, themeName, toggleTheme } = useDevToolsTheme();
 
   useEffect(() => {
     loadSettings();
@@ -142,7 +133,7 @@ export function BubbleSettingsDetail({
       if (AsyncStorageModule) {
         await AsyncStorageModule.setItem(
           STORAGE_KEY,
-          JSON.stringify(newSettings),
+          JSON.stringify(newSettings)
         );
       }
       setSettings(newSettings);
@@ -160,8 +151,9 @@ export function BubbleSettingsDetail({
     try {
       await loadAsyncStorage();
       if (AsyncStorageModule) {
-        const prefsStored =
-          await AsyncStorageModule.getItem(USER_PREFERENCES_KEY);
+        const prefsStored = await AsyncStorageModule.getItem(
+          USER_PREFERENCES_KEY
+        );
         const currentPrefs = prefsStored ? JSON.parse(prefsStored) : {};
 
         const prefKey = key.replace("show", "hasSet");
@@ -172,7 +164,7 @@ export function BubbleSettingsDetail({
 
         await AsyncStorageModule.setItem(
           USER_PREFERENCES_KEY,
-          JSON.stringify(updatedPrefs),
+          JSON.stringify(updatedPrefs)
         );
       }
     } catch (error) {
@@ -239,47 +231,8 @@ export function BubbleSettingsDetail({
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Developer Tools Settings</Text>
           <Text style={styles.headerDescription}>
-            Configure theme and bubble button visibility
+            Configure bubble button visibility
           </Text>
-        </View>
-
-        {/* Theme Toggle Section */}
-        <View style={styles.themeSection}>
-          <View style={styles.settingItem}>
-            <View style={styles.settingIconContainer}>
-              <Palette size={16} color={theme.colors.primary} />
-            </View>
-            <View style={styles.settingContent}>
-              <Text style={styles.settingLabel}>Theme</Text>
-              <Text style={styles.settingDescription}>
-                {themeName === "cyberpunk"
-                  ? "Cyberpunk theme with glitch effects"
-                  : themeName === "dark"
-                    ? "Clean dark theme"
-                    : "Clean light theme"}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={toggleTheme}
-              style={[
-                styles.themeToggleButton,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-            >
-              <Text
-                style={[styles.themeToggleText, { color: theme.colors.text }]}
-              >
-                {themeName === "cyberpunk"
-                  ? "CYBER"
-                  : themeName === "dark"
-                    ? "DARK"
-                    : "LIGHT"}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         <View style={styles.sectionDivider}>
@@ -457,24 +410,6 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontSize: 11,
     fontStyle: "italic",
-  },
-  themeSection: {
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-  themeToggleButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    minWidth: 70,
-    alignItems: "center",
-  },
-  themeToggleText: {
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1,
-    fontFamily: "monospace",
   },
   sectionDivider: {
     paddingHorizontal: 16,

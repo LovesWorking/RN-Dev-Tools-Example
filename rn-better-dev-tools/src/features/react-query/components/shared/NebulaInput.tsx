@@ -7,6 +7,10 @@ import {
   TextInputProps,
   Platform,
   Easing,
+  ViewStyle,
+  LayoutChangeEvent,
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
 } from "react-native";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
@@ -35,7 +39,7 @@ const runningBorderPath = (
 
 interface NebulaInputProps extends TextInputProps {
   label?: string;
-  containerStyle?: any;
+  containerStyle?: ViewStyle;
 }
 
 export function NebulaInput({
@@ -121,14 +125,14 @@ export function NebulaInput({
     };
   }, [offset]);
 
-  const handleFocus = () => {
+  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(true);
-    props.onFocus?.({} as any);
+    props.onFocus?.(e);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setIsFocused(false);
-    props.onBlur?.({} as any);
+    props.onBlur?.(e);
   };
 
   const handleChangeText = (text: string) => {
@@ -136,7 +140,7 @@ export function NebulaInput({
     props.onChangeText?.(text);
   };
 
-  const handleLayout = (event: any) => {
+  const handleLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setDimensions({ width, height });
   };

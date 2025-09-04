@@ -25,12 +25,10 @@ import {
   generateTestSentryEvents,
 } from "../utils/sentryEventListeners";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 
 interface SentryLogsModalProps {
   visible: boolean;
   onClose: () => void;
-  getSentrySubtitle: () => string;
   onBack?: () => void;
   enableSharedModalDimensions?: boolean;
 }
@@ -53,10 +51,9 @@ export function SentryLogsModal({
     new Set()
   );
   const [isLoggingEnabled, setIsLoggingEnabled] = useState(true);
-  const theme = useTheme();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
-    console.log("handleModeChange", mode);
+    // Handle mode change - previously logged mode value
   }, []);
 
   // Get event counts
@@ -182,7 +179,7 @@ export function SentryLogsModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <SentryLogsContent

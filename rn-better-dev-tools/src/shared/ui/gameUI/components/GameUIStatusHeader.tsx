@@ -8,7 +8,7 @@ export interface GameUIStatusHeaderProps {
   // Badge text (e.g., "STATIC", "PERSISTENT")
   badgeText: string;
   // Animated style from useGameUIAlertState hook
-  animatedStyle?: any;
+  animatedStyle?: Animated.AnimatedProps<ViewStyle>;
   // Optional container style
   style?: ViewStyle;
   // Optional indicator dots count (default: 3)

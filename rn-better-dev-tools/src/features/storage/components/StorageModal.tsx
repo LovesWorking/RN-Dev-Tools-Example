@@ -1,12 +1,9 @@
-import { useCallback } from "react";
 import {
   JsModal,
-  type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 
 interface StorageModalProps {
@@ -24,11 +21,6 @@ export function StorageModal({
   enableSharedModalDimensions = false,
   requiredStorageKeys = [],
 }: StorageModalProps) {
-  const theme = useTheme();
-
-  const handleModeChange = useCallback((mode: ModalMode) => {
-    console.log("mode", mode);
-  }, []);
 
   if (!visible) return null;
 
@@ -55,10 +47,9 @@ export function StorageModal({
           </ModalHeader>
         ),
       }}
-      onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <StorageBrowserMode

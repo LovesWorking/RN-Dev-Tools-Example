@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  ViewStyle,
 } from "react-native";
 import type { ReactNode } from "react";
 import { X, Plus } from "rn-better-dev-tools/icons";
@@ -11,7 +12,7 @@ import { X, Plus } from "rn-better-dev-tools/icons";
 // Container for filter section
 interface FilterSectionProps {
   children: ReactNode;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export function FilterSection({ children, style }: FilterSectionProps) {

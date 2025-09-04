@@ -57,9 +57,7 @@ export function createAutoDetectedClipboard(): ClipboardFunction | null {
           return false;
         }
       };
-      console.log(
-        "[RnBetterDevTools] Auto-detected React Native CLI Clipboard",
-      );
+      // Auto-detected React Native CLI Clipboard successfully
       return cachedClipboard;
     }
   } catch {

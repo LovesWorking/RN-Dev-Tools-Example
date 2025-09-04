@@ -19,8 +19,7 @@ import { SentryBugIcon } from "@/rn-better-dev-tools/icons/SentryBugIcon";
 import { DialIcon } from "./DialIcon";
 import {
   gameUIColors,
-  getThemedDialColors,
-  THEME_ACCENT,
+  dialColors,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
   DevToolsSettingsModal,
@@ -384,6 +383,7 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
         pulseAnimationRef.current.stop();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- All animated values are useRef().current which are stable
   }, []);
 
   const handleClose = () => {
@@ -616,8 +616,6 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
   );
 };
 
-// Get themed colors based on the global theme accent
-const themedDialColors = getThemedDialColors(THEME_ACCENT);
 
 const styles = StyleSheet.create({
   container: {
@@ -641,8 +639,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: themedDialColors.dialBorder,
-    shadowColor: themedDialColors.dialShadow,
+    borderColor: dialColors.dialBorder,
+    shadowColor: dialColors.dialShadow,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
@@ -653,18 +651,18 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: CIRCLE_SIZE / 2,
     position: "relative",
-    backgroundColor: themedDialColors.dialBackground,
+    backgroundColor: dialColors.dialBackground,
     overflow: "hidden",
   },
   gradientLayer1: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themedDialColors.dialGradient1,
+    backgroundColor: dialColors.dialGradient1,
     opacity: 0.6,
     borderRadius: CIRCLE_SIZE / 2,
   },
   gradientLayer2: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themedDialColors.dialGradient2,
+    backgroundColor: dialColors.dialGradient2,
     opacity: 0.4,
     top: "30%",
     left: "30%",
@@ -672,7 +670,7 @@ const styles = StyleSheet.create({
   },
   gradientLayer3: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themedDialColors.dialGradient3,
+    backgroundColor: dialColors.dialGradient3,
     opacity: 0.3,
     top: "50%",
     left: "50%",
@@ -687,7 +685,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: CIRCLE_SIZE,
     height: 1,
-    backgroundColor: themedDialColors.dialGridLine,
+    backgroundColor: dialColors.dialGridLine,
   },
   buttonContainer: {
     zIndex: 1,
@@ -706,19 +704,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 4,
-    backgroundColor: themedDialColors.dialBackground,
+    backgroundColor: dialColors.dialBackground,
     position: "relative",
     overflow: "hidden",
   },
   buttonGradientLayer1: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themedDialColors.dialGradient1,
+    backgroundColor: dialColors.dialGradient1,
     opacity: 0.5,
     borderRadius: BUTTON_SIZE,
   },
   buttonGradientLayer2: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themedDialColors.dialGradient2,
+    backgroundColor: dialColors.dialGradient2,
     opacity: 0.3,
     top: "20%",
     left: "20%",
@@ -726,21 +724,21 @@ const styles = StyleSheet.create({
   },
   buttonGradientLayer3: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themedDialColors.dialGradient3,
+    backgroundColor: dialColors.dialGradient3,
     opacity: 0.2,
     top: "40%",
     left: "40%",
     borderRadius: BUTTON_SIZE,
   },
   buttonBorder: {
-    backgroundColor: themedDialColors.dialGridLine,
+    backgroundColor: dialColors.dialGridLine,
     alignItems: "center",
     justifyContent: "center",
     width: BUTTON_SIZE * 1.2,
     height: BUTTON_SIZE * 1.2,
     borderRadius: BUTTON_SIZE * 0.6,
     borderWidth: 2,
-    borderColor: themedDialColors.dialBorder,
+    borderColor: dialColors.dialBorder,
   },
   button: {
     width: BUTTON_SIZE,

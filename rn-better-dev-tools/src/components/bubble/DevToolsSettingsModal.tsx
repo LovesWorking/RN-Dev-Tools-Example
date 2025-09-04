@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, FC } from "react";
 import {
   View,
   Text,
@@ -24,7 +24,6 @@ import {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
@@ -88,7 +87,6 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
     initialSettings || defaultSettings
   );
   const [activeTab, setActiveTab] = useState<"dial" | "floating">("dial");
-  const theme = useTheme();
   const insets = useSafeAreaInsets();
   const screenHeight = Dimensions.get("window").height;
   const screenWidth = Dimensions.get("window").width;
@@ -414,7 +412,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
         x: (screenWidth - modalWidth) / 2, // Center horizontally
         y: insets.top + 20, // Position at top with safe area padding
       }}
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
     >
       {renderContent()}
     </JsModal>

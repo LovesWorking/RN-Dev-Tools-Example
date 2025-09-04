@@ -22,10 +22,7 @@ interface ExpandableSectionWithModalProps {
   title: string;
   subtitle: string;
   children: ReactNode | ((closeModal: () => void) => ReactNode); // Modal content or function that returns content
-  modalSnapPoints?: string[]; // Kept for compatibility but not used
-  enableDynamicSizing?: boolean; // Kept for compatibility but not used
   modalBackgroundColor?: string; // Default to '#0F0F0F'
-  handleIndicatorColor?: string; // Default to '#6B7280' (kept for compatibility)
   showModalHeader?: boolean; // Default to true, set to false to hide default header
   fullScreen?: boolean; // Default to false, set to true for full-screen modal
   onModalOpen?: () => void;
@@ -40,15 +37,11 @@ export function ExpandableSectionWithModal({
   subtitle,
   children,
   modalBackgroundColor = "#0F0F0F",
-  handleIndicatorColor = "#6B7280", // Kept for compatibility
   showModalHeader = true,
   fullScreen = false,
   onModalOpen,
   onModalClose,
 }: ExpandableSectionWithModalProps) {
-  // Suppress unused variable warning - kept for compatibility
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _unusedHandleIndicatorColor = handleIndicatorColor;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const insets = useSafeAreaInsets({ minBottom: 16 });
 

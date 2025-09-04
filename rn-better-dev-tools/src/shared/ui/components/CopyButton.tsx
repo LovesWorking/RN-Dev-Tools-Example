@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, memo } from "react";
+import { useState, useRef, useCallback, memo, useEffect } from "react";
 import {
   TouchableOpacity,
   StyleSheet,
@@ -53,24 +53,49 @@ export const CopyButton = memo(function CopyButton({
 }: CopyButtonProps) {
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const valueRef = useRef(value);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   valueRef.current = value;
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleCopy = useCallback(async () => {
+    // Clear existing timeout if any
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
     try {
       const copied = await copyToClipboard(valueRef.current);
       if (copied) {
         setCopyState("success");
         onCopySuccess?.();
-        setTimeout(() => setCopyState("idle"), feedbackDuration);
+        timeoutRef.current = setTimeout(() => {
+          setCopyState("idle");
+          timeoutRef.current = null;
+        }, feedbackDuration);
       } else {
         setCopyState("error");
         onCopyError?.();
-        setTimeout(() => setCopyState("idle"), feedbackDuration);
+        timeoutRef.current = setTimeout(() => {
+          setCopyState("idle");
+          timeoutRef.current = null;
+        }, feedbackDuration);
       }
     } catch {
       setCopyState("error");
       onCopyError?.();
-      setTimeout(() => setCopyState("idle"), feedbackDuration);
+      timeoutRef.current = setTimeout(() => {
+        setCopyState("idle");
+        timeoutRef.current = null;
+      }, feedbackDuration);
     }
   }, [feedbackDuration, onCopySuccess, onCopyError]);
 

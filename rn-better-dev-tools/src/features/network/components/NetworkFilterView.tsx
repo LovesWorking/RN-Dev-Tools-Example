@@ -31,15 +31,17 @@ import {
 import type { NetworkEvent } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 
+interface NetworkFilter {
+  status?: "all" | "success" | "error" | "pending";
+  method?: string[];
+  contentType?: string[];
+  searchText?: string;
+}
+
 interface NetworkFilterViewProps {
   events: NetworkEvent[];
-  filter: {
-    status?: "all" | "success" | "error" | "pending";
-    method?: string[];
-    contentType?: string[];
-    searchText?: string;
-  };
-  onFilterChange: (filter: any) => void;
+  filter: NetworkFilter;
+  onFilterChange: (filter: NetworkFilter) => void;
   ignoredDomains?: Set<string>;
   ignoredUrls?: Set<string>;
   onToggleDomain?: (domain: string) => void;
@@ -107,22 +109,16 @@ export function NetworkFilterView({
     pending: events.filter((e) => !e.status && !e.error).length,
   };
 
-  const methodCounts = events.reduce(
-    (acc, event) => {
-      acc[event.method] = (acc[event.method] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const methodCounts = events.reduce((acc, event) => {
+    acc[event.method] = (acc[event.method] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
-  const contentTypeCounts = events.reduce(
-    (acc, event) => {
-      const { type } = getContentType(event);
-      acc[type] = (acc[type] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const contentTypeCounts = events.reduce((acc, event) => {
+    const { type } = getContentType(event);
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   // Extract domains and URLs from ALL events (not just filtered)
   // This ensures we show all available options for filtering
@@ -139,7 +135,7 @@ export function NetworkFilterView({
             return null;
           }
         })
-        .filter(Boolean) as string[],
+        .filter(Boolean) as string[]
     ),
   ];
 
@@ -155,7 +151,7 @@ export function NetworkFilterView({
             return match ? match[0] : null;
           }
         })
-        .filter(Boolean) as string[],
+        .filter(Boolean) as string[]
     ),
   ];
 
@@ -166,7 +162,7 @@ export function NetworkFilterView({
   };
 
   const handleStatusFilter = (
-    status: "all" | "success" | "error" | "pending",
+    status: "all" | "success" | "error" | "pending"
   ) => {
     if (status === "all") {
       onFilterChange({ ...filter, status: undefined });
@@ -387,18 +383,18 @@ export function NetworkFilterView({
                         status === "success"
                           ? "rgba(16, 185, 129, 0.12)"
                           : status === "error"
-                            ? "rgba(239, 68, 68, 0.12)"
-                            : status === "pending"
-                              ? "rgba(245, 158, 11, 0.12)"
-                              : "rgba(139, 92, 246, 0.12)",
+                          ? "rgba(239, 68, 68, 0.12)"
+                          : status === "pending"
+                          ? "rgba(245, 158, 11, 0.12)"
+                          : "rgba(139, 92, 246, 0.12)",
                       borderColor:
                         status === "success"
                           ? "rgba(16, 185, 129, 0.2)"
                           : status === "error"
-                            ? "rgba(239, 68, 68, 0.2)"
-                            : status === "pending"
-                              ? "rgba(245, 158, 11, 0.2)"
-                              : "rgba(139, 92, 246, 0.2)",
+                          ? "rgba(239, 68, 68, 0.2)"
+                          : status === "pending"
+                          ? "rgba(245, 158, 11, 0.2)"
+                          : "rgba(139, 92, 246, 0.2)",
                     },
                   ]}
                 >
@@ -408,10 +404,10 @@ export function NetworkFilterView({
                       status === "success"
                         ? "#10B981"
                         : status === "error"
-                          ? "#EF4444"
-                          : status === "pending"
-                            ? "#F59E0B"
-                            : "#8B5CF6"
+                        ? "#EF4444"
+                        : status === "pending"
+                        ? "#F59E0B"
+                        : "#8B5CF6"
                     }
                   />
                 </View>
@@ -426,10 +422,10 @@ export function NetworkFilterView({
                         status === "success"
                           ? gameUIColors.success
                           : status === "error"
-                            ? gameUIColors.error
-                            : status === "pending"
-                              ? gameUIColors.warning
-                              : gameUIColors.network,
+                          ? gameUIColors.error
+                          : status === "pending"
+                          ? gameUIColors.warning
+                          : gameUIColors.network,
                     },
                   ]}
                 >
@@ -533,12 +529,12 @@ export function NetworkFilterView({
     patterns: Set<string>,
     available: string[],
     onToggle: (pattern: string) => void,
-    type: "domains" | "urls",
+    type: "domains" | "urls"
   ) => {
     const currentPatterns = patterns;
     // Filter out patterns that are already in the ignore list
     const suggestedPatterns = available.filter(
-      (pattern) => !currentPatterns.has(pattern),
+      (pattern) => !currentPatterns.has(pattern)
     );
 
     const filterManager =
@@ -676,7 +672,7 @@ export function NetworkFilterView({
             ignoredDomains,
             availableDomains,
             onToggleDomain,
-            "domains",
+            "domains"
           )}
         {activeTab === "urls" &&
           renderIgnorePatterns(ignoredUrls, availableUrls, onToggleUrl, "urls")}

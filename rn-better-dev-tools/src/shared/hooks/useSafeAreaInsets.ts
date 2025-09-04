@@ -38,7 +38,15 @@ const iPhoneDimensionMap: Record<
   "414,896": { top: 48, bottom: 34 },
 };
 
-// Pure JS implementation
+/**
+ * Pure JavaScript implementation for calculating safe area insets
+ * Uses device dimensions mapping for iOS and platform APIs for Android
+ *
+ * @returns SafeAreaInsets object with top, bottom, left, right values
+ *
+ * @performance Optimized for iOS with dimension-based mapping table
+ * Device recognition uses screen dimensions as lookup key
+ */
 const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
   if (Platform.OS === "android") {
     const androidVersion = Platform.Version;
@@ -78,18 +86,28 @@ const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
   };
 };
 
+// Define types for the safe area context module
+interface NativeSafeAreaInsets {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+interface SafeAreaContextModuleType {
+  useSafeAreaInsets?: () => NativeSafeAreaInsets;
+}
+
 // Check if npm package is available at module level (not inside component)
 let hasNativePackage = false;
-let SafeAreaContextModule: any = null;
+let SafeAreaContextModule: SafeAreaContextModuleType | null = null;
 
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   SafeAreaContextModule = require("react-native-safe-area-context");
   if (SafeAreaContextModule?.useSafeAreaInsets) {
     hasNativePackage = true;
-    console.log(
-      "✅ react-native-safe-area-context package found - using native implementation"
-    );
+    // react-native-safe-area-context package found - using native implementation
   }
 } catch {
   console.warn(
@@ -98,11 +116,43 @@ try {
 }
 
 // Create a wrapper hook that always exists
-const useNativeSafeAreaInsets = hasNativePackage
+const useNativeSafeAreaInsets = hasNativePackage && SafeAreaContextModule?.useSafeAreaInsets
   ? SafeAreaContextModule.useSafeAreaInsets
   : () => null;
 
-// Main hook with automatic fallback
+/**
+ * Custom hook for accessing safe area insets with automatic fallback
+ *
+ * Provides safe area insets for proper UI positioning on devices with notches,
+ * dynamic islands, and status bars. Automatically detects and uses the native
+ * react-native-safe-area-context package when available, falling back to a
+ * pure JavaScript implementation when not available.
+ *
+ * @param options - Configuration options for minimum inset values
+ * @param options.minTop - Minimum top inset value (overrides calculated value if larger)
+ * @param options.minBottom - Minimum bottom inset value (overrides calculated value if larger)
+ * @param options.minLeft - Minimum left inset value (overrides calculated value if larger)
+ * @param options.minRight - Minimum right inset value (overrides calculated value if larger)
+ *
+ * @returns SafeAreaInsets object with top, bottom, left, right pixel values
+ *
+ * @example
+ * ```typescript
+ * // Basic usage
+ * const insets = useSafeAreaInsets();
+ * const topPadding = insets.top;
+ *
+ * // With minimum values
+ * const insets = useSafeAreaInsets({
+ *   minTop: 20,
+ *   minBottom: 10
+ * });
+ * ```
+ *
+ * @performance Uses pure JS fallback with device dimension mapping for iOS
+ * @performance Automatically handles orientation changes with dimension listener
+ * @performance Memoizes native package detection at module level
+ */
 export const useSafeAreaInsets = (
   options: SafeAreaInsetsOptions = {}
 ): SafeAreaInsets => {
@@ -127,7 +177,7 @@ export const useSafeAreaInsets = (
         subscription?.remove();
       };
     }
-  }, [!nativeInsets]); // Use boolean for stable dependency
+  }, [nativeInsets]); // Dependency on nativeInsets
 
   const baseInsets = nativeInsets || fallbackInsets;
 
@@ -154,7 +204,19 @@ export const useSafeAreaInsets = (
   return finalInsets;
 };
 
-// Utility to check if device has notch/dynamic island
+/**
+ * Utility function to detect if the current device has a notch or dynamic island
+ *
+ * @returns True if the device has a notch/dynamic island, false otherwise
+ *
+ * @example
+ * ```typescript
+ * if (hasNotch()) {
+ *   // Apply special styling for notched devices
+ *   console.log('Device has notch or dynamic island');
+ * }
+ * ```
+ */
 export const hasNotch = (): boolean => {
   const insets = getPureJSSafeAreaInsets();
 
@@ -167,9 +229,18 @@ export const hasNotch = (): boolean => {
   return insets.top > 20;
 };
 
-// Configuration helper for migration
+/**
+ * Configuration helper for safe area implementation management
+ *
+ * Provides utilities for checking native package availability,
+ * forcing pure JS implementation, and getting implementation type info
+ */
 export const SafeAreaConfig = {
-  // Check if npm package is available
+  /**
+   * Check if the native react-native-safe-area-context package is available
+   *
+   * @returns True if native package is installed and available
+   */
   hasNativeSupport: (): boolean => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -180,21 +251,44 @@ export const SafeAreaConfig = {
     }
   },
 
-  // Force pure JS implementation (useful for testing)
+  /**
+   * Force pure JS implementation (useful for testing)
+   * Set to true to disable native package usage even when available
+   */
   forcePureJS: false,
 
-  // Get current implementation type
+  /**
+   * Get current implementation type being used
+   *
+   * @returns "native" if using react-native-safe-area-context, "pure-js" if using fallback
+   */
   getImplementationType: (): "native" | "pure-js" => {
     if (SafeAreaConfig.forcePureJS) return "pure-js";
     return SafeAreaConfig.hasNativeSupport() ? "native" : "pure-js";
   },
 };
 
-// Re-export for compatibility
+/**
+ * Compatibility hook that returns the window frame dimensions
+ *
+ * @returns Frame object with x, y, width, height properties
+ *
+ * @deprecated Use Dimensions.get("window") directly instead
+ */
 export const useSafeAreaFrame = () => {
   const { width, height } = Dimensions.get("window");
   return { x: 0, y: 0, width, height };
 };
 
-// Export the pure JS implementation directly for compatibility
+/**
+ * Export the pure JS implementation directly for compatibility
+ *
+ * @returns SafeAreaInsets calculated using pure JavaScript implementation
+ *
+ * @example
+ * ```typescript
+ * const insets = getSafeAreaInsets();
+ * console.log(`Top inset: ${insets.top}px`);
+ * ```
+ */
 export const getSafeAreaInsets = getPureJSSafeAreaInsets;

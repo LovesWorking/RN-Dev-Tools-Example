@@ -20,11 +20,11 @@ try {
   const sentry = require("@sentry/react-native");
   if (sentry && sentry.getClient) {
     realSentryGetClient = sentry.getClient;
-    console.log("✅ Real Sentry SDK detected");
+    // Real Sentry SDK detected
   }
 } catch {
   // Sentry not available, will use mock
-  console.log("ℹ️ @sentry/react-native not available, will use mock client");
+  // @sentry/react-native not available, will use mock client
 }
 
 /**
@@ -54,10 +54,10 @@ export function getSentryClient(): SentryClient | null {
 
   // Fall back to mock client
   if (!mockClientInstance) {
-    console.log("📦 Creating mock Sentry client for dev tools");
+    // Creating mock Sentry client for dev tools
     mockClientInstance = createMockSentryClient();
     // Auto-start event generation for testing
-    (mockClientInstance as any).startMockEventGeneration?.();
+    (mockClientInstance as { startMockEventGeneration?: () => void }).startMockEventGeneration?.();
   }
 
   return mockClientInstance;

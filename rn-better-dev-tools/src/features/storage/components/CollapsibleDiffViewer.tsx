@@ -17,6 +17,7 @@ import {
 } from "rn-better-dev-tools/icons";
 import { objectDiff, type DiffItem } from "../utils/objectDiff";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
+import { parseValue, formatValue, getTypeColor } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface CollapsibleDiffViewerProps {
   oldValue: unknown;
@@ -26,8 +27,8 @@ interface CollapsibleDiffViewerProps {
 interface FlattenedDiff {
   path: string;
   type: "CREATE" | "REMOVE" | "CHANGE";
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
 }
 
 export function CollapsibleDiffViewer({
@@ -36,17 +37,6 @@ export function CollapsibleDiffViewer({
 }: CollapsibleDiffViewerProps) {
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
 
-  const parseValue = (value: unknown): unknown => {
-    if (value === null || value === undefined) return value;
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value;
-      }
-    }
-    return value;
-  };
 
   const flattened = useMemo(() => {
     const oldParsed = parseValue(oldValue);
@@ -107,40 +97,6 @@ export function CollapsibleDiffViewer({
     });
   };
 
-  const formatValue = (value: any): string => {
-    if (value === null) return "null";
-    if (value === undefined) return "undefined";
-    if (typeof value === "string") return `"${value}"`;
-    if (typeof value === "boolean") return value ? "true" : "false";
-    if (typeof value === "number") return String(value);
-    if (typeof value === "object") {
-      if (Array.isArray(value)) {
-        return `[Array: ${value.length} items]`;
-      }
-      return `{Object: ${Object.keys(value).length} keys}`;
-    }
-    return String(value);
-  };
-
-  const getTypeColor = (value: any): string => {
-    if (value === null) return gameUIColors.dataTypes.null;
-    if (value === undefined) return gameUIColors.dataTypes.undefined;
-    const type = typeof value;
-    switch (type) {
-      case "string":
-        return gameUIColors.dataTypes.string;
-      case "number":
-        return gameUIColors.dataTypes.number;
-      case "boolean":
-        return gameUIColors.dataTypes.boolean;
-      case "object":
-        return Array.isArray(value)
-          ? gameUIColors.dataTypes.array
-          : gameUIColors.dataTypes.object;
-      default:
-        return gameUIColors.primary;
-    }
-  };
 
   const getDiffIcon = (type: string) => {
     switch (type) {

@@ -20,6 +20,7 @@ import { ThemedSplitView } from "./DiffViewer/modes/ThemedSplitView";
 import { diffThemes } from "./DiffViewer/themes/diffThemes";
 import { computeLineDiff, DiffType } from "../utils/lineDiff";
 import { TreeDiffViewer } from "./DiffViewer/TreeDiffViewer";
+import { parseValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface StorageKeyConversation {
   key: string;
@@ -61,17 +62,6 @@ export function StorageEventDetailContent({
   const [isLeftPickerOpen, setIsLeftPickerOpen] = useState(false);
   const [isRightPickerOpen, setIsRightPickerOpen] = useState(false);
   const [diffViewerTab, setDiffViewerTab] = useState<"split" | "tree">("tree");
-  const parseValue = (value: unknown): unknown => {
-    if (value === null || value === undefined) return value;
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value;
-      }
-    }
-    return value;
-  };
 
   const renderValueContent = (value: unknown, label: string) => {
     const parsed = parseValue(value);

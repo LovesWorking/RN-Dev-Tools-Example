@@ -6,14 +6,12 @@ import { EnvVarsDetailContent } from "./EnvVarsSection";
 import { RequiredEnvVar } from "../types";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useCallback } from "react";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 
 interface EnvVarsModalProps {
   visible: boolean;
   onClose: () => void;
   requiredEnvVars: RequiredEnvVar[];
-  _envVarsSubtitle: string;
   onBack?: () => void;
   enableSharedModalDimensions?: boolean;
 }
@@ -26,12 +24,9 @@ export function EnvVarsModal({
   visible,
   onClose,
   requiredEnvVars,
-  _envVarsSubtitle,
   onBack,
   enableSharedModalDimensions = false,
 }: EnvVarsModalProps) {
-  const theme = useTheme();
-
   const handleModeChange = useCallback((_mode: ModalMode) => {
     // Mode changes handled by JsModal
   }, []);
@@ -64,7 +59,7 @@ export function EnvVarsModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <EnvVarsDetailContent requiredEnvVars={requiredEnvVars} />

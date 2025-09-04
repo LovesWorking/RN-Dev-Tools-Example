@@ -4,7 +4,6 @@ import {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import {
   View,
@@ -34,6 +33,7 @@ import {
 } from "@/rn-better-dev-tools/src/shared/ui/components";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
+import { parseValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface StorageEventDetailModalProps {
   visible: boolean;
@@ -81,11 +81,10 @@ export function StorageEventDetailModal({
   const [showValueChanges, setShowValueChanges] = useState(true);
   const [showOperationHistory, setShowOperationHistory] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const theme = useTheme();
   const insets = useSafeAreaInsets();
 
   const handleModeChange = useCallback((mode: ModalMode) => {
-    console.log("mode", mode);
+    // Modal mode changed to: mode
   }, []);
 
   // Force re-render every 10 seconds for relative times
@@ -174,17 +173,6 @@ export function StorageEventDetailModal({
     setKeyStats(stats);
   }, [event, allEvents, visible]);
 
-  const parseValue = (value: unknown): unknown => {
-    if (value === null || value === undefined) return value;
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value;
-      }
-    }
-    return value;
-  };
 
   const formatTimestamp = (date: Date): string => {
     const hours = date.getHours().toString().padStart(2, "0");
@@ -353,7 +341,7 @@ export function StorageEventDetailModal({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <ScrollView

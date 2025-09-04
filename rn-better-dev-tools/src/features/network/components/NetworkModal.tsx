@@ -25,7 +25,6 @@ import {
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
 import { NetworkFilterView } from "./NetworkFilterView";
@@ -62,7 +61,6 @@ function NetworkModalInner({
   onBack,
   enableSharedModalDimensions = false,
 }: NetworkModalProps) {
-  const theme = useTheme();
   const {
     events,
     stats,
@@ -458,7 +456,7 @@ function NetworkModalInner({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
     >
       <View style={styles.container}>
@@ -611,12 +609,12 @@ const styles = StyleSheet.create({
   headerSearchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: gameUIColors.blackTint2,
-    borderRadius: 8,
+    backgroundColor: `${gameUIColors.blackTint2}80`,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    borderColor: `${gameUIColors.border}40`,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
   },
   headerSearchInput: {
     flex: 1,
@@ -638,29 +636,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: gameUIColors.blackTint3,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
+    backgroundColor: `${gameUIColors.blackTint3}60`,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: `${gameUIColors.border}30`,
   },
   headerChipActive: {
-    backgroundColor: `${gameUIColors.network}26`,
-    borderColor: `${gameUIColors.network}66`,
+    backgroundColor: `${gameUIColors.network}15`,
+    borderColor: `${gameUIColors.network}50`,
+    shadowColor: gameUIColors.network,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 1,
   },
   headerChipValue: {
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: "600",
     fontFamily: "monospace",
   },
   headerActionButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    backgroundColor: gameUIColors.blackTint2,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: `${gameUIColors.blackTint2}80`,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: `${gameUIColors.border}40`,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -708,16 +711,16 @@ const styles = StyleSheet.create({
     color: gameUIColors.muted,
   },
   startButton: {
-    backgroundColor: `${gameUIColors.success}1A`,
-    borderColor: `${gameUIColors.success}33`,
+    backgroundColor: `${gameUIColors.success}12`,
+    borderColor: `${gameUIColors.success}40`,
   },
   stopButton: {
-    backgroundColor: `${gameUIColors.error}1A`,
-    borderColor: `${gameUIColors.error}33`,
+    backgroundColor: `${gameUIColors.error}12`,
+    borderColor: `${gameUIColors.error}40`,
   },
   activeFilterButton: {
-    backgroundColor: `${gameUIColors.network}1A`,
-    borderColor: `${gameUIColors.network}33`,
+    backgroundColor: `${gameUIColors.network}12`,
+    borderColor: `${gameUIColors.network}40`,
   },
   activeIgnoreButton: {
     backgroundColor: `${gameUIColors.warning}1A`,
@@ -767,14 +770,14 @@ const styles = StyleSheet.create({
   disabledBanner: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    padding: 8,
+    gap: 8,
+    padding: 10,
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: `${gameUIColors.warning}1A`,
-    borderRadius: 6,
+    backgroundColor: `${gameUIColors.warning}08`,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: `${gameUIColors.warning}33`,
+    borderColor: `${gameUIColors.warning}20`,
   },
   disabledText: {
     color: gameUIColors.warning,

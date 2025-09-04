@@ -34,6 +34,19 @@ export function createMockSentryClient(): MockSentryClient {
   let isRunning = false;
   let eventInterval: ReturnType<typeof setInterval> | null = null;
   let eventCounter = 0;
+  const activeTimeouts = new Set<ReturnType<typeof setTimeout>>();
+
+  // Helper function to manage timeouts with automatic cleanup
+  const managedSetTimeout = (callback: () => void, delay: number): ReturnType<typeof setTimeout> => {
+    const timeoutId = setTimeout(() => {
+      activeTimeouts.delete(timeoutId);
+      if (isRunning && client._isRunning) {
+        callback();
+      }
+    }, delay);
+    activeTimeouts.add(timeoutId);
+    return timeoutId;
+  };
 
   const client: MockSentryClient = {
     _listeners: listeners,
@@ -73,11 +86,14 @@ export function createMockSentryClient(): MockSentryClient {
       isRunning = true;
       client._isRunning = true;
 
-      // Generate initial events
-      setTimeout(() => {
+      // Generate initial events with managed timeout for automatic cleanup
+      const initialTimeout = managedSetTimeout(() => {
         client.generateMockEvent("session");
         client.generateMockEvent("breadcrumb-navigation");
       }, 100);
+
+      // Store initial timeout for cleanup
+      (client as any)._initialTimeout = initialTimeout;
 
       // Generate periodic events
       eventInterval = setInterval(() => {
@@ -106,6 +122,14 @@ export function createMockSentryClient(): MockSentryClient {
         clearInterval(eventInterval);
         eventInterval = null;
       }
+      // Clear initial timeout if still pending
+      if ((client as any)._initialTimeout) {
+        clearTimeout((client as any)._initialTimeout);
+        (client as any)._initialTimeout = null;
+      }
+      // Clear all active timeouts to prevent memory leaks
+      activeTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+      activeTimeouts.clear();
     },
 
     generateMockEvent: (type: string) => {
@@ -279,8 +303,8 @@ export function createMockSentryClient(): MockSentryClient {
 
           client.emit("spanStart", spanStart);
 
-          // Emit span end after a delay
-          setTimeout(() => {
+          // Emit span end after a delay with managed timeout
+          managedSetTimeout(() => {
             const spanEnd: SpanJSON = {
               ...spanStart,
               timestamp: timestamp / 1000,
@@ -319,8 +343,8 @@ export function createMockSentryClient(): MockSentryClient {
             startTimestamp: startTime / 1000,
           });
 
-          // Finish transaction after delay
-          setTimeout(() => {
+          // Finish transaction after delay with managed timeout
+          managedSetTimeout(() => {
             const transaction: SentryEvent = {
               transaction: transactionName,
               start_timestamp: startTime / 1000,
@@ -466,7 +490,7 @@ export function getMockSentryClient(): MockSentryClient {
     mockClientInstance = createMockSentryClient();
     // Auto-start mock event generation for testing
     mockClientInstance.startMockEventGeneration();
-    console.log("✅ Mock Sentry client created and event generation started");
+    // Mock Sentry client created and event generation started
   }
   return mockClientInstance;
 }

@@ -4,8 +4,8 @@ import { DataViewer } from "../../../../react-query/components/shared/DataViewer
 import type { DiffItem } from "../../../utils/objectDiff";
 
 interface SideBySideDiffViewProps {
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   differences: DiffItem[];
   debugMode?: boolean;
 }

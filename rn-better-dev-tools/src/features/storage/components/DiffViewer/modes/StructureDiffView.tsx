@@ -14,8 +14,8 @@ import {
 import type { DiffItem } from "../../../utils/objectDiff";
 
 interface StructureDiffViewProps {
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   differences: DiffItem[];
   debugMode?: boolean;
 }
@@ -79,14 +79,14 @@ export function StructureDiffView({
     return root;
   };
 
-  const getValueType = (value: any): "object" | "array" | "primitive" => {
+  const getValueType = (value: unknown): "object" | "array" | "primitive" => {
     if (value === null || value === undefined) return "primitive";
     if (Array.isArray(value)) return "array";
     if (typeof value === "object") return "object";
     return "primitive";
   };
 
-  const getTypeIcon = (type: string, value?: any) => {
+  const getTypeIcon = (type: string, value?: unknown) => {
     switch (type) {
       case "object":
         return <Database size={11} color={gameUIColors.dataTypes.object} />;

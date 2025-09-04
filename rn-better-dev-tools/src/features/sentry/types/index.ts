@@ -17,7 +17,7 @@ export interface Breadcrumb {
   event_id?: string;
   category?: string;
   message?: string;
-  data?: { [key: string]: any };
+  data?: { [key: string]: unknown };
   timestamp?: number;
 }
 
@@ -38,7 +38,7 @@ export interface XhrBreadcrumbData {
 }
 
 export interface FetchBreadcrumbHint {
-  input: any[];
+  input: unknown[];
   data?: unknown;
   response?: unknown;
   startTimestamp: number;
@@ -82,7 +82,7 @@ export interface SpanJSON {
   origin?: string;
   profile_id?: string;
   exclusive_time?: number;
-  measurements?: Record<string, any>;
+  measurements?: Record<string, unknown>;
   is_segment?: boolean;
   segment_id?: string;
 }
@@ -120,9 +120,9 @@ export interface SentryEvent {
   message?: string;
   transaction?: string;
   modules?: { [key: string]: string };
-  extra?: { [key: string]: any };
+  extra?: { [key: string]: unknown };
   tags?: { [key: string]: string };
-  user?: any;
+  user?: unknown;
   contexts?: {
     trace?: {
       trace_id?: string;
@@ -130,16 +130,16 @@ export interface SentryEvent {
       parent_span_id?: string;
       op?: string;
       status?: string;
-      data?: { [key: string]: any };
+      data?: { [key: string]: unknown };
     };
-    [key: string]: any;
+    [key: string]: unknown;
   };
   breadcrumbs?: Breadcrumb[];
   spans?: SpanJSON[];
   start_timestamp?: number;
   timestamp?: number;
-  measurements?: Record<string, any>;
-  profile?: any;
+  measurements?: Record<string, unknown>;
+  profile?: unknown;
 }
 
 // Extended types for the dev tools
@@ -201,20 +201,22 @@ export function extractHttpDataFromSentryEvent(
     metadata.category === "fetch" ||
     metadata.category === "http"
   ) {
-    const data = (metadata.data || metadata) as Record<string, any>;
+    const data = (metadata.data || metadata) as Record<string, unknown>;
     const statusCode = data.status_code || data.status || data.statusCode;
     return {
-      method: data.method || "GET",
-      url: data.url || "",
-      statusCode: statusCode as number | undefined,
-      duration:
-        data.duration ||
-        data.responseTime ||
+      method: typeof data.method === 'string' ? data.method : "GET",
+      url: typeof data.url === 'string' ? data.url : "",
+      statusCode: typeof statusCode === 'number' ? statusCode : undefined,
+      duration: typeof data.duration === 'number' ? data.duration :
+        typeof data.responseTime === 'number' ? data.responseTime :
         (data.endTimestamp && data.startTimestamp
           ? Number(data.endTimestamp) - Number(data.startTimestamp)
           : undefined),
-      requestSize: data.request_body_size || data.requestSize,
-      responseSize: data.response_body_size || data.responseSize || data.size,
+      requestSize: typeof data.request_body_size === 'number' ? data.request_body_size : 
+        typeof data.requestSize === 'number' ? data.requestSize : undefined,
+      responseSize: typeof data.response_body_size === 'number' ? data.response_body_size : 
+        typeof data.responseSize === 'number' ? data.responseSize :
+        typeof data.size === 'number' ? data.size : undefined,
       error: Number(statusCode || 0) >= 400,
       errorMessage:
         Number(statusCode || 0) >= 400
@@ -266,15 +268,16 @@ export function extractHttpDataFromSentryEvent(
 
   // Try to extract from event contexts
   const rawEventData = metadata._sentryRawData as SentryEvent | undefined;
-  const trace = rawEventData?.contexts?.trace as any;
-  if (trace?.op === "http.client") {
-    const traceData = trace.data || {};
+  const trace = rawEventData?.contexts?.trace as Record<string, unknown> | undefined;
+  if (trace && trace.op === "http.client" && typeof trace.data === 'object' && trace.data !== null) {
+    const traceData = trace.data as Record<string, unknown>;
     return {
-      method:
-        traceData["http.request.method"] || traceData["http.method"] || "GET",
-      url: traceData["url.full"] || traceData["http.url"] || "",
-      statusCode:
-        traceData["http.response.status_code"] || traceData["http.status_code"],
+      method: typeof traceData["http.request.method"] === 'string' ? traceData["http.request.method"] :
+        typeof traceData["http.method"] === 'string' ? traceData["http.method"] : "GET",
+      url: typeof traceData["url.full"] === 'string' ? traceData["url.full"] :
+        typeof traceData["http.url"] === 'string' ? traceData["http.url"] : "",
+      statusCode: typeof traceData["http.response.status_code"] === 'number' ? traceData["http.response.status_code"] :
+        typeof traceData["http.status_code"] === 'number' ? traceData["http.status_code"] : undefined,
       duration: metadata.duration as number | undefined,
       timestamp,
     };

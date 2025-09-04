@@ -1,10 +1,11 @@
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import type { DiffItem } from "../../../utils/objectDiff";
+import { formatValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface UnifiedDiffViewProps {
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   differences: DiffItem[];
   debugMode?: boolean;
 }
@@ -30,20 +31,16 @@ export function UnifiedDiffView({
     );
   };
 
-  const formatValue = (value: any): string => {
-    if (value === null) return "null";
-    if (value === undefined) return "undefined";
-    if (typeof value === "string") return `"${value}"`;
-    if (typeof value === "boolean") return value ? "true" : "false";
-    if (typeof value === "number") return String(value);
-    if (typeof value === "object") {
+  // Custom formatValue for JSON display in unified view
+  const formatValueExpanded = (value: unknown): string => {
+    if (typeof value === "object" && value !== null) {
       try {
         return JSON.stringify(value, null, 2);
       } catch {
-        return String(value);
+        return formatValue(value);
       }
     }
-    return String(value);
+    return formatValue(value);
   };
 
   // Group differences by path and sort
@@ -82,7 +79,7 @@ export function UnifiedDiffView({
                     <Text style={styles.lineNumber}>-</Text>
                     <View style={[styles.lineContent, styles.removeLine]}>
                       <Text style={styles.removeText}>
-                        {formatValue(diff.oldValue)}
+                        {formatValueExpanded(diff.oldValue)}
                       </Text>
                     </View>
                   </View>
@@ -93,7 +90,7 @@ export function UnifiedDiffView({
                     <Text style={styles.lineNumber}>+</Text>
                     <View style={[styles.lineContent, styles.addLine]}>
                       <Text style={styles.addText}>
-                        {formatValue(diff.value)}
+                        {formatValueExpanded(diff.value)}
                       </Text>
                     </View>
                   </View>
@@ -105,7 +102,7 @@ export function UnifiedDiffView({
                       <Text style={styles.lineNumber}>-</Text>
                       <View style={[styles.lineContent, styles.removeLine]}>
                         <Text style={styles.removeText}>
-                          {formatValue(diff.oldValue)}
+                          {formatValueExpanded(diff.oldValue)}
                         </Text>
                       </View>
                     </View>
@@ -113,7 +110,7 @@ export function UnifiedDiffView({
                       <Text style={styles.lineNumber}>+</Text>
                       <View style={[styles.lineContent, styles.addLine]}>
                         <Text style={styles.addText}>
-                          {formatValue(diff.value)}
+                          {formatValueExpanded(diff.value)}
                         </Text>
                       </View>
                     </View>

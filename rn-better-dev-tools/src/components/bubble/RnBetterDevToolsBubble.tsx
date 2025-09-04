@@ -3,7 +3,6 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RequiredEnvVar,
-  useEnvVarsSubtitle,
   EnvVarsModal,
   EnvironmentIndicator,
   type Environment,
@@ -17,7 +16,6 @@ import {
   SentryLogsModal,
   setupSentryEventListeners,
 } from "@/rn-better-dev-tools/src/features/sentry";
-import { useSentrySubtitle } from "@/rn-better-dev-tools/src/features/sentry/hooks/useSentrySubtitle";
 
 import { FloatingTools, type UserRole, UserStatus } from "./floatingTools";
 import { ErrorBoundary } from "@/rn-better-dev-tools/src/shared/ui/components/ErrorBoundary";
@@ -113,8 +111,6 @@ export function RnBetterDevToolsBubble({
     hideStorageButton,
   ]);
 
-  const { getSentrySubtitle } = useSentrySubtitle();
-  const envVarsSubtitle = useEnvVarsSubtitle(requiredEnvVars);
 
   // Initialize Sentry event listeners on mount
   useEffect(() => {
@@ -322,7 +318,6 @@ export function RnBetterDevToolsBubble({
           visible={isEnvModalOpen}
           onClose={handleEnvModalDismiss}
           requiredEnvVars={requiredEnvVars}
-          _envVarsSubtitle={envVarsSubtitle}
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
 
@@ -331,7 +326,6 @@ export function RnBetterDevToolsBubble({
           key="sentry-logs-modal"
           visible={isSentryModalOpen}
           onClose={handleSentryModalDismiss}
-          getSentrySubtitle={getSentrySubtitle}
           enableSharedModalDimensions={enableSharedModalDimensions}
         />
 

@@ -23,7 +23,6 @@ import {
   Filter,
 } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { useTheme } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import {
   startListening,
@@ -39,6 +38,7 @@ import {
 } from "./StorageEventDetailContent";
 import { StorageFilterView } from "./StorageFilterView";
 import { ValueTypeBadge } from "@/rn-better-dev-tools/src/shared/ui/components/ValueTypeBadge";
+import { parseValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
 interface StorageModalWithTabsProps {
   visible: boolean;
@@ -74,7 +74,6 @@ export function StorageModalWithTabs({
   requiredStorageKeys = [],
 }: StorageModalWithTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("browser");
-  const theme = useTheme();
 
   // Event Listener state
   const [events, setEvents] = useState<AsyncStorageEvent[]>([]);
@@ -86,7 +85,7 @@ export function StorageModalWithTabs({
   const [showFilters, setShowFilters] = useState(false);
   const [detailTab, setDetailTab] = useState<"current" | "diff">("current");
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
-    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"]),
+    new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"])
   );
   const lastEventRef = useRef<AsyncStorageEvent | null>(null);
   const hasLoadedFilters = useRef(false);
@@ -109,7 +108,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedTab = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.activeTab(),
+          devToolsStorageKeys.storage.activeTab()
         );
         if (storedTab && (storedTab === "browser" || storedTab === "events")) {
           setActiveTab(storedTab as TabType);
@@ -133,7 +132,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedMonitoring = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.isMonitoring(),
+          devToolsStorageKeys.storage.isMonitoring()
         );
         if (storedMonitoring !== null) {
           const shouldMonitor = storedMonitoring === "true";
@@ -162,7 +161,7 @@ export function StorageModalWithTabs({
         );
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.activeTab(),
-          activeTab,
+          activeTab
         );
       } catch (error) {
         console.warn("Failed to save tab state:", error);
@@ -183,7 +182,7 @@ export function StorageModalWithTabs({
         );
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.isMonitoring(),
-          isListening.toString(),
+          isListening.toString()
         );
       } catch (error) {
         console.warn("Failed to save monitoring state:", error);
@@ -203,7 +202,7 @@ export function StorageModalWithTabs({
           "@react-native-async-storage/async-storage"
         );
         const storedFilters = await AsyncStorage.getItem(
-          devToolsStorageKeys.storage.eventFilters(),
+          devToolsStorageKeys.storage.eventFilters()
         );
         if (storedFilters) {
           const filters = JSON.parse(storedFilters) as string[];
@@ -230,7 +229,7 @@ export function StorageModalWithTabs({
         const filters = Array.from(ignoredPatterns);
         await AsyncStorage.setItem(
           devToolsStorageKeys.storage.eventFilters(),
-          JSON.stringify(filters),
+          JSON.stringify(filters)
         );
       } catch (error) {
         console.warn("Failed to save storage event filters:", error);
@@ -292,7 +291,7 @@ export function StorageModalWithTabs({
       setSelectedEventIndex(0);
       setDetailTab("current");
     },
-    [],
+    []
   );
 
   const handleTogglePattern = useCallback((pattern: string) => {
@@ -315,20 +314,9 @@ export function StorageModalWithTabs({
     setShowFilters(!showFilters);
   }, [showFilters]);
 
-  const parseValue = (value: unknown): unknown => {
-    if (value === null || value === undefined) return value;
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return value;
-      }
-    }
-    return value;
-  };
 
   const getValueType = (
-    value: unknown,
+    value: unknown
   ): StorageKeyConversation["valueType"] => {
     const parsed = parseValue(value);
     if (parsed === null) return "null";
@@ -363,7 +351,7 @@ export function StorageModalWithTabs({
 
       // Filter out keys that match ignored patterns
       const shouldIgnore = Array.from(ignoredPatterns).some((pattern) =>
-        key.includes(pattern),
+        key.includes(pattern)
       );
 
       if (shouldIgnore) return;
@@ -395,7 +383,7 @@ export function StorageModalWithTabs({
     // Convert to array and sort by last updated
     return Array.from(keyMap.values()).sort(
       (a, b) =>
-        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime(),
+        b.lastEvent.timestamp.getTime() - a.lastEvent.timestamp.getTime()
     );
   }, [events, ignoredPatterns]);
 
@@ -472,7 +460,7 @@ export function StorageModalWithTabs({
         </TouchableOpacity>
       );
     },
-    [],
+    []
   );
 
   if (!visible) return null;
@@ -628,7 +616,11 @@ export function StorageModalWithTabs({
                   },
                   {
                     key: "events",
-                    label: `Events${events.length > 0 && activeTab !== "events" ? ` (${events.length})` : ""}`,
+                    label: `Events${
+                      events.length > 0 && activeTab !== "events"
+                        ? ` (${events.length})`
+                        : ""
+                    }`,
                   },
                 ]}
                 activeTab={activeTab}
@@ -682,7 +674,7 @@ export function StorageModalWithTabs({
       onModeChange={handleModeChange}
       enablePersistence={true}
       initialMode="bottomSheet"
-      enableGlitchEffects={theme.name === "cyberpunk"}
+      enableGlitchEffects={true}
       styles={{}}
       footer={footerNode}
       footerHeight={footerNode ? 68 : 0}

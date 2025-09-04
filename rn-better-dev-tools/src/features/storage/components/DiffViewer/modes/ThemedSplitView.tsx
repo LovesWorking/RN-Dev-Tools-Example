@@ -12,9 +12,9 @@ import { DiffOptions } from "../DiffOptionsPanel";
 import { DiffTheme } from "../themes/diffThemes";
 
 interface ThemedSplitViewProps {
-  oldValue: any;
-  newValue: any;
-  differences: any[]; // From objectDiff, not used in this view
+  oldValue: unknown;
+  newValue: unknown;
+  differences: unknown[]; // From objectDiff, not used in this view
   theme: DiffTheme;
   options?: DiffOptions;
   showThemeName?: boolean;

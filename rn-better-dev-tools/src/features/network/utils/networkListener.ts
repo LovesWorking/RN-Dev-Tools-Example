@@ -41,6 +41,33 @@ export interface NetworkingEvent {
 
 export type NetworkingEventListener = (event: NetworkingEvent) => void;
 
+/**
+ * Network traffic interceptor for React Native applications
+ * 
+ * This class intercepts both fetch and XMLHttpRequest operations to provide
+ * comprehensive network monitoring capabilities. It uses method swizzling to
+ * wrap native networking APIs while preserving their original functionality.
+ * 
+ * @example
+ * ```typescript
+ * // Start monitoring network traffic
+ * startNetworkListener();
+ * 
+ * // Add a listener for network events
+ * const unsubscribe = addNetworkListener((event) => {
+ *   if (event.type === 'response') {
+ *     console.log(`${event.request.method} ${event.request.url}: ${event.response?.status}`);
+ *   }
+ * });
+ * 
+ * // Stop monitoring and cleanup
+ * unsubscribe();
+ * stopNetworkListener();
+ * ```
+ * 
+ * @performance Uses lazy singleton pattern to minimize memory footprint
+ * @performance Includes URL filtering to ignore development traffic
+ */
 class NetworkListener {
   private listeners: NetworkingEventListener[] = [];
   private isListening = false;
@@ -73,7 +100,15 @@ class NetworkListener {
       XMLHttpRequest.prototype.setRequestHeader;
   }
 
-  // Check if URL should be ignored
+  /**
+   * Check if URL should be ignored from network monitoring
+   * 
+   * Filters out development-related URLs like Metro bundler, debugger proxy,
+   * and symbolication requests to reduce noise in the network logs.
+   * 
+   * @param url - The URL to check
+   * @returns True if the URL should be ignored
+   */
   private shouldIgnoreUrl(url: string): boolean {
     return this.ignoredUrls.some((pattern) => pattern.test(url));
   }
@@ -89,7 +124,14 @@ class NetworkListener {
     });
   }
 
-  // Parse URL to extract query parameters
+  /**
+   * Parse URL to extract query parameters and clean URL
+   * 
+   * @param url - The URL to parse
+   * @returns Object containing cleaned URL and parsed query parameters
+   * 
+   * @performance Uses manual parsing instead of URL constructor for better performance
+   */
   private parseUrl(url: string): {
     url: string;
     params: Record<string, string> | null;
@@ -130,7 +172,17 @@ class NetworkListener {
     return 0;
   }
 
-  // Start listening to network operations
+  /**
+   * Start intercepting network operations by swizzling fetch and XMLHttpRequest
+   * 
+   * This method replaces the global fetch function and XMLHttpRequest methods
+   * with instrumented versions that emit events while preserving original functionality.
+   * 
+   * @throws Will log warnings if already listening
+   * 
+   * @performance Uses method swizzling for minimal runtime overhead
+   * @performance Includes request deduplication through ignored URL patterns
+   */
   startListening() {
     if (this.isListening) {
       console.warn("[NetworkListener] Already listening");
@@ -518,11 +570,16 @@ class NetworkListener {
 
     this.isListening = true;
     if (__DEV__) {
-      console.log("[NetworkListener] Started listening");
+      // Network listener has started monitoring fetch and XMLHttpRequest operations
     }
   }
 
-  // Stop listening and restore original methods
+  /**
+   * Stop listening and restore original networking methods
+   * 
+   * This method restores the original fetch and XMLHttpRequest implementations,
+   * effectively disabling network monitoring.
+   */
   stopListening() {
     if (!this.isListening) {
       console.warn("[NetworkListener] Not currently listening");
@@ -538,11 +595,16 @@ class NetworkListener {
 
     this.isListening = false;
     if (__DEV__) {
-      console.log("[NetworkListener] Stopped listening");
+      // Network listener has stopped monitoring and restored original methods
     }
   }
 
-  // Add event listener
+  /**
+   * Add a listener for network events
+   * 
+   * @param listener - Callback function to handle network events
+   * @returns Unsubscribe function to remove the listener
+   */
   addListener(listener: NetworkingEventListener) {
     this.listeners.push(listener);
 
@@ -571,9 +633,19 @@ class NetworkListener {
   }
 }
 
-// Create lazy singleton instance
+/**
+ * Lazy singleton instance holder for NetworkListener
+ * 
+ * This pattern ensures only one NetworkListener instance exists throughout
+ * the application lifecycle while deferring instantiation until first use.
+ */
 let _networkListener: NetworkListener | null = null;
 
+/**
+ * Get or create the singleton NetworkListener instance
+ * 
+ * @returns The singleton NetworkListener instance
+ */
 const getNetworkListener = () => {
   if (!_networkListener) {
     _networkListener = new NetworkListener();
@@ -581,14 +653,64 @@ const getNetworkListener = () => {
   return _networkListener;
 };
 
+/**
+ * Access function for the singleton NetworkListener instance
+ * 
+ * @returns Function that returns the NetworkListener instance
+ */
 export const networkListener = getNetworkListener;
 
-// Simple API functions
+/**
+ * Start network traffic monitoring
+ * 
+ * @example
+ * ```typescript
+ * startNetworkListener();
+ * console.log('Network monitoring started');
+ * ```
+ */
 export const startNetworkListener = () => getNetworkListener().startListening();
+
+/**
+ * Stop network traffic monitoring
+ */
 export const stopNetworkListener = () => getNetworkListener().stopListening();
+
+/**
+ * Add a listener for network events
+ * 
+ * @param listener - Callback function to handle network events
+ * @returns Unsubscribe function to remove the listener
+ * 
+ * @example
+ * ```typescript
+ * const unsubscribe = addNetworkListener((event) => {
+ *   console.log(`Network ${event.type}:`, event.request.url);
+ * });
+ * 
+ * // Later...
+ * unsubscribe();
+ * ```
+ */
 export const addNetworkListener = (listener: NetworkingEventListener) =>
   getNetworkListener().addListener(listener);
+
+/**
+ * Remove all registered network event listeners
+ */
 export const removeAllNetworkListeners = () =>
   getNetworkListener().removeAllListeners();
+
+/**
+ * Check if network monitoring is currently active
+ * 
+ * @returns True if currently intercepting network traffic
+ */
 export const isNetworkListening = () => getNetworkListener().isActive;
+
+/**
+ * Get the number of registered network event listeners
+ * 
+ * @returns Number of active listeners
+ */
 export const getNetworkListenerCount = () => getNetworkListener().listenerCount;

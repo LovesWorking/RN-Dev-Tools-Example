@@ -13,6 +13,44 @@ import {
 } from "../utils/networkListener";
 import type { NetworkEvent, NetworkStats, NetworkFilter } from "../types";
 
+/**
+ * Custom hook for accessing network events and controls
+ * 
+ * This hook provides a complete interface for network monitoring, including
+ * event filtering, statistics calculation, and interception control. It uses
+ * the Reactotron-style listener pattern for network event handling.
+ * 
+ * @returns Object containing filtered events, statistics, controls, and utilities
+ * 
+ * @example
+ * ```typescript
+ * function NetworkMonitor() {
+ *   const {
+ *     events,
+ *     stats,
+ *     filter,
+ *     setFilter,
+ *     clearEvents,
+ *     toggleInterception,
+ *     isEnabled
+ *   } = useNetworkEvents();
+ * 
+ *   return (
+ *     <div>
+ *       <p>Total requests: {stats.totalRequests}</p>
+ *       <p>Success rate: {stats.successfulRequests}/{stats.totalRequests}</p>
+ *       <button onClick={toggleInterception}>
+ *         {isEnabled ? 'Stop' : 'Start'} Monitoring
+ *       </button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ * 
+ * @performance Uses memoization for expensive filtering and statistics calculations
+ * @performance Optimizes string operations and array processing for large datasets
+ * @performance Includes Set-based lookups for O(1) filter matching
+ */
 export function useNetworkEvents() {
   const [events, setEvents] = useState<NetworkEvent[]>([]);
   const [filter, setFilter] = useState<NetworkFilter>({});
@@ -31,8 +69,7 @@ export function useNetworkEvents() {
         !event.request.url.includes("symbolicate") &&
         !event.request.url.includes(":8081")
       ) {
-        // Uncomment for debugging
-        // console.log('[Network Event]', event.type, event.request.method, event.request.url);
+        // Network event processed: [event.type] [method] [url] - available for debugging if needed
       }
       networkEventStore.processNetworkEvent(event);
     });
@@ -71,12 +108,35 @@ export function useNetworkEvents() {
     }
   }, [isEnabled]);
 
-  // Filter events
+  // Memoize search text processing to avoid repeated toLowerCase calls
+  // Performance: Expensive string operations repeated for every event on every filter
+  const searchLower = useMemo(() => {
+    return filter.searchText ? filter.searchText.toLowerCase() : null;
+  }, [filter.searchText]);
+
+  // Memoize method filter Set for O(1) lookup instead of Array.includes
+  // Performance: Converting array.includes to Set.has for faster lookups with large method lists
+  const methodSet = useMemo(() => {
+    return filter.method && filter.method.length > 0 
+      ? new Set(filter.method) 
+      : null;
+  }, [filter.method]);
+
+  // Memoize content type Set for O(1) lookup
+  // Performance: Converting array.some to Set.has for faster content type matching
+  const contentTypeSet = useMemo(() => {
+    return filter.contentType && filter.contentType.length > 0 
+      ? new Set(filter.contentType) 
+      : null;
+  }, [filter.contentType]);
+
+  // Filter events with optimized string operations and Set lookups
+  // Performance: Complex multi-stage filtering with string operations and content type matching
   const filteredEvents = useMemo(() => {
     let filtered = [...events];
 
-    if (filter.method && filter.method.length > 0) {
-      filtered = filtered.filter((e) => filter.method!.includes(e.method));
+    if (methodSet) {
+      filtered = filtered.filter((e) => methodSet.has(e.method));
     }
 
     if (filter.status && filter.status !== "all") {
@@ -97,15 +157,14 @@ export function useNetworkEvents() {
       }
     }
 
-    if (filter.searchText) {
-      const search = filter.searchText.toLowerCase();
+    if (searchLower) {
       filtered = filtered.filter(
         (e) =>
-          e.url.toLowerCase().includes(search) ||
-          e.method.toLowerCase().includes(search) ||
-          e.path?.toLowerCase().includes(search) ||
-          e.host?.toLowerCase().includes(search) ||
-          (e.error && e.error.toLowerCase().includes(search)),
+          e.url.toLowerCase().includes(searchLower) ||
+          e.method.toLowerCase().includes(searchLower) ||
+          e.path?.toLowerCase().includes(searchLower) ||
+          e.host?.toLowerCase().includes(searchLower) ||
+          (e.error && e.error.toLowerCase().includes(searchLower)),
       );
     }
 
@@ -113,32 +172,40 @@ export function useNetworkEvents() {
       filtered = filtered.filter((e) => e.host === filter.host);
     }
 
-    if (filter.contentType && filter.contentType.length > 0) {
+    if (contentTypeSet) {
       filtered = filtered.filter((e) => {
         const headers = e.responseHeaders || e.requestHeaders;
         const contentType =
           headers?.["content-type"] || headers?.["Content-Type"] || "";
 
-        return filter.contentType!.some((type) => {
+        for (const type of contentTypeSet) {
           switch (type) {
             case "JSON":
-              return contentType.includes("json");
+              if (contentType.includes("json")) return true;
+              break;
             case "XML":
-              return contentType.includes("xml");
+              if (contentType.includes("xml")) return true;
+              break;
             case "HTML":
-              return contentType.includes("html");
+              if (contentType.includes("html")) return true;
+              break;
             case "TEXT":
-              return contentType.includes("text");
+              if (contentType.includes("text")) return true;
+              break;
             case "IMAGE":
-              return contentType.includes("image");
+              if (contentType.includes("image")) return true;
+              break;
             case "VIDEO":
-              return contentType.includes("video");
+              if (contentType.includes("video")) return true;
+              break;
             case "AUDIO":
-              return contentType.includes("audio");
+              if (contentType.includes("audio")) return true;
+              break;
             case "FORM":
-              return contentType.includes("form");
+              if (contentType.includes("form")) return true;
+              break;
             case "OTHER":
-              return (
+              if (
                 !contentType ||
                 (!contentType.includes("json") &&
                   !contentType.includes("xml") &&
@@ -148,60 +215,84 @@ export function useNetworkEvents() {
                   !contentType.includes("video") &&
                   !contentType.includes("audio") &&
                   !contentType.includes("form"))
-              );
-            default:
-              return false;
+              ) {
+                return true;
+              }
+              break;
           }
-        });
+        }
+        return false;
       });
     }
 
     return filtered;
-  }, [events, filter]);
+  }, [events, filter, searchLower, methodSet, contentTypeSet]);
 
-  // Calculate statistics
+  // Memoize expensive statistics calculation by categorizing events in single pass
+  // Performance: Multiple array.filter operations replaced with single loop for better performance
   const stats: NetworkStats = useMemo(() => {
-    const successful = events.filter(
-      (e) => e.status && e.status >= 200 && e.status < 300,
-    );
-    const failed = events.filter(
-      (e) => e.error || (e.status && e.status >= 400),
-    );
-    const pending = events.filter((e) => !e.status && !e.error);
+    let successful = 0;
+    let failed = 0;
+    let pending = 0;
+    let totalSent = 0;
+    let totalReceived = 0;
+    let durationSum = 0;
+    let durationCount = 0;
 
-    const durations = events.filter((e) => e.duration).map((e) => e.duration!);
+    // Single pass through events for all statistics
+    for (const event of events) {
+      // Categorize status
+      if (event.status && event.status >= 200 && event.status < 300) {
+        successful++;
+      } else if (event.error || (event.status && event.status >= 400)) {
+        failed++;
+      } else if (!event.status && !event.error) {
+        pending++;
+      }
 
-    const avgDuration =
-      durations.length > 0
-        ? durations.reduce((a, b) => a + b, 0) / durations.length
-        : 0;
+      // Accumulate data sizes
+      totalSent += event.requestSize || 0;
+      totalReceived += event.responseSize || 0;
 
-    const totalSent = events.reduce((sum, e) => sum + (e.requestSize || 0), 0);
-    const totalReceived = events.reduce(
-      (sum, e) => sum + (e.responseSize || 0),
-      0,
-    );
+      // Accumulate durations
+      if (event.duration) {
+        durationSum += event.duration;
+        durationCount++;
+      }
+    }
+
+    const avgDuration = durationCount > 0 ? durationSum / durationCount : 0;
 
     return {
       totalRequests: events.length,
-      successfulRequests: successful.length,
-      failedRequests: failed.length,
-      pendingRequests: pending.length,
+      successfulRequests: successful,
+      failedRequests: failed,
+      pendingRequests: pending,
       totalDataSent: totalSent,
       totalDataReceived: totalReceived,
       averageDuration: Math.round(avgDuration),
     };
   }, [events]);
 
-  // Get unique hosts
+  // Memoize unique hosts extraction with single pass instead of map + filter + Set
+  // Performance: Avoiding array.map().filter() chain, using single loop with Set for deduplication
   const hosts = useMemo(() => {
-    const hostSet = new Set(events.map((e) => e.host).filter(Boolean));
+    const hostSet = new Set<string>();
+    for (const event of events) {
+      if (event.host) {
+        hostSet.add(event.host);
+      }
+    }
     return Array.from(hostSet);
   }, [events]);
 
-  // Get unique methods
+  // Memoize unique methods extraction with single pass
+  // Performance: Avoiding array.map() + Set constructor, using single loop for better performance
   const methods = useMemo(() => {
-    const methodSet = new Set(events.map((e) => e.method));
+    const methodSet = new Set<string>();
+    for (const event of events) {
+      methodSet.add(event.method);
+    }
     return Array.from(methodSet);
   }, [events]);
 

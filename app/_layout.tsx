@@ -12,7 +12,6 @@ import { QueryClientWrapper } from "@/src/components/QueryClientWrapper";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonTheme } from "@/constants/PokemonTheme";
 import { View } from "react-native";
-import { DevToolsThemeProvider } from "@/rn-better-dev-tools/src/themes/DevToolsThemeContext";
 import { useEffect } from "react";
 
 // import { RnBetterDevToolsBubble } from "@/src/_components/floating-bubble/bubble/RnBetterDevToolsBubble";
@@ -52,20 +51,18 @@ const queryClient = global.__queryClient;
 // App content component
 function AppContent() {
   return (
-    <DevToolsThemeProvider defaultTheme="cyberpunk">
-      <View style={{ flex: 1 }}>
-        <LinearGradient
-          colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
-          style={{ flex: 1 }}
-        >
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="light" />
-        </LinearGradient>
-      </View>
-    </DevToolsThemeProvider>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[PokemonTheme.colors.darkBg, "#1a1f3a", "#0A0E27"]}
+        style={{ flex: 1 }}
+      >
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="light" />
+      </LinearGradient>
+    </View>
   );
 }
 

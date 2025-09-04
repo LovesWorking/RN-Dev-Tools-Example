@@ -428,7 +428,7 @@ const useDataFlattening = (
   // Store circular cache outside of re-renders to prevent reset
   const circularCacheRef = useRef<WeakSet<object>>(new WeakSet<object>());
   const processingRef = useRef(false);
-  const dataVersionRef = useRef(0);
+  const dataVersionRef = useRef<number>(0);
   const lastActionRef = useRef<
     { type: "expand" | "collapse" | "init"; itemId?: string } | undefined
   >(undefined);
@@ -605,7 +605,7 @@ const useDataFlattening = (
     }
 
     let isCancelled = false;
-    let timeoutId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     processingRef.current = true;
     setIsProcessing(true);
 
@@ -629,7 +629,7 @@ const useDataFlattening = (
       try {
         // Initialize circular cache for new data
         circularCacheRef.current = new WeakSet();
-        dataVersionRef.current = data as any;
+        dataVersionRef.current = Date.now();
 
         const newFlatData = flattenDataStable(
           data,
@@ -1045,9 +1045,16 @@ export const VirtualizedDataExplorer: FC<
     initialExpanded,
   );
 
-  // Calculate visible types for the legend
+  // Calculate visible types for the legend with single pass deduplication
+  // Performance: Avoiding array.map() + Array.from(new Set()), using single loop for unique types
   const visibleTypes = useMemo(() => {
-    return flatData.map((item) => item.valueType);
+    const typeSet = new Set<string>();
+    for (const item of flatData) {
+      typeSet.add(item.valueType);
+      // Early exit if we have enough types for the legend (max 8 as per TypeLegend component)
+      if (typeSet.size >= 8) break;
+    }
+    return Array.from(typeSet);
   }, [flatData]);
 
   // Remove unnecessary useCallback - not passed to memoized components [[memory:4875251]]
@@ -1060,15 +1067,19 @@ export const VirtualizedDataExplorer: FC<
     <VirtualizedItem item={item} onToggleExpanded={toggleExpanded} />
   );
 
-  // Calculate average item size for better FlatList performance [[memory:4875251]]
+  // Calculate average item size for better FlatList performance with single pass
+  // Performance: Avoiding array.filter(), using single loop to count long keys  
   const averageItemSize = useMemo(() => {
-    const longKeyCount = flatData.filter(
-      (item) => item.key.length > LONG_KEY_THRESHOLD,
-    ).length;
-    const normalKeyCount = flatData.length - longKeyCount;
-
     if (flatData.length === 0) return ITEM_HEIGHT;
 
+    let longKeyCount = 0;
+    for (const item of flatData) {
+      if (item.key.length > LONG_KEY_THRESHOLD) {
+        longKeyCount++;
+      }
+    }
+
+    const normalKeyCount = flatData.length - longKeyCount;
     const totalHeight =
       longKeyCount * LONG_ITEM_HEIGHT + normalKeyCount * ITEM_HEIGHT;
     return Math.round(totalHeight / flatData.length);

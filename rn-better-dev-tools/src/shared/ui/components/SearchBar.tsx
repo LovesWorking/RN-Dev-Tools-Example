@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   ViewStyle,
+  TextStyle,
 } from "react-native";
 import { Search, X, Filter, Clock } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "../gameUI";
@@ -19,11 +20,22 @@ interface SearchBarProps {
   recentSearches?: string[];
   showFilters?: boolean;
   onFilterPress?: () => void;
-  style?: any;
+  style?: TextStyle;
   containerStyle?: ViewStyle;
   autoFocus?: boolean;
   onSubmitEditing?: () => void;
-  returnKeyType?: any;
+  returnKeyType?:
+    | "done"
+    | "go"
+    | "next"
+    | "search"
+    | "send"
+    | "default"
+    | "emergency-call"
+    | "google"
+    | "join"
+    | "route"
+    | "yahoo";
 }
 
 export function SearchBar({
@@ -43,6 +55,16 @@ export function SearchBar({
 }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleClear = () => {
     onChange("");
@@ -55,7 +77,7 @@ export function SearchBar({
   };
 
   const filteredSuggestions = suggestions.filter((s) =>
-    s.toLowerCase().includes(value.toLowerCase()),
+    s.toLowerCase().includes(value.toLowerCase())
   );
 
   const shouldShowSuggestions =
@@ -80,7 +102,15 @@ export function SearchBar({
           }}
           onBlur={() => {
             setIsFocused(false);
-            setTimeout(() => setShowSuggestions(false), 200);
+            // Clear any existing timeout
+            if (blurTimeoutRef.current) {
+              clearTimeout(blurTimeoutRef.current);
+            }
+            // Set new timeout with proper cleanup
+            blurTimeoutRef.current = setTimeout(() => {
+              setShowSuggestions(false);
+              blurTimeoutRef.current = null;
+            }, 200);
           }}
           autoFocus={autoFocus}
           autoCapitalize="none"
@@ -146,7 +176,7 @@ export function SearchBar({
 interface QuickSearchProps {
   onSearch: (query: string) => void;
   placeholder?: string;
-  style?: any;
+  style?: TextStyle;
 }
 
 SearchBar.Quick = function QuickSearch({

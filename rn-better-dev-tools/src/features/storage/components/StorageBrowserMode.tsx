@@ -9,12 +9,15 @@ interface StorageBrowserModeProps {
 }
 
 /**
- * Storage browser mode component using Game UI design system
- * Displays storage keys with game-themed visualization
+ * Storage browser mode component
+ * Displays storage keys with game UI styled interface
  */
 export function StorageBrowserMode({
   requiredStorageKeys = [],
 }: StorageBrowserModeProps) {
-  // Simply pass through to the new Game UI component
-  return <GameUIStorageBrowser requiredStorageKeys={requiredStorageKeys} />;
+  return (
+    <GameUIStorageBrowser
+      requiredStorageKeys={requiredStorageKeys}
+    />
+  );
 }
