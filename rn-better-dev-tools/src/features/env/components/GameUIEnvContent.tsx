@@ -70,7 +70,7 @@ export function GameUIEnvContent({
     return requiredVars.filter((v) => 
       v.key.toLowerCase().includes(query) ||
       v.description?.toLowerCase().includes(query) ||
-      v.value?.toLowerCase().includes(query)
+      (typeof v.value === 'string' && v.value.toLowerCase().includes(query))
     );
   }, [requiredVars, searchQuery]);
   
@@ -80,7 +80,7 @@ export function GameUIEnvContent({
     return optionalVars.filter((v) => 
       v.key.toLowerCase().includes(query) ||
       v.description?.toLowerCase().includes(query) ||
-      v.value?.toLowerCase().includes(query)
+      (typeof v.value === 'string' && v.value.toLowerCase().includes(query))
     );
   }, [optionalVars, searchQuery]);
   
@@ -349,7 +349,7 @@ export function GameUIEnvContent({
                 <Search size={48} color={gameUIColors.muted} />
                 <Text style={styles.emptyTitle}>No search results</Text>
                 <Text style={styles.emptySubtitle}>
-                  No issues found matching "{searchQuery}"
+                  No issues found matching &quot;{searchQuery}&quot;
                 </Text>
               </View>
             ) : (

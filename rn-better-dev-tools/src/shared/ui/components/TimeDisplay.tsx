@@ -66,23 +66,23 @@ export function TimeDisplay({
       : `${hours}h`;
   };
 
-  const formatMixed = (date: Date): string => {
-    const now = Date.now();
-    const diff = now - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-
-    if (hours < 24) {
-      return formatRelativeTime(date);
-    }
-    return date.toLocaleDateString([], {
-      month: "short",
-      day: "numeric",
-      year:
-        date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
-    });
-  };
-
   useEffect(() => {
+    const formatMixed = (date: Date): string => {
+      const now = Date.now();
+      const diff = now - date.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+
+      if (hours < 24) {
+        return formatRelativeTime(date);
+      }
+      return date.toLocaleDateString([], {
+        month: "short",
+        day: "numeric",
+        year:
+          date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+      });
+    };
+
     const updateTime = () => {
       if (format === "duration" && typeof time === "number") {
         setDisplayTime(formatDuration(time));

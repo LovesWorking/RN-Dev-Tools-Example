@@ -66,7 +66,7 @@ export function StorageFilterView({
       // External changes detected, update internal state
       // This ensures the filter manager stays in sync with parent component
     }
-  }, [ignoredPatterns]);
+  }, [ignoredPatterns, filterManager.filters]);
 
   const handleAddPattern = () => {
     if (filterManager.newFilter.trim()) {

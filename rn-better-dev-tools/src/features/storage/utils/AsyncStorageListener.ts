@@ -11,7 +11,7 @@ type AsyncStorageMultiMerge = (
   keyValuePairs: [string, string][]
 ) => Promise<void>;
 
-interface AsyncStorageModule {
+interface IAsyncStorageModule {
   setItem: AsyncStorageSetItem;
   removeItem: AsyncStorageRemoveItem;
   mergeItem: AsyncStorageMergeItem;
@@ -22,7 +22,7 @@ interface AsyncStorageModule {
 }
 
 // AsyncStorage will be loaded lazily
-let AsyncStorageModule: AsyncStorageModule | null = null;
+let AsyncStorageModule: IAsyncStorageModule | null = null;
 let asyncStorageLoadPromise: Promise<void> | null = null;
 
 /**

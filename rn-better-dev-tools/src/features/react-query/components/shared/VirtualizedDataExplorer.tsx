@@ -678,7 +678,7 @@ const useDataFlattening = (
       processingRef.current = false;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [data, expandedItems, flattenDataStable, maxDepth]);
+  }, [data, expandedItems, flattenDataStable, maxDepth, isProcessing]);
 
   // Incremental update function for expand/collapse
   const updateFlatDataIncremental = useCallback(
