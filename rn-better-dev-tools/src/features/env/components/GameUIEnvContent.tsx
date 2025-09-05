@@ -9,7 +9,7 @@ import {
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Local imports
-import { useDynamicEnv } from "../hooks";
+import { useDynamicEnv } from "../hooks/useDynamicEnv";
 import { RequiredEnvVar } from "../types";
 import { processEnvVars, calculateStats } from "../utils";
 import { EnvVarSection } from "./EnvVarSection";

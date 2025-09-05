@@ -79,34 +79,6 @@ export function envVar(key: string) {
 }
 
 /**
- * Type guard to check if a RequiredEnvVar has an expected value
- */
-export function hasExpectedValue(
-  requiredEnvVar: RequiredEnvVar,
-): requiredEnvVar is {
-  key: string;
-  expectedValue: string;
-  description?: string;
-} {
-  return (
-    typeof requiredEnvVar === "object" && "expectedValue" in requiredEnvVar
-  );
-}
-
-/**
- * Type guard to check if a RequiredEnvVar has an expected type
- */
-export function hasExpectedType(
-  requiredEnvVar: RequiredEnvVar,
-): requiredEnvVar is {
-  key: string;
-  expectedType: EnvVarType;
-  description?: string;
-} {
-  return typeof requiredEnvVar === "object" && "expectedType" in requiredEnvVar;
-}
-
-/**
  * Helper to create a set of required environment variables with better readability
  *
  * @example
@@ -130,70 +102,4 @@ export function hasExpectedType(
  */
 export function createEnvVarConfig(vars: RequiredEnvVar[]): RequiredEnvVar[] {
   return vars;
-}
-
-/**
- * Helper to validate environment variables at runtime
- * Returns an object with validation results
- */
-export function validateEnvVars(
-  envVars: Record<string, unknown>,
-  requiredVars: RequiredEnvVar[],
-): {
-  isValid: boolean;
-  errors: {
-    key: string;
-    issue: "missing" | "wrong_type" | "wrong_value";
-    expected?: string | EnvVarType;
-    actual?: unknown;
-  }[];
-} {
-  const errors: {
-    key: string;
-    issue: "missing" | "wrong_type" | "wrong_value";
-    expected?: string | EnvVarType;
-    actual?: unknown;
-  }[] = [];
-
-  for (const requiredVar of requiredVars) {
-    const key = typeof requiredVar === "string" ? requiredVar : requiredVar.key;
-    const value = envVars[key];
-
-    if (value === undefined) {
-      errors.push({ key, issue: "missing" });
-      continue;
-    }
-
-    if (hasExpectedValue(requiredVar) && value !== requiredVar.expectedValue) {
-      errors.push({
-        key,
-        issue: "wrong_value",
-        expected: requiredVar.expectedValue,
-        actual: value,
-      });
-    }
-
-    if (hasExpectedType(requiredVar)) {
-      const actualType =
-        typeof value === "string"
-          ? "string"
-          : Array.isArray(value)
-            ? "array"
-            : typeof value;
-
-      if (actualType !== requiredVar.expectedType) {
-        errors.push({
-          key,
-          issue: "wrong_type",
-          expected: requiredVar.expectedType,
-          actual: actualType,
-        });
-      }
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
 }

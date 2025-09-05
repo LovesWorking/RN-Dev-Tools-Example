@@ -3,15 +3,9 @@
  * This component orchestrates all env-related functionality
  */
 
-// Re-export all public APIs from this feature
-export * from "./types";
-export * from "./utils/helpers";
-export { EnvVarsSection } from "./components/EnvVarsSection";
-export { EnvVarsDetailContent } from "./components/EnvVarsSection";
+// Re-export only the public APIs that are actually used
+export type { RequiredEnvVar, EnvVarInfo, EnvVarStats, EnvVarType } from "./types";
+export { envVar, createEnvVarConfig } from "./utils/helpers";
 export { EnvVarsModal } from "./components/EnvVarsModal";
 export type { Environment } from "./components/EnvironmentIndicator";
 export { EnvironmentIndicator } from "./components/EnvironmentIndicator";
-export { useDynamicEnv } from "./hooks/useDynamicEnv";
-
-// Re-export components for backward compatibility
-export { GameUIEnvContent } from "./components/GameUIEnvContent";

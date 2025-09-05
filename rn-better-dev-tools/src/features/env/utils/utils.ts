@@ -131,26 +131,3 @@ export const calculateStats = (
   };
 };
 
-export const getSubtitle = (stats: EnvVarStats) => {
-  const {
-    requiredCount,
-    missingCount,
-    wrongValueCount,
-    wrongTypeCount,
-    optionalCount,
-  } = stats;
-  const issueCount = missingCount + wrongValueCount + wrongTypeCount;
-
-  if (requiredCount > 0) {
-    if (issueCount > 0) {
-      // Shorter format: "7✗ issues" or specific count
-      return `${issueCount}✗`;
-    } else {
-      // Shorter format: "✓ No issues"
-      return `✓ Valid`;
-    }
-  } else {
-    // Shorter format: "5 found"
-    return `${optionalCount} found`;
-  }
-};
