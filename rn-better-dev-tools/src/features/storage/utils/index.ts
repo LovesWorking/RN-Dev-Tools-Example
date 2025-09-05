@@ -1,6 +1,5 @@
 // Storage utilities
 export { clearAllAppStorage } from "./clearAllStorage";
-export { getEnvValue } from "./getEnvValue";
 
 // AsyncStorage Event Listener
 export {

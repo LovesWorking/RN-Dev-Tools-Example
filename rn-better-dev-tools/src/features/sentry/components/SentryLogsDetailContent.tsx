@@ -10,7 +10,7 @@ import {
   EmptyFilterState,
   EmptyState,
 } from "@/rn-better-dev-tools/src/features/log-dump/EmptyStates";
-import { SentryEventLogEntryItem } from "./SentryEventLogEntryItemCompact";
+import { SentryEventLogEntryItem } from "./SentryEventLogEntryItem";
 import { useSentryEvents } from "../hooks/useSentryEvents";
 import { TickProvider } from "../hooks/useTickEveryMinute";
 import { SentryDetailModal } from "./SentryDetailModal";

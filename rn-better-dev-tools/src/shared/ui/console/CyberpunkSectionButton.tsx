@@ -3,7 +3,7 @@ import type { LucideIcon } from "rn-better-dev-tools/icons";
 import { ChevronRight } from "rn-better-dev-tools/icons";
 import { CyberpunkButtonOutline } from "./CyberpunkButtonOutline";
 import { CyberpunkIconContainer } from "./CyberpunkIconContainer";
-import { theme } from "@/rn-better-dev-tools/src/themes/devToolsTheme";
+import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface CyberpunkSectionButtonProps {
   id: string;
@@ -40,7 +40,7 @@ export function CyberpunkSectionButton({
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>
+          <Text style={[styles.title, { color: gameUIColors.text }]}>
             {title}
           </Text>
           {subtitle && (

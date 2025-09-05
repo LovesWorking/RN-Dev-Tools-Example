@@ -3,8 +3,8 @@ import {
   JsModal,
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
-import { StorageBrowserMode } from "./StorageBrowserMode";
 import { RequiredStorageKey } from "../types";
+import { StorageBrowserMode } from "./StorageBrowserMode";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
 import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import {

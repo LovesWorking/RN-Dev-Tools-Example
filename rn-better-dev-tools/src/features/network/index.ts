@@ -4,10 +4,9 @@
 
 // Components
 export { NetworkModal } from "./components/NetworkModal";
-export { NetworkSection } from "./components/NetworkSection";
-export { NetworkEventItem } from "./components/NetworkEventItem";
 export { NetworkEventDetailView } from "./components/NetworkEventDetailView";
-export { NetworkStatsSection } from "./components/NetworkStats";
+export { NetworkEventItemCompact } from "./components/NetworkEventItemCompact";
+export { NetworkFilterView } from "./components/NetworkFilterView";
 
 // Hooks
 export { useNetworkEvents } from "./hooks/useNetworkEvents";

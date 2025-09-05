@@ -26,6 +26,7 @@ import {
   envVar,
 } from "@/rn-better-dev-tools/src/features/env";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { IconShowcase } from "@/docs/svg/IconShowCase";
 // import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
 // import { AutoDiffTest } from "@/components/AutoDiffTest";
@@ -190,6 +191,36 @@ function PokemonScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Test AsyncStorage operations
+  const testAsyncStorage = async () => {
+    console.log("Testing AsyncStorage operations...");
+    try {
+      // Test setItem
+      await AsyncStorage.setItem("test_key_1", "test_value_1");
+      console.log("Set test_key_1");
+      
+      // Test multiSet
+      await AsyncStorage.multiSet([
+        ["test_key_2", "test_value_2"],
+        ["test_key_3", JSON.stringify({ data: "object" })],
+      ]);
+      console.log("Set multiple keys");
+      
+      // Test mergeItem
+      await AsyncStorage.mergeItem("test_key_3", JSON.stringify({ merged: true }));
+      console.log("Merged test_key_3");
+      
+      // Test removeItem
+      await AsyncStorage.removeItem("test_key_1");
+      console.log("Removed test_key_1");
+      
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      console.error("AsyncStorage test error:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
+  };
+
   // Handle search with haptic feedback
   function handleSearch() {
     if (inputValue.trim()) {
@@ -243,6 +274,7 @@ function PokemonScreen() {
       setPokemonStack((prev) => [...prev, ...newPokemon]);
     }
   }, [currentIndex, pokemonStack.length]);
+
 
   // Handle input change with autocomplete
   const handleInputChange = useCallback((text: string) => {
@@ -616,6 +648,19 @@ function PokemonScreen() {
                           <Ionicons name="dice" size={18} color="#FFFFFF" />
                         </LinearGradient>
                       </Animated.View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={testAsyncStorage}
+                      activeOpacity={0.7}
+                      style={styles.actionButton}
+                    >
+                      <LinearGradient
+                        colors={["#10B981", "#059669"]}
+                        style={styles.gradientButton}
+                      >
+                        <Ionicons name="flask" size={18} color="#FFFFFF" />
+                      </LinearGradient>
                     </TouchableOpacity>
                   </View>
                 </View>

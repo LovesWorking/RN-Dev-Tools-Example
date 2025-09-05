@@ -21,14 +21,7 @@ export { SentryLogsModal } from "./components/SentryLogsModal";
 export { SentryEventDetailView } from "./components/SentryEventDetailView";
 export { SentryFilterView } from "./components/SentryFilterView";
 export { SentryLogsDetailContent } from "./components/SentryLogsDetailContent";
-
-// Log dump components
-export { SentryEventLogDetailView } from "./components/SentryEventLogDetailView";
-export { SentryEventLogDumpModalContent } from "./components/SentryEventLogDumpModalContent";
 export { SentryEventLogEntryItem } from "./components/SentryEventLogEntryItem";
-export { SentryEventLogEntryItem as SentryEventLogEntryItemCompact } from "./components/SentryEventLogEntryItemCompact";
-export { SentryEventLogFilters } from "./components/SentryEventLogFilters";
-export { LogEntrySentryBadge } from "./components/LogEntrySentryBadge";
 
 // Logger exports
 export * from "./logger/index-sentry";

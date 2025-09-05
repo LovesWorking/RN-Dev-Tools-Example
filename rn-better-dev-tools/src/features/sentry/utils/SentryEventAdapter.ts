@@ -1,5 +1,5 @@
-import type { SentryEventEntry } from "./types";
-import { SentryEventLevel, SentryEventType } from "./types";
+import type { SentryEventEntry } from "../types";
+import { SentryEventLevel, SentryEventType } from "../types";
 import {
   ConsoleTransportEntry,
   LogLevel,

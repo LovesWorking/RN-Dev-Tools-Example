@@ -6,7 +6,6 @@
 // Re-export all public APIs from this feature
 export * from "./types";
 export * from "./utils/helpers";
-export { useEnvVarsSubtitle } from "./components/EnvVarsContent";
 export { EnvVarsSection } from "./components/EnvVarsSection";
 export { EnvVarsDetailContent } from "./components/EnvVarsSection";
 export { EnvVarsModal } from "./components/EnvVarsModal";

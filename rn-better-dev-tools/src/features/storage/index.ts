@@ -1,6 +1,5 @@
 // Storage section components
 export { StorageSection } from "./components/StorageSection";
-export { StorageModal } from "./components/StorageModal";
 export { StorageModalWithTabs } from "./components/StorageModalWithTabs";
 export { StorageKeyCard } from "./components/StorageKeyCard";
 export { StorageKeyStatsSection } from "./components/StorageKeyStats";

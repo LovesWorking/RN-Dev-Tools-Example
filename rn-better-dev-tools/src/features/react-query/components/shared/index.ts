@@ -2,4 +2,4 @@
 export { DataViewer } from "./DataViewer";
 export { VirtualizedDataExplorer } from "./VirtualizedDataExplorer";
 export { TypeLegend } from "./TypeLegend";
-export { NebulaInput } from "./NebulaInput";
+export { CyberpunkInput } from "./CyberpunkInput";

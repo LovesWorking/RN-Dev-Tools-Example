@@ -4,18 +4,18 @@ import type {
   SpanJSON,
   FetchBreadcrumbHint,
   XhrBreadcrumbHint,
+  SentryEventEntry,
 } from "../types";
+import { SentryEventType, SentryEventLevel } from "../types";
 import {
   getSentryClient,
   configureSentryClient as configureSentryClientProvider,
   isUsingMockClient,
 } from "./sentryClientProvider";
-import type { SentryEventEntry } from "./types";
-import { SentryEventType, SentryEventLevel } from "./types";
 
 // Import the reactive store instead of creating a local one
 import { reactiveSentryEventStore as eventStore } from "./sentryEventStore";
-export { SentryEventEntry, SentryEventType, SentryEventLevel } from "./types";
+export { SentryEventEntry, SentryEventType, SentryEventLevel } from "../types";
 
 interface SentryClient extends Record<string, unknown> {
   on?: (event: string, callback: (arg: unknown) => unknown) => void;

@@ -17,4 +17,4 @@ export { default as ActionButton } from "./ActionButton";
 export { default as ClearCacheButton } from "./ClearCacheButton";
 export { default as NetworkToggleButton } from "./NetworkToggleButton";
 export { default as StorageStatusCount } from "./StorageStatusCount";
-export { TanstackLogo } from "./svgs";
+export { TanstackLogo, CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
