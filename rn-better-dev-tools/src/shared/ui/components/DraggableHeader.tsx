@@ -54,8 +54,8 @@ export const DraggableHeader = memo(function DraggableHeader({
         onPanResponderGrant: (evt) => {
           isDraggingRef.current = false; // Start as not dragging
           dragDistanceRef.current = 0;
-          onDragStart?.();
-
+          // Don't call onDragStart immediately - wait to see if it's actually a drag
+          
           // Record where inside the bubble the user touched
           touchOffsetRef.current = {
             x: evt.nativeEvent.locationX,
@@ -77,8 +77,9 @@ export const DraggableHeader = memo(function DraggableHeader({
           dragDistanceRef.current = totalDistance;
 
           // Mark as dragging if moved more than 5 pixels
-          if (totalDistance > 5) {
+          if (totalDistance > 5 && !isDraggingRef.current) {
             isDraggingRef.current = true;
+            onDragStart?.(); // Call onDragStart only when we confirm it's a drag
           }
 
           // Use absolute finger anchoring for better grip feel
@@ -91,15 +92,19 @@ export const DraggableHeader = memo(function DraggableHeader({
         },
 
         onPanResponderRelease: () => {
-          // Check if it was a tap (minimal movement)
-          if (dragDistanceRef.current <= 5 && !isDraggingRef.current) {
-            onTap?.();
-            return;
-          }
-
-          // Get current position (no need to flattenOffset since we're using absolute positioning)
+          // Get current position before any operations
           const currentX = Number(JSON.stringify(position.x));
           const currentY = Number(JSON.stringify(position.y));
+          
+          // Check if it was a tap (minimal movement)
+          if (dragDistanceRef.current <= 5 && !isDraggingRef.current) {
+            // Reset position to current values without offset for tap
+            position.setOffset({ x: 0, y: 0 });
+            position.setValue({ x: currentX, y: currentY });
+            onTap?.();
+            // No need to call onDragEnd since onDragStart was never called for a tap
+            return;
+          }
 
           // Apply boundary constraints
           const clampedX = Math.max(
