@@ -12,6 +12,7 @@ import { EnvVarInfo } from "../types";
 import { getEnvVarType } from "../utils/envTypeDetector";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 // CONFIGURABLE: Glitch duration
 const GLITCH_DURATION_MS = 80; // Shorter glitch for less distraction
@@ -28,47 +29,47 @@ const getStatusConfig = (status: EnvVarInfo["status"]) => {
     case "required_present":
       return {
         icon: CheckCircle2,
-        color: gameUIColors.success,
-        bgColor: gameUIColors.success + "1A",
-        borderColor: gameUIColors.success + "80",
+        color: macOSColors.semantic.success,
+        bgColor: macOSColors.semantic.successBackground,
+        borderColor: macOSColors.semantic.success + "80",
         label: "✓ VALID",
-        labelColor: gameUIColors.success,
+        labelColor: macOSColors.semantic.success,
       };
     case "required_missing":
       return {
         icon: AlertCircle,
-        color: gameUIColors.error,
-        bgColor: gameUIColors.error + "1A",
-        borderColor: gameUIColors.error + "80",
+        color: macOSColors.semantic.error,
+        bgColor: macOSColors.semantic.errorBackground,
+        borderColor: macOSColors.semantic.error + "80",
         label: "⚠ MISSING",
-        labelColor: gameUIColors.error,
+        labelColor: macOSColors.semantic.error,
       };
     case "required_wrong_value":
       return {
         icon: XCircle,
-        color: gameUIColors.warning,
-        bgColor: gameUIColors.warning + "1A",
-        borderColor: gameUIColors.warning + "80",
+        color: macOSColors.semantic.warning,
+        bgColor: macOSColors.semantic.warningBackground,
+        borderColor: macOSColors.semantic.warning + "80",
         label: "⚠ WRONG VALUE",
-        labelColor: gameUIColors.warning,
+        labelColor: macOSColors.semantic.warning,
       };
     case "required_wrong_type":
       return {
         icon: XCircle,
-        color: gameUIColors.info,
-        bgColor: gameUIColors.info + "1A",
-        borderColor: gameUIColors.info + "80",
+        color: macOSColors.semantic.info,
+        bgColor: macOSColors.semantic.infoBackground,
+        borderColor: macOSColors.semantic.info + "80",
         label: "⚠ WRONG TYPE",
-        labelColor: gameUIColors.info,
+        labelColor: macOSColors.semantic.info,
       };
     case "optional_present":
       return {
         icon: Eye,
-        color: gameUIColors.optional,
-        bgColor: gameUIColors.optional + "1A",
-        borderColor: gameUIColors.optional + "66",
+        color: macOSColors.semantic.debug,
+        bgColor: macOSColors.semantic.debug + "1A",
+        borderColor: macOSColors.semantic.debug + "66",
         label: "OPTIONAL",
-        labelColor: gameUIColors.optional,
+        labelColor: macOSColors.semantic.debug,
       };
   }
 };
@@ -541,23 +542,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
-    backgroundColor: gameUIColors.background + "F2", // Darker, more opaque background
+    backgroundColor: macOSColors.background.card, // Card background from macOS design
   },
   glassLayer1: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: gameUIColors.panel + "4D", // Reduced transparency
+    backgroundColor: macOSColors.background.hover + "4D", // Hover state background
     opacity: 0.7,
   },
   glassLayer2: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: gameUIColors.panel + "33",
+    backgroundColor: macOSColors.background.hover + "33",
     opacity: 0.5,
     top: "20%",
     left: "20%",
   },
   glassLayer3: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: gameUIColors.primary + "03",
+    backgroundColor: macOSColors.text.primary + "03",
     opacity: 0.3,
   },
   glitchOverlay: {
@@ -622,7 +623,7 @@ const styles = StyleSheet.create({
   envVarKey: {
     fontSize: 14,
     fontWeight: "600",
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     letterSpacing: 0.3,
     fontFamily: "monospace",
     textShadowOffset: { width: 0, height: 1 },
@@ -630,7 +631,7 @@ const styles = StyleSheet.create({
   },
   envVarDescription: {
     fontSize: 11,
-    color: gameUIColors.secondary, // Lighter gray for better readability
+    color: macOSColors.text.secondary, // Secondary text color
     fontFamily: "monospace",
     opacity: 0.9,
     marginTop: 2,
@@ -654,12 +655,12 @@ const styles = StyleSheet.create({
   typeBadge: {
     paddingHorizontal: 6,
     paddingVertical: 3,
-    backgroundColor: gameUIColors.primary + "0D",
+    backgroundColor: macOSColors.text.primary + "0D",
     borderRadius: 4,
   },
   typeText: {
     fontSize: 8,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontWeight: "600",
     fontFamily: "monospace",
     letterSpacing: 0.5,
@@ -676,7 +677,7 @@ const styles = StyleSheet.create({
   },
   expandedContent: {
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.primary + "0D",
+    borderTopColor: macOSColors.border.default,
     paddingHorizontal: 12,
     paddingBottom: 12,
     gap: 10,
@@ -692,20 +693,20 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
   },
   valueBox: {
-    backgroundColor: gameUIColors.background + "B3", // Darker background for better contrast
+    backgroundColor: macOSColors.background.input, // Input background
     borderRadius: 6,
     padding: 12,
     borderWidth: 1,
   },
   expectedBox: {
-    backgroundColor: gameUIColors.background + "80",
+    backgroundColor: macOSColors.background.input + "80",
     borderRadius: 6,
     padding: 12,
     borderWidth: 1,
     borderStyle: "dashed",
   },
   valueContent: {
-    color: gameUIColors.primaryLight, // Brighter text
+    color: macOSColors.text.primary, // Primary text
     fontSize: 12,
     fontFamily: "monospace",
     lineHeight: 18,
@@ -715,7 +716,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     padding: 10,
-    backgroundColor: gameUIColors.background + "4D",
+    backgroundColor: macOSColors.background.base + "4D",
     borderRadius: 6,
     borderWidth: 1,
   },

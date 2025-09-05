@@ -7,6 +7,8 @@
  * 3. Save and refresh
  */
 
+import { macOSGameUIColors } from './macOSDesignSystemColors';
+
 // ============================================
 // THEME DEFINITIONS
 // ============================================
@@ -90,11 +92,15 @@ const defaultTheme = {
   },
 };
 
+// macOS theme - Apple HIG based design system
+const macOSTheme = macOSGameUIColors;
+
 // ============================================
 // THEME SELECTION - Just change this one line!
 // ============================================
 
-const activeTheme = defaultTheme; // DEFAULT - Mixed colors (original)
+// const activeTheme = defaultTheme; // DEFAULT - Mixed colors (original)
+const activeTheme = macOSTheme; // macOS - Apple HIG design system
 
 // ============================================
 // GAME UI COLORS (uses selected theme)

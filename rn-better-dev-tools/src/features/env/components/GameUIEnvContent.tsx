@@ -13,6 +13,7 @@ import { useDynamicEnv } from "../hooks/useDynamicEnv";
 import { RequiredEnvVar } from "../types";
 import { processEnvVars, calculateStats } from "../utils";
 import { EnvVarSection } from "./EnvVarSection";
+import { EnvStatsOverview } from "./EnvStatsOverview";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 
 interface GameUIEnvContentProps {
@@ -142,189 +143,13 @@ export function GameUIEnvContent({
         // Overview tab shows simplified stats + issues
         return (
           <View style={styles.overviewContainer}>
-            {/* Cyberpunk Stats Section */}
-            <View style={styles.statsContainer}>
-              {/* Cyberpunk Health Status */}
-              <View style={styles.cyberHealthCard}>
-                <View style={styles.cyberHealthGlow} />
-                <View style={styles.cyberHealthContent}>
-                  <View style={styles.cyberHealthHeader}>
-                    <Text style={styles.cyberHealthLabel}>SYSTEM STATUS</Text>
-                    <View style={styles.cyberHealthRight}>
-                      <Text
-                        style={[
-                          styles.cyberHealthPercent,
-                          { color: healthColor },
-                        ]}
-                      >
-                        {healthPercentage}%
-                      </Text>
-                      <View
-                        style={[
-                          styles.cyberHealthBadge,
-                          { borderColor: healthColor + "60" },
-                        ]}
-                      >
-                        <View
-                          style={[
-                            styles.cyberHealthBadgeDot,
-                            { backgroundColor: healthColor },
-                          ]}
-                        />
-                        <Text
-                          style={[
-                            styles.cyberHealthStatus,
-                            { color: healthColor },
-                          ]}
-                        >
-                          {healthStatus}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  {/* Cyberpunk Health Bar */}
-                  <View style={styles.cyberHealthBarContainer}>
-                    <View style={styles.cyberHealthBarTrack}>
-                      {/* Segments */}
-                      {[...Array(10)].map((_, i) => (
-                        <View
-                          key={i}
-                          style={[
-                            styles.cyberHealthBarSegment,
-                            {
-                              opacity:
-                                i < Math.floor(healthPercentage / 10) ? 1 : 0.2,
-                            },
-                          ]}
-                        />
-                      ))}
-                    </View>
-                    <View
-                      style={[
-                        styles.cyberHealthBarFill,
-                        {
-                          width: `${healthPercentage}%`,
-                          backgroundColor: healthColor,
-                          shadowColor: healthColor,
-                        },
-                      ]}
-                    />
-                  </View>
-                </View>
-              </View>
-
-              {/* Cyberpunk Stats Grid */}
-              <View style={styles.cyberStatsGrid}>
-                <View
-                  style={[
-                    styles.cyberStatItem,
-                    { borderColor: gameUIColors.info + "40" },
-                  ]}
-                >
-                  <View style={styles.cyberStatGlow} />
-                  <Text style={styles.cyberStatValue}>
-                    {stats.requiredCount}
-                  </Text>
-                  <Text style={styles.cyberStatLabel}>REQUIRED</Text>
-                  <View
-                    style={[
-                      styles.cyberStatIndicator,
-                      { backgroundColor: gameUIColors.info },
-                    ]}
-                  />
-                </View>
-
-                <View
-                  style={[
-                    styles.cyberStatItem,
-                    { borderColor: gameUIColors.success + "40" },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.cyberStatGlow,
-                      { backgroundColor: gameUIColors.success + "10" },
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.cyberStatValue,
-                      { color: gameUIColors.success },
-                    ]}
-                  >
-                    {stats.presentRequiredCount}
-                  </Text>
-                  <Text style={styles.cyberStatLabel}>VALID</Text>
-                  <View
-                    style={[
-                      styles.cyberStatIndicator,
-                      { backgroundColor: gameUIColors.success },
-                    ]}
-                  />
-                </View>
-
-                <View
-                  style={[
-                    styles.cyberStatItem,
-                    { borderColor: gameUIColors.error + "40" },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.cyberStatGlow,
-                      { backgroundColor: gameUIColors.error + "10" },
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.cyberStatValue,
-                      { color: gameUIColors.error },
-                    ]}
-                  >
-                    {stats.missingCount +
-                      stats.wrongValueCount +
-                      stats.wrongTypeCount}
-                  </Text>
-                  <Text style={styles.cyberStatLabel}>ISSUES</Text>
-                  <View
-                    style={[
-                      styles.cyberStatIndicator,
-                      { backgroundColor: gameUIColors.error },
-                    ]}
-                  />
-                </View>
-
-                <View
-                  style={[
-                    styles.cyberStatItem,
-                    { borderColor: gameUIColors.optional + "40" },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.cyberStatGlow,
-                      { backgroundColor: gameUIColors.optional + "10" },
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.cyberStatValue,
-                      { color: gameUIColors.optional },
-                    ]}
-                  >
-                    {stats.optionalCount}
-                  </Text>
-                  <Text style={styles.cyberStatLabel}>EXTRA</Text>
-                  <View
-                    style={[
-                      styles.cyberStatIndicator,
-                      { backgroundColor: gameUIColors.optional },
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
+            {/* Stats Overview using new component */}
+            <EnvStatsOverview
+              stats={stats}
+              healthPercentage={healthPercentage}
+              healthStatus={healthStatus}
+              healthColor={healthColor}
+            />
 
             {/* Issues Section using reusable EnvVarSection */}
             {issues.length > 0 ? (

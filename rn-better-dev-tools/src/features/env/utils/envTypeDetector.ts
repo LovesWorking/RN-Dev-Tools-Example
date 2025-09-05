@@ -34,14 +34,21 @@ export function getEnvVarType(value: unknown): EnvVarType | "unknown" {
     }
 
     // Check if it's a boolean string
+    const lowerStr = strValue.toLowerCase();
     if (
-      strValue.toLowerCase() === "true" ||
-      strValue.toLowerCase() === "false"
+      lowerStr === "true" ||
+      lowerStr === "false" ||
+      lowerStr === "enabled" ||
+      lowerStr === "disabled" ||
+      lowerStr === "yes" ||
+      lowerStr === "no" ||
+      lowerStr === "on" ||
+      lowerStr === "off"
     ) {
       return "boolean";
     }
 
-    // Check if it's a number string
+    // Check if it's a number string (including 1 and 0 as numbers, not booleans)
     if (!isNaN(Number(strValue)) && strValue.trim() !== "") {
       return "number";
     }

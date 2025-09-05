@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { EnvVarInfo } from "../types";
-import { CyberpunkEnvVarCard } from "./CyberpunkEnvVarCard";
+import { EnvVarRow } from "./EnvVarRow";
 import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 
 interface EnvVarSectionProps {
@@ -17,18 +17,10 @@ export function EnvVarSection({
   vars,
   emptyMessage,
 }: EnvVarSectionProps) {
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [expandedVar, setExpandedVar] = useState<string | null>(null);
 
-  const toggleCardExpansion = useCallback((key: string) => {
-    setExpandedCards((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(key)) {
-        newSet.delete(key);
-      } else {
-        newSet.add(key);
-      }
-      return newSet;
-    });
+  const handleVarPress = useCallback((envVar: EnvVarInfo) => {
+    setExpandedVar(prev => prev === envVar.key ? null : envVar.key);
   }, []);
 
   if (vars.length === 0 && title === "Required Variables") {
@@ -56,13 +48,12 @@ export function EnvVarSection({
         </SectionHeader>
       )}
       <View style={styles.sectionContent}>
-        {vars.map((envVar, index) => (
-          <CyberpunkEnvVarCard
+        {vars.map((envVar) => (
+          <EnvVarRow
             key={envVar.key}
             envVar={envVar}
-            isExpanded={expandedCards.has(envVar.key)}
-            onToggle={() => toggleCardExpansion(envVar.key)}
-            index={index}
+            isExpanded={expandedVar === envVar.key}
+            onPress={handleVarPress}
           />
         ))}
       </View>
@@ -75,7 +66,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionContent: {
-    gap: 8,
+    // No gap needed, EnvVarRow has its own margins
   },
   emptySection: {
     padding: 20,
