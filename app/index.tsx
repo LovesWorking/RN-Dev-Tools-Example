@@ -51,7 +51,6 @@ function getRandomPokemonNames(count: number): string[] {
 // Temporarily replace with TestStorageDiff for testing
 export default function TestScreen() {
   // return <StorageDiffTest />; // Storage diff test component
-  // return <PureModalExample />;
   // return <TestDiffViewer />; // Testing diff viewer fixes
   // return <StorageDiffTest />; // Testing storage diff
   return <PokemonScreen />; // Main app screen
