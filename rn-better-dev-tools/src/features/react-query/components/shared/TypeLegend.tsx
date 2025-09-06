@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface TypeLegendProps {
   types: string[];
@@ -10,20 +11,20 @@ interface TypeLegendProps {
 // Type color mapping using centralized theme colors
 export const getTypeColor = (type: string): string => {
   const colors: { [key: string]: string } = {
-    string: gameUIColors.dataTypes.string,
-    number: gameUIColors.dataTypes.number,
-    bigint: gameUIColors.optional, // Purple for bigint
-    boolean: gameUIColors.dataTypes.boolean,
-    null: gameUIColors.dataTypes.null,
-    undefined: gameUIColors.dataTypes.undefined,
-    function: gameUIColors.dataTypes.function,
-    symbol: gameUIColors.critical, // Pink for symbols
-    date: gameUIColors.critical, // Pink for dates
-    error: gameUIColors.error, // Red for errors
-    array: gameUIColors.dataTypes.array,
-    object: gameUIColors.dataTypes.object,
+    string: macOSColors.dataTypes.string,
+    number: macOSColors.dataTypes.number,
+    bigint: macOSColors.semantic.debug, // Purple for bigint
+    boolean: macOSColors.dataTypes.boolean,
+    null: macOSColors.dataTypes.null,
+    undefined: macOSColors.dataTypes.undefined,
+    function: macOSColors.dataTypes.function,
+    symbol: macOSColors.semantic.error, // Pink for symbols
+    date: macOSColors.semantic.error, // Pink for dates
+    error: macOSColors.semantic.error, // Red for errors
+    array: macOSColors.dataTypes.array,
+    object: macOSColors.dataTypes.object,
   };
-  return colors[type] || gameUIColors.secondary;
+  return colors[type] || macOSColors.text.secondary;
 };
 
 /**
@@ -59,7 +60,7 @@ export const TypeLegend: FC<TypeLegendProps> = ({
             style={[
               styles.typeBadge,
               isActive && styles.typeBadgeActive,
-              { borderColor: isActive ? color : gameUIColors.primary + "1A" },
+              { borderColor: isActive ? color : macOSColors.text.primary + "1A" },
             ]}
             onPress={() => handleTypeFilter(type)}
             accessibilityLabel={`Filter by ${type} values`}
@@ -81,14 +82,14 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: gameUIColors.primary + "05",
+    backgroundColor: macOSColors.text.primary + "05",
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.primary + "0D",
+    borderBottomColor: macOSColors.border.default,
   },
   typeBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: gameUIColors.primary + "08",
+    backgroundColor: macOSColors.background.hover,
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginRight: 8,
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   typeBadgeActive: {
-    backgroundColor: gameUIColors.primary + "14",
+    backgroundColor: macOSColors.background.input,
   },
   typeColor: {
     width: 8,
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   typeName: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
     fontWeight: "500",
   },

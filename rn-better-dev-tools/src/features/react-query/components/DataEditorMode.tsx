@@ -7,6 +7,7 @@ import ActionButton from "./query-browser/ActionButton";
 import { getQueryStatusLabel } from "../utils/getQueryStatusLabel";
 import { useActionButtons } from "../hooks/useActionButtons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { DataViewer } from "./shared/DataViewer";
 import { useEffect, useRef, useState } from "react";
 
@@ -262,14 +263,14 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   emptyTitle: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center",
   },
   emptyDescription: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
@@ -279,10 +280,10 @@ const styles = StyleSheet.create({
   // Action footer matching main dev tools exactly
   actionFooter: {
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.primary + "0F", // Match DevToolsHeader border
+    borderTopColor: macOSColors.border.default,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
   },
@@ -295,25 +296,25 @@ const styles = StyleSheet.create({
   // Query Explorer styled container matching QueryDetails
   queryExplorerContainer: {
     minWidth: 200,
-    backgroundColor: gameUIColors.panel + "D9",
+    backgroundColor: macOSColors.background.card,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.info + "4D",
+    borderColor: macOSColors.semantic.info + "4D",
     overflow: "hidden",
-    shadowColor: gameUIColors.info,
+    shadowColor: macOSColors.semantic.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
   },
   queryExplorerHeader: {
-    backgroundColor: gameUIColors.info + "1A",
+    backgroundColor: macOSColors.semantic.infoBackground,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.info + "33",
+    borderBottomColor: macOSColors.semantic.info + "33",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     fontFamily: "monospace",
@@ -324,26 +325,26 @@ const styles = StyleSheet.create({
   // Data section with green accent - editable/success theme
   dataContainer: {
     minWidth: 200,
-    backgroundColor: gameUIColors.panel + "D9",
+    backgroundColor: macOSColors.background.card,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.info + "4D",
+    borderColor: macOSColors.semantic.info + "4D",
     overflow: "hidden",
-    shadowColor: gameUIColors.info,
+    shadowColor: macOSColors.semantic.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     marginTop: 8,
   },
   dataHeader: {
-    backgroundColor: gameUIColors.info + "1A",
+    backgroundColor: macOSColors.semantic.infoBackground,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.info + "33",
+    borderBottomColor: macOSColors.semantic.info + "33",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     fontFamily: "monospace",

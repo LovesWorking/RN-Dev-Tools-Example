@@ -30,6 +30,7 @@ import {
 } from "rn-better-dev-tools/icons";
 import type { NetworkEvent } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface NetworkFilter {
   status?: "all" | "success" | "error" | "pending";
@@ -61,22 +62,22 @@ function getContentType(event: NetworkEvent): { type: string; color: string } {
     headers?.["content-type"] || headers?.["Content-Type"] || "";
 
   if (contentType.includes("json"))
-    return { type: "JSON", color: gameUIColors.info };
+    return { type: "JSON", color: macOSColors.semantic.info };
   if (contentType.includes("xml"))
-    return { type: "XML", color: gameUIColors.network };
+    return { type: "XML", color: macOSColors.semantic.success };
   if (contentType.includes("html"))
-    return { type: "HTML", color: gameUIColors.warning };
+    return { type: "HTML", color: macOSColors.semantic.warning };
   if (contentType.includes("text"))
-    return { type: "TEXT", color: gameUIColors.success };
+    return { type: "TEXT", color: macOSColors.semantic.success };
   if (contentType.includes("image"))
-    return { type: "IMAGE", color: gameUIColors.error };
+    return { type: "IMAGE", color: macOSColors.semantic.error };
   if (contentType.includes("video"))
-    return { type: "VIDEO", color: gameUIColors.critical };
+    return { type: "VIDEO", color: macOSColors.semantic.error };
   if (contentType.includes("audio"))
-    return { type: "AUDIO", color: gameUIColors.optional };
+    return { type: "AUDIO", color: macOSColors.semantic.debug };
   if (contentType.includes("form"))
-    return { type: "FORM", color: gameUIColors.query };
-  return { type: "OTHER", color: gameUIColors.muted };
+    return { type: "FORM", color: macOSColors.semantic.info };
+  return { type: "OTHER", color: macOSColors.text.muted };
 }
 
 export function NetworkFilterView({
@@ -158,7 +159,7 @@ export function NetworkFilterView({
   // Get color for content type
   const getContentTypeColor = (type: string) => {
     const testEvent = events.find((e) => getContentType(e).type === type);
-    return testEvent ? getContentType(testEvent).color : gameUIColors.muted;
+    return testEvent ? getContentType(testEvent).color : macOSColors.text.muted;
   };
 
   const handleStatusFilter = (
@@ -246,17 +247,17 @@ export function NetworkFilterView({
   const getMethodColor = (method: string) => {
     switch (method) {
       case "GET":
-        return gameUIColors.success;
+        return macOSColors.semantic.success;
       case "POST":
-        return gameUIColors.info;
+        return macOSColors.semantic.info;
       case "PUT":
-        return gameUIColors.warning;
+        return macOSColors.semantic.warning;
       case "DELETE":
-        return gameUIColors.error;
+        return macOSColors.semantic.error;
       case "PATCH":
-        return gameUIColors.network;
+        return macOSColors.semantic.success;
       default:
-        return gameUIColors.muted;
+        return macOSColors.text.muted;
     }
   };
 
@@ -274,7 +275,7 @@ export function NetworkFilterView({
         <Filter
           size={14}
           color={
-            activeTab === "filters" ? gameUIColors.network : gameUIColors.muted
+            activeTab === "filters" ? macOSColors.semantic.info : macOSColors.text.muted
           }
         />
         <Text
@@ -301,7 +302,7 @@ export function NetworkFilterView({
         <Globe
           size={14}
           color={
-            activeTab === "domains" ? gameUIColors.network : gameUIColors.muted
+            activeTab === "domains" ? macOSColors.semantic.info : macOSColors.text.muted
           }
         />
         <Text
@@ -333,7 +334,7 @@ export function NetworkFilterView({
         <Link
           size={14}
           color={
-            activeTab === "urls" ? gameUIColors.network : gameUIColors.muted
+            activeTab === "urls" ? macOSColors.semantic.info : macOSColors.text.muted
           }
         />
         <Text
@@ -381,20 +382,20 @@ export function NetworkFilterView({
                     {
                       backgroundColor:
                         status === "success"
-                          ? "rgba(16, 185, 129, 0.12)"
+                          ? macOSColors.semantic.successBackground
                           : status === "error"
-                          ? "rgba(239, 68, 68, 0.12)"
+                          ? macOSColors.semantic.errorBackground
                           : status === "pending"
-                          ? "rgba(245, 158, 11, 0.12)"
-                          : "rgba(139, 92, 246, 0.12)",
+                          ? macOSColors.semantic.warningBackground
+                          : macOSColors.semantic.infoBackground,
                       borderColor:
                         status === "success"
-                          ? "rgba(16, 185, 129, 0.2)"
+                          ? macOSColors.semantic.success + "33"
                           : status === "error"
-                          ? "rgba(239, 68, 68, 0.2)"
+                          ? macOSColors.semantic.error + "33"
                           : status === "pending"
-                          ? "rgba(245, 158, 11, 0.2)"
-                          : "rgba(139, 92, 246, 0.2)",
+                          ? macOSColors.semantic.warning + "33"
+                          : macOSColors.semantic.info + "33",
                     },
                   ]}
                 >
@@ -402,12 +403,12 @@ export function NetworkFilterView({
                     size={22}
                     color={
                       status === "success"
-                        ? "#10B981"
+                        ? macOSColors.semantic.success
                         : status === "error"
-                        ? "#EF4444"
+                        ? macOSColors.semantic.error
                         : status === "pending"
-                        ? "#F59E0B"
-                        : "#8B5CF6"
+                        ? macOSColors.semantic.warning
+                        : macOSColors.semantic.info
                     }
                   />
                 </View>
@@ -420,12 +421,12 @@ export function NetworkFilterView({
                     {
                       color:
                         status === "success"
-                          ? gameUIColors.success
+                          ? macOSColors.semantic.success
                           : status === "error"
-                          ? gameUIColors.error
+                          ? macOSColors.semantic.error
                           : status === "pending"
-                          ? gameUIColors.warning
-                          : gameUIColors.network,
+                          ? macOSColors.semantic.warning
+                          : macOSColors.semantic.info,
                     },
                   ]}
                 >
@@ -549,7 +550,7 @@ export function NetworkFilterView({
           {!filterManager.showAddInput ? (
             <AddFilterButton
               onPress={() => filterManager.setShowAddInput(true)}
-              color={gameUIColors.network}
+              color={macOSColors.semantic.info}
             />
           ) : (
             <AddFilterInput
@@ -565,7 +566,7 @@ export function NetworkFilterView({
                   ? "Enter domain (e.g., api.example.com)"
                   : "Enter URL pattern (e.g., /analytics)"
               }
-              color={gameUIColors.primaryLight}
+              color={macOSColors.text.primary}
             />
           )}
 
@@ -601,9 +602,9 @@ export function NetworkFilterView({
                       style={styles.suggestedItem}
                     >
                       {type === "domains" ? (
-                        <Globe size={14} color="#9CA3AF" />
+                        <Globe size={14} color={macOSColors.text.secondary} />
                       ) : (
-                        <Link size={14} color="#9CA3AF" />
+                        <Link size={14} color={macOSColors.text.secondary} />
                       )}
                       <Text style={styles.suggestedText} numberOfLines={1}>
                         {pattern}
@@ -618,7 +619,7 @@ export function NetworkFilterView({
                         }}
                         style={styles.addIconButton}
                       >
-                        <Plus size={16} color="#8B5CF6" />
+                        <Plus size={16} color={macOSColors.semantic.info} />
                       </TouchableOpacity>
                     </TouchableOpacity>
                   ))
@@ -649,7 +650,7 @@ export function NetworkFilterView({
             <FilterList
               filters={currentPatterns}
               onRemoveFilter={onToggle}
-              color={gameUIColors.network}
+              color={macOSColors.semantic.info}
             />
           ) : (
             <Text style={styles.emptyText}>
@@ -684,16 +685,16 @@ export function NetworkFilterView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   tabContainer: {
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 8,
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: macOSColors.background.card,
     borderBottomWidth: 1,
-    borderBottomColor: `${gameUIColors.network}1A`,
+    borderBottomColor: macOSColors.border.default,
   },
   tabButton: {
     flex: 1,
@@ -707,12 +708,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tabButtonActive: {
-    backgroundColor: `${gameUIColors.network}26`,
-    borderColor: gameUIColors.network,
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info,
   },
   tabButtonInactive: {
-    backgroundColor: gameUIColors.blackTint3,
-    borderColor: gameUIColors.border,
+    backgroundColor: macOSColors.background.hover,
+    borderColor: macOSColors.border.default,
   },
   tabButtonText: {
     fontSize: 11,
@@ -720,13 +721,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   tabButtonTextActive: {
-    color: gameUIColors.network,
+    color: macOSColors.semantic.info,
   },
   tabButtonTextInactive: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
   },
   tabBadge: {
-    backgroundColor: `${gameUIColors.network}40`,
+    backgroundColor: macOSColors.semantic.info + "40",
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 8,
@@ -735,7 +736,7 @@ const styles = StyleSheet.create({
   },
   tabBadgeText: {
     fontSize: 9,
-    color: gameUIColors.network,
+    color: macOSColors.semantic.info,
     fontWeight: "700",
   },
   content: {
@@ -754,13 +755,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   filterCard: {
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 12,
     padding: 14,
     minWidth: 104,
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -768,26 +769,26 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   activeFilterCard: {
-    backgroundColor: `${gameUIColors.network}26`,
-    borderColor: `${gameUIColors.network}66`,
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info + "66",
     borderWidth: 1.5,
-    shadowColor: gameUIColors.network,
+    shadowColor: macOSColors.semantic.info,
     shadowOpacity: 0.2,
   },
   filterIconContainer: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: `${gameUIColors.network}1A`,
+    backgroundColor: macOSColors.semantic.infoBackground,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: `${gameUIColors.network}26`,
+    borderColor: macOSColors.semantic.info + "26",
   },
   filterLabel: {
     fontSize: 11,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     marginBottom: 6,
     fontWeight: "500",
     textTransform: "capitalize",
@@ -795,7 +796,7 @@ const styles = StyleSheet.create({
   filterCount: {
     fontSize: 18,
     fontWeight: "700",
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
   },
   methodBadge: {
@@ -804,7 +805,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
   },
   methodText: {
     fontSize: 13,
@@ -823,17 +824,17 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   suggestedContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backgroundColor: macOSColors.background.hover,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
     maxHeight: 300,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: macOSColors.border.default,
   },
   suggestedTitle: {
     fontSize: 10,
-    color: "#6B7280",
+    color: macOSColors.text.muted,
     fontWeight: "600",
     letterSpacing: 0.5,
     marginBottom: 12,
@@ -845,24 +846,24 @@ const styles = StyleSheet.create({
   suggestedItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 10,
     marginBottom: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: macOSColors.border.input,
   },
   suggestedText: {
     flex: 1,
     fontSize: 12,
-    color: "#E5E7EB",
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     marginLeft: 4,
   },
   emptyText: {
     fontSize: 11,
-    color: "#6B7280",
+    color: macOSColors.text.muted,
     fontStyle: "italic",
     padding: 12,
     textAlign: "center",
@@ -870,6 +871,6 @@ const styles = StyleSheet.create({
   addIconButton: {
     padding: 4,
     borderRadius: 4,
-    backgroundColor: "rgba(139, 92, 246, 0.1)",
+    backgroundColor: macOSColors.semantic.infoBackground,
   },
 });

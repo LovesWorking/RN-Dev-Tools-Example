@@ -1,43 +1,44 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 // Define the color mappings using Game UI colors
 const buttonConfigs = {
   btnRefetch: {
-    color: gameUIColors.success,
-    backgroundColor: gameUIColors.success + "26",
-    borderColor: gameUIColors.success + "59",
-    textColor: gameUIColors.success,
+    color: macOSColors.semantic.success,
+    backgroundColor: macOSColors.semantic.successBackground,
+    borderColor: macOSColors.semantic.success + "59",
+    textColor: macOSColors.semantic.success,
   },
   btnInvalidate: {
-    color: gameUIColors.warning,
-    backgroundColor: gameUIColors.warning + "26",
-    borderColor: gameUIColors.warning + "59",
-    textColor: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
+    backgroundColor: macOSColors.semantic.warningBackground,
+    borderColor: macOSColors.semantic.warning + "59",
+    textColor: macOSColors.semantic.warning,
   },
   btnReset: {
-    color: gameUIColors.secondary,
-    backgroundColor: gameUIColors.secondary + "26",
-    borderColor: gameUIColors.secondary + "59",
-    textColor: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
+    backgroundColor: macOSColors.text.secondary + "26",
+    borderColor: macOSColors.text.secondary + "59",
+    textColor: macOSColors.text.secondary,
   },
   btnRemove: {
-    color: gameUIColors.error,
-    backgroundColor: gameUIColors.error + "26",
-    borderColor: gameUIColors.error + "59",
-    textColor: gameUIColors.error,
+    color: macOSColors.semantic.error,
+    backgroundColor: macOSColors.semantic.errorBackground,
+    borderColor: macOSColors.semantic.error + "59",
+    textColor: macOSColors.semantic.error,
   },
   btnTriggerLoading: {
-    color: gameUIColors.info,
-    backgroundColor: gameUIColors.info + "26",
-    borderColor: gameUIColors.info + "59",
-    textColor: gameUIColors.info,
+    color: macOSColors.semantic.info,
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info + "59",
+    textColor: macOSColors.semantic.info,
   },
   btnTriggerLoadiError: {
-    color: gameUIColors.optional,
-    backgroundColor: gameUIColors.optional + "26",
-    borderColor: gameUIColors.optional + "59",
-    textColor: gameUIColors.optional,
+    color: macOSColors.semantic.debug,
+    backgroundColor: macOSColors.semantic.debug + "26",
+    borderColor: macOSColors.semantic.debug + "59",
+    textColor: macOSColors.semantic.debug,
   },
 };
 
@@ -68,10 +69,10 @@ export default function ActionButton({
         styles.button,
         {
           backgroundColor: disabled
-            ? gameUIColors.muted + "1A"
+            ? macOSColors.text.muted + "1A"
             : config.backgroundColor,
           borderColor: disabled
-            ? gameUIColors.muted + "33"
+            ? macOSColors.text.muted + "33"
             : config.borderColor,
           opacity: disabled ? 0.5 : 1,
         },
@@ -84,13 +85,13 @@ export default function ActionButton({
       <View
         style={[
           styles.dot,
-          { backgroundColor: disabled ? gameUIColors.muted : config.color },
+          { backgroundColor: disabled ? macOSColors.text.muted : config.color },
         ]}
       />
       <Text
         style={[
           styles.text,
-          { color: disabled ? gameUIColors.muted : config.textColor },
+          { color: disabled ? macOSColors.text.muted : config.textColor },
         ]}
       >
         {text}
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     marginRight: 6,
-    shadowColor: gameUIColors.primary,
+    shadowColor: macOSColors.text.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 2,

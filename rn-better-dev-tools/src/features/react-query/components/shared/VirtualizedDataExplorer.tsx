@@ -38,7 +38,7 @@ const INDENT_STYLES = Array.from(
       container: {
         marginLeft: depth * 10, // Reduced space for tighter tree lines
       },
-    }).container,
+    }).container
 );
 
 // Enhanced type color cache using centralized theme colors [[memory:4875251]]
@@ -395,7 +395,7 @@ const TypeLegend = memo(TypeLegendComponent);
 const useDataFlattening = (
   data: JsonValue,
   maxDepth = 10,
-  autoExpandFirstLevel = false,
+  autoExpandFirstLevel = false
 ) => {
   const [flatData, setFlatData] = useState<FlatDataItem[]>([]);
   const flatDataMapRef = useRef<
@@ -420,7 +420,7 @@ const useDataFlattening = (
   }, [autoExpandFirstLevel, data]);
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(() =>
-    getInitialExpanded(),
+    getInitialExpanded()
   );
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -442,7 +442,7 @@ const useDataFlattening = (
       key = "root",
       depth = 0,
       parentId?: string,
-      path: string[] = [],
+      path: string[] = []
     ): FlatDataItem[] => {
       // Early termination for performance [[memory:4875251]]
       if (depth > Math.min(maxDepth, MAX_DEPTH_LIMIT)) return [];
@@ -561,8 +561,8 @@ const useDataFlattening = (
                   childKey,
                   depth + 1,
                   id,
-                  currentPath,
-                ),
+                  currentPath
+                )
               );
             }
 
@@ -579,7 +579,7 @@ const useDataFlattening = (
 
       return result;
     },
-    [maxDepth], // Only depend on maxDepth, not expandedItems
+    [maxDepth] // Only depend on maxDepth, not expandedItems
   );
 
   // Only process full data when data changes (not on expand/collapse)
@@ -638,7 +638,7 @@ const useDataFlattening = (
           "root",
           0,
           undefined,
-          [],
+          []
         );
 
         // Build the map for incremental updates
@@ -678,7 +678,10 @@ const useDataFlattening = (
       processingRef.current = false;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [data, expandedItems, flattenDataStable, maxDepth, isProcessing]);
+
+    // isProcessing is not used in the dependency array because it is not needed - DONT ADD IT TO THE DEPENDENCY ARRAY
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, expandedItems, flattenDataStable, maxDepth]);
 
   // Incremental update function for expand/collapse
   const updateFlatDataIncremental = useCallback(
@@ -763,7 +766,7 @@ const useDataFlattening = (
                 childKey,
                 item.depth + 1,
                 itemId,
-                item.path,
+                item.path
               );
               childrenItems.push(...childItems);
             }
@@ -839,7 +842,7 @@ const useDataFlattening = (
         return prevFlatData;
       });
     },
-    [flattenDataStable],
+    [flattenDataStable]
   );
 
   const toggleExpanded = useCallback(
@@ -866,7 +869,7 @@ const useDataFlattening = (
         return newSet;
       });
     },
-    [updateFlatDataIncremental],
+    [updateFlatDataIncremental]
   );
 
   return { flatData, isProcessing, toggleExpanded };
@@ -1028,9 +1031,7 @@ interface VirtualizedDataExplorerProps {
   initialExpanded?: boolean; // When true, auto-expands the first level of data
 }
 
-export const VirtualizedDataExplorer: FC<
-  VirtualizedDataExplorerProps
-> = ({
+export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
   title,
   description,
   data,
@@ -1042,7 +1043,7 @@ export const VirtualizedDataExplorer: FC<
   const { flatData, isProcessing, toggleExpanded } = useDataFlattening(
     data,
     maxDepth,
-    initialExpanded,
+    initialExpanded
   );
 
   // Calculate visible types for the legend with single pass deduplication
@@ -1068,7 +1069,7 @@ export const VirtualizedDataExplorer: FC<
   );
 
   // Calculate average item size for better FlatList performance with single pass
-  // Performance: Avoiding array.filter(), using single loop to count long keys  
+  // Performance: Avoiding array.filter(), using single loop to count long keys
   const averageItemSize = useMemo(() => {
     if (flatData.length === 0) return ITEM_HEIGHT;
 

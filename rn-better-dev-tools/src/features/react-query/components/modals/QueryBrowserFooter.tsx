@@ -2,6 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import QueryStatusCount from "../query-browser/QueryStatusCount";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface QueryBrowserFooterProps {
   activeFilter?: string | null;
@@ -48,10 +49,10 @@ export function QueryBrowserFooter({
 const styles = StyleSheet.create({
   filterFooter: {
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.border + "40",
+    borderTopColor: macOSColors.border.default,
     paddingVertical: 8,
     paddingHorizontal: 0,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
   },

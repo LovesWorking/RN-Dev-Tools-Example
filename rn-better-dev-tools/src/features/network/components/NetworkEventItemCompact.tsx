@@ -14,6 +14,7 @@ import { formatBytes, formatDuration } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { useTickEveryMinute } from "../../sentry/hooks/useTickEveryMinute";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface NetworkEventItemCompactProps {
   event: NetworkEvent;
@@ -22,12 +23,12 @@ interface NetworkEventItemCompactProps {
 
 // Get color based on status
 function getStatusColor(status?: number, error?: string) {
-  if (error) return gameUIColors.error;
-  if (!status) return gameUIColors.warning;
-  if (status >= 200 && status < 300) return gameUIColors.success;
-  if (status >= 300 && status < 400) return gameUIColors.info;
-  if (status >= 400) return gameUIColors.error;
-  return gameUIColors.muted;
+  if (error) return macOSColors.semantic.error;
+  if (!status) return macOSColors.semantic.warning;
+  if (status >= 200 && status < 300) return macOSColors.semantic.success;
+  if (status >= 300 && status < 400) return macOSColors.semantic.info;
+  if (status >= 400) return macOSColors.semantic.error;
+  return macOSColors.text.muted;
 }
 
 // Get content type badge with color
@@ -60,7 +61,7 @@ function StatusIndicator({
   if (isPending) {
     return (
       <View style={styles.pendingBadge}>
-        <Clock size={10} color={gameUIColors.warning} />
+        <Clock size={10} color={macOSColors.semantic.warning} />
         <Text style={styles.pendingText}>...</Text>
       </View>
     );
@@ -69,7 +70,7 @@ function StatusIndicator({
   if (event.error) {
     return (
       <View style={styles.errorBadge}>
-        <AlertCircle size={10} color={gameUIColors.error} />
+        <AlertCircle size={10} color={macOSColors.semantic.error} />
         <Text style={styles.errorText}>ERR</Text>
       </View>
     );
@@ -98,13 +99,13 @@ function SizeIndicators({
     <View style={styles.sizeRow}>
       {requestSize ? (
         <View style={styles.sizeItem}>
-          <Upload size={8} color={gameUIColors.info} />
+          <Upload size={8} color={macOSColors.semantic.info} />
           <Text style={styles.sizeText}>{formatBytes(requestSize)}</Text>
         </View>
       ) : null}
       {responseSize ? (
         <View style={styles.sizeItem}>
-          <Download size={8} color={gameUIColors.success} />
+          <Download size={8} color={macOSColors.semantic.success} />
           <Text style={styles.sizeText}>{formatBytes(responseSize)}</Text>
         </View>
       ) : null}
@@ -182,7 +183,7 @@ export const NetworkEventItemCompact = memo<NetworkEventItemCompactProps>(
         </View>
 
         {/* Chevron */}
-        <ChevronRight size={14} color={gameUIColors.muted} />
+        <ChevronRight size={14} color={macOSColors.text.muted} />
       </ListItem>
     );
   },
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 6,
     paddingVertical: 8,
     paddingHorizontal: 10,
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
   },
   urlText: {
     fontSize: 12,
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     lineHeight: 16,
     fontFamily: "monospace",
   },
@@ -250,12 +251,12 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingHorizontal: 4,
     paddingVertical: 1,
-    backgroundColor: `${gameUIColors.warning}26`,
+    backgroundColor: macOSColors.semantic.warning + "26",
     borderRadius: 3,
   },
   pendingText: {
     fontSize: 10,
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
     fontWeight: "600",
   },
   errorBadge: {
@@ -264,17 +265,17 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingHorizontal: 4,
     paddingVertical: 1,
-    backgroundColor: `${gameUIColors.error}26`,
+    backgroundColor: macOSColors.semantic.error + "26",
     borderRadius: 3,
   },
   errorText: {
     fontSize: 10,
-    color: gameUIColors.error,
+    color: macOSColors.semantic.error,
     fontWeight: "600",
   },
   durationText: {
     fontSize: 9,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
   },
   sizeRow: {
     flexDirection: "row",
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
   },
   sizeText: {
     fontSize: 8,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
 });

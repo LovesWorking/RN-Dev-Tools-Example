@@ -2,39 +2,40 @@ import { Query } from "@tanstack/react-query";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
 import { Text, View, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface Props {
   query: Query;
 }
 
 const backgroundColors = {
-  fresh: gameUIColors.success + "1A",
-  stale: gameUIColors.warning + "1A",
-  fetching: gameUIColors.info + "1A",
-  paused: gameUIColors.storage + "1A",
-  noObserver: gameUIColors.muted + "1A",
-  error: gameUIColors.error + "1A",
-  inactive: gameUIColors.muted + "1A",
+  fresh: macOSColors.semantic.successBackground,
+  stale: macOSColors.semantic.warningBackground,
+  fetching: macOSColors.semantic.infoBackground,
+  paused: macOSColors.semantic.debug + "1A",
+  noObserver: macOSColors.text.muted + "1A",
+  error: macOSColors.semantic.errorBackground,
+  inactive: macOSColors.text.muted + "1A",
 };
 
 const borderColors = {
-  fresh: gameUIColors.success + "33",
-  stale: gameUIColors.warning + "33",
-  fetching: gameUIColors.info + "33",
-  paused: gameUIColors.storage + "33",
-  noObserver: gameUIColors.muted + "33",
-  error: gameUIColors.error + "33",
-  inactive: gameUIColors.muted + "33",
+  fresh: macOSColors.semantic.success + "33",
+  stale: macOSColors.semantic.warning + "33",
+  fetching: macOSColors.semantic.info + "33",
+  paused: macOSColors.semantic.debug + "33",
+  noObserver: macOSColors.text.muted + "33",
+  error: macOSColors.semantic.error + "33",
+  inactive: macOSColors.text.muted + "33",
 };
 
 const textColors = {
-  fresh: gameUIColors.success,
-  stale: gameUIColors.warning,
-  fetching: gameUIColors.info,
-  paused: gameUIColors.storage,
-  noObserver: gameUIColors.muted,
-  error: gameUIColors.error,
-  inactive: gameUIColors.muted,
+  fresh: macOSColors.semantic.success,
+  stale: macOSColors.semantic.warning,
+  fetching: macOSColors.semantic.info,
+  paused: macOSColors.semantic.debug,
+  noObserver: macOSColors.text.muted,
+  error: macOSColors.semantic.error,
+  inactive: macOSColors.text.muted,
 };
 type QueryStatus =
   | "fresh"

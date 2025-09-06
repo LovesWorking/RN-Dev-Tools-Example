@@ -1,6 +1,7 @@
 import { Query } from "@tanstack/react-query";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { CompactRow } from "@/rn-better-dev-tools/src/shared/ui/components/CompactRow";
 
 const getQueryText = (query: Query) => {
@@ -27,17 +28,17 @@ const QueryRow: React.FC<QueryRowProps> = ({ query, isSelected, onSelect }) => {
   const getStatusHexColor = (status: string): string => {
     switch (status) {
       case "fresh":
-        return gameUIColors.success;
+        return macOSColors.semantic.success;
       case "stale":
-        return gameUIColors.warning;
+        return macOSColors.semantic.warning;
       case "inactive":
-        return gameUIColors.muted;
+        return macOSColors.text.muted;
       case "fetching":
-        return gameUIColors.info;
+        return macOSColors.semantic.info;
       case "paused":
-        return gameUIColors.storage;
+        return macOSColors.semantic.debug;
       default:
-        return gameUIColors.secondary;
+        return macOSColors.text.secondary;
     }
   };
 

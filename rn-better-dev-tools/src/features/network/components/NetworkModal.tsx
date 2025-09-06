@@ -26,6 +26,7 @@ import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/Moda
 import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
 import { NetworkFilterView } from "./NetworkFilterView";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
@@ -44,7 +45,7 @@ interface NetworkModalProps {
 function EmptyState({ isEnabled }: { isEnabled: boolean }) {
   return (
     <View style={styles.emptyState}>
-      <Globe size={32} color={gameUIColors.muted} />
+      <Globe size={32} color={macOSColors.text.muted} />
       <Text style={styles.emptyTitle}>No network events</Text>
       <Text style={styles.emptyText}>
         {isEnabled
@@ -274,12 +275,12 @@ function NetworkModalInner({
         <ModalHeader.Content title="">
           {isSearchActive ? (
             <View style={styles.headerSearchContainer}>
-              <Search size={14} color={gameUIColors.secondary} />
+              <Search size={14} color={macOSColors.text.secondary} />
               <TextInput
                 ref={searchInputRef}
                 style={styles.headerSearchInput}
                 placeholder="Search URL, method, error..."
-                placeholderTextColor={gameUIColors.muted}
+                placeholderTextColor={macOSColors.text.muted}
                 value={searchText}
                 onChangeText={handleSearch}
                 onSubmitEditing={() => setIsSearchActive(false)}
@@ -299,7 +300,7 @@ function NetworkModalInner({
                   sentry-label="ignore clear search header"
                   style={styles.headerSearchClear}
                 >
-                  <X size={14} color={gameUIColors.secondary} />
+                  <X size={14} color={macOSColors.text.secondary} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -317,11 +318,11 @@ function NetworkModalInner({
                   })
                 }
               >
-                <CheckCircle size={12} color={gameUIColors.success} />
+                <CheckCircle size={12} color={macOSColors.semantic.success} />
                 <Text
                   style={[
                     styles.headerChipValue,
-                    { color: gameUIColors.success },
+                    { color: macOSColors.semantic.success },
                   ]}
                 >
                   {stats.successfulRequests}
@@ -340,11 +341,11 @@ function NetworkModalInner({
                   })
                 }
               >
-                <XCircle size={12} color={gameUIColors.error} />
+                <XCircle size={12} color={macOSColors.semantic.error} />
                 <Text
                   style={[
                     styles.headerChipValue,
-                    { color: gameUIColors.error },
+                    { color: macOSColors.semantic.error },
                   ]}
                 >
                   {stats.failedRequests}
@@ -363,11 +364,11 @@ function NetworkModalInner({
                   })
                 }
               >
-                <Clock size={12} color={gameUIColors.warning} />
+                <Clock size={12} color={macOSColors.semantic.warning} />
                 <Text
                   style={[
                     styles.headerChipValue,
-                    { color: gameUIColors.warning },
+                    { color: macOSColors.semantic.warning },
                   ]}
                 >
                   {stats.pendingRequests}
@@ -382,7 +383,7 @@ function NetworkModalInner({
             onPress={() => setIsSearchActive(true)}
             style={styles.headerActionButton}
           >
-            <Search size={14} color={gameUIColors.secondary} />
+            <Search size={14} color={macOSColors.text.secondary} />
           </TouchableOpacity>
           <TouchableOpacity
             sentry-label="ignore filter"
@@ -400,8 +401,8 @@ function NetworkModalInner({
               size={14}
               color={
                 filter.status || filter.method || filter.contentType
-                  ? gameUIColors.network
-                  : gameUIColors.muted
+                  ? macOSColors.semantic.info
+                  : macOSColors.text.muted
               }
             />
           </TouchableOpacity>
@@ -416,7 +417,7 @@ function NetworkModalInner({
           >
             <Power
               size={14}
-              color={isEnabled ? gameUIColors.success : gameUIColors.error}
+              color={isEnabled ? macOSColors.semantic.success : macOSColors.semantic.error}
             />
           </TouchableOpacity>
 
@@ -429,7 +430,7 @@ function NetworkModalInner({
             <Trash2
               size={14}
               color={
-                events.length > 0 ? gameUIColors.muted : gameUIColors.blackTint3
+                events.length > 0 ? macOSColors.text.muted : macOSColors.background.hover
               }
             />
           </TouchableOpacity>
@@ -527,7 +528,7 @@ function NetworkModalInner({
           <>
             {!isEnabled ? (
               <View style={styles.disabledBanner}>
-                <Power size={14} color={gameUIColors.warning} />
+                <Power size={14} color={macOSColors.semantic.warning} />
                 <Text style={styles.disabledText}>
                   Network interception is disabled
                 </Text>
@@ -564,7 +565,7 @@ function NetworkModalInner({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   // Compact header styles matching Sentry/Storage modals
   headerContainer: {
@@ -576,7 +577,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
   headerTitle: {
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontSize: 14,
     fontWeight: "500",
     flex: 1,
@@ -587,12 +588,12 @@ const styles = StyleSheet.create({
   },
   headerStatsText: {
     fontSize: 12,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontWeight: "500",
   },
   headerFilteredText: {
     fontSize: 11,
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
     fontWeight: "500",
     marginLeft: 4,
   },
@@ -609,16 +610,16 @@ const styles = StyleSheet.create({
   headerSearchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: `${gameUIColors.blackTint2}80`,
+    backgroundColor: macOSColors.background.input,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: `${gameUIColors.border}40`,
+    borderColor: macOSColors.border.default,
     paddingHorizontal: 12,
     paddingVertical: 5,
   },
   headerSearchInput: {
     flex: 1,
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontSize: 13,
     marginLeft: 6,
     paddingVertical: 2,
@@ -636,17 +637,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: `${gameUIColors.blackTint3}60`,
+    backgroundColor: macOSColors.background.hover,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: `${gameUIColors.border}30`,
+    borderColor: macOSColors.border.default,
   },
   headerChipActive: {
-    backgroundColor: `${gameUIColors.network}15`,
-    borderColor: `${gameUIColors.network}50`,
-    shadowColor: gameUIColors.network,
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info + "50",
+    shadowColor: macOSColors.semantic.info,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 2,
@@ -661,20 +662,20 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: `${gameUIColors.blackTint2}80`,
+    backgroundColor: macOSColors.background.hover,
     borderWidth: 1,
-    borderColor: `${gameUIColors.border}40`,
+    borderColor: macOSColors.border.default,
     alignItems: "center",
     justifyContent: "center",
   },
   // Shared navbar styles (matching React Query modal)
   tabNavigationContainer: {
     flexDirection: "row",
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 6,
     padding: 2,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
+    borderColor: macOSColors.border.default,
     justifyContent: "space-evenly",
     flex: 1,
     marginLeft: 8,
@@ -690,9 +691,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
   },
   tabButtonActive: {
-    backgroundColor: gameUIColors.info + "20",
+    backgroundColor: macOSColors.semantic.infoBackground,
     borderWidth: 1,
-    borderColor: gameUIColors.info + "40",
+    borderColor: macOSColors.semantic.info + "40",
   },
   tabButtonInactive: {
     backgroundColor: "transparent",
@@ -705,26 +706,26 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   tabButtonTextActive: {
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
   },
   tabButtonTextInactive: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
   },
   startButton: {
-    backgroundColor: `${gameUIColors.success}12`,
-    borderColor: `${gameUIColors.success}40`,
+    backgroundColor: macOSColors.semantic.successBackground,
+    borderColor: macOSColors.semantic.success + "40",
   },
   stopButton: {
-    backgroundColor: `${gameUIColors.error}12`,
-    borderColor: `${gameUIColors.error}40`,
+    backgroundColor: macOSColors.semantic.errorBackground,
+    borderColor: macOSColors.semantic.error + "40",
   },
   activeFilterButton: {
-    backgroundColor: `${gameUIColors.network}12`,
-    borderColor: `${gameUIColors.network}40`,
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info + "40",
   },
   activeIgnoreButton: {
-    backgroundColor: `${gameUIColors.warning}1A`,
-    borderColor: `${gameUIColors.warning}33`,
+    backgroundColor: macOSColors.semantic.warningBackground,
+    borderColor: macOSColors.semantic.warning + "33",
   },
   detailHeaderActions: {
     flexDirection: "row",
@@ -745,7 +746,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.hover,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -753,8 +754,8 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   statChipActive: {
-    backgroundColor: `${gameUIColors.network}26`,
-    borderColor: `${gameUIColors.network}66`,
+    backgroundColor: macOSColors.semantic.info + "26",
+    borderColor: macOSColors.semantic.info + "66",
   },
   statValue: {
     fontSize: 14,
@@ -763,7 +764,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 10,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontWeight: "500",
     textTransform: "uppercase",
   },
@@ -774,13 +775,13 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: `${gameUIColors.warning}08`,
+    backgroundColor: macOSColors.semantic.warningBackground,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: `${gameUIColors.warning}20`,
+    borderColor: macOSColors.semantic.warning + "20",
   },
   disabledText: {
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
     fontSize: 11,
     flex: 1,
   },
@@ -792,14 +793,14 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   emptyTitle: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontSize: 14,
     fontWeight: "600",
     marginTop: 12,
     marginBottom: 6,
   },
   emptyText: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 12,
     textAlign: "center",
   },

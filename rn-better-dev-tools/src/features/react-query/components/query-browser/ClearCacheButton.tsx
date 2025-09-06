@@ -1,6 +1,7 @@
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Svg, Path } from "react-native-svg";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface ClearCacheButtonProps {
   type: "queries" | "mutations";
@@ -42,7 +43,7 @@ const TrashIcon = () => (
     strokeLinejoin="round"
   >
     <Path
-      stroke={gameUIColors.warning}
+      stroke={macOSColors.semantic.warning}
       d="M9 3H15M3 6H21M19 6L18.2987 16.5193C18.1935 18.0975 18.1409 18.8867 17.8 19.485C17.4999 20.0118 17.0472 20.4353 16.5017 20.6997C15.882 21 15.0911 21 13.5093 21H10.4907C8.90891 21 8.11803 21 7.49834 20.6997C6.95276 20.4353 6.50009 20.0118 6.19998 19.485C5.85911 18.8867 5.8065 18.0975 5.70129 16.5193L5 6M10 10.5V15.5M14 10.5V15.5"
     />
   </Svg>
@@ -53,16 +54,16 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 6,
-    backgroundColor: gameUIColors.warning + "1A",
+    backgroundColor: macOSColors.semantic.warningBackground,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: gameUIColors.warning + "33",
+    borderColor: macOSColors.semantic.warning + "33",
   },
   disabledButton: {
     opacity: 0.5,
-    backgroundColor: gameUIColors.secondary + "1A",
-    borderColor: gameUIColors.secondary + "33",
+    backgroundColor: macOSColors.text.secondary + "1A",
+    borderColor: macOSColors.text.secondary + "33",
   },
 });
 

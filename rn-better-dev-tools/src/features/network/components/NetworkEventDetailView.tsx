@@ -30,10 +30,10 @@ import {
 } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
-  onBack: () => void;
   ignoredDomains?: Set<string>;
   ignoredUrls?: Set<string>;
   onToggleDomain?: (domain: string) => void;
@@ -52,7 +52,6 @@ const CollapsibleSection: FC<{
   return (
     <View style={styles.collapsibleSection}>
       <TouchableOpacity
-        sentry-label="ignore collapsible section"
         style={styles.collapsibleHeader}
         onPress={() => setIsOpen(!isOpen)}
       >
@@ -61,9 +60,9 @@ const CollapsibleSection: FC<{
           <Text style={styles.collapsibleTitleText}>{title}</Text>
         </View>
         {isOpen ? (
-          <ChevronUp size={16} color={gameUIColors.secondary} />
+          <ChevronUp size={16} color={macOSColors.text.secondary} />
         ) : (
-          <ChevronDown size={16} color={gameUIColors.secondary} />
+          <ChevronDown size={16} color={macOSColors.text.secondary} />
         )}
       </TouchableOpacity>
       {isOpen ? (
@@ -110,9 +109,9 @@ const UrlBreakdown: FC<{ url: string }> = ({ url }) => {
     <View style={styles.urlBreakdown}>
       <View style={styles.urlRow}>
         {urlParts.isSecure ? (
-          <Lock size={12} color={gameUIColors.success} />
+          <Lock size={12} color={macOSColors.semantic.success} />
         ) : (
-          <Unlock size={12} color={gameUIColors.warning} />
+          <Unlock size={12} color={macOSColors.semantic.warning} />
         )}
         <Text style={styles.urlDomain}>{urlParts.host}</Text>
         <Text style={styles.urlProtocol}>
@@ -139,7 +138,6 @@ const UrlBreakdown: FC<{ url: string }> = ({ url }) => {
 
 export function NetworkEventDetailView({
   event,
-  onBack,
   ignoredDomains = new Set(),
   ignoredUrls = new Set(),
   onToggleDomain = () => {},
@@ -151,7 +149,6 @@ export function NetworkEventDetailView({
   return (
     <ScrollView
       style={styles.container}
-      sentry-label="ignore network detail scroll"
     >
       {/* Request Details - Always visible */}
       <View style={styles.requestDetailsSection}>
@@ -172,13 +169,13 @@ export function NetworkEventDetailView({
             </View>
           ) : isPending ? (
             <View style={styles.pendingBadge}>
-              <Clock size={10} color={gameUIColors.warning} />
+              <Clock size={10} color={macOSColors.semantic.warning} />
               <Text style={styles.pendingBadgeText}>Pending</Text>
             </View>
           ) : null}
           {event.duration ? (
             <View style={styles.httpDuration}>
-              <Clock size={10} color={gameUIColors.muted} />
+              <Clock size={10} color={macOSColors.text.muted} />
               <Text style={styles.httpDurationText}>
                 {formatDuration(event.duration)}
               </Text>
@@ -190,7 +187,7 @@ export function NetworkEventDetailView({
 
         {event.error ? (
           <View style={styles.errorBox}>
-            <AlertCircle size={12} color={gameUIColors.error} />
+            <AlertCircle size={12} color={macOSColors.semantic.error} />
             <Text style={styles.errorText}>{event.error}</Text>
           </View>
         ) : null}
@@ -199,7 +196,7 @@ export function NetworkEventDetailView({
       {/* Timing Information - Always visible */}
       <View style={styles.timingSection}>
         <View style={styles.timingRow}>
-          <Clock size={12} color={gameUIColors.secondary} />
+          <Clock size={12} color={macOSColors.text.secondary} />
           <Text style={styles.timingLabel}>Started:</Text>
           <Text style={styles.timingValue}>
             {formatRelativeTime(event.timestamp)}
@@ -213,7 +210,7 @@ export function NetworkEventDetailView({
           <View style={styles.sizeRow}>
             {event.requestSize !== undefined ? (
               <View style={styles.sizeItem}>
-                <Upload size={10} color={gameUIColors.info} />
+                <Upload size={10} color={macOSColors.semantic.info} />
                 <Text style={styles.sizeLabel}>Sent:</Text>
                 <Text style={styles.sizeValue}>
                   {formatBytes(event.requestSize)}
@@ -222,7 +219,7 @@ export function NetworkEventDetailView({
             ) : null}
             {event.responseSize !== undefined ? (
               <View style={styles.sizeItem}>
-                <Download size={10} color={gameUIColors.success} />
+                <Download size={10} color={macOSColors.semantic.success} />
                 <Text style={styles.sizeLabel}>Received:</Text>
                 <Text style={styles.sizeValue}>
                   {formatBytes(event.responseSize)}
@@ -236,7 +233,7 @@ export function NetworkEventDetailView({
       {/* Request Headers - Collapsible */}
       <CollapsibleSection
         title="Request Headers"
-        icon={<Upload size={14} color={gameUIColors.info} />}
+        icon={<Upload size={14} color={macOSColors.semantic.info} />}
         defaultOpen={false}
       >
         {Object.keys(event.requestHeaders).length > 0 ? (
@@ -257,7 +254,7 @@ export function NetworkEventDetailView({
       {/* Response Headers - Collapsible */}
       <CollapsibleSection
         title="Response Headers"
-        icon={<Download size={14} color={gameUIColors.success} />}
+        icon={<Download size={14} color={macOSColors.semantic.success} />}
         defaultOpen={false}
       >
         {Object.keys(event.responseHeaders).length > 0 ? (
@@ -279,7 +276,7 @@ export function NetworkEventDetailView({
       {event.requestData ? (
         <CollapsibleSection
           title="Request Body"
-          icon={<FileJson size={14} color={gameUIColors.network} />}
+          icon={<FileJson size={14} color={macOSColors.semantic.info} />}
           defaultOpen={false}
         >
           <View style={styles.dataViewerContainer}>
@@ -298,7 +295,7 @@ export function NetworkEventDetailView({
       {event.responseData ? (
         <CollapsibleSection
           title="Response Body"
-          icon={<FileJson size={14} color={gameUIColors.success} />}
+          icon={<FileJson size={14} color={macOSColors.semantic.success} />}
           defaultOpen={false}
         >
           <View style={styles.dataViewerContainer}>
@@ -316,7 +313,7 @@ export function NetworkEventDetailView({
       {/* Filter Options - Collapsible */}
       <CollapsibleSection
         title="Filter Options"
-        icon={<Filter size={14} color={gameUIColors.warning} />}
+        icon={<Filter size={14} color={macOSColors.semantic.warning} />}
         defaultOpen={false}
       >
         <View style={styles.filterOptionsContainer}>
@@ -347,7 +344,7 @@ export function NetworkEventDetailView({
                   <View style={styles.filterOptionLeft}>
                     <Globe
                       size={16}
-                      color={isDomainIgnored ? "#F59E0B" : "#6B7280"}
+                      color={isDomainIgnored ? macOSColors.semantic.warning : macOSColors.text.muted}
                     />
                     <View style={styles.filterOptionContent}>
                       <Text style={styles.filterOptionLabel}>
@@ -386,7 +383,7 @@ export function NetworkEventDetailView({
                   <View style={styles.filterOptionLeft}>
                     <Link
                       size={16}
-                      color={isUrlIgnored ? "#F59E0B" : "#6B7280"}
+                      color={isUrlIgnored ? macOSColors.semantic.warning : macOSColors.text.muted}
                     />
                     <View style={styles.filterOptionContent}>
                       <Text style={styles.filterOptionLabel}>
@@ -433,16 +430,16 @@ export function NetworkEventDetailView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   // Request details section - always visible
   requestDetailsSection: {
     marginHorizontal: 12,
     marginTop: 12,
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
     padding: 12,
   },
   httpHeader: {
@@ -452,13 +449,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   httpMethodBadge: {
-    backgroundColor: `${gameUIColors.network}33`,
+    backgroundColor: macOSColors.semantic.infoBackground,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   httpMethod: {
-    color: gameUIColors.network,
+    color: macOSColors.semantic.info,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 0.5,
@@ -476,13 +473,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: `${gameUIColors.warning}33`,
+    backgroundColor: macOSColors.semantic.warningBackground,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   pendingBadgeText: {
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
     fontSize: 11,
     fontWeight: "600",
   },
@@ -493,12 +490,12 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   httpDurationText: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
   },
   // URL breakdown styles
   urlBreakdown: {
-    backgroundColor: gameUIColors.blackTint1,
+    backgroundColor: macOSColors.background.input,
     borderRadius: 4,
     padding: 8,
   },
@@ -509,13 +506,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   urlDomain: {
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontSize: 12,
     fontWeight: "600",
     flex: 1,
   },
   urlProtocol: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 10,
   },
   copyButton: {
@@ -525,7 +522,7 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
   },
   urlPath: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
     fontFamily: "monospace",
   },
@@ -533,10 +530,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.border,
+    borderTopColor: macOSColors.border.default,
   },
   urlParamsTitle: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 10,
     fontWeight: "600",
     marginBottom: 4,
@@ -544,7 +541,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   urlParam: {
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontSize: 11,
     fontFamily: "monospace",
     marginLeft: 8,
@@ -554,10 +551,10 @@ const styles = StyleSheet.create({
   timingSection: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
     padding: 12,
   },
   timingRow: {
@@ -566,16 +563,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   timingLabel: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
   },
   timingValue: {
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontSize: 11,
     fontWeight: "600",
   },
   timingExact: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 10,
     marginLeft: 4,
   },
@@ -585,7 +582,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.border,
+    borderTopColor: macOSColors.border.default,
   },
   sizeItem: {
     flexDirection: "row",
@@ -593,11 +590,11 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   sizeLabel: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 10,
   },
   sizeValue: {
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontSize: 10,
     fontFamily: "monospace",
     fontWeight: "600",
@@ -606,10 +603,10 @@ const styles = StyleSheet.create({
   collapsibleSection: {
     marginHorizontal: 12,
     marginTop: 8,
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
     overflow: "hidden",
   },
   collapsibleHeader: {
@@ -617,7 +614,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 12,
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: macOSColors.background.hover,
   },
   collapsibleTitle: {
     flexDirection: "row",
@@ -625,7 +622,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   collapsibleTitleText: {
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontSize: 13,
     fontWeight: "600",
   },
@@ -643,19 +640,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: `${gameUIColors.error}1A`,
+    backgroundColor: macOSColors.semantic.errorBackground,
     padding: 8,
     borderRadius: 4,
     marginTop: 8,
   },
   errorText: {
-    color: gameUIColors.error,
+    color: macOSColors.semantic.error,
     fontSize: 11,
     flex: 1,
   },
   // Empty state
   emptyText: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 12,
     fontStyle: "italic",
     textAlign: "center",
@@ -668,15 +665,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.hover,
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
   },
   filterOptionActive: {
-    backgroundColor: `${gameUIColors.warning}1A`,
-    borderColor: `${gameUIColors.warning}33`,
+    backgroundColor: macOSColors.semantic.warningBackground,
+    borderColor: macOSColors.semantic.warning + "33",
   },
   filterOptionLeft: {
     flexDirection: "row",
@@ -688,14 +685,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterOptionLabel: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
     marginBottom: 2,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   filterOptionValue: {
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontSize: 13,
     fontFamily: "monospace",
   },
@@ -703,32 +700,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 4,
-    backgroundColor: gameUIColors.blackTint3,
+    backgroundColor: macOSColors.background.input,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
   },
   filterToggleActive: {
-    backgroundColor: `${gameUIColors.warning}26`,
-    borderColor: `${gameUIColors.warning}4D`,
+    backgroundColor: macOSColors.semantic.warning + "26",
+    borderColor: macOSColors.semantic.warning + "4D",
   },
   filterToggleText: {
     fontSize: 10,
     fontWeight: "600",
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     letterSpacing: 0.5,
   },
   filterToggleTextActive: {
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
   },
   filterInfoBox: {
-    backgroundColor: `${gameUIColors.network}1A`,
+    backgroundColor: macOSColors.semantic.infoBackground,
     borderRadius: 6,
     padding: 10,
     borderWidth: 1,
-    borderColor: `${gameUIColors.network}33`,
+    borderColor: macOSColors.semantic.info + "33",
   },
   filterInfoText: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
     lineHeight: 16,
   },

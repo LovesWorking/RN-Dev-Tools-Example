@@ -5,6 +5,7 @@ import QueryRow from "./QueryRow";
 import useAllQueries from "../../hooks/useAllQueries";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface Props {
   selectedQuery: Query | undefined;
@@ -91,21 +92,21 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 16,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 32,
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     margin: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
+    borderColor: macOSColors.border.default,
   },
   emptyText: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 14,
     textAlign: "center",
     fontFamily: "monospace",

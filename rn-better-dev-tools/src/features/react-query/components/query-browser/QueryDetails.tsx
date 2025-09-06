@@ -3,6 +3,7 @@ import QueryDetailsChip from "./QueryDetailsChip";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface Props {
   query: Query | undefined;
@@ -51,25 +52,25 @@ export default function QueryDetails({ query }: Props) {
 const styles = StyleSheet.create({
   minWidth: {
     minWidth: 200,
-    backgroundColor: gameUIColors.panel + "D9",
+    backgroundColor: macOSColors.background.card,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.info + "4D",
+    borderColor: macOSColors.semantic.info + "4D",
     overflow: "hidden",
-    shadowColor: gameUIColors.info,
+    shadowColor: macOSColors.semantic.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
   },
   headerText: {
-    backgroundColor: gameUIColors.info + "1A",
+    backgroundColor: macOSColors.semantic.infoBackground,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontWeight: "600",
     fontSize: 12,
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.info + "33",
+    borderBottomColor: macOSColors.semantic.info + "33",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     fontFamily: "monospace",
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.muted + "66",
+    borderBottomColor: macOSColors.text.muted + "66",
   },
   flexOne: {
     flex: 1,
@@ -89,20 +90,20 @@ const styles = StyleSheet.create({
   },
   queryKeyText: {
     fontSize: 12,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     lineHeight: 18,
     flexShrink: 1,
-    backgroundColor: gameUIColors.info + "1A",
+    backgroundColor: macOSColors.semantic.infoBackground,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: gameUIColors.info + "4D",
+    borderColor: macOSColors.semantic.info + "4D",
   },
   labelText: {
     fontSize: 10,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontWeight: "600",
     letterSpacing: 0.5,
     textTransform: "uppercase",
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: 12,
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontWeight: "500",
     fontVariant: ["tabular-nums"],
     fontFamily: "monospace",

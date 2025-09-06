@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, ReactNode } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { ReactNode } from "react";
 import { ChevronDown, ChevronRight } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 

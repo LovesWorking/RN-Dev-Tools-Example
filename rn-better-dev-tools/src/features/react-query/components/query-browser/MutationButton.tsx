@@ -2,6 +2,7 @@ import { Mutation } from "@tanstack/react-query";
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { CheckCircle, LoadingCircle, PauseCircle, XCircle } from "./svgs";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 const getMutationText = (mutation: Mutation) => {
   if (!mutation.options.mutationKey) return "Anonymous Mutation";
@@ -34,7 +35,7 @@ export default function MutationButton({
     if (mutation.state.isPaused) {
       return {
         status: "Paused",
-        color: gameUIColors.storage,
+        color: macOSColors.semantic.debug,
         icon: <PauseCircle />,
       };
     }
@@ -42,23 +43,23 @@ export default function MutationButton({
       case "success":
         return {
           status: "Success",
-          color: gameUIColors.success,
+          color: macOSColors.semantic.success,
           icon: <CheckCircle />,
         };
       case "error":
         return {
           status: "Error",
-          color: gameUIColors.error,
+          color: macOSColors.semantic.error,
           icon: <XCircle />,
         };
       case "pending":
         return {
           status: "Loading",
-          color: gameUIColors.info,
+          color: macOSColors.semantic.info,
           icon: <LoadingCircle />,
         };
       default:
-        return { status: "Idle", color: gameUIColors.muted, icon: null };
+        return { status: "Idle", color: macOSColors.text.muted, icon: null };
     }
   };
 
@@ -98,17 +99,17 @@ export default function MutationButton({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
+    borderColor: macOSColors.border.default,
     marginHorizontal: 8,
     marginVertical: 3,
     padding: 12,
   },
   selected: {
-    backgroundColor: gameUIColors.info + "15",
-    borderColor: gameUIColors.info + "50",
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info + "50",
   },
   rowContent: {
     flexDirection: "row",
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   },
   submittedText: {
     fontSize: 10,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     marginTop: 1,
   },
   mutationSection: {
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   mutationKey: {
     fontFamily: "monospace",
     fontSize: 12,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     lineHeight: 16,
   },
 });

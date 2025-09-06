@@ -2,6 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { Query } from "@tanstack/react-query";
 import { QueryBrowser } from "./query-browser/index";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface QueryBrowserModeProps {
   selectedQuery: Query | undefined;
@@ -34,11 +35,11 @@ export function QueryBrowserMode({
 const styles = StyleSheet.create({
   queryListContainer: {
     flex: 1,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   queryListContent: {
     padding: 8,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
     flexGrow: 1,
   },
 });

@@ -6,6 +6,7 @@ import {
   GestureResponderEvent,
 } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface QueryStatusProps {
   label: string;
@@ -32,40 +33,40 @@ const QueryStatus: FC<QueryStatusProps> = ({
   const getStatusColors = (colorName: ColorName) => {
     const colorMap = {
       green: {
-        bg: gameUIColors.success + "26",
-        border: gameUIColors.success + "59",
-        dot: gameUIColors.success,
-        text: gameUIColors.success,
+        bg: macOSColors.semantic.successBackground,
+        border: macOSColors.semantic.success + "59",
+        dot: macOSColors.semantic.success,
+        text: macOSColors.semantic.success,
       },
       yellow: {
-        bg: gameUIColors.warning + "26",
-        border: gameUIColors.warning + "59",
-        dot: gameUIColors.warning,
-        text: gameUIColors.warning,
+        bg: macOSColors.semantic.warningBackground,
+        border: macOSColors.semantic.warning + "59",
+        dot: macOSColors.semantic.warning,
+        text: macOSColors.semantic.warning,
       },
       blue: {
-        bg: gameUIColors.info + "26",
-        border: gameUIColors.info + "59",
-        dot: gameUIColors.info,
-        text: gameUIColors.info,
+        bg: macOSColors.semantic.infoBackground,
+        border: macOSColors.semantic.info + "59",
+        dot: macOSColors.semantic.info,
+        text: macOSColors.semantic.info,
       },
       purple: {
-        bg: gameUIColors.optional + "26",
-        border: gameUIColors.optional + "59",
-        dot: gameUIColors.optional,
-        text: gameUIColors.optional,
+        bg: macOSColors.semantic.debug + "26",
+        border: macOSColors.semantic.debug + "59",
+        dot: macOSColors.semantic.debug,
+        text: macOSColors.semantic.debug,
       },
       red: {
-        bg: gameUIColors.error + "26",
-        border: gameUIColors.error + "59",
-        dot: gameUIColors.error,
-        text: gameUIColors.error,
+        bg: macOSColors.semantic.errorBackground,
+        border: macOSColors.semantic.error + "59",
+        dot: macOSColors.semantic.error,
+        text: macOSColors.semantic.error,
       },
       gray: {
-        bg: gameUIColors.muted + "26",
-        border: gameUIColors.muted + "59",
-        dot: gameUIColors.muted,
-        text: gameUIColors.muted,
+        bg: macOSColors.text.muted + "26",
+        border: macOSColors.text.muted + "59",
+        dot: macOSColors.text.muted,
+        text: macOSColors.text.muted,
       },
     };
     return colorMap[colorName] || colorMap.gray;
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 11,
     fontWeight: "500",
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "system",
   },
   count: {
