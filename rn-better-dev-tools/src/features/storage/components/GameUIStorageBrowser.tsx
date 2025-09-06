@@ -43,6 +43,7 @@ import {
   type IssueItem,
   type StatCardConfig,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { copyToClipboard as copyToClipboardUtil } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
 
 // Custom alert states for Storage specific needs
@@ -71,7 +72,7 @@ const STORAGE_ALERT_STATES = {
   EMPTY: {
     ...GAME_UI_ALERT_STATES.EMPTY,
     icon: Database,
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     label: "NO STORAGE DATA",
     subtitle: "Your app hasn't stored any data yet",
   },

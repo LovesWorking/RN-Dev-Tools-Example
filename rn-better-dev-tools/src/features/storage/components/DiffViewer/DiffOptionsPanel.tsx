@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   Settings,
   Hash,
@@ -82,7 +83,7 @@ export function DiffOptionsPanel({
         onPress={onToggleExpanded}
         activeOpacity={0.7}
       >
-        <Settings size={12} color={gameUIColors.info} />
+        <Settings size={12} color={macOSColors.semantic.info} />
         <Text style={styles.toggleText}>Options</Text>
         {hasActiveFilters && (
           <View style={styles.activeIndicator}>
@@ -111,7 +112,7 @@ export function DiffOptionsPanel({
             <View style={styles.optionContainer}>
               <View style={styles.option}>
                 <View style={styles.optionLeft}>
-                  <Hash size={11} color={gameUIColors.secondary} />
+                  <Hash size={11} color={macOSColors.text.secondary} />
                   <Text style={styles.optionLabel}>Line Numbers</Text>
                 </View>
                 <Switch
@@ -120,13 +121,13 @@ export function DiffOptionsPanel({
                     updateOption("hideLineNumbers", !value)
                   }
                   trackColor={{
-                    false: gameUIColors.border,
-                    true: gameUIColors.success + "60",
+                    false: macOSColors.border.default,
+                    true: macOSColors.semantic.success + "60",
                   }}
                   thumbColor={
                     !options.hideLineNumbers
-                      ? gameUIColors.success
-                      : gameUIColors.muted
+                      ? macOSColors.semantic.success
+                      : macOSColors.text.muted
                   }
                   style={styles.switch}
                 />
@@ -141,7 +142,7 @@ export function DiffOptionsPanel({
             <View style={styles.optionContainer}>
               <View style={styles.option}>
                 <View style={styles.optionLeft}>
-                  <FileText size={11} color={gameUIColors.secondary} />
+                  <FileText size={11} color={macOSColors.text.secondary} />
                   <Text style={styles.optionLabel}>Word Diff</Text>
                 </View>
                 <Switch
@@ -150,13 +151,13 @@ export function DiffOptionsPanel({
                     updateOption("disableWordDiff", !value)
                   }
                   trackColor={{
-                    false: gameUIColors.border,
-                    true: gameUIColors.success + "60",
+                    false: macOSColors.border.default,
+                    true: macOSColors.semantic.success + "60",
                   }}
                   thumbColor={
                     !options.disableWordDiff
-                      ? gameUIColors.success
-                      : gameUIColors.muted
+                      ? macOSColors.semantic.success
+                      : macOSColors.text.muted
                   }
                   style={styles.switch}
                 />
@@ -171,20 +172,20 @@ export function DiffOptionsPanel({
             <View style={styles.optionContainer}>
               <View style={styles.option}>
                 <View style={styles.optionLeft}>
-                  <Filter size={11} color={gameUIColors.secondary} />
+                  <Filter size={11} color={macOSColors.text.secondary} />
                   <Text style={styles.optionLabel}>Diff Only</Text>
                 </View>
                 <Switch
                   value={options.showDiffOnly}
                   onValueChange={(value) => updateOption("showDiffOnly", value)}
                   trackColor={{
-                    false: gameUIColors.border,
-                    true: gameUIColors.success + "60",
+                    false: macOSColors.border.default,
+                    true: macOSColors.semantic.success + "60",
                   }}
                   thumbColor={
                     options.showDiffOnly
-                      ? gameUIColors.success
-                      : gameUIColors.muted
+                      ? macOSColors.semantic.success
+                      : macOSColors.text.muted
                   }
                   style={styles.switch}
                 />
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
   toggleButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: gameUIColors.panel + "30",
+    backgroundColor: macOSColors.background.card,
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 4,
@@ -289,18 +290,18 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: 10,
     fontWeight: "600",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
     flex: 1,
   },
   toggleIndicator: {
     fontSize: 8,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
   },
   optionsContent: {
     marginTop: 8,
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 6,
     padding: 12,
     gap: 16,
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 9,
     fontWeight: "700",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
     letterSpacing: 0.5,
     marginBottom: 4,
@@ -332,12 +333,12 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     fontSize: 11,
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
   },
   optionDescription: {
     fontSize: 9,
-    color: gameUIColors.muted + "CC",
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     marginTop: 4,
     marginLeft: 19,
@@ -354,27 +355,27 @@ const styles = StyleSheet.create({
   methodButton: {
     paddingVertical: 6,
     paddingHorizontal: 10,
-    backgroundColor: gameUIColors.background + "60",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "20",
+    borderColor: macOSColors.border.default,
   },
   methodButtonActive: {
-    backgroundColor: gameUIColors.info + "20",
-    borderColor: gameUIColors.info + "40",
+    backgroundColor: macOSColors.semantic.infoBackground,
+    borderColor: macOSColors.semantic.info + "40",
   },
   methodButtonText: {
     fontSize: 9,
     fontFamily: "monospace",
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontWeight: "600",
   },
   methodButtonTextActive: {
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
   },
   methodDescription: {
     fontSize: 9,
-    color: gameUIColors.muted + "CC",
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     marginTop: 8,
     lineHeight: 12,
@@ -388,33 +389,33 @@ const styles = StyleSheet.create({
     height: 28,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: gameUIColors.background + "60",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "20",
+    borderColor: macOSColors.border.default,
   },
   contextButtonActive: {
-    backgroundColor: gameUIColors.warning + "20",
-    borderColor: gameUIColors.warning + "40",
+    backgroundColor: macOSColors.semantic.warningBackground,
+    borderColor: macOSColors.semantic.warning + "40",
   },
   contextButtonText: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontWeight: "600",
   },
   contextButtonTextActive: {
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
   },
   contextDescription: {
     fontSize: 9,
-    color: gameUIColors.muted + "CC",
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     marginTop: 8,
     lineHeight: 12,
   },
   activeIndicator: {
-    backgroundColor: gameUIColors.warning + "20",
+    backgroundColor: macOSColors.semantic.warningBackground,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
@@ -424,7 +425,7 @@ const styles = StyleSheet.create({
   activeIndicatorText: {
     fontSize: 8,
     fontFamily: "monospace",
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
     fontWeight: "600",
   },
 });

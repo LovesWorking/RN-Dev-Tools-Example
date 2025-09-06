@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   FileCode,
   Layers,
@@ -49,7 +50,7 @@ export function DiffModeSelector({
             >
               <Icon
                 size={12}
-                color={isActive ? gameUIColors.info : gameUIColors.muted}
+                color={isActive ? macOSColors.semantic.info : macOSColors.text.muted}
               />
               <Text
                 style={[styles.modeLabel, isActive && styles.modeLabelActive]}
@@ -77,12 +78,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 11,
     fontWeight: "600",
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
   },
   modeSelector: {
     flexDirection: "row",
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 6,
     padding: 2,
     gap: 2,
@@ -98,16 +99,16 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   modeButtonActive: {
-    backgroundColor: gameUIColors.info + "20",
+    backgroundColor: macOSColors.semantic.infoBackground,
   },
   modeLabel: {
     fontSize: 9,
     fontWeight: "600",
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     letterSpacing: 0.3,
   },
   modeLabelActive: {
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
   },
 });

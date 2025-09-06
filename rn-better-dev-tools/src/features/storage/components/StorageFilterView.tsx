@@ -10,9 +10,9 @@ import { useEffect } from "react";
 import {
   GameUIStatusHeader,
   GameUICompactStats,
-  gameUIColors,
   GAME_UI_ALERT_STATES,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 import {
   FilterSection,
@@ -35,14 +35,14 @@ const FILTER_ALERT_STATES = {
   ACTIVE: {
     ...GAME_UI_ALERT_STATES.OPTIMAL,
     icon: Filter,
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     label: "FILTERS ACTIVE",
     subtitle: "Storage events are being filtered",
   },
   INACTIVE: {
     ...GAME_UI_ALERT_STATES.EMPTY,
     icon: Filter,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     label: "NO FILTERS",
     subtitle: "All storage events are visible",
   },
@@ -52,7 +52,6 @@ export function StorageFilterView({
   ignoredPatterns,
   onTogglePattern,
   onAddPattern,
-  onBack,
   availableKeys = [],
 }: StorageFilterViewProps) {
   const filterManager = useFilterManager(ignoredPatterns);
@@ -126,9 +125,9 @@ export function StorageFilterView({
             {
               label: "SYSTEM",
               value: systemCount,
-              color: gameUIColors.warning,
+              color: macOSColors.semantic.warning,
             },
-            { label: "CUSTOM", value: customCount, color: gameUIColors.info },
+            { label: "CUSTOM", value: customCount, color: macOSColors.semantic.info },
           ]}
         />
 
@@ -137,13 +136,13 @@ export function StorageFilterView({
           <SectionHeader>
             <SectionHeader.Icon
               icon={Filter}
-              color={gameUIColors.info}
+              color={macOSColors.semantic.info}
               size={14}
             />
             <SectionHeader.Title>Active Filters</SectionHeader.Title>
             <SectionHeader.Badge
               count={ignoredPatterns.size}
-              color={gameUIColors.info}
+              color={macOSColors.semantic.info}
             />
           </SectionHeader>
           <Text style={styles.sectionSubtitle}>
@@ -155,7 +154,7 @@ export function StorageFilterView({
             {!filterManager.showAddInput ? (
               <AddFilterButton
                 onPress={() => filterManager.setShowAddInput(true)}
-                color={gameUIColors.info}
+                color={macOSColors.semantic.info}
               />
             ) : (
               <>
@@ -169,7 +168,7 @@ export function StorageFilterView({
                       filterManager.setNewFilter("");
                     }}
                     placeholder="Enter pattern (e.g., @temp)"
-                    color={gameUIColors.primary}
+                    color={macOSColors.text.primary}
                   />
                 </View>
 
@@ -199,7 +198,7 @@ export function StorageFilterView({
                           >
                             {key}
                           </Text>
-                          <Plus size={12} color={gameUIColors.info} />
+                          <Plus size={12} color={macOSColors.semantic.info} />
                         </TouchableOpacity>
                       ))}
                     </ScrollView>
@@ -213,7 +212,7 @@ export function StorageFilterView({
               <FilterList
                 filters={ignoredPatterns}
                 onRemoveFilter={onTogglePattern}
-                color={gameUIColors.info}
+                color={macOSColors.semantic.info}
               />
             ) : (
               <Text style={styles.emptyText}>No filters active</Text>
@@ -226,7 +225,7 @@ export function StorageFilterView({
           <SectionHeader>
             <SectionHeader.Icon
               icon={Filter}
-              color={gameUIColors.warning}
+              color={macOSColors.semantic.warning}
               size={12}
             />
             <SectionHeader.Title>HOW FILTERS WORK</SectionHeader.Title>
@@ -256,7 +255,7 @@ export function StorageFilterView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   content: {
     flex: 1,
@@ -273,7 +272,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: 12,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 12,
@@ -292,7 +291,7 @@ const styles = StyleSheet.create({
   // Empty state
   emptyText: {
     fontSize: 12,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontStyle: "italic",
   },
 
@@ -300,16 +299,16 @@ const styles = StyleSheet.create({
   availableKeysContainer: {
     marginTop: 12,
     marginBottom: 12,
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
+    borderColor: macOSColors.border.default,
     padding: 12,
   },
   availableKeysTitle: {
     fontSize: 10,
     fontWeight: "700",
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     letterSpacing: 1,
     marginBottom: 8,
@@ -323,32 +322,32 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 8,
     paddingHorizontal: 10,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.input,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "30",
+    borderColor: macOSColors.border.input,
     marginBottom: 6,
   },
   availableKeyText: {
     flex: 1,
     fontSize: 11,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     marginRight: 8,
   },
 
   // How It Works Section
   howItWorksSection: {
-    backgroundColor: gameUIColors.warning + "08",
+    backgroundColor: macOSColors.semantic.warningBackground,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.warning + "20",
+    borderColor: macOSColors.semantic.warning + "30",
     marginTop: 12,
     overflow: "hidden",
   },
   howItWorksText: {
     fontSize: 11,
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primary,
     lineHeight: 16,
     marginBottom: 12,
     marginTop: 8,
@@ -360,19 +359,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.warning + "20",
+    borderTopColor: macOSColors.semantic.warning + "30",
   },
   examplesTitle: {
     fontSize: 10,
     fontWeight: "600",
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     letterSpacing: 0.5,
     marginBottom: 6,
   },
   exampleItem: {
     fontSize: 10,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     lineHeight: 16,
   },

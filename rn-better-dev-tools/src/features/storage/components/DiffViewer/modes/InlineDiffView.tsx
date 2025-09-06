@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   Plus,
   Minus,
@@ -59,11 +60,11 @@ export function InlineDiffView({
   const getDiffIcon = (type: string) => {
     switch (type) {
       case "CREATE":
-        return <Plus size={11} color={gameUIColors.success} />;
+        return <Plus size={11} color={macOSColors.semantic.success} />;
       case "REMOVE":
-        return <Minus size={11} color={gameUIColors.error} />;
+        return <Minus size={11} color={macOSColors.semantic.error} />;
       case "CHANGE":
-        return <Edit3 size={11} color={gameUIColors.warning} />;
+        return <Edit3 size={11} color={macOSColors.semantic.warning} />;
       default:
         return null;
     }
@@ -72,13 +73,13 @@ export function InlineDiffView({
   const getDiffColor = (type: string) => {
     switch (type) {
       case "CREATE":
-        return gameUIColors.success;
+        return macOSColors.semantic.success;
       case "REMOVE":
-        return gameUIColors.error;
+        return macOSColors.semantic.error;
       case "CHANGE":
-        return gameUIColors.warning;
+        return macOSColors.semantic.warning;
       default:
-        return gameUIColors.muted;
+        return macOSColors.text.muted;
     }
   };
 
@@ -131,9 +132,9 @@ export function InlineDiffView({
                 >
                   <View style={styles.headerContent}>
                     {isExpanded ? (
-                      <ChevronDown size={12} color={gameUIColors.muted} />
+                      <ChevronDown size={12} color={macOSColors.text.muted} />
                     ) : (
-                      <ChevronRight size={12} color={gameUIColors.muted} />
+                      <ChevronRight size={12} color={macOSColors.text.muted} />
                     )}
                     {getDiffIcon(diff.type)}
                     <Text style={styles.path}>{pathStr}</Text>
@@ -208,7 +209,7 @@ export function InlineDiffView({
                         <Text
                           style={[
                             styles.valueLabel,
-                            { color: gameUIColors.success },
+                            { color: macOSColors.semantic.success },
                           ]}
                         >
                           ADDED:
@@ -237,7 +238,7 @@ export function InlineDiffView({
                         <Text
                           style={[
                             styles.valueLabel,
-                            { color: gameUIColors.error },
+                            { color: macOSColors.semantic.error },
                           ]}
                         >
                           REMOVED:
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   scrollContainer: {
-    backgroundColor: gameUIColors.panel + "30",
+    backgroundColor: macOSColors.background.card + "30",
     borderRadius: 6,
     padding: 8,
   },
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "20",
+    borderBottomColor: macOSColors.border.default + "20",
   },
   changesSection: {
     gap: 4,
@@ -308,14 +309,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 10,
     fontWeight: "700",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
     letterSpacing: 0.5,
     marginBottom: 8,
     textTransform: "uppercase",
   },
   dataContainer: {
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.base + "40",
     borderRadius: 4,
     padding: 8,
   },
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.base + "40",
     borderRadius: 4,
     paddingVertical: 6,
     paddingHorizontal: 8,
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
   },
   path: {
     fontSize: 11,
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primaryLight,
     fontFamily: "monospace",
     flex: 1,
   },
@@ -357,14 +358,14 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: 24,
     padding: 8,
-    backgroundColor: gameUIColors.background + "20",
+    backgroundColor: macOSColors.background.base + "20",
     borderRadius: 4,
     borderLeftWidth: 2,
-    borderLeftColor: gameUIColors.border + "30",
+    borderLeftColor: macOSColors.border.default + "30",
   },
   valueLabel: {
     fontSize: 9,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     fontWeight: "700",
     marginBottom: 4,
@@ -374,7 +375,7 @@ const styles = StyleSheet.create({
   },
   primitiveValue: {
     fontSize: 10,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
   },
 });

@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import type { DiffItem } from "../../../utils/objectDiff";
 import { formatValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
@@ -125,17 +126,17 @@ export function UnifiedDiffView({
       {/* Stats bar */}
       <View style={styles.statsBar}>
         <View style={styles.stat}>
-          <Text style={[styles.statText, { color: gameUIColors.success }]}>
+          <Text style={[styles.statText, { color: macOSColors.semantic.success }]}>
             +{differences.filter((d) => d.type === "CREATE").length}
           </Text>
         </View>
         <View style={styles.stat}>
-          <Text style={[styles.statText, { color: gameUIColors.error }]}>
+          <Text style={[styles.statText, { color: macOSColors.semantic.error }]}>
             -{differences.filter((d) => d.type === "REMOVE").length}
           </Text>
         </View>
         <View style={styles.stat}>
-          <Text style={[styles.statText, { color: gameUIColors.warning }]}>
+          <Text style={[styles.statText, { color: macOSColors.semantic.warning }]}>
             ~{differences.filter((d) => d.type === "CHANGE").length}
           </Text>
         </View>
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   header: {
-    backgroundColor: gameUIColors.background + "60",
+    backgroundColor: macOSColors.background.base + "60",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 4,
@@ -173,11 +174,11 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontWeight: "600",
   },
   scrollContainer: {
-    backgroundColor: gameUIColors.panel + "30",
+    backgroundColor: macOSColors.background.card + "30",
     borderRadius: 6,
     padding: 8,
   },
@@ -185,21 +186,21 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   diffBlock: {
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.base + "40",
     borderRadius: 4,
     overflow: "hidden",
   },
   pathHeader: {
-    backgroundColor: gameUIColors.info + "10",
+    backgroundColor: macOSColors.semantic.info + "10",
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "20",
+    borderBottomColor: macOSColors.border.default + "20",
   },
   pathText: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontWeight: "600",
   },
   lineContainer: {
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     textAlign: "center",
   },
   lineContent: {
@@ -221,20 +222,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   removeLine: {
-    backgroundColor: gameUIColors.error + "10",
+    backgroundColor: macOSColors.semantic.error + "10",
   },
   addLine: {
-    backgroundColor: gameUIColors.success + "10",
+    backgroundColor: macOSColors.semantic.success + "10",
   },
   removeText: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.error,
+    color: macOSColors.semantic.error,
   },
   addText: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.success,
+    color: macOSColors.semantic.success,
   },
   statsBar: {
     flexDirection: "row",

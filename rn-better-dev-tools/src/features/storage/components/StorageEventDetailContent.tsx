@@ -16,6 +16,7 @@ import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { ThemedSplitView } from "./DiffViewer/modes/ThemedSplitView";
 import { diffThemes } from "./DiffViewer/themes/diffThemes";
 import { computeLineDiff, DiffType } from "../utils/lineDiff";
@@ -166,7 +167,7 @@ export function StorageEventDetailContent({
     if (navigationItems.length === 0) {
       return (
         <View style={styles.emptyState}>
-          <AlertCircle size={32} color={gameUIColors.muted} />
+          <AlertCircle size={32} color={macOSColors.text.muted} />
           <Text style={styles.emptyText}>No changes to display</Text>
         </View>
       );
@@ -223,7 +224,7 @@ export function StorageEventDetailContent({
             {/* PREV side */}
             <View style={styles.compareSide}>
               <Text
-                style={[styles.compareLabel, { color: gameUIColors.optional }]}
+                style={[styles.compareLabel, { color: macOSColors.semantic.debug }]}
               >
                 PREV
               </Text>
@@ -240,8 +241,8 @@ export function StorageEventDetailContent({
                     size={14}
                     color={
                       leftIndex <= 0
-                        ? gameUIColors.muted
-                        : gameUIColors.secondary
+                        ? macOSColors.text.muted
+                        : macOSColors.text.secondary
                     }
                   />
                 </TouchableOpacity>
@@ -272,8 +273,8 @@ export function StorageEventDetailContent({
                     size={14}
                     color={
                       leftIndex >= rightIndex - 1
-                        ? gameUIColors.muted
-                        : gameUIColors.secondary
+                        ? macOSColors.text.muted
+                        : macOSColors.text.secondary
                     }
                   />
                 </TouchableOpacity>
@@ -285,7 +286,7 @@ export function StorageEventDetailContent({
             {/* CUR side */}
             <View style={styles.compareSide}>
               <Text
-                style={[styles.compareLabel, { color: gameUIColors.success }]}
+                style={[styles.compareLabel, { color: macOSColors.semantic.success }]}
               >
                 CUR
               </Text>
@@ -302,8 +303,8 @@ export function StorageEventDetailContent({
                     size={14}
                     color={
                       rightIndex <= leftIndex + 1
-                        ? gameUIColors.muted
-                        : gameUIColors.secondary
+                        ? macOSColors.text.muted
+                        : macOSColors.text.secondary
                     }
                   />
                 </TouchableOpacity>
@@ -334,8 +335,8 @@ export function StorageEventDetailContent({
                     size={14}
                     color={
                       rightIndex >= totalEvents - 1
-                        ? gameUIColors.muted
-                        : gameUIColors.secondary
+                        ? macOSColors.text.muted
+                        : macOSColors.text.secondary
                     }
                   />
                 </TouchableOpacity>
@@ -412,7 +413,7 @@ export function StorageEventDetailContent({
                 style={styles.pickerClose}
                 accessibilityLabel="Close event picker"
               >
-                <X size={16} color={gameUIColors.secondary} />
+                <X size={16} color={macOSColors.text.secondary} />
               </TouchableOpacity>
             </View>
             <View style={styles.pickerDivider} />
@@ -540,8 +541,8 @@ export function StorageEventDetailContent({
               size={20}
               color={
                 selectedEventIndex === 0
-                  ? gameUIColors.muted
-                  : gameUIColors.primary
+                  ? macOSColors.text.muted
+                  : macOSColors.text.primary
               }
             />
             <Text
@@ -591,8 +592,8 @@ export function StorageEventDetailContent({
               size={20}
               color={
                 selectedEventIndex === totalEvents - 1
-                  ? gameUIColors.muted
-                  : gameUIColors.primary
+                  ? macOSColors.text.muted
+                  : macOSColors.text.primary
               }
             />
           </TouchableOpacity>
@@ -632,7 +633,7 @@ export function StorageEventDetailFooter({
         <ChevronLeft
           size={20}
           color={
-            selectedEventIndex === 0 ? gameUIColors.muted : gameUIColors.primary
+            selectedEventIndex === 0 ? macOSColors.text.muted : macOSColors.text.primary
           }
         />
         <Text
@@ -677,8 +678,8 @@ export function StorageEventDetailFooter({
           size={20}
           color={
             selectedEventIndex === totalEvents - 1
-              ? gameUIColors.muted
-              : gameUIColors.primary
+              ? macOSColors.text.muted
+              : macOSColors.text.primary
           }
         />
       </TouchableOpacity>
@@ -689,7 +690,7 @@ export function StorageEventDetailFooter({
 const styles = StyleSheet.create({
   contentOnly: {
     flex: 1,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
   },
   stickyFooter: {
     position: "absolute",
@@ -701,9 +702,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.border + "40",
+    borderTopColor: macOSColors.border.default,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -717,9 +718,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: gameUIColors.background,
+    backgroundColor: macOSColors.background.base,
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.border + "40",
+    borderTopColor: macOSColors.border.default,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -740,15 +741,15 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 12,
     fontSize: 14,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
   card: {
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "30",
+    borderColor: macOSColors.border.input,
   },
   valueContent: {
     marginTop: 4,
@@ -761,7 +762,7 @@ const styles = StyleSheet.create({
   },
   valueLabel: {
     fontSize: 10,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     letterSpacing: 0.5,
     fontWeight: "600",
@@ -771,24 +772,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
-    backgroundColor: gameUIColors.muted + "20",
+    backgroundColor: macOSColors.background.input,
   },
   typeText: {
     fontSize: 9,
     fontWeight: "600",
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
   },
   valueBox: {
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "30",
+    borderColor: macOSColors.border.input,
     padding: 8,
   },
   valueText: {
     fontSize: 12,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     lineHeight: 18,
   },
@@ -799,7 +800,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: gameUIColors.panel + "60",
+    backgroundColor: macOSColors.background.card,
     minWidth: 100,
     justifyContent: "center",
   },
@@ -809,12 +810,12 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 12,
     fontWeight: "600",
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     textTransform: "uppercase",
   },
   navButtonTextDisabled: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
   },
   eventCounterContainer: {
     alignItems: "center",
@@ -822,13 +823,13 @@ const styles = StyleSheet.create({
   eventCounter: {
     fontSize: 14,
     fontWeight: "700",
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     textTransform: "uppercase",
   },
   eventTimestamp: {
     fontSize: 11,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     marginTop: 2,
   },
@@ -837,9 +838,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: gameUIColors.panel + "40",
+    backgroundColor: macOSColors.background.card,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "20",
+    borderColor: macOSColors.border.default,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 6,
@@ -866,9 +867,9 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 6,
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: macOSColors.background.card,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -880,23 +881,23 @@ const styles = StyleSheet.create({
   },
   compareTime: {
     fontSize: 11,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
   },
   compareIndex: {
     fontSize: 10,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
   compareRelative: {
     fontSize: 10,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
   compareDivider: {
     width: 1,
     height: 34,
-    backgroundColor: gameUIColors.border + "40",
+    backgroundColor: macOSColors.background.input,
   },
   pickerOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -911,10 +912,10 @@ const styles = StyleSheet.create({
   pickerCard: {
     width: "86%",
     maxHeight: 320,
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "60",
+    borderColor: macOSColors.border.hover,
     padding: 12,
   },
   pickerHeader: {
@@ -925,13 +926,13 @@ const styles = StyleSheet.create({
   pickerClose: {
     padding: 6,
     borderRadius: 6,
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: macOSColors.background.card,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
   },
   pickerDivider: {
     height: 1,
-    backgroundColor: gameUIColors.border + "40",
+    backgroundColor: macOSColors.background.input,
     marginVertical: 8,
   },
   pickerScroll: {
@@ -940,7 +941,7 @@ const styles = StyleSheet.create({
   pickerTitle: {
     fontSize: 12,
     fontWeight: "700",
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     textTransform: "uppercase",
     marginBottom: 8,
@@ -952,9 +953,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 6,
-    backgroundColor: gameUIColors.blackTint2,
+    backgroundColor: macOSColors.background.card,
     borderWidth: 1,
-    borderColor: gameUIColors.border,
+    borderColor: macOSColors.border.default,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -965,19 +966,19 @@ const styles = StyleSheet.create({
   },
   pickerIndex: {
     fontSize: 10,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     width: 40,
   },
   pickerTime: {
     fontSize: 11,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     flex: 1,
   },
   pickerRelative: {
     fontSize: 10,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
   pickerCounts: {
@@ -995,9 +996,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: gameUIColors.panel + "40",
+    backgroundColor: macOSColors.background.card,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "20",
+    borderColor: macOSColors.border.default,
     borderRadius: 6,
     paddingHorizontal: 4,
     paddingVertical: 4,
@@ -1013,18 +1014,18 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   diffViewerTabActive: {
-    backgroundColor: gameUIColors.primary + "20",
+    backgroundColor: macOSColors.semantic.infoBackground,
     borderWidth: 1,
-    borderColor: gameUIColors.primary + "40",
+    borderColor: macOSColors.semantic.info + "40",
   },
   diffViewerTabText: {
     fontSize: 11,
     fontFamily: "monospace",
     fontWeight: "600",
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     letterSpacing: 0.5,
   },
   diffViewerTabTextActive: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
   },
 });

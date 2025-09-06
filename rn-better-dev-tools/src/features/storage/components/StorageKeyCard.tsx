@@ -14,6 +14,7 @@ import {
   getStorageTypeHexColor,
 } from "../../react-query/utils/storageQueryUtils";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { getEnvVarType } from "../../env/utils/envTypeDetector";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 
@@ -31,47 +32,47 @@ const getStatusConfig = (status: StorageKeyInfo["status"]) => {
     case "required_present":
       return {
         icon: CheckCircle2,
-        color: gameUIColors.success,
-        bgColor: gameUIColors.success + "1A",
-        borderColor: gameUIColors.success + "33",
+        color: macOSColors.semantic.success,
+        bgColor: macOSColors.semantic.successBackground,
+        borderColor: macOSColors.semantic.success + "40",
         label: "REQUIRED",
-        labelColor: gameUIColors.success,
+        labelColor: macOSColors.semantic.success,
       };
     case "required_missing":
       return {
         icon: AlertCircle,
-        color: gameUIColors.error,
-        bgColor: gameUIColors.error + "1A",
-        borderColor: gameUIColors.error + "4D",
+        color: macOSColors.semantic.error,
+        bgColor: macOSColors.semantic.errorBackground,
+        borderColor: macOSColors.semantic.error + "50",
         label: "MISSING",
-        labelColor: gameUIColors.error,
+        labelColor: macOSColors.semantic.error,
       };
     case "required_wrong_value":
       return {
         icon: XCircle,
-        color: gameUIColors.warning,
-        bgColor: gameUIColors.warning + "1A",
-        borderColor: gameUIColors.warning + "4D",
+        color: macOSColors.semantic.warning,
+        bgColor: macOSColors.semantic.warningBackground,
+        borderColor: macOSColors.semantic.warning + "50",
         label: "WRONG S",
-        labelColor: gameUIColors.warning,
+        labelColor: macOSColors.semantic.warning,
       };
     case "required_wrong_type":
       return {
         icon: XCircle,
-        color: gameUIColors.info,
-        bgColor: gameUIColors.info + "1A",
-        borderColor: gameUIColors.info + "4D",
+        color: macOSColors.semantic.info,
+        bgColor: macOSColors.semantic.infoBackground,
+        borderColor: macOSColors.semantic.info + "50",
         label: "WRONG TYPE",
-        labelColor: gameUIColors.info,
+        labelColor: macOSColors.semantic.info,
       };
     case "optional_present":
       return {
         icon: Eye,
-        color: gameUIColors.optional,
-        bgColor: gameUIColors.optional + "1A",
-        borderColor: gameUIColors.optional + "33",
+        color: macOSColors.semantic.debug,
+        bgColor: macOSColors.semantic.infoBackground,
+        borderColor: macOSColors.semantic.debug + "40",
         label: "OPTIONAL",
-        labelColor: gameUIColors.optional,
+        labelColor: macOSColors.semantic.debug,
       };
   }
 };
@@ -176,7 +177,7 @@ export function StorageKeyCard({
             onPress={onToggle}
             hitSlop={HIT_SLOP}
           >
-            <Eye size={12} color={gameUIColors.secondary} />
+            <Eye size={12} color={macOSColors.text.secondary} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -247,7 +248,7 @@ export function StorageKeyCard({
       {isExpanded && !hasValue && (
         <View style={styles.cardBody}>
           <View style={styles.emptyValueContainer}>
-            <AlertCircle size={16} color={gameUIColors.warning} />
+            <AlertCircle size={16} color={macOSColors.semantic.warning} />
             <Text style={styles.emptyValueText}>
               Storage key not found or empty
             </Text>
@@ -271,7 +272,7 @@ export function StorageKeyCard({
 
 const styles = StyleSheet.create({
   storageKeyCard: {
-    backgroundColor: gameUIColors.panel + "08",
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
     overflow: "hidden",
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   descriptionText: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 10,
     marginTop: 2,
     flexWrap: "wrap",
@@ -342,12 +343,12 @@ const styles = StyleSheet.create({
   valueBadge: {
     paddingHorizontal: 4,
     paddingVertical: 2,
-    backgroundColor: gameUIColors.primary + "0D",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 3,
   },
   valueText: {
     fontSize: 8,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontWeight: "500",
   },
   cardHeaderRight: {
@@ -356,11 +357,11 @@ const styles = StyleSheet.create({
   actionButton: {
     padding: 4,
     borderRadius: 4,
-    backgroundColor: gameUIColors.primary + "0D",
+    backgroundColor: macOSColors.background.input,
   },
   cardBody: {
     borderTopWidth: 1,
-    borderTopColor: gameUIColors.primary + "0D",
+    borderTopColor: macOSColors.border.default,
     padding: 12,
     gap: 12,
   },
@@ -371,7 +372,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   simpleValueLabel: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 10,
     fontWeight: "500",
     textTransform: "uppercase",
@@ -399,7 +400,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   valueLabel: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 10,
     fontWeight: "500",
     textTransform: "uppercase",
@@ -447,7 +448,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   typeHelperText: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 9,
     marginTop: 4,
     textAlign: "center",

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   Plus,
   Minus,
@@ -83,11 +84,11 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
   const getDiffIcon = (type: string) => {
     switch (type) {
       case "CREATE":
-        return <Plus size={12} color={gameUIColors.success} />;
+        return <Plus size={12} color={macOSColors.semantic.success} />;
       case "REMOVE":
-        return <Minus size={12} color={gameUIColors.error} />;
+        return <Minus size={12} color={macOSColors.semantic.error} />;
       case "CHANGE":
-        return <Edit3 size={12} color={gameUIColors.warning} />;
+        return <Edit3 size={12} color={macOSColors.semantic.warning} />;
       default:
         return null;
     }
@@ -96,13 +97,13 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
   const getDiffColor = (type: string) => {
     switch (type) {
       case "CREATE":
-        return gameUIColors.success;
+        return macOSColors.semantic.success;
       case "REMOVE":
-        return gameUIColors.error;
+        return macOSColors.semantic.error;
       case "CHANGE":
-        return gameUIColors.warning;
+        return macOSColors.semantic.warning;
       default:
-        return gameUIColors.muted;
+        return macOSColors.text.muted;
     }
   };
 
@@ -111,7 +112,7 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <GitBranch size={14} color={gameUIColors.info} />
+          <GitBranch size={14} color={macOSColors.semantic.info} />
           <Text style={styles.title}>CHANGES</Text>
         </View>
         <View style={styles.countBadge}>
@@ -173,7 +174,7 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
                 </View>
 
                 <View style={styles.arrowContainer}>
-                  <ChevronRight size={16} color={gameUIColors.warning} />
+                  <ChevronRight size={16} color={macOSColors.semantic.warning} />
                 </View>
 
                 <View style={styles.changeValue}>
@@ -196,7 +197,7 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
               <View style={styles.singleValueContainer}>
                 <View style={styles.singleValue}>
                   <Text
-                    style={[styles.valueLabel, { color: gameUIColors.success }]}
+                    style={[styles.valueLabel, { color: macOSColors.semantic.success }]}
                   >
                     ADDED
                   </Text>
@@ -218,7 +219,7 @@ export function DiffViewer({ oldValue, newValue }: DiffViewerProps) {
               <View style={styles.singleValueContainer}>
                 <View style={styles.singleValue}>
                   <Text
-                    style={[styles.valueLabel, { color: gameUIColors.error }]}
+                    style={[styles.valueLabel, { color: macOSColors.semantic.error }]}
                   >
                     REMOVED
                   </Text>
@@ -262,37 +263,37 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 11,
     fontWeight: "700",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
     letterSpacing: 1,
     textTransform: "uppercase",
   },
   countBadge: {
-    backgroundColor: gameUIColors.info + "25",
+    backgroundColor: macOSColors.semantic.infoBackground,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: gameUIColors.info + "40",
+    borderColor: macOSColors.semantic.info + "40",
     minWidth: 28,
     alignItems: "center",
   },
   countText: {
     fontSize: 10,
     fontWeight: "700",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
   },
   scrollContainer: {
     backgroundColor: "transparent",
   },
   diffCard: {
-    backgroundColor: gameUIColors.panel + "60",
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     marginBottom: 10,
     borderLeftWidth: 4,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "20",
+    borderColor: macOSColors.border.default,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -306,9 +307,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.input,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "15",
+    borderBottomColor: macOSColors.border.default,
   },
   pathContainer: {
     flexDirection: "row",
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
   },
   path: {
     fontSize: 12,
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     fontWeight: "600",
     flex: 1,
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
   },
   valueLabel: {
     fontSize: 9,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     fontWeight: "700",
     letterSpacing: 0.5,
@@ -359,19 +360,19 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   valueContent: {
-    backgroundColor: gameUIColors.background + "50",
+    backgroundColor: macOSColors.background.input,
     borderRadius: 4,
     padding: 8,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "10",
+    borderColor: macOSColors.border.default,
   },
   addedContent: {
-    borderColor: gameUIColors.success + "20",
-    backgroundColor: gameUIColors.success + "08",
+    borderColor: macOSColors.semantic.success + "30",
+    backgroundColor: macOSColors.semantic.successBackground,
   },
   removedContent: {
-    borderColor: gameUIColors.error + "20",
-    backgroundColor: gameUIColors.error + "08",
+    borderColor: macOSColors.semantic.error + "30",
+    backgroundColor: macOSColors.semantic.errorBackground,
   },
   value: {
     fontSize: 11,

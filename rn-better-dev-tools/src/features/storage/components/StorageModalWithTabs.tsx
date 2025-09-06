@@ -24,6 +24,7 @@ import {
 } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   startListening,
   stopListening,
@@ -397,16 +398,16 @@ export function StorageModalWithTabs({
     switch (action) {
       case "setItem":
       case "multiSet":
-        return gameUIColors.success;
+        return macOSColors.semantic.success;
       case "removeItem":
       case "multiRemove":
       case "clear":
-        return gameUIColors.error;
+        return macOSColors.semantic.error;
       case "mergeItem":
       case "multiMerge":
-        return gameUIColors.info;
+        return macOSColors.semantic.info;
       default:
-        return gameUIColors.muted;
+        return macOSColors.text.muted;
     }
   };
 
@@ -485,7 +486,7 @@ export function StorageModalWithTabs({
       return (
         <View style={styles.contentWrapper}>
           <View style={styles.keyNameHeader}>
-            <HardDrive size={16} color={gameUIColors.storage} />
+            <HardDrive size={16} color={macOSColors.semantic.debug} />
             <Text style={styles.keyNameHeaderText} numberOfLines={1}>
               {selectedConversation.key}
             </Text>
@@ -525,7 +526,7 @@ export function StorageModalWithTabs({
     if (conversations.length === 0) {
       return (
         <View style={styles.emptyState}>
-          <Database size={48} color={gameUIColors.muted} />
+          <Database size={48} color={macOSColors.text.muted} />
           <Text style={styles.emptyTitle}>
             {isListening ? "No storage events yet" : "Event listener is paused"}
           </Text>
@@ -641,8 +642,8 @@ export function StorageModalWithTabs({
                       size={14}
                       color={
                         ignoredPatterns.size > 0
-                          ? gameUIColors.optional
-                          : gameUIColors.secondary
+                          ? macOSColors.semantic.debug
+                          : macOSColors.text.secondary
                       }
                     />
                   </TouchableOpacity>
@@ -654,16 +655,16 @@ export function StorageModalWithTabs({
                     ]}
                   >
                     {isListening ? (
-                      <Pause size={14} color={gameUIColors.success} />
+                      <Pause size={14} color={macOSColors.semantic.success} />
                     ) : (
-                      <Play size={14} color={gameUIColors.success} />
+                      <Play size={14} color={macOSColors.semantic.success} />
                     )}
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleClearEvents}
                     style={styles.iconButton}
                   >
-                    <Trash2 size={14} color={gameUIColors.error} />
+                    <Trash2 size={14} color={macOSColors.semantic.error} />
                   </TouchableOpacity>
                 </>
               )}
@@ -688,20 +689,20 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 6,
     borderRadius: 6,
-    backgroundColor: gameUIColors.panel + "40",
+    backgroundColor: macOSColors.background.input,
   },
 
   activeButton: {
-    backgroundColor: gameUIColors.success + "26",
+    backgroundColor: macOSColors.semantic.successBackground,
   },
 
   activeFilterButton: {
-    backgroundColor: gameUIColors.optional + "26",
+    backgroundColor: macOSColors.semantic.infoBackground,
   },
 
   conversationItem: {
     padding: 12,
-    backgroundColor: gameUIColors.panel,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     marginHorizontal: 16,
   },
@@ -714,7 +715,7 @@ const styles = StyleSheet.create({
   },
 
   keyText: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontSize: 14,
     fontWeight: "600",
     flex: 1,
@@ -736,14 +737,14 @@ const styles = StyleSheet.create({
   },
 
   operationCount: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 11,
     flex: 1,
     fontFamily: "monospace",
   },
 
   timestamp: {
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontSize: 11,
     fontFamily: "monospace",
   },
@@ -764,7 +765,7 @@ const styles = StyleSheet.create({
   },
 
   emptyTitle: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontSize: 16,
     fontWeight: "600",
     marginTop: 16,
@@ -775,7 +776,7 @@ const styles = StyleSheet.create({
   },
 
   emptySubtitle: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 14,
     textAlign: "center",
     fontFamily: "monospace",
@@ -798,7 +799,7 @@ const styles = StyleSheet.create({
   },
 
   eventCounter: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontSize: 12,
     fontWeight: "600",
     fontFamily: "monospace",
@@ -817,12 +818,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: gameUIColors.panel + "40",
+    backgroundColor: macOSColors.background.input,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.storage + "20",
+    borderColor: macOSColors.border.input,
     height: 28,
   },
 
@@ -830,7 +831,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     fontWeight: "600",
-    color: gameUIColors.storage,
+    color: macOSColors.semantic.debug,
     fontFamily: "monospace",
     letterSpacing: 0.5,
   },
@@ -845,16 +846,16 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: gameUIColors.panel + "40",
+    backgroundColor: macOSColors.background.card,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "20",
+    borderBottomColor: macOSColors.border.default,
   },
 
   keyNameHeaderText: {
     flex: 1,
     fontSize: 14,
     fontWeight: "600",
-    color: gameUIColors.storage,
+    color: macOSColors.semantic.debug,
     fontFamily: "monospace",
     letterSpacing: 0.5,
   },
@@ -866,17 +867,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 6,
     paddingBottom: 8,
-    backgroundColor: gameUIColors.panel + "40",
+    backgroundColor: macOSColors.background.card,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border + "10",
+    borderBottomColor: macOSColors.border.default,
   },
   keyMetaTime: {
-    color: gameUIColors.primary,
+    color: macOSColors.text.primary,
     fontSize: 12,
     fontFamily: "monospace",
   },
   keyMetaRelative: {
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontSize: 12,
     fontFamily: "monospace",
   },

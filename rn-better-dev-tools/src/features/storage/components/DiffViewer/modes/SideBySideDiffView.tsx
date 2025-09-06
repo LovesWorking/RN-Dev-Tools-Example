@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { DataViewer } from "../../../../react-query/components/shared/DataViewer";
 import type { DiffItem } from "../../../utils/objectDiff";
 
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   columnsContainer: {
     flexDirection: "row",
-    backgroundColor: gameUIColors.panel + "30",
+    backgroundColor: macOSColors.background.card + "30",
     borderRadius: 6,
     padding: 8,
     gap: 8,
@@ -146,19 +147,19 @@ const styles = StyleSheet.create({
   columnTitle: {
     fontSize: 10,
     fontWeight: "700",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   removedBadge: {
-    backgroundColor: gameUIColors.error + "15",
+    backgroundColor: macOSColors.semantic.error + "15",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
   },
   addedBadge: {
-    backgroundColor: gameUIColors.success + "15",
+    backgroundColor: macOSColors.semantic.success + "15",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
@@ -166,26 +167,26 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 8,
     fontWeight: "600",
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
   scrollContainer: {
     maxHeight: 300,
   },
   dataContainer: {
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.base + "40",
     borderRadius: 4,
     padding: 8,
     minHeight: 100,
   },
   divider: {
     width: 1,
-    backgroundColor: gameUIColors.border + "30",
+    backgroundColor: macOSColors.border.default + "30",
     marginVertical: 24,
   },
   emptyState: {
     fontSize: 10,
-    color: gameUIColors.muted,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     fontStyle: "italic",
     textAlign: "center",
@@ -198,12 +199,12 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 8,
     paddingVertical: 6,
-    backgroundColor: gameUIColors.background + "20",
+    backgroundColor: macOSColors.background.base + "20",
     borderRadius: 4,
   },
   summaryText: {
     fontSize: 9,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     fontWeight: "600",
   },

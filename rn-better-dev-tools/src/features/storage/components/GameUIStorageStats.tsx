@@ -11,16 +11,24 @@ import {
 } from "rn-better-dev-tools/icons";
 import { StorageKeyStats } from "../types";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface GameUIStorageStatsProps {
   stats: StorageKeyStats;
 }
 
-// Use shared game colors
+// Use macOS colors
 const gameColors = {
   ...gameUIColors,
-  // Add storage-specific colors if needed
-  online: gameUIColors.success,
+  ...macOSColors.semantic,
+  primary: macOSColors.text.primary,
+  secondary: macOSColors.text.secondary,
+  muted: macOSColors.text.muted,
+  panel: macOSColors.background.card,
+  border: macOSColors.border.default,
+  online: macOSColors.semantic.success,
+  storage: macOSColors.semantic.debug,
+  optional: macOSColors.semantic.debug,
 };
 
 // Storage type configurations with game UI colors

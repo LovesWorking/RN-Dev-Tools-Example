@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   Plus,
   Minus,
@@ -108,20 +109,20 @@ export function StructureDiffView({
             <CheckCircle size={11} color={gameUIColors.dataTypes.boolean} />
           );
         }
-        return <FileText size={11} color={gameUIColors.muted} />;
+        return <FileText size={11} color={macOSColors.text.muted} />;
       default:
-        return <FileText size={11} color={gameUIColors.muted} />;
+        return <FileText size={11} color={macOSColors.text.muted} />;
     }
   };
 
   const getChangeIcon = (type: string) => {
     switch (type) {
       case "CREATE":
-        return <Plus size={10} color={gameUIColors.success} />;
+        return <Plus size={10} color={macOSColors.semantic.success} />;
       case "REMOVE":
-        return <Minus size={10} color={gameUIColors.error} />;
+        return <Minus size={10} color={macOSColors.semantic.error} />;
       case "CHANGE":
-        return <Edit3 size={10} color={gameUIColors.warning} />;
+        return <Edit3 size={10} color={macOSColors.semantic.warning} />;
       default:
         return null;
     }
@@ -195,13 +196,13 @@ export function StructureDiffView({
   const getChangeColor = (type: string) => {
     switch (type) {
       case "CREATE":
-        return gameUIColors.success;
+        return macOSColors.semantic.success;
       case "REMOVE":
-        return gameUIColors.error;
+        return macOSColors.semantic.error;
       case "CHANGE":
-        return gameUIColors.warning;
+        return macOSColors.semantic.warning;
       default:
-        return gameUIColors.muted;
+        return macOSColors.text.muted;
     }
   };
 
@@ -249,7 +250,7 @@ export function StructureDiffView({
           <Text style={styles.legendText}>Array</Text>
         </View>
         <View style={styles.legendItem}>
-          <FileText size={10} color={gameUIColors.muted} />
+          <FileText size={10} color={macOSColors.text.muted} />
           <Text style={styles.legendText}>Value</Text>
         </View>
       </View>
@@ -282,19 +283,19 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 11,
     fontWeight: "700",
-    color: gameUIColors.info,
+    color: macOSColors.semantic.info,
     fontFamily: "monospace",
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   headerSubtitle: {
     fontSize: 9,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
     marginTop: 2,
   },
   scrollContainer: {
-    backgroundColor: gameUIColors.panel + "30",
+    backgroundColor: macOSColors.background.card + "30",
     borderRadius: 6,
     padding: 8,
   },
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: gameUIColors.background + "40",
+    backgroundColor: macOSColors.background.base + "40",
     borderRadius: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
@@ -323,11 +324,11 @@ const styles = StyleSheet.create({
   nodeName: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: gameUIColors.primaryLight,
+    color: macOSColors.text.primaryLight,
     flex: 1,
   },
   typeChange: {
-    backgroundColor: gameUIColors.warning + "10",
+    backgroundColor: macOSColors.semantic.warning + "10",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
@@ -336,7 +337,7 @@ const styles = StyleSheet.create({
   typeChangeText: {
     fontSize: 8,
     fontFamily: "monospace",
-    color: gameUIColors.warning,
+    color: macOSColors.semantic.warning,
     fontWeight: "600",
   },
   changeBadge: {
@@ -358,7 +359,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginTop: 8,
     paddingVertical: 6,
-    backgroundColor: gameUIColors.background + "20",
+    backgroundColor: macOSColors.background.base + "20",
     borderRadius: 4,
   },
   legendItem: {
@@ -368,7 +369,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 9,
-    color: gameUIColors.secondary,
+    color: macOSColors.text.secondary,
     fontFamily: "monospace",
   },
 });
