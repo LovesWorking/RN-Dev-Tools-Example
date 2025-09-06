@@ -28,45 +28,10 @@ import { StorageFilterCards, type StorageFilterType, type StorageTypeFilter } fr
 
 // Import shared Game UI components
 import {
-  GameUIStatusHeader,
-  useGameUIAlertState,
   gameUIColors,
-  GAME_UI_ALERT_STATES,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { copyToClipboard as copyToClipboardUtil } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
-
-// Custom alert states for Storage specific needs
-const STORAGE_ALERT_STATES = {
-  ...GAME_UI_ALERT_STATES,
-  OPTIMAL: {
-    ...GAME_UI_ALERT_STATES.OPTIMAL,
-    label: "STORAGE HEALTHY",
-    subtitle: "All required data is properly stored",
-  },
-  WARNING: {
-    ...GAME_UI_ALERT_STATES.WARNING,
-    label: "STORAGE WARNING",
-    subtitle: "Some stored values have incorrect types or values",
-  },
-  ERROR: {
-    ...GAME_UI_ALERT_STATES.ERROR,
-    label: "STORAGE ERROR",
-    subtitle: "Required data is missing from storage",
-  },
-  CRITICAL: {
-    ...GAME_UI_ALERT_STATES.CRITICAL,
-    label: "STORAGE FAILURE",
-    subtitle: "Multiple critical keys are missing",
-  },
-  EMPTY: {
-    ...GAME_UI_ALERT_STATES.EMPTY,
-    icon: Database,
-    color: macOSColors.semantic.info,
-    label: "NO STORAGE DATA",
-    subtitle: "Your app hasn't stored any data yet",
-  },
-};
 
 interface GameUIStorageBrowserProps {
   requiredStorageKeys?: RequiredStorageKey[];
@@ -276,11 +241,6 @@ export function GameUIStorageBrowser({
     return keys;
   }, [allKeys, activeFilter, activeStorageType]);
 
-  // Use shared alert state hook
-  const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
-    stats,
-    STORAGE_ALERT_STATES
-  );
 
   // Copy to clipboard helper
   const copyToClipboard = useCallback(async (text: string, label: string) => {
@@ -376,18 +336,28 @@ export function GameUIStorageBrowser({
     >
       <View style={styles.backgroundGrid} />
 
-      {/* Status Header using shared component */}
-      <GameUIStatusHeader
-        alertConfig={alertConfig}
-        badgeText="PERSISTENT"
-        animatedStyle={alertAnimatedStyle}
+      {/* Filter Cards Section with integrated status */}
+      <StorageFilterCards
+        stats={stats}
+        healthPercentage={healthPercentage}
+        healthStatus={healthStatus}
+        healthColor={healthColor}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+        activeStorageType={activeStorageType}
+        onStorageTypeChange={setActiveStorageType}
       />
 
-      {/* Action Controls */}
+      {/* Streamlined Action Bar */}
       <View style={styles.actionBar}>
-        <View style={styles.actionLeft}>
+        <View style={styles.actionBarLeft}>
+          <View style={styles.keyPill}>
+            <Text style={styles.keyPillText}>
+              {stats.totalCount} {stats.totalCount === 1 ? "key" : "keys"}
+            </Text>
+          </View>
           <Text style={styles.keyCount}>
-            {stats.totalCount} {stats.totalCount === 1 ? "KEY" : "KEYS"} STORED
+            Stored
           </Text>
         </View>
 
@@ -401,8 +371,8 @@ export function GameUIStorageBrowser({
             activeOpacity={0.7}
           >
             <RefreshCw
-              size={14}
-              color={isRefreshing ? gameUIColors.success : gameUIColors.info}
+              size={12}
+              color={isRefreshing ? gameUIColors.success : macOSColors.text.secondary}
             />
             <Text
               style={[
@@ -410,11 +380,11 @@ export function GameUIStorageBrowser({
                 {
                   color: isRefreshing
                     ? gameUIColors.success
-                    : gameUIColors.info,
+                    : macOSColors.text.secondary,
                 },
               ]}
             >
-              SCAN
+              Scan
             </Text>
           </TouchableOpacity>
 
@@ -423,40 +393,31 @@ export function GameUIStorageBrowser({
             style={styles.actionButton}
             activeOpacity={0.7}
           >
-            <Database size={14} color={gameUIColors.storage} />
+            <Database size={12} color={macOSColors.text.secondary} />
             <Text
-              style={[styles.actionButtonText, { color: gameUIColors.storage }]}
+              style={[styles.actionButtonText, { color: macOSColors.text.secondary }]}
             >
-              EXPORT
+              Export
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleClearAll}
-            style={styles.actionButton}
+            style={[
+              styles.actionButton,
+              styles.dangerButton,
+            ]}
             activeOpacity={0.7}
           >
-            <Trash2 size={14} color={gameUIColors.error} />
+            <Trash2 size={12} color={gameUIColors.error} />
             <Text
               style={[styles.actionButtonText, { color: gameUIColors.error }]}
             >
-              PURGE
+              Purge
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Filter Cards Section */}
-      <StorageFilterCards
-        stats={stats}
-        healthPercentage={healthPercentage}
-        healthStatus={healthStatus}
-        healthColor={healthColor}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-        activeStorageType={activeStorageType}
-        onStorageTypeChange={setActiveStorageType}
-      />
 
       {/* Filtered Storage Keys */}
       {filteredKeys.length > 0 ? (
@@ -512,40 +473,60 @@ const styles = StyleSheet.create({
     backgroundColor: gameUIColors.background,
   },
   container: {
-    padding: 16,
+    padding: 12,
     paddingBottom: 32,
   },
   backgroundGrid: {
     ...StyleSheet.absoluteFillObject,
-    opacity: 0.01,
+    opacity: 0.006,
     backgroundColor: gameUIColors.info,
   },
 
-  // Action bar
+  // Streamlined Action bar (polished styling)
   actionBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: gameUIColors.panel,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginTop: 8,
+    marginBottom: 12,
+    backgroundColor: macOSColors.background.card,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: gameUIColors.border + "40",
+    borderColor: macOSColors.border.default,
   },
-  actionLeft: {
-    flex: 1,
+  actionBarLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  keyPill: {
+    backgroundColor: macOSColors.background.base,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default,
+  },
+  keyPillText: {
+    fontSize: 11,
+    fontWeight: "700",
+    fontFamily: "monospace",
+    color: macOSColors.text.primary,
+    letterSpacing: 0.3,
   },
   keyCount: {
-    fontSize: 10,
-    color: gameUIColors.secondary,
+    fontSize: 11,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     fontWeight: "600",
+    textTransform: "uppercase",
   },
   actionButtons: {
     flexDirection: "row",
-    gap: 8,
+    gap: 6,
   },
   actionButton: {
     flexDirection: "row",
@@ -553,20 +534,22 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    backgroundColor: gameUIColors.primary + "08",
+    backgroundColor: macOSColors.background.base,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: gameUIColors.primary + "14",
+    borderColor: macOSColors.border.default,
   },
   actionButtonActive: {
-    backgroundColor: gameUIColors.success + "1A",
-    borderColor: gameUIColors.success + "4D",
+    backgroundColor: gameUIColors.success + "15",
+    borderColor: gameUIColors.success + "40",
+  },
+  dangerButton: {
+    backgroundColor: gameUIColors.error + "08",
+    borderColor: gameUIColors.error + "20",
   },
   actionButtonText: {
-    fontSize: 9,
-    fontFamily: "monospace",
-    fontWeight: "700",
-    letterSpacing: 0.5,
+    fontSize: 10,
+    fontWeight: "500",
   },
 
   techFooter: {
@@ -581,34 +564,41 @@ const styles = StyleSheet.create({
   
   // Keys section
   keysSection: {
-    marginTop: 16,
+    marginTop: 8,
+    backgroundColor: macOSColors.background.base,
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
-    paddingHorizontal: 8,
+    marginBottom: 10,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: macOSColors.border.default,
   },
   sectionTitle: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: macOSColors.text.muted,
-    letterSpacing: 1.2,
-    fontFamily: "monospace",
+    fontSize: 12,
+    fontWeight: "600",
+    color: macOSColors.text.secondary,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
   },
   countBadge: {
-    backgroundColor: macOSColors.semantic.infoBackground,
+    backgroundColor: macOSColors.background.card,
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 9999,
+    paddingVertical: 3,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: macOSColors.border.default + "50",
+    borderColor: macOSColors.border.default,
   },
   countText: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: macOSColors.semantic.info,
+    fontSize: 11,
+    fontWeight: "600",
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
   },
   

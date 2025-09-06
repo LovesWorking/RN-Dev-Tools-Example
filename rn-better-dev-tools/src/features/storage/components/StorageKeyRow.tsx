@@ -56,51 +56,68 @@ const formatValue = (value: unknown): string => {
   return str;
 };
 
-export function StorageKeyRow({ storageKey, isExpanded, onPress }: StorageKeyRowProps) {
+export function StorageKeyRow({
+  storageKey,
+  isExpanded,
+  onPress,
+}: StorageKeyRowProps) {
   const config = getStatusConfig(storageKey.status);
   const hasValue = storageKey.value !== undefined && storageKey.value !== null;
-  
+
   // Format primary text - show the key
   const primaryText = storageKey.key;
-  
+
   // Show storage type as secondary text
   const storageTypeLabel = getStorageTypeLabel(storageKey.storageType);
-  
+
   // Check if value is JSON object/array for DataViewer
-  const isJsonData = storageKey.value && 
-    (typeof storageKey.value === 'object' || 
-     (typeof storageKey.value === 'string' && 
-      (storageKey.value.startsWith('{') || storageKey.value.startsWith('['))));
-  
+  const isJsonData =
+    storageKey.value &&
+    (typeof storageKey.value === "object" ||
+      (typeof storageKey.value === "string" &&
+        (storageKey.value.startsWith("{") ||
+          storageKey.value.startsWith("["))));
+
   // Parse JSON string if needed
   let parsedValue = storageKey.value;
-  if (typeof storageKey.value === 'string' && isJsonData) {
+  if (typeof storageKey.value === "string" && isJsonData) {
     try {
       parsedValue = JSON.parse(storageKey.value);
     } catch {
       // Keep original if parse fails
     }
   }
-  
+
   // Create expanded content for value and storage details
   const expandedContent = (
     <View style={styles.expandedContainer}>
       <View style={styles.expandedRow}>
         <Text style={styles.expandedLabel}>Storage:</Text>
-        <View style={styles.storageBadge}>
-          <Text style={[styles.storageBadgeText, { color: getStorageTypeColor(storageKey.storageType) }]}>
+        <View
+          style={[
+            styles.storageBadge,
+            {
+              backgroundColor:
+                getStorageTypeColor(storageKey.storageType) + "12",
+              borderColor: getStorageTypeColor(storageKey.storageType) + "40",
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.storageBadgeText,
+              { color: getStorageTypeColor(storageKey.storageType) },
+            ]}
+          >
             {storageTypeLabel}
           </Text>
         </View>
       </View>
-      
+
       {/* Use DataViewer for JSON data, otherwise show as text */}
-      {isJsonData && typeof parsedValue === 'object' ? (
+      {isJsonData && typeof parsedValue === "object" ? (
         <View style={styles.dataViewerContainer}>
-          <DataViewer
-            data={parsedValue}
-            title="Value"
-          />
+          <DataViewer data={parsedValue} title="Value" />
         </View>
       ) : (
         <View style={styles.expandedRow}>
@@ -110,27 +127,29 @@ export function StorageKeyRow({ storageKey, isExpanded, onPress }: StorageKeyRow
           </Text>
         </View>
       )}
-      
-      {storageKey.status === "required_wrong_type" && storageKey.expectedType && (
-        <>
-          <View style={styles.expandedRow}>
-            <Text style={styles.expandedLabel}>Type:</Text>
-            <TypeBadge type={getEnvVarType(storageKey.value)} />
-          </View>
+
+      {storageKey.status === "required_wrong_type" &&
+        storageKey.expectedType && (
+          <>
+            <View style={styles.expandedRow}>
+              <Text style={styles.expandedLabel}>Type:</Text>
+              <TypeBadge type={getEnvVarType(storageKey.value)} />
+            </View>
+            <View style={styles.expandedRow}>
+              <Text style={styles.expandedLabel}>Expected:</Text>
+              <TypeBadge type={storageKey.expectedType} />
+            </View>
+          </>
+        )}
+      {storageKey.status === "required_wrong_value" &&
+        storageKey.expectedValue && (
           <View style={styles.expandedRow}>
             <Text style={styles.expandedLabel}>Expected:</Text>
-            <TypeBadge type={storageKey.expectedType} />
+            <Text style={styles.expandedExpected}>
+              {String(storageKey.expectedValue)}
+            </Text>
           </View>
-        </>
-      )}
-      {storageKey.status === "required_wrong_value" && storageKey.expectedValue && (
-        <View style={styles.expandedRow}>
-          <Text style={styles.expandedLabel}>Expected:</Text>
-          <Text style={styles.expandedExpected}>
-            {String(storageKey.expectedValue)}
-          </Text>
-        </View>
-      )}
+        )}
       {storageKey.description && (
         <View style={styles.expandedRow}>
           <Text style={styles.expandedLabel}>Info:</Text>
@@ -141,16 +160,26 @@ export function StorageKeyRow({ storageKey, isExpanded, onPress }: StorageKeyRow
       )}
     </View>
   );
-  
+
   // Create storage type badge
   const storageBadge = (
-    <View style={[styles.storageBadge, { backgroundColor: getStorageTypeColor(storageKey.storageType) + "20" }]}>
-      <Text style={[styles.storageBadgeText, { color: getStorageTypeColor(storageKey.storageType) }]}>
+    <View
+      style={[
+        styles.storageBadge,
+        { backgroundColor: getStorageTypeColor(storageKey.storageType) + "20" },
+      ]}
+    >
+      <Text
+        style={[
+          styles.storageBadgeText,
+          { color: getStorageTypeColor(storageKey.storageType) },
+        ]}
+      >
         {storageTypeLabel}
       </Text>
     </View>
   );
-  
+
   return (
     <CompactRow
       statusDotColor={config.color}
@@ -183,18 +212,18 @@ const getStorageTypeColor = (storageType: StorageKeyInfo["storageType"]) => {
 
 const styles = StyleSheet.create({
   expandedContainer: {
-    gap: 6,
+    gap: 8,
   },
   expandedRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
   },
   expandedLabel: {
     fontSize: 10,
     color: macOSColors.text.muted,
     fontWeight: "600",
-    minWidth: 60,
+    minWidth: 70,
     fontFamily: "monospace",
   },
   expandedValue: {
@@ -215,16 +244,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dataViewerContainer: {
-    marginTop: 4,
-    marginBottom: 4,
+    marginTop: 6,
+    marginBottom: 6,
+    backgroundColor: macOSColors.background.base,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default,
+    padding: 6,
   },
   storageBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    borderWidth: 1,
   },
   storageBadgeText: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: "700",
     fontFamily: "monospace",
     letterSpacing: 0.5,

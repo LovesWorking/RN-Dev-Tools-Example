@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
-import { CompactRow } from "@/rn-better-dev-tools/src/shared/ui/components/CompactRow";
 
 export type StorageFilterType = "all" | "missing" | "issues";
 export type StorageTypeFilter = "all" | "async" | "mmkv" | "secure";
@@ -38,181 +37,276 @@ export function StorageFilterCards({
   activeStorageType = "all",
   onStorageTypeChange,
 }: StorageFilterCardsProps) {
-  const issuesCount = stats.missingCount + stats.wrongValueCount + stats.wrongTypeCount;
-  
+  const issuesCount =
+    stats.missingCount + stats.wrongValueCount + stats.wrongTypeCount;
+
   return (
     <View style={styles.container}>
-      {/* System Status Card */}
-      <CompactRow
-        statusDotColor={healthColor}
-        statusLabel="Storage"
-        statusSublabel={healthStatus.toLowerCase()}
-        primaryText="Persistent Data Layer"
-        secondaryText={`${healthPercentage}% healthy`}
-        customBadge={
-          <View style={[styles.percentBadge, { borderColor: healthColor + "40", backgroundColor: healthColor + "10" }]}>
-            <Text style={[styles.percentText, { color: healthColor }]}>
-              {healthPercentage}%
-            </Text>
-          </View>
-        }
-      />
-      
-      {/* Stats Grid - Filter cards */}
-      <View style={styles.statsGrid}>
-        <TouchableOpacity 
+      {/* Title + Health */}
+      <View style={styles.topRow}>
+        <View style={styles.titleLeft}>
+          <View style={[styles.healthDot, { backgroundColor: healthColor }]} />
+          <Text style={styles.titleText}>Storage</Text>
+          <View style={styles.titleDivider} />
+          <Text style={styles.subtitleText}>
+            {stats.totalCount} {stats.totalCount === 1 ? "key" : "keys"} •{" "}
+            {healthStatus.toLowerCase()}
+          </Text>
+        </View>
+
+        <View
           style={[
-            styles.statCard, 
-            { borderColor: macOSColors.border.default },
+            styles.healthBadge,
+            {
+              backgroundColor: healthColor + "20",
+              borderColor: healthColor + "40",
+            },
+          ]}
+        >
+          <Text style={[styles.healthBadgeText, { color: healthColor }]}>
+            {healthPercentage}%
+          </Text>
+        </View>
+      </View>
+
+      {/* Health progress - purely visual */}
+      <View style={styles.healthProgressBar}>
+        <View
+          style={[
+            styles.healthProgressFill,
+            { width: `${healthPercentage}%`, backgroundColor: healthColor },
+          ]}
+        />
+      </View>
+
+      {/* Status Filters */}
+      <View style={styles.filtersRow}>
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
             activeFilter === "all" && [
-              styles.activeCard,
+              styles.filterChipActive,
               {
-                backgroundColor: macOSColors.semantic.infoBackground,
-                borderColor: macOSColors.semantic.info,
-                shadowColor: macOSColors.semantic.info,
-              }
-            ]
+                backgroundColor: macOSColors.background.hover,
+                borderColor: macOSColors.border.hover,
+                shadowColor: macOSColors.text.primary,
+              },
+            ],
           ]}
           onPress={() => onFilterChange?.("all")}
           activeOpacity={0.8}
         >
-          <View style={[styles.statDot, { backgroundColor: macOSColors.semantic.info }]} />
-          <Text style={[styles.statValue, { color: macOSColors.semantic.info }]}>
+          <Text
+            style={[styles.filterValue, { color: macOSColors.text.primary }]}
+          >
             {stats.totalCount}
           </Text>
-          <Text style={styles.statLabel}>All</Text>
+          <Text style={styles.filterLabel}>All</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.statCard, 
-            { borderColor: macOSColors.border.default },
+            styles.filterChip,
             activeFilter === "missing" && [
-              styles.activeCard,
+              styles.filterChipActive,
               {
-                backgroundColor: macOSColors.semantic.errorBackground,
-                borderColor: macOSColors.semantic.error,
+                backgroundColor: macOSColors.semantic.error + "10",
+                borderColor: macOSColors.semantic.error + "30",
                 shadowColor: macOSColors.semantic.error,
-              }
-            ]
+              },
+            ],
           ]}
           onPress={() => onFilterChange?.("missing")}
           activeOpacity={0.8}
         >
-          <View style={[styles.statDot, { backgroundColor: macOSColors.semantic.error }]} />
-          <Text style={[styles.statValue, { color: macOSColors.semantic.error }]}>
+          <Text
+            style={[
+              styles.filterValue, 
+              { color: stats.missingCount > 0 ? macOSColors.semantic.error : macOSColors.text.muted }
+            ]}
+          >
             {stats.missingCount}
           </Text>
-          <Text style={styles.statLabel}>Missing</Text>
+          <Text style={styles.filterLabel}>Missing</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.statCard, 
-            { borderColor: macOSColors.border.default },
+            styles.filterChip,
             activeFilter === "issues" && [
-              styles.activeCard,
+              styles.filterChipActive,
               {
-                backgroundColor: macOSColors.semantic.warningBackground,
-                borderColor: macOSColors.semantic.warning,
+                backgroundColor: macOSColors.semantic.warning + "10",
+                borderColor: macOSColors.semantic.warning + "30",
                 shadowColor: macOSColors.semantic.warning,
-              }
-            ]
+              },
+            ],
           ]}
           onPress={() => onFilterChange?.("issues")}
           activeOpacity={0.8}
         >
-          <View style={[styles.statDot, { backgroundColor: macOSColors.semantic.warning }]} />
-          <Text style={[styles.statValue, { color: macOSColors.semantic.warning }]}>
+          <Text
+            style={[
+              styles.filterValue,
+              { color: issuesCount > 0 ? macOSColors.semantic.warning : macOSColors.text.muted },
+            ]}
+          >
             {issuesCount}
           </Text>
-          <Text style={styles.statLabel}>Issues</Text>
+          <Text style={styles.filterLabel}>Issues</Text>
         </TouchableOpacity>
       </View>
-      
-      {/* Storage Type Filter Cards - Smaller */}
+
+      {/* Storage Type Segments */}
       {onStorageTypeChange && (
-        <View style={styles.storageTypeGrid}>
-          <TouchableOpacity 
+        <View style={styles.typesRow}>
+          <TouchableOpacity
             style={[
-              styles.storageTypeCard, 
+              styles.typePill,
               { borderColor: macOSColors.border.default },
               activeStorageType === "all" && [
-                styles.activeStorageCard,
+                styles.typePillActive,
                 {
                   backgroundColor: macOSColors.background.hover,
-                  borderColor: macOSColors.text.secondary,
-                }
-              ]
+                  borderColor: macOSColors.border.hover,
+                },
+              ],
             ]}
             onPress={() => onStorageTypeChange?.("all")}
             activeOpacity={0.8}
           >
-            <Text style={[styles.storageTypeLabel, activeStorageType === "all" && { color: macOSColors.text.primary }]}>All Types</Text>
-            <Text style={[styles.storageTypeValue, { color: macOSColors.text.secondary }]}>
+            <Text
+              style={[
+                styles.typePillLabel,
+                activeStorageType === "all" && {
+                  color: macOSColors.text.primary,
+                  fontWeight: "600",
+                },
+              ]}
+            >
+              All Types
+            </Text>
+            <Text
+              style={[
+                styles.typePillValue,
+                activeStorageType === "all" && { color: macOSColors.text.primary },
+                activeStorageType !== "all" && { color: macOSColors.text.muted },
+              ]}
+            >
               {stats.totalCount}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.storageTypeCard, 
+              styles.typePill,
               { borderColor: macOSColors.border.default },
               activeStorageType === "async" && [
-                styles.activeStorageCard,
+                styles.typePillActive,
                 {
-                  backgroundColor: macOSColors.semantic.warningBackground,
-                  borderColor: macOSColors.semantic.warning,
-                }
-              ]
+                  backgroundColor: macOSColors.semantic.warning + "15",
+                  borderColor: macOSColors.semantic.warning + "40",
+                },
+              ],
             ]}
             onPress={() => onStorageTypeChange?.("async")}
             activeOpacity={0.8}
           >
-            <Text style={[styles.storageTypeLabel, activeStorageType === "async" && { color: macOSColors.semantic.warning }]}>Async</Text>
-            <Text style={[styles.storageTypeValue, { color: macOSColors.semantic.warning }]}>
+            <Text
+              style={[
+                styles.typePillLabel,
+                activeStorageType === "async" && {
+                  color: macOSColors.semantic.warning,
+                  fontWeight: "600",
+                },
+              ]}
+            >
+              Async
+            </Text>
+            <Text
+              style={[
+                styles.typePillValue,
+                activeStorageType === "async" ? 
+                  { color: macOSColors.semantic.warning } : 
+                  { color: macOSColors.text.muted },
+              ]}
+            >
               {stats.asyncCount || 0}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.storageTypeCard, 
+              styles.typePill,
               { borderColor: macOSColors.border.default },
               activeStorageType === "mmkv" && [
-                styles.activeStorageCard,
+                styles.typePillActive,
                 {
-                  backgroundColor: macOSColors.semantic.infoBackground,
-                  borderColor: macOSColors.semantic.info,
-                }
-              ]
+                  backgroundColor: macOSColors.semantic.info + "15",
+                  borderColor: macOSColors.semantic.info + "40",
+                },
+              ],
             ]}
             onPress={() => onStorageTypeChange?.("mmkv")}
             activeOpacity={0.8}
           >
-            <Text style={[styles.storageTypeLabel, activeStorageType === "mmkv" && { color: macOSColors.semantic.info }]}>MMKV</Text>
-            <Text style={[styles.storageTypeValue, { color: macOSColors.semantic.info }]}>
+            <Text
+              style={[
+                styles.typePillLabel,
+                activeStorageType === "mmkv" && {
+                  color: macOSColors.semantic.info,
+                  fontWeight: "600",
+                },
+              ]}
+            >
+              MMKV
+            </Text>
+            <Text
+              style={[
+                styles.typePillValue,
+                activeStorageType === "mmkv" ? 
+                  { color: macOSColors.semantic.info } : 
+                  { color: macOSColors.text.muted },
+              ]}
+            >
               {stats.mmkvCount || 0}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.storageTypeCard, 
+              styles.typePill,
               { borderColor: macOSColors.border.default },
               activeStorageType === "secure" && [
-                styles.activeStorageCard,
+                styles.typePillActive,
                 {
-                  backgroundColor: macOSColors.semantic.successBackground,
-                  borderColor: macOSColors.semantic.success,
-                }
-              ]
+                  backgroundColor: macOSColors.semantic.success + "15",
+                  borderColor: macOSColors.semantic.success + "40",
+                },
+              ],
             ]}
             onPress={() => onStorageTypeChange?.("secure")}
             activeOpacity={0.8}
           >
-            <Text style={[styles.storageTypeLabel, activeStorageType === "secure" && { color: macOSColors.semantic.success }]}>Secure</Text>
-            <Text style={[styles.storageTypeValue, { color: macOSColors.semantic.success }]}>
+            <Text
+              style={[
+                styles.typePillLabel,
+                activeStorageType === "secure" && {
+                  color: macOSColors.semantic.success,
+                  fontWeight: "600",
+                },
+              ]}
+            >
+              Secure
+            </Text>
+            <Text
+              style={[
+                styles.typePillValue,
+                activeStorageType === "secure" ? 
+                  { color: macOSColors.semantic.success } : 
+                  { color: macOSColors.text.muted },
+              ]}
+            >
               {stats.secureCount || 0}
             </Text>
           </TouchableOpacity>
@@ -224,102 +318,134 @@ export function StorageFilterCards({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
-  },
-  statsGrid: {
-    flexDirection: "row",
-    gap: 12,
-    paddingHorizontal: 4,
-  },
-  statCard: {
-    flex: 1,
     backgroundColor: macOSColors.background.card,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default + "50",
+    gap: 14,
+    shadowColor: "#000000",
+    shadowOpacity: 0.03,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  titleLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flexShrink: 1,
+  },
+  healthDot: { width: 6, height: 6, borderRadius: 3 },
+  titleText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: macOSColors.text.primary,
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+  },
+  titleDivider: {
+    width: 4,
+    height: 1,
+    backgroundColor: macOSColors.border.default + "60",
+    marginHorizontal: 4,
+  },
+  subtitleText: { color: macOSColors.text.muted, fontSize: 11 },
+  healthBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  healthBadgeText: {
+    fontSize: 10,
+    fontWeight: "600",
+    fontVariant: ["tabular-nums"],
+  },
+
+  // Health progress bar
+  healthProgressBar: {
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: macOSColors.background.input,
+    overflow: "hidden",
+  },
+  healthProgressFill: { 
+    height: 3, 
+    borderRadius: 1.5,
+  },
+
+  // Status filters
+  filtersRow: { flexDirection: "row", gap: 10 },
+  filterChip: {
+    flex: 1,
+    backgroundColor: macOSColors.background.input,
     borderRadius: 8,
     borderWidth: 1,
-    padding: 10,
+    borderColor: macOSColors.border.default + "40",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 60,
+    minHeight: 44,
   },
-  statDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    position: "absolute",
-    top: 8,
-    right: 8,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: "700",
-    fontFamily: "monospace",
-    lineHeight: 22,
-  },
-  statLabel: {
-    fontSize: 9,
-    color: macOSColors.text.muted,
-    marginTop: 2,
-    textTransform: "uppercase",
-    letterSpacing: 0.3,
-    fontWeight: "600",
-  },
-  percentBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
-  },
-  percentText: {
-    fontSize: 14,
-    fontWeight: "700",
-    fontFamily: "monospace",
-  },
-  activeCard: {
+  filterChipActive: {
     borderWidth: 1,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
-    transform: [{ scale: 1.01 }],
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+    transform: [{ scale: 1.005 }],
   },
-  
-  // Storage Type Filter Cards
-  storageTypeGrid: {
-    flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 4,
-    marginTop: 8,
+  filterLabel: {
+    fontSize: 9,
+    color: macOSColors.text.muted,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    fontWeight: "500",
+    marginTop: 3,
   },
-  storageTypeCard: {
+  filterValue: {
+    fontSize: 18,
+    fontWeight: "600",
+    fontFamily: "monospace",
+    lineHeight: 20,
+  },
+
+  // Storage type pills
+  typesRow: { flexDirection: "row", gap: 8, marginTop: 2 },
+  typePill: {
     flex: 1,
-    backgroundColor: macOSColors.background.card,
-    borderRadius: 6,
+    backgroundColor: macOSColors.background.input + "80",
+    borderRadius: 8,
     borderWidth: 1,
+    borderColor: macOSColors.border.default + "30",
     paddingVertical: 6,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 36,
+    minHeight: 32,
   },
-  storageTypeLabel: {
-    fontSize: 8,
-    color: macOSColors.text.muted,
-    textTransform: "uppercase",
-    letterSpacing: 0.3,
-    fontWeight: "600",
-    marginBottom: 2,
-  },
-  storageTypeValue: {
-    fontSize: 14,
-    fontWeight: "700",
-    fontFamily: "monospace",
-    lineHeight: 16,
-  },
-  activeStorageCard: {
+  typePillActive: {
     borderWidth: 1,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
+    transform: [{ scale: 1.005 }],
+  },
+  typePillLabel: {
+    fontSize: 9,
+    color: macOSColors.text.secondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+    fontWeight: "500",
+    marginBottom: 1,
+  },
+  typePillValue: {
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: "monospace",
+    lineHeight: 14,
   },
 });

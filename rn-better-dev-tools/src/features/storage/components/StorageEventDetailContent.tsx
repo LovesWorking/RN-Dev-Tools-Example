@@ -5,23 +5,25 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   ChevronLeft,
   ChevronRight,
   AlertCircle,
   X,
+  Database,
+  GitBranch,
 } from "rn-better-dev-tools/icons";
 import { AsyncStorageEvent } from "../utils/AsyncStorageListener";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { ThemedSplitView } from "./DiffViewer/modes/ThemedSplitView";
 import { diffThemes } from "./DiffViewer/themes/diffThemes";
 import { computeLineDiff, DiffType } from "../utils/lineDiff";
 import { TreeDiffViewer } from "./DiffViewer/TreeDiffViewer";
 import { parseValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
+import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 
 interface StorageKeyConversation {
   key: string;
@@ -41,7 +43,6 @@ interface StorageKeyConversation {
 
 interface StorageEventDetailContentProps {
   conversation: StorageKeyConversation;
-  activeTab?: "current" | "diff";
   selectedEventIndex?: number;
   onEventIndexChange?: (index: number) => void;
   // If true, do not render the internal sticky footer (use external modal footer)
@@ -50,19 +51,92 @@ interface StorageEventDetailContentProps {
 
 export function StorageEventDetailContent({
   conversation,
-  activeTab = "current",
   selectedEventIndex = 0,
   onEventIndexChange = () => {},
   disableInternalFooter = false,
 }: StorageEventDetailContentProps) {
+  // Internal view state - now managed internally instead of via props
+  const [internalActiveView, setInternalActiveView] = useState<
+    "current" | "diff"
+  >("current");
   // Compare-any-two state for Diff tab
   const [leftIndex, setLeftIndex] = useState<number>(
-    Math.max(0, selectedEventIndex - 1),
+    Math.max(0, selectedEventIndex - 1)
   );
   const [rightIndex, setRightIndex] = useState<number>(selectedEventIndex);
   const [isLeftPickerOpen, setIsLeftPickerOpen] = useState(false);
   const [isRightPickerOpen, setIsRightPickerOpen] = useState(false);
   const [diffViewerTab, setDiffViewerTab] = useState<"split" | "tree">("tree");
+
+  // Track if preferences have been loaded
+  const hasLoadedPreferences = useRef(false);
+
+  // Load saved preferences on mount
+  useEffect(() => {
+    if (hasLoadedPreferences.current) return;
+
+    const loadPreferences = async () => {
+      try {
+        const { default: AsyncStorage } = await import(
+          "@react-native-async-storage/async-storage"
+        );
+
+        // Load detail view preference (current/diff)
+        const savedDetailView = await AsyncStorage.getItem(
+          devToolsStorageKeys.storage.detailView()
+        );
+        if (savedDetailView === "current" || savedDetailView === "diff") {
+          setInternalActiveView(savedDetailView);
+        }
+
+        // Load diff viewer mode preference (split/tree)
+        const savedDiffMode = await AsyncStorage.getItem(
+          devToolsStorageKeys.storage.diffViewerMode()
+        );
+        if (savedDiffMode === "split" || savedDiffMode === "tree") {
+          setDiffViewerTab(savedDiffMode);
+        }
+
+        hasLoadedPreferences.current = true;
+      } catch (error) {
+        console.warn("Failed to load view preferences:", error);
+      }
+    };
+
+    loadPreferences();
+  }, []);
+
+  // Save detail view preference when changed
+  const handleViewChange = useCallback(async (view: "current" | "diff") => {
+    setInternalActiveView(view);
+    try {
+      const { default: AsyncStorage } = await import(
+        "@react-native-async-storage/async-storage"
+      );
+      await AsyncStorage.setItem(
+        devToolsStorageKeys.storage.detailView(),
+        view
+      );
+    } catch (error) {
+      console.warn("Failed to save detail view preference:", error);
+    }
+  }, []);
+
+  // Save diff viewer mode preference when changed
+  const handleDiffModeChange = useCallback(async (mode: "split" | "tree") => {
+    setDiffViewerTab(mode);
+    try {
+      const { default: AsyncStorage } = await import(
+        "@react-native-async-storage/async-storage"
+      );
+      await AsyncStorage.setItem(
+        devToolsStorageKeys.storage.diffViewerMode(),
+        mode
+      );
+    } catch (error) {
+      console.warn("Failed to save diff viewer mode preference:", error);
+    }
+  }, []);
 
   const renderValueContent = (value: unknown, label: string) => {
     const parsed = parseValue(value);
@@ -70,10 +144,10 @@ export function StorageEventDetailContent({
       parsed === null
         ? "null"
         : parsed === undefined
-          ? "undefined"
-          : Array.isArray(parsed)
-            ? "array"
-            : typeof parsed;
+        ? "undefined"
+        : Array.isArray(parsed)
+        ? "array"
+        : typeof parsed;
 
     return (
       <View style={styles.valueContent}>
@@ -100,10 +174,10 @@ export function StorageEventDetailContent({
               {parsed === null
                 ? "null"
                 : parsed === undefined
-                  ? "undefined"
-                  : type === "string"
-                    ? `"${parsed}"`
-                    : String(parsed)}
+                ? "undefined"
+                : type === "string"
+                ? `"${parsed}"`
+                : String(parsed)}
             </Text>
           )}
         </View>
@@ -113,7 +187,7 @@ export function StorageEventDetailContent({
 
   // Get all events sorted by time
   const navigationItems = conversation.events.sort(
-    (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+    (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
   );
   const totalEvents = navigationItems.length;
 
@@ -155,7 +229,7 @@ export function StorageEventDetailContent({
 
     return (
       <View style={styles.fullPageSection}>
-        <View style={styles.card}>
+        <View style={styles.contentCard}>
           {renderValueContent(valueToShow, "CURRENT VALUE")}
         </View>
       </View>
@@ -189,7 +263,7 @@ export function StorageEventDetailContent({
               styles.diffViewerTab,
               diffViewerTab === "split" && styles.diffViewerTabActive,
             ]}
-            onPress={() => setDiffViewerTab("split")}
+            onPress={() => handleDiffModeChange("split")}
           >
             <Text
               style={[
@@ -205,7 +279,7 @@ export function StorageEventDetailContent({
               styles.diffViewerTab,
               diffViewerTab === "tree" && styles.diffViewerTabActive,
             ]}
-            onPress={() => setDiffViewerTab("tree")}
+            onPress={() => handleDiffModeChange("tree")}
           >
             <Text
               style={[
@@ -224,7 +298,10 @@ export function StorageEventDetailContent({
             {/* PREV side */}
             <View style={styles.compareSide}>
               <Text
-                style={[styles.compareLabel, { color: macOSColors.semantic.debug }]}
+                style={[
+                  styles.compareLabel,
+                  { color: macOSColors.semantic.debug },
+                ]}
               >
                 PREV
               </Text>
@@ -286,7 +363,10 @@ export function StorageEventDetailContent({
             {/* CUR side */}
             <View style={styles.compareSide}>
               <Text
-                style={[styles.compareLabel, { color: macOSColors.semantic.success }]}
+                style={[
+                  styles.compareLabel,
+                  { color: macOSColors.semantic.success },
+                ]}
               >
                 CUR
               </Text>
@@ -386,8 +466,89 @@ export function StorageEventDetailContent({
           },
         ]}
       >
-        {activeTab === "current" && renderCurrentValue()}
-        {activeTab === "diff" && renderDiff()}
+        {/* Toggle Cards for View Selection */}
+        <View style={styles.viewToggleContainer}>
+          <TouchableOpacity
+            style={[
+              styles.viewToggleCard,
+              internalActiveView === "current" && styles.viewToggleCardActive,
+            ]}
+            onPress={() => handleViewChange("current")}
+            activeOpacity={0.8}
+          >
+            <View style={styles.viewToggleContent}>
+              <Database
+                size={16}
+                color={
+                  internalActiveView === "current"
+                    ? macOSColors.semantic.info
+                    : macOSColors.text.secondary
+                }
+              />
+              <Text
+                style={[
+                  styles.viewToggleLabel,
+                  internalActiveView === "current" &&
+                    styles.viewToggleLabelActive,
+                ]}
+              >
+                CURRENT VALUE
+              </Text>
+            </View>
+            <Text
+              style={[
+                styles.viewToggleDescription,
+                internalActiveView === "current" && {
+                  color: macOSColors.text.primary,
+                },
+              ]}
+            >
+              View the current stored value
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.viewToggleCard,
+              internalActiveView === "diff" && styles.viewToggleCardActive,
+            ]}
+            onPress={() => handleViewChange("diff")}
+            activeOpacity={0.8}
+          >
+            <View style={styles.viewToggleContent}>
+              <GitBranch
+                size={16}
+                color={
+                  internalActiveView === "diff"
+                    ? macOSColors.semantic.success
+                    : macOSColors.text.secondary
+                }
+              />
+              <Text
+                style={[
+                  styles.viewToggleLabel,
+                  internalActiveView === "diff" && styles.viewToggleLabelActive,
+                ]}
+              >
+                DIFF VIEW
+              </Text>
+            </View>
+            <Text
+              style={[
+                styles.viewToggleDescription,
+                internalActiveView === "diff" && {
+                  color: macOSColors.text.primary,
+                },
+              ]}
+            >
+              Compare changes between versions
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Content based on selected view */}
+        {internalActiveView === "current" && renderCurrentValue()}
+        {internalActiveView === "diff" && renderDiff()}
       </View>
 
       {(isLeftPickerOpen || isRightPickerOpen) && (
@@ -400,9 +561,21 @@ export function StorageEventDetailContent({
               setIsRightPickerOpen(false);
             }}
           />
-          <View style={styles.pickerCard}>
+          <View
+            style={[
+              styles.pickerCard,
+              isLeftPickerOpen && styles.pickerCardLeft,
+              isRightPickerOpen && styles.pickerCardRight,
+            ]}
+          >
             <View style={styles.pickerHeader}>
-              <Text style={styles.pickerTitle}>
+              <Text
+                style={[
+                  styles.pickerTitle,
+                  isLeftPickerOpen && styles.pickerTitleLeft,
+                  isRightPickerOpen && styles.pickerTitleRight,
+                ]}
+              >
                 Select {isLeftPickerOpen ? "PREV" : "CUR"} Event
               </Text>
               <TouchableOpacity
@@ -428,6 +601,9 @@ export function StorageEventDetailContent({
                 const disabled = isLeftPickerOpen
                   ? idx >= rightIndex
                   : idx <= leftIndex;
+                const isSelected = isLeftPickerOpen
+                  ? idx === leftIndex
+                  : idx === rightIndex;
                 return (
                   <TouchableOpacity
                     key={idx}
@@ -443,6 +619,13 @@ export function StorageEventDetailContent({
                     }}
                     style={[
                       styles.pickerItem,
+                      isSelected && styles.pickerItemSelected,
+                      isSelected &&
+                        isLeftPickerOpen &&
+                        styles.pickerItemSelectedLeft,
+                      isSelected &&
+                        isRightPickerOpen &&
+                        styles.pickerItemSelectedRight,
                       disabled && styles.pickerItemDisabled,
                     ]}
                   >
@@ -469,13 +652,13 @@ export function StorageEventDetailContent({
                         contextLines: 0,
                       });
                       const added = diffs.filter(
-                        (d) => d.type === DiffType.ADDED,
+                        (d) => d.type === DiffType.ADDED
                       ).length;
                       const removed = diffs.filter(
-                        (d) => d.type === DiffType.REMOVED,
+                        (d) => d.type === DiffType.REMOVED
                       ).length;
                       const modified = diffs.filter(
-                        (d) => d.type === DiffType.MODIFIED,
+                        (d) => d.type === DiffType.MODIFIED
                       ).length;
                       return (
                         <View style={styles.pickerCounts}>
@@ -561,7 +744,7 @@ export function StorageEventDetailContent({
             </Text>
             <Text style={styles.eventTimestamp}>
               {formatRelativeTime(
-                navigationItems[selectedEventIndex]?.timestamp,
+                navigationItems[selectedEventIndex]?.timestamp
               )}
             </Text>
           </View>
@@ -569,7 +752,7 @@ export function StorageEventDetailContent({
           <TouchableOpacity
             onPress={() =>
               onEventIndexChange(
-                Math.min(totalEvents - 1, selectedEventIndex + 1),
+                Math.min(totalEvents - 1, selectedEventIndex + 1)
               )
             }
             disabled={selectedEventIndex === totalEvents - 1}
@@ -614,7 +797,7 @@ export function StorageEventDetailFooter({
   onEventIndexChange?: (index: number) => void;
 }) {
   const navigationItems = conversation.events.sort(
-    (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+    (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
   );
   const totalEvents = navigationItems.length;
 
@@ -633,7 +816,9 @@ export function StorageEventDetailFooter({
         <ChevronLeft
           size={20}
           color={
-            selectedEventIndex === 0 ? macOSColors.text.muted : macOSColors.text.primary
+            selectedEventIndex === 0
+              ? macOSColors.text.muted
+              : macOSColors.text.primary
           }
         />
         <Text
@@ -729,8 +914,8 @@ const styles = StyleSheet.create({
   },
   fullPageSection: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   emptyState: {
     flex: 1,
@@ -746,10 +931,10 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: macOSColors.background.card,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 14,
+    padding: 14,
     borderWidth: 1,
-    borderColor: macOSColors.border.input,
+    borderColor: macOSColors.border.default,
   },
   valueContent: {
     marginTop: 4,
@@ -907,16 +1092,27 @@ const styles = StyleSheet.create({
   },
   pickerBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.65)",
   },
   pickerCard: {
     width: "86%",
     maxHeight: 320,
     backgroundColor: macOSColors.background.card,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: macOSColors.border.hover,
-    padding: 12,
+    borderRadius: 16,
+    borderWidth: 2,
+    padding: 16,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 40,
+    elevation: 15,
+  },
+  pickerCardLeft: {
+    borderColor: macOSColors.semantic.debug,
+    shadowColor: macOSColors.semantic.debug,
+  },
+  pickerCardRight: {
+    borderColor: macOSColors.semantic.success,
+    shadowColor: macOSColors.semantic.success,
   },
   pickerHeader: {
     flexDirection: "row",
@@ -939,27 +1135,50 @@ const styles = StyleSheet.create({
     maxHeight: 260,
   },
   pickerTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
-    color: macOSColors.text.primary,
     fontFamily: "monospace",
     textTransform: "uppercase",
     marginBottom: 8,
+    letterSpacing: 0.6,
+  },
+  pickerTitleLeft: {
+    color: macOSColors.semantic.debug,
+  },
+  pickerTitleRight: {
+    color: macOSColors.semantic.success,
   },
   pickerList: {
     gap: 4,
   },
   pickerItem: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-    backgroundColor: macOSColors.background.card,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    backgroundColor: macOSColors.background.base,
     borderWidth: 1,
     borderColor: macOSColors.border.default,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 4,
+    marginBottom: 6,
+  },
+  pickerItemSelected: {
+    borderWidth: 1.5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  pickerItemSelectedLeft: {
+    backgroundColor: macOSColors.semantic.debug + "1A",
+    borderColor: macOSColors.semantic.debug,
+    shadowColor: macOSColors.semantic.debug,
+  },
+  pickerItemSelectedRight: {
+    backgroundColor: macOSColors.semantic.successBackground + "30",
+    borderColor: macOSColors.semantic.success,
+    shadowColor: macOSColors.semantic.success,
   },
   pickerItemDisabled: {
     opacity: 0.4,
@@ -1027,5 +1246,64 @@ const styles = StyleSheet.create({
   },
   diffViewerTabTextActive: {
     color: macOSColors.text.primary,
+  },
+  contentCard: {
+    backgroundColor: macOSColors.background.card,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default,
+    shadowColor: macOSColors.semantic.info,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 16,
+    elevation: 2,
+  },
+
+  // View Toggle Cards
+  viewToggleContainer: {
+    flexDirection: "row",
+    gap: 12,
+    padding: 14,
+    backgroundColor: macOSColors.background.base,
+  },
+  viewToggleCard: {
+    flex: 1,
+    backgroundColor: macOSColors.background.card,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default,
+    padding: 14,
+    gap: 8,
+  },
+  viewToggleCardActive: {
+    borderWidth: 1.5,
+    borderColor: macOSColors.semantic.info,
+    backgroundColor: macOSColors.semantic.infoBackground + "30",
+    shadowColor: macOSColors.semantic.info,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  viewToggleContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  viewToggleLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    color: macOSColors.text.secondary,
+    textTransform: "uppercase",
+  },
+  viewToggleLabelActive: {
+    color: macOSColors.text.primary,
+  },
+  viewToggleDescription: {
+    fontSize: 11,
+    color: macOSColors.text.muted,
+    lineHeight: 16,
   },
 });

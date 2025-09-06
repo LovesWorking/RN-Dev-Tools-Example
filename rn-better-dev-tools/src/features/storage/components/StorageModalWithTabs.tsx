@@ -15,7 +15,6 @@ import {
   FlatList,
 } from "react-native";
 import {
-  HardDrive,
   Database,
   Pause,
   Play,
@@ -23,7 +22,6 @@ import {
   Filter,
 } from "rn-better-dev-tools/icons";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   startListening,
@@ -84,7 +82,6 @@ export function StorageModalWithTabs({
   >(null);
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
-  const [detailTab, setDetailTab] = useState<"current" | "diff">("current");
   const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(
     new Set(["@RNAsyncStorage", "redux-persist", "@devtools", "persist:"])
   );
@@ -150,6 +147,9 @@ export function StorageModalWithTabs({
 
     loadMonitoringState();
   }, [visible]);
+  
+  // Note: Conversations will appear when storage events are triggered
+  // Click on any conversation to see the unified view with toggle cards
 
   // Save tab state when it changes
   useEffect(() => {
@@ -272,15 +272,6 @@ export function StorageModalWithTabs({
     }
   }, [isListening]);
 
-  // Format precise time like HH:MM:SS.mmm
-  const formatTimeWithMs = useCallback((date: Date) => {
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-    const ms = String(date.getMilliseconds()).padStart(3, "0");
-    return `${hours}:${minutes}:${seconds}.${ms}`;
-  }, []);
-
   const handleClearEvents = useCallback(() => {
     setEvents([]);
     setSelectedConversationKey(null);
@@ -290,7 +281,6 @@ export function StorageModalWithTabs({
     (conversation: StorageKeyConversation) => {
       setSelectedConversationKey(conversation.key);
       setSelectedEventIndex(0);
-      setDetailTab("current");
     },
     []
   );
@@ -485,24 +475,8 @@ export function StorageModalWithTabs({
     if (selectedConversation) {
       return (
         <View style={styles.contentWrapper}>
-          <View style={styles.keyNameHeader}>
-            <HardDrive size={16} color={macOSColors.semantic.debug} />
-            <Text style={styles.keyNameHeaderText} numberOfLines={1}>
-              {selectedConversation.key}
-            </Text>
-          </View>
-          {/* Last updated timestamp under the key */}
-          <View style={styles.keyMetaRow}>
-            <Text style={styles.keyMetaTime}>
-              {formatTimeWithMs(selectedConversation.lastEvent.timestamp)}
-            </Text>
-            <Text style={styles.keyMetaRelative}>
-              ({formatRelativeTime(selectedConversation.lastEvent.timestamp)})
-            </Text>
-          </View>
           <StorageEventDetailContent
             conversation={selectedConversation}
-            activeTab={detailTab}
             selectedEventIndex={selectedEventIndex}
             onEventIndexChange={setSelectedEventIndex}
             disableInternalFooter={true}
@@ -584,26 +558,10 @@ export function StorageModalWithTabs({
               onBack={() => {
                 setSelectedConversationKey(null);
                 setSelectedEventIndex(0);
-                setDetailTab("current");
               }}
               onClose={onClose}
             />
-            <ModalHeader.Content title="" noMargin>
-              <TabSelector
-                tabs={[
-                  {
-                    key: "current",
-                    label: "Current Value",
-                  },
-                  {
-                    key: "diff",
-                    label: "Diff",
-                  },
-                ]}
-                activeTab={detailTab}
-                onTabChange={(tab) => setDetailTab(tab as "current" | "diff")}
-              />
-            </ModalHeader.Content>
+            <ModalHeader.Content title={selectedConversation.key} />
           </ModalHeader>
         ) : (
           <ModalHeader>
@@ -838,47 +796,5 @@ const styles = StyleSheet.create({
 
   contentWrapper: {
     flex: 1,
-  },
-
-  keyNameHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: macOSColors.background.card,
-    borderBottomWidth: 1,
-    borderBottomColor: macOSColors.border.default,
-  },
-
-  keyNameHeaderText: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "600",
-    color: macOSColors.semantic.debug,
-    fontFamily: "monospace",
-    letterSpacing: 0.5,
-  },
-
-  keyMetaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingTop: 6,
-    paddingBottom: 8,
-    backgroundColor: macOSColors.background.card,
-    borderBottomWidth: 1,
-    borderBottomColor: macOSColors.border.default,
-  },
-  keyMetaTime: {
-    color: macOSColors.text.primary,
-    fontSize: 12,
-    fontFamily: "monospace",
-  },
-  keyMetaRelative: {
-    color: macOSColors.text.secondary,
-    fontSize: 12,
-    fontFamily: "monospace",
   },
 });

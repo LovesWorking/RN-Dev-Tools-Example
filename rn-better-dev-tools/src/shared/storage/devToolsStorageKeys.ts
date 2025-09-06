@@ -82,6 +82,10 @@ export const devToolsStorageKeys = {
       `${devToolsStorageKeys.storage.root()}_active_tab` as const,
     isMonitoring: () =>
       `${devToolsStorageKeys.storage.root()}_is_monitoring` as const,
+    detailView: () =>
+      `${devToolsStorageKeys.storage.root()}_detail_view` as const, // 'current' | 'diff'
+    diffViewerMode: () =>
+      `${devToolsStorageKeys.storage.root()}_diff_viewer_mode` as const, // 'split' | 'tree'
   },
 
   /**

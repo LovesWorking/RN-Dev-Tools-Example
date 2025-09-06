@@ -5,9 +5,11 @@ import {
   TextInput,
   StyleSheet,
   ViewStyle,
+  ScrollView,
 } from "react-native";
 import type { ReactNode } from "react";
 import { X, Plus } from "rn-better-dev-tools/icons";
+import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 // Container for filter section
 interface FilterSectionProps {
@@ -84,10 +86,24 @@ export function AddFilterInput({
         style={[styles.input, { color }]}
         autoFocus
         returnKeyType="done"
+        autoCorrect={false}
+        autoCapitalize="none"
+        autoComplete="off"
+        spellCheck={false}
       />
-      <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
-        <X size={16} color={`${color}60`} />
-      </TouchableOpacity>
+      <View style={styles.inputButtons}>
+        {value.trim() && (
+          <TouchableOpacity 
+            onPress={onSubmit} 
+            style={[styles.inlineAddButton, { backgroundColor: `${color}15`, borderColor: `${color}40` }]}
+          >
+            <Text style={[styles.inlineAddButtonText, { color }]}>Add</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
+          <X size={16} color={`${color}60`} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -130,15 +146,22 @@ export function FilterList({
   const filterArray = Array.from(filters);
 
   return (
-    <View style={styles.filterList}>
+    <View style={styles.filterListColumn}>
       {filterArray.map((filter) => (
-        <FilterBadge
+        <TouchableOpacity
           key={filter}
-          filter={filter}
-          onRemove={onRemoveFilter ? () => onRemoveFilter(filter) : undefined}
-          active={!activeFilters || activeFilters.has(filter)}
-          color={color}
-        />
+          style={styles.filterItemRow}
+          onPress={() => onRemoveFilter?.(filter)}
+          activeOpacity={0.8}
+        >
+          <Text 
+            style={[styles.filterItemText, { color }]} 
+            numberOfLines={1}
+          >
+            {filter}
+          </Text>
+          <X size={12} color={`${color}80`} />
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -157,8 +180,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     marginRight: 8,
-    marginBottom: 8,
-    maxWidth: 200,
   },
   badgeText: {
     fontSize: 13,
@@ -172,11 +193,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    borderRadius: 16,
+    backgroundColor: macOSColors.background.input,
+    borderRadius: 8,
     borderWidth: 1,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
     marginRight: 8,
     marginBottom: 8,
     minWidth: 150,
@@ -186,9 +207,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingVertical: 0,
   },
+  inputButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   cancelButton: {
-    marginLeft: 8,
     padding: 2,
+  },
+  inlineAddButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    borderWidth: 1,
+  },
+  inlineAddButtonText: {
+    fontSize: 11,
+    fontWeight: "600",
   },
   addButton: {
     flexDirection: "row",
@@ -206,8 +241,24 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginLeft: 4,
   },
-  filterList: {
+  filterListColumn: {
+    gap: 6,
+  },
+  filterItemRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: macOSColors.background.input,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: macOSColors.border.input,
+  },
+  filterItemText: {
+    flex: 1,
+    fontSize: 11,
+    fontFamily: "monospace",
+    marginRight: 8,
   },
 });

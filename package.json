@@ -23,7 +23,9 @@
     "clear:cache": "rm -rf .expo && rm -rf node_modules/.cache && npx expo start --clear",
     "screenshot": "bash scripts/screenshot.sh",
     "screenshot:ios": "bash scripts/screenshot.sh ios",
-    "screenshot:android": "bash scripts/screenshot.sh android"
+    "screenshot:android": "bash scripts/screenshot.sh android",
+    "gpt5-zip-repo": "bash scripts/gpt5-zip-repo.sh",
+    "zip": "bash scripts/gpt5-zip-repo.sh"
   },
   "jest": {
     "preset": "jest-expo"

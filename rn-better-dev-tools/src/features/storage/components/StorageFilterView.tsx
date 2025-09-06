@@ -9,7 +9,6 @@ import { Filter, Plus } from "rn-better-dev-tools/icons";
 import { useEffect } from "react";
 import {
   GameUIStatusHeader,
-  GameUICompactStats,
   GAME_UI_ALERT_STATES,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
@@ -74,10 +73,6 @@ export function StorageFilterView({
     }
   };
 
-  const handleKeySelect = (key: string) => {
-    filterManager.setNewFilter(key);
-  };
-
   // Determine alert state based on active filters
   const alertState =
     ignoredPatterns.size > 0
@@ -117,97 +112,49 @@ export function StorageFilterView({
           animatedStyle={alertAnimatedStyle}
         />
 
-        {/* Filter Stats */}
-        <GameUICompactStats
-          statsConfig={[]}
-          bottomStats={[
-            { label: "TOTAL", value: ignoredPatterns.size },
-            {
-              label: "SYSTEM",
-              value: systemCount,
-              color: macOSColors.semantic.warning,
-            },
-            { label: "CUSTOM", value: customCount, color: macOSColors.semantic.info },
-          ]}
-        />
-
-        {/* Filters Section */}
+        {/* Add Filter Section */}
         <View style={styles.section}>
+          {!filterManager.showAddInput ? (
+            <AddFilterButton
+              onPress={() => filterManager.setShowAddInput(true)}
+              color={macOSColors.semantic.info}
+            />
+          ) : (
+            <View style={styles.filterInputWrapper}>
+              <AddFilterInput
+                value={filterManager.newFilter}
+                onChange={filterManager.setNewFilter}
+                onSubmit={handleAddPattern}
+                onCancel={() => {
+                  filterManager.setShowAddInput(false);
+                  filterManager.setNewFilter("");
+                }}
+                placeholder="Enter pattern (e.g., @temp)"
+                color={macOSColors.text.primary}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Active Filters Section */}
+        <View style={styles.activeFiltersSection}>
           <SectionHeader>
             <SectionHeader.Icon
               icon={Filter}
               color={macOSColors.semantic.info}
-              size={14}
+              size={12}
             />
-            <SectionHeader.Title>Active Filters</SectionHeader.Title>
+            <SectionHeader.Title>ACTIVE FILTERS</SectionHeader.Title>
             <SectionHeader.Badge
               count={ignoredPatterns.size}
               color={macOSColors.semantic.info}
             />
           </SectionHeader>
-          <Text style={styles.sectionSubtitle}>
-            Add patterns to filter out storage keys
-          </Text>
-
-          {/* Add new filter */}
-          <FilterSection style={styles.filterSectionOverrides}>
-            {!filterManager.showAddInput ? (
-              <AddFilterButton
-                onPress={() => filterManager.setShowAddInput(true)}
-                color={macOSColors.semantic.info}
-              />
-            ) : (
-              <>
-                <View style={styles.filterInputWrapper}>
-                  <AddFilterInput
-                    value={filterManager.newFilter}
-                    onChange={filterManager.setNewFilter}
-                    onSubmit={handleAddPattern}
-                    onCancel={() => {
-                      filterManager.setShowAddInput(false);
-                      filterManager.setNewFilter("");
-                    }}
-                    placeholder="Enter pattern (e.g., @temp)"
-                    color={macOSColors.text.primary}
-                  />
-                </View>
-
-                {/* Available Keys Section */}
-                {suggestedKeys.length > 0 && (
-                  <View style={styles.availableKeysContainer}>
-                    <Text style={styles.availableKeysTitle}>
-                      AVAILABLE KEYS FROM EVENTS
-                    </Text>
-                    <ScrollView
-                      style={styles.availableKeysScroll}
-                      horizontal={false}
-                      showsVerticalScrollIndicator={true}
-                      nestedScrollEnabled={true}
-                      scrollEnabled={true}
-                    >
-                      {suggestedKeys.map((key) => (
-                        <TouchableOpacity
-                          key={key}
-                          onPress={() => handleKeySelect(key)}
-                          style={styles.availableKeyItem}
-                          sentry-label="ignore-touchable-opacity"
-                        >
-                          <Text
-                            style={styles.availableKeyText}
-                            numberOfLines={1}
-                          >
-                            {key}
-                          </Text>
-                          <Plus size={12} color={macOSColors.semantic.info} />
-                        </TouchableOpacity>
-                      ))}
-                    </ScrollView>
-                  </View>
-                )}
-              </>
-            )}
-
-            {/* Filter badges */}
+          <ScrollView 
+            style={styles.activeFiltersContent}
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+          >
             {ignoredPatterns.size > 0 ? (
               <FilterList
                 filters={ignoredPatterns}
@@ -215,9 +162,60 @@ export function StorageFilterView({
                 color={macOSColors.semantic.info}
               />
             ) : (
-              <Text style={styles.emptyText}>No filters active</Text>
+              <Text style={styles.emptyStateText}>
+                No filters active. Add patterns to filter out storage keys.
+              </Text>
             )}
-          </FilterSection>
+          </ScrollView>
+        </View>
+
+        {/* Available Keys Section - Always Show */}
+        <View style={styles.availableKeysSection}>
+          <SectionHeader>
+            <SectionHeader.Icon
+              icon={Plus}
+              color={macOSColors.semantic.info}
+              size={12}
+            />
+            <SectionHeader.Title>AVAILABLE KEYS FROM EVENTS</SectionHeader.Title>
+            <SectionHeader.Badge
+              count={suggestedKeys.length}
+              color={macOSColors.semantic.info}
+            />
+          </SectionHeader>
+          <ScrollView
+            style={styles.availableKeysScroll}
+            horizontal={false}
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+            scrollEnabled={true}
+          >
+            {suggestedKeys.length > 0 ? (
+              suggestedKeys.map((key) => (
+                <TouchableOpacity
+                  key={key}
+                  onPress={() => {
+                    onAddPattern(key);
+                    filterManager.addFilter(key);
+                  }}
+                  style={styles.availableKeyItem}
+                  sentry-label="ignore-touchable-opacity"
+                >
+                  <Text
+                    style={styles.availableKeyText}
+                    numberOfLines={1}
+                  >
+                    {key}
+                  </Text>
+                  <Plus size={12} color={macOSColors.semantic.info} />
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={styles.emptyStateText}>
+                No keys available. Keys from storage events will appear here.
+              </Text>
+            )}
+          </ScrollView>
         </View>
 
         {/* How Filters Work Section */}
@@ -225,7 +223,7 @@ export function StorageFilterView({
           <SectionHeader>
             <SectionHeader.Icon
               icon={Filter}
-              color={macOSColors.semantic.warning}
+              color={macOSColors.text.secondary}
               size={12}
             />
             <SectionHeader.Title>HOW FILTERS WORK</SectionHeader.Title>
@@ -268,53 +266,49 @@ const styles = StyleSheet.create({
 
   // Section
   section: {
-    marginBottom: 16,
-  },
-  sectionSubtitle: {
-    fontSize: 12,
-    color: macOSColors.text.secondary,
-    paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 12,
-  },
-
-  // Filter Section Overrides
-  filterSectionOverrides: {
-    paddingHorizontal: 0,
-    paddingTop: 0,
-    backgroundColor: "transparent",
+    marginBottom: 8,
   },
   filterInputWrapper: {
-    marginBottom: 12,
+    marginBottom: 4,
   },
 
-  // Empty state
-  emptyText: {
-    fontSize: 12,
-    color: macOSColors.text.muted,
-    fontStyle: "italic",
-  },
-
-  // Available Keys Section
-  availableKeysContainer: {
-    marginTop: 12,
-    marginBottom: 12,
+  // Active Filters Section
+  activeFiltersSection: {
     backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: macOSColors.border.default,
-    padding: 12,
+    borderColor: macOSColors.border.default + "50",
+    marginTop: 8,
+    overflow: "hidden",
   },
-  availableKeysTitle: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: macOSColors.text.secondary,
-    fontFamily: "monospace",
-    letterSpacing: 1,
-    marginBottom: 8,
+  activeFiltersContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+    maxHeight: 200,
+  },
+  emptyStateText: {
+    fontSize: 11,
+    color: macOSColors.text.muted,
+    fontStyle: "italic",
+    textAlign: "center",
+    paddingVertical: 12,
+  },
+
+  // Available Keys Section
+  availableKeysSection: {
+    backgroundColor: macOSColors.background.card,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default + "50",
+    marginTop: 12,
+    overflow: "hidden",
   },
   availableKeysScroll: {
     maxHeight: 150,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   availableKeyItem: {
     flexDirection: "row",
@@ -338,16 +332,16 @@ const styles = StyleSheet.create({
 
   // How It Works Section
   howItWorksSection: {
-    backgroundColor: macOSColors.semantic.warningBackground,
+    backgroundColor: macOSColors.background.card,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: macOSColors.semantic.warning + "30",
+    borderColor: macOSColors.border.default + "50",
     marginTop: 12,
     overflow: "hidden",
   },
   howItWorksText: {
     fontSize: 11,
-    color: macOSColors.text.primary,
+    color: macOSColors.text.secondary,
     lineHeight: 16,
     marginBottom: 12,
     marginTop: 8,
@@ -359,12 +353,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     borderTopWidth: 1,
-    borderTopColor: macOSColors.semantic.warning + "30",
+    borderTopColor: macOSColors.border.default + "50",
   },
   examplesTitle: {
     fontSize: 10,
     fontWeight: "600",
-    color: macOSColors.text.secondary,
+    color: macOSColors.text.muted,
     fontFamily: "monospace",
     letterSpacing: 0.5,
     marginBottom: 6,
