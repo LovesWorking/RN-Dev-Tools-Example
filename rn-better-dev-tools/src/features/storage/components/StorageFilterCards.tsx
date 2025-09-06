@@ -3,6 +3,7 @@ import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constant
 import { CompactRow } from "@/rn-better-dev-tools/src/shared/ui/components/CompactRow";
 
 export type StorageFilterType = "all" | "missing" | "issues";
+export type StorageTypeFilter = "all" | "async" | "mmkv" | "secure";
 
 interface StorageFilterCardsProps {
   stats: {
@@ -14,12 +15,17 @@ interface StorageFilterCardsProps {
     wrongValueCount: number;
     wrongTypeCount: number;
     devToolsCount: number;
+    asyncCount?: number;
+    mmkvCount?: number;
+    secureCount?: number;
   };
   healthPercentage: number;
   healthStatus: string;
   healthColor: string;
   activeFilter?: StorageFilterType;
   onFilterChange?: (filter: StorageFilterType) => void;
+  activeStorageType?: StorageTypeFilter;
+  onStorageTypeChange?: (type: StorageTypeFilter) => void;
 }
 
 export function StorageFilterCards({
@@ -29,6 +35,8 @@ export function StorageFilterCards({
   healthColor,
   activeFilter = "all",
   onFilterChange,
+  activeStorageType = "all",
+  onStorageTypeChange,
 }: StorageFilterCardsProps) {
   const issuesCount = stats.missingCount + stats.wrongValueCount + stats.wrongTypeCount;
   
@@ -121,6 +129,95 @@ export function StorageFilterCards({
           <Text style={styles.statLabel}>Issues</Text>
         </TouchableOpacity>
       </View>
+      
+      {/* Storage Type Filter Cards - Smaller */}
+      {onStorageTypeChange && (
+        <View style={styles.storageTypeGrid}>
+          <TouchableOpacity 
+            style={[
+              styles.storageTypeCard, 
+              { borderColor: macOSColors.border.default },
+              activeStorageType === "all" && [
+                styles.activeStorageCard,
+                {
+                  backgroundColor: macOSColors.background.hover,
+                  borderColor: macOSColors.text.secondary,
+                }
+              ]
+            ]}
+            onPress={() => onStorageTypeChange?.("all")}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.storageTypeLabel, activeStorageType === "all" && { color: macOSColors.text.primary }]}>All Types</Text>
+            <Text style={[styles.storageTypeValue, { color: macOSColors.text.secondary }]}>
+              {stats.totalCount}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[
+              styles.storageTypeCard, 
+              { borderColor: macOSColors.border.default },
+              activeStorageType === "async" && [
+                styles.activeStorageCard,
+                {
+                  backgroundColor: macOSColors.semantic.warningBackground,
+                  borderColor: macOSColors.semantic.warning,
+                }
+              ]
+            ]}
+            onPress={() => onStorageTypeChange?.("async")}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.storageTypeLabel, activeStorageType === "async" && { color: macOSColors.semantic.warning }]}>Async</Text>
+            <Text style={[styles.storageTypeValue, { color: macOSColors.semantic.warning }]}>
+              {stats.asyncCount || 0}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[
+              styles.storageTypeCard, 
+              { borderColor: macOSColors.border.default },
+              activeStorageType === "mmkv" && [
+                styles.activeStorageCard,
+                {
+                  backgroundColor: macOSColors.semantic.infoBackground,
+                  borderColor: macOSColors.semantic.info,
+                }
+              ]
+            ]}
+            onPress={() => onStorageTypeChange?.("mmkv")}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.storageTypeLabel, activeStorageType === "mmkv" && { color: macOSColors.semantic.info }]}>MMKV</Text>
+            <Text style={[styles.storageTypeValue, { color: macOSColors.semantic.info }]}>
+              {stats.mmkvCount || 0}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[
+              styles.storageTypeCard, 
+              { borderColor: macOSColors.border.default },
+              activeStorageType === "secure" && [
+                styles.activeStorageCard,
+                {
+                  backgroundColor: macOSColors.semantic.successBackground,
+                  borderColor: macOSColors.semantic.success,
+                }
+              ]
+            ]}
+            onPress={() => onStorageTypeChange?.("secure")}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.storageTypeLabel, activeStorageType === "secure" && { color: macOSColors.semantic.success }]}>Secure</Text>
+            <Text style={[styles.storageTypeValue, { color: macOSColors.semantic.success }]}>
+              {stats.secureCount || 0}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -184,5 +281,45 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
     transform: [{ scale: 1.01 }],
+  },
+  
+  // Storage Type Filter Cards
+  storageTypeGrid: {
+    flexDirection: "row",
+    gap: 8,
+    paddingHorizontal: 4,
+    marginTop: 8,
+  },
+  storageTypeCard: {
+    flex: 1,
+    backgroundColor: macOSColors.background.card,
+    borderRadius: 6,
+    borderWidth: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 36,
+  },
+  storageTypeLabel: {
+    fontSize: 8,
+    color: macOSColors.text.muted,
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  storageTypeValue: {
+    fontSize: 14,
+    fontWeight: "700",
+    fontFamily: "monospace",
+    lineHeight: 16,
+  },
+  activeStorageCard: {
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
   },
 });

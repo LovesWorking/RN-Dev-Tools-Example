@@ -24,7 +24,7 @@ import { StorageKeyInfo, RequiredStorageKey, StorageKeyStats } from "../types";
 import { isDevToolsStorageKey } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { clearAllAppStorage } from "../utils/clearAllStorage";
 import { StorageKeySection } from "./StorageKeySection";
-import { StorageFilterCards, type StorageFilterType } from "./StorageFilterCards";
+import { StorageFilterCards, type StorageFilterType, type StorageTypeFilter } from "./StorageFilterCards";
 
 // Import shared Game UI components
 import {
@@ -78,6 +78,7 @@ export function GameUIStorageBrowser({
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeFilter, setActiveFilter] = useState<StorageFilterType>("all");
+  const [activeStorageType, setActiveStorageType] = useState<StorageTypeFilter>("all");
 
   // Get all storage queries from cache
   const allQueries = queryClient.getQueryCache().getAll();
@@ -249,23 +250,31 @@ export function GameUIStorageBrowser({
     });
   }, [requiredKeys, optionalKeys, devToolKeys]);
   
-  // Filter keys based on active filter
+  // Filter keys based on active filter and storage type
   const filteredKeys = useMemo(() => {
+    let keys = allKeys;
+    
+    // Apply status filter
     switch (activeFilter) {
-      case "all":
-        return allKeys;
       case "missing":
-        return allKeys.filter(k => k.status === "required_missing");
+        keys = keys.filter(k => k.status === "required_missing");
+        break;
       case "issues":
-        return allKeys.filter(k => 
+        keys = keys.filter(k => 
           k.status === "required_missing" || 
           k.status === "required_wrong_type" || 
           k.status === "required_wrong_value"
         );
-      default:
-        return allKeys;
+        break;
     }
-  }, [allKeys, activeFilter]);
+    
+    // Apply storage type filter
+    if (activeStorageType !== "all") {
+      keys = keys.filter(k => k.storageType === activeStorageType);
+    }
+    
+    return keys;
+  }, [allKeys, activeFilter, activeStorageType]);
 
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
@@ -445,6 +454,8 @@ export function GameUIStorageBrowser({
         healthColor={healthColor}
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
+        activeStorageType={activeStorageType}
+        onStorageTypeChange={setActiveStorageType}
       />
 
       {/* Filtered Storage Keys */}
@@ -455,6 +466,7 @@ export function GameUIStorageBrowser({
               {activeFilter === "all" ? "ALL STORAGE KEYS" : 
                activeFilter === "missing" ? "MISSING KEYS" :
                "ISSUES TO FIX"}
+              {activeStorageType !== "all" && ` (${activeStorageType.toUpperCase()})`}
             </Text>
             <View style={styles.countBadge}>
               <Text style={styles.countText}>{filteredKeys.length}</Text>

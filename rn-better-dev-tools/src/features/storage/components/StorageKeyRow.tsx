@@ -13,7 +13,7 @@ interface StorageKeyRowProps {
   onPress?: (storageKey: StorageKeyInfo) => void;
 }
 
-const getStatusConfig = (status: StorageKeyInfo["status"], storageType?: string) => {
+const getStatusConfig = (status: StorageKeyInfo["status"]) => {
   switch (status) {
     case "required_present":
       return {
@@ -57,7 +57,7 @@ const formatValue = (value: unknown): string => {
 };
 
 export function StorageKeyRow({ storageKey, isExpanded, onPress }: StorageKeyRowProps) {
-  const config = getStatusConfig(storageKey.status, storageKey.storageType);
+  const config = getStatusConfig(storageKey.status);
   const hasValue = storageKey.value !== undefined && storageKey.value !== null;
   
   // Format primary text - show the key
@@ -100,9 +100,6 @@ export function StorageKeyRow({ storageKey, isExpanded, onPress }: StorageKeyRow
           <DataViewer
             data={parsedValue}
             title="Value"
-            collapsedByDefault={false}
-            showCopyButton={true}
-            backgroundColor={macOSColors.background.input}
           />
         </View>
       ) : (
