@@ -23,12 +23,10 @@ import {
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
-import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
-import { NetworkFilterView } from "./NetworkFilterView";
+import { NetworkFilterViewV2 } from "./NetworkFilterViewV2";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
 import { NetworkEventDetailView } from "./NetworkEventDetailView";
 import { useNetworkEvents } from "../hooks/useNetworkEvents";
@@ -78,14 +76,10 @@ function NetworkModalInner({
 
   const [selectedEvent, setSelectedEvent] = useState<NetworkEvent | null>(null);
   const [showFilterView, setShowFilterView] = useState(false);
-  const [filterViewTab, setFilterViewTab] = useState<
-    "filters" | "domains" | "urls"
-  >("filters");
   const [searchText, setSearchText] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
-  const [ignoredDomains, setIgnoredDomains] = useState<Set<string>>(new Set());
-  const [ignoredUrls, setIgnoredUrls] = useState<Set<string>>(new Set());
+  const [ignoredPatterns, setIgnoredPatterns] = useState<Set<string>>(new Set());
   const flatListRef = useRef<FlatList<NetworkEvent>>(null);
   const hasLoadedFilters = useRef(false);
 
@@ -99,22 +93,13 @@ function NetworkModalInner({
           "@react-native-async-storage/async-storage"
         );
 
-        // Load ignored domains
-        const storedDomains = await AsyncStorage.getItem(
+        // Load ignored patterns (using domains key for now)
+        const storedPatterns = await AsyncStorage.getItem(
           devToolsStorageKeys.network.ignoredDomains()
         );
-        if (storedDomains) {
-          const domains = JSON.parse(storedDomains) as string[];
-          setIgnoredDomains(new Set(domains));
-        }
-
-        // Load ignored URLs
-        const storedUrls = await AsyncStorage.getItem(
-          devToolsStorageKeys.network.ignoredUrls()
-        );
-        if (storedUrls) {
-          const urls = JSON.parse(storedUrls) as string[];
-          setIgnoredUrls(new Set(urls));
+        if (storedPatterns) {
+          const patterns = JSON.parse(storedPatterns) as string[];
+          setIgnoredPatterns(new Set(patterns));
         }
 
         hasLoadedFilters.current = true;
@@ -137,18 +122,11 @@ function NetworkModalInner({
           "@react-native-async-storage/async-storage"
         );
 
-        // Save ignored domains
-        const domains = Array.from(ignoredDomains);
+        // Save ignored patterns
+        const patterns = Array.from(ignoredPatterns);
         await AsyncStorage.setItem(
           devToolsStorageKeys.network.ignoredDomains(),
-          JSON.stringify(domains)
-        );
-
-        // Save ignored URLs
-        const urls = Array.from(ignoredUrls);
-        await AsyncStorage.setItem(
-          devToolsStorageKeys.network.ignoredUrls(),
-          JSON.stringify(urls)
+          JSON.stringify(patterns)
         );
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_error) {
@@ -157,7 +135,7 @@ function NetworkModalInner({
     };
 
     saveFilters();
-  }, [ignoredDomains, ignoredUrls]);
+  }, [ignoredPatterns]);
 
   // Simple handlers - no useCallback needed per rule2
   const handleEventPress = (event: NetworkEvent) => {
@@ -183,42 +161,19 @@ function NetworkModalInner({
 
   // Filter events based on ignored patterns
   const filteredEvents = useMemo(() => {
-    if (ignoredDomains.size === 0 && ignoredUrls.size === 0) return events;
+    if (ignoredPatterns.size === 0) return events;
 
     return events.filter((event) => {
       const url = event.url.toLowerCase();
 
-      // Check domain filters
-      if (ignoredDomains.size > 0) {
-        try {
-          const urlObj = new URL(event.url);
-          const hostname = urlObj.hostname.toLowerCase();
-          if (
-            Array.from(ignoredDomains).some((domain) =>
-              hostname.includes(domain.toLowerCase())
-            )
-          ) {
-            return false;
-          }
-        } catch {
-          // If URL parsing fails, check as string
-        }
-      }
+      // Check if any pattern matches the URL
+      const isFiltered = Array.from(ignoredPatterns).some((pattern) =>
+        url.includes(pattern.toLowerCase())
+      );
 
-      // Check URL pattern filters
-      if (ignoredUrls.size > 0) {
-        if (
-          Array.from(ignoredUrls).some((pattern) =>
-            url.includes(pattern.toLowerCase())
-          )
-        ) {
-          return false;
-        }
-      }
-
-      return true;
+      return !isFiltered;
     });
-  }, [events, ignoredDomains, ignoredUrls]);
+  }, [events, ignoredPatterns]);
 
   // FlatList optimization - only keep what's needed for FlatList performance
   const keyExtractor = (item: NetworkEvent) => item.id;
@@ -232,26 +187,12 @@ function NetworkModalInner({
 
   // Compact header with actions (like Sentry/Storage modals)
   const renderHeaderContent = () => {
-    // Filter view header with tabs
+    // Filter view header - simple, no tabs
     if (showFilterView) {
-      const filterTabs = [
-        { key: "filters" as const, label: "Filters" },
-        { key: "domains" as const, label: "Domains" },
-        { key: "urls" as const, label: "URLs" },
-      ];
-
       return (
         <ModalHeader>
           <ModalHeader.Navigation onBack={() => setShowFilterView(false)} />
-          <ModalHeader.Content title="" noMargin>
-            <TabSelector
-              tabs={filterTabs}
-              activeTab={filterViewTab}
-              onTabChange={(tab) =>
-                setFilterViewTab(tab as "filters" | "domains" | "urls")
-              }
-            />
-          </ModalHeader.Content>
+          <ModalHeader.Content title="Filters" centered />
           <ModalHeader.Actions onClose={onClose} />
         </ModalHeader>
       );
@@ -388,7 +329,6 @@ function NetworkModalInner({
           <TouchableOpacity
             sentry-label="ignore filter"
             onPress={() => {
-              setFilterViewTab("filters");
               setShowFilterView(true);
             }}
             style={[
@@ -465,63 +405,36 @@ function NetworkModalInner({
         {selectedEvent ? (
           <NetworkEventDetailView
             event={selectedEvent}
-            onBack={handleBack}
-            ignoredDomains={ignoredDomains}
-            ignoredUrls={ignoredUrls}
-            onToggleDomain={(domain) => {
-              const newDomains = new Set(ignoredDomains);
-              if (newDomains.has(domain)) {
-                newDomains.delete(domain);
+            ignoredPatterns={ignoredPatterns}
+            onTogglePattern={(pattern) => {
+              const newPatterns = new Set(ignoredPatterns);
+              if (newPatterns.has(pattern)) {
+                newPatterns.delete(pattern);
               } else {
-                newDomains.add(domain);
+                newPatterns.add(pattern);
               }
-              setIgnoredDomains(newDomains);
-            }}
-            onToggleUrl={(url) => {
-              const newUrls = new Set(ignoredUrls);
-              if (newUrls.has(url)) {
-                newUrls.delete(url);
-              } else {
-                newUrls.add(url);
-              }
-              setIgnoredUrls(newUrls);
+              setIgnoredPatterns(newPatterns);
             }}
           />
         ) : showFilterView ? (
-          <NetworkFilterView
+          <NetworkFilterViewV2
             events={events}
             filter={filter}
             onFilterChange={setFilter}
-            activeTab={filterViewTab}
-            ignoredDomains={ignoredDomains}
-            ignoredUrls={ignoredUrls}
-            onToggleDomain={(domain) => {
-              const newDomains = new Set(ignoredDomains);
-              if (newDomains.has(domain)) {
-                newDomains.delete(domain);
+            ignoredPatterns={ignoredPatterns}
+            onTogglePattern={(pattern) => {
+              const newPatterns = new Set(ignoredPatterns);
+              if (newPatterns.has(pattern)) {
+                newPatterns.delete(pattern);
               } else {
-                newDomains.add(domain);
+                newPatterns.add(pattern);
               }
-              setIgnoredDomains(newDomains);
+              setIgnoredPatterns(newPatterns);
             }}
-            onAddDomain={(domain) => {
-              const newDomains = new Set(ignoredDomains);
-              newDomains.add(domain);
-              setIgnoredDomains(newDomains);
-            }}
-            onToggleUrl={(url) => {
-              const newUrls = new Set(ignoredUrls);
-              if (newUrls.has(url)) {
-                newUrls.delete(url);
-              } else {
-                newUrls.add(url);
-              }
-              setIgnoredUrls(newUrls);
-            }}
-            onAddUrl={(url) => {
-              const newUrls = new Set(ignoredUrls);
-              newUrls.add(url);
-              setIgnoredUrls(newUrls);
+            onAddPattern={(pattern) => {
+              const newPatterns = new Set(ignoredPatterns);
+              newPatterns.add(pattern);
+              setIgnoredPatterns(newPatterns);
             }}
           />
         ) : (

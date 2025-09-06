@@ -35,7 +35,7 @@ import {
   StorageEventDetailContent,
   StorageEventDetailFooter,
 } from "./StorageEventDetailContent";
-import { StorageFilterView } from "./StorageFilterView";
+import { StorageFilterViewV2 } from "./StorageFilterViewV2";
 import { ValueTypeBadge } from "@/rn-better-dev-tools/src/shared/ui/components/ValueTypeBadge";
 import { parseValue } from "@/rn-better-dev-tools/src/shared/utils/valueFormatting";
 
@@ -487,11 +487,10 @@ export function StorageModalWithTabs({
 
     if (showFilters) {
       return (
-        <StorageFilterView
+        <StorageFilterViewV2
           ignoredPatterns={ignoredPatterns}
           onTogglePattern={handleTogglePattern}
           onAddPattern={handleAddPattern}
-          onBack={() => setShowFilters(false)}
           availableKeys={allEventKeys}
         />
       );

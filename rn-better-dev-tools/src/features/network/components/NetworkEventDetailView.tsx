@@ -29,15 +29,12 @@ import {
   formatHttpStatus,
 } from "../utils/formatting";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
-  ignoredDomains?: Set<string>;
-  ignoredUrls?: Set<string>;
-  onToggleDomain?: (domain: string) => void;
-  onToggleUrl?: (url: string) => void;
+  ignoredPatterns?: Set<string>;
+  onTogglePattern?: (pattern: string) => void;
 }
 
 // Component for collapsible sections matching Sentry style
@@ -138,10 +135,8 @@ const UrlBreakdown: FC<{ url: string }> = ({ url }) => {
 
 export function NetworkEventDetailView({
   event,
-  ignoredDomains = new Set(),
-  ignoredUrls = new Set(),
-  onToggleDomain = () => {},
-  onToggleUrl = () => {},
+  ignoredPatterns = new Set(),
+  onTogglePattern = () => {},
 }: NetworkEventDetailViewProps) {
   const status = event.status ? formatHttpStatus(event.status) : null;
   const isPending = !event.status && !event.error;
@@ -328,8 +323,8 @@ export function NetworkEventDetailView({
               urlPath = event.url;
             }
 
-            const isDomainIgnored = ignoredDomains.has(domain);
-            const isUrlIgnored = ignoredUrls.has(urlPath);
+            const isDomainIgnored = ignoredPatterns.has(domain);
+            const isUrlIgnored = ignoredPatterns.has(urlPath);
 
             return (
               <>
@@ -339,7 +334,7 @@ export function NetworkEventDetailView({
                     styles.filterOption,
                     isDomainIgnored && styles.filterOptionActive,
                   ]}
-                  onPress={() => domain && onToggleDomain(domain)}
+                  onPress={() => domain && onTogglePattern(domain)}
                 >
                   <View style={styles.filterOptionLeft}>
                     <Globe
@@ -378,7 +373,7 @@ export function NetworkEventDetailView({
                     styles.filterOption,
                     isUrlIgnored && styles.filterOptionActive,
                   ]}
-                  onPress={() => urlPath && onToggleUrl(urlPath)}
+                  onPress={() => urlPath && onTogglePattern(urlPath)}
                 >
                   <View style={styles.filterOptionLeft}>
                     <Link
