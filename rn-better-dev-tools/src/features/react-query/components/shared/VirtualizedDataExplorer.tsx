@@ -21,6 +21,7 @@ import Svg, { Path } from "react-native-svg";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { CopyButton } from "@/rn-better-dev-tools/src/shared/ui/components/CopyButton";
+import { IndentGuidesOverlay } from "./IndentGuidesOverlay";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const HIT_SLOP_10 = { top: 10, bottom: 10, left: 10, right: 10 };
@@ -240,6 +241,10 @@ interface FlatDataItem {
   childCount: number;
   path: string[];
   type: string; // For FlatList optimization
+  isLastChild?: boolean; // Track if this is the last child of its parent
+  parentHasMoreSiblings?: boolean[]; // Track which parent levels have more siblings
+  siblingIndex?: number; // Index among siblings
+  totalSiblings?: number; // Total number of siblings
 }
 
 // Enhanced type detection optimized for performance
@@ -443,7 +448,10 @@ const useDataFlattening = (
       key = "root",
       depth = 0,
       parentId?: string,
-      path: string[] = []
+      path: string[] = [],
+      siblingIndex = 0,
+      totalSiblings = 1,
+      parentHasMoreSiblings: boolean[] = []
     ): FlatDataItem[] => {
       // Early termination for performance [[memory:4875251]]
       if (depth > Math.min(maxDepth, MAX_DEPTH_LIMIT)) return [];
@@ -474,6 +482,10 @@ const useDataFlattening = (
               childCount: 0,
               path: currentPath,
               type: "circular",
+              isLastChild: siblingIndex === totalSiblings - 1,
+              parentHasMoreSiblings: [...parentHasMoreSiblings],
+              siblingIndex,
+              totalSiblings,
             },
           ];
         }
@@ -493,6 +505,10 @@ const useDataFlattening = (
         childCount,
         path: currentPath,
         type: isExpandable ? "expandable" : valueType,
+        isLastChild: siblingIndex === totalSiblings - 1,
+        parentHasMoreSiblings: [...parentHasMoreSiblings],
+        siblingIndex,
+        totalSiblings,
       };
 
       const result = [currentItem];
@@ -549,10 +565,19 @@ const useDataFlattening = (
 
           // Aggressively limit children for performance [[memory:4875251]]
           const limitedEntries = entries.slice(0, childCount);
+          const totalChildCount = limitedEntries.length;
+
+          // Update parent's sibling tracking for children
+          const newParentHasMoreSiblings = [...parentHasMoreSiblings];
+          if (depth > 0) {
+            // Current item has more siblings if it's not the last child
+            newParentHasMoreSiblings[depth - 1] = !currentItem.isLastChild;
+          }
 
           // Process children in smaller batches to avoid blocking
           for (let i = 0; i < limitedEntries.length; i += CHUNK_SIZE) {
             const chunk = limitedEntries.slice(i, i + CHUNK_SIZE);
+            let chunkIndex = i;
             for (const [childKey, childValue] of chunk) {
               result.push(
                 ...flattenDataStable(
@@ -562,9 +587,13 @@ const useDataFlattening = (
                   childKey,
                   depth + 1,
                   id,
-                  currentPath
+                  currentPath,
+                  chunkIndex,
+                  totalChildCount,
+                  newParentHasMoreSiblings
                 )
               );
+              chunkIndex++;
             }
 
             // Yield to main thread periodically for large datasets
@@ -639,6 +668,9 @@ const useDataFlattening = (
           "root",
           0,
           undefined,
+          [],
+          0,
+          1,
           []
         );
 
@@ -758,8 +790,15 @@ const useDataFlattening = (
                 break;
             }
 
-            // Process each child
-            for (const [childKey, childValue] of entries) {
+            // Process each child with sibling tracking
+            const totalEntries = entries.length;
+            const parentHasMoreSiblings = item.parentHasMoreSiblings || [];
+            const newParentHasMoreSiblings = [...parentHasMoreSiblings];
+            if (item.depth > 0) {
+              newParentHasMoreSiblings[item.depth - 1] = !item.isLastChild;
+            }
+
+            entries.forEach(([childKey, childValue], index) => {
               const childItems = flattenDataStable(
                 childValue,
                 new Set(), // Children start collapsed
@@ -767,10 +806,13 @@ const useDataFlattening = (
                 childKey,
                 item.depth + 1,
                 itemId,
-                item.path
+                item.path,
+                index,
+                totalEntries,
+                newParentHasMoreSiblings
               );
               childrenItems.push(...childItems);
-            }
+            });
           } catch (error) {
             console.error(error);
           }
@@ -819,7 +861,7 @@ const useDataFlattening = (
 
           // Filter out descendants and update the parent
           const newItems = prevFlatData
-            .map((it, idx) => {
+            .map((it) => {
               if (it.id === itemId) {
                 return { ...it, isExpanded: false };
               }
@@ -915,31 +957,6 @@ const VirtualizedItemComponent = ({
 
   return (
     <View style={[STABLE_STYLES.itemContainer, indentStyle]}>
-      {/* Tree lines */}
-      {item.depth > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            left: -10,
-            top: 0,
-            bottom: 0,
-            width: 1,
-            backgroundColor: gameUIColors.primary + "26",
-          }}
-        />
-      )}
-      {item.depth > 0 && (
-        <View
-          style={{
-            position: "absolute",
-            left: -10,
-            top: 10, // Center of the 20px height (marginTop: 4 + height: 12 / 2)
-            width: 10, // Connect to the arrow
-            height: 1,
-            backgroundColor: gameUIColors.primary + "26",
-          }}
-        />
-      )}
       <TouchableOpacity
         sentry-label="ignore devtools data explorer item"
         style={[
@@ -1057,6 +1074,32 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
     maxDepth,
     initialExpanded
   );
+  
+  // State for indent guides overlay
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
+  const [scrollOffset, setScrollOffset] = useState(0);
+  const [activeLineIndex, setActiveLineIndex] = useState<number | undefined>(undefined);
+  const listRef = useRef<FlatList>(null);
+  
+  // Track visible items for overlay optimization
+  const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
+    if (viewableItems && viewableItems.length > 0) {
+      const firstIndex = viewableItems[0].index || 0;
+      const lastIndex = viewableItems[viewableItems.length - 1].index || 0;
+      setVisibleRange({ start: firstIndex, end: lastIndex });
+    }
+  }, []);
+  
+  // Track scroll position for precise overlay positioning
+  const onScroll = useCallback((event: any) => {
+    const offset = event.nativeEvent.contentOffset.y;
+    // Calculate the scroll offset within a single item for sub-pixel positioning
+    setScrollOffset(offset % ITEM_HEIGHT);
+  }, []);
+  
+  const viewabilityConfig = useMemo(() => ({
+    itemVisiblePercentThreshold: 10,
+  }), []);
 
   // Calculate visible types for the legend with single pass deduplication
   // Performance: Avoiding array.map() + Array.from(new Set()), using single loop for unique types
@@ -1135,18 +1178,33 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
             </Text>
           </View>
         ) : (
-          <FlatList
-            sentry-label="ignore devtools data explorer list"
-            data={flatData}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            showsVerticalScrollIndicator={true}
-            contentContainerStyle={STABLE_STYLES.listContent}
-            initialNumToRender={15}
-            maxToRenderPerBatch={10}
-            windowSize={10}
-            scrollEnabled={false}
-          />
+          <View style={{ flex: 1, position: 'relative' }}>
+            <IndentGuidesOverlay
+              flatData={flatData}
+              visibleRange={visibleRange}
+              scrollOffset={scrollOffset}
+              itemHeight={ITEM_HEIGHT}
+              indentWidth={10} // Match the indent width from INDENT_STYLES
+              activeLineIndex={activeLineIndex}
+            />
+            <FlatList
+              ref={listRef}
+              sentry-label="ignore devtools data explorer list"
+              data={flatData}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              showsVerticalScrollIndicator={true}
+              contentContainerStyle={STABLE_STYLES.listContent}
+              initialNumToRender={15}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              scrollEnabled={false}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+            />
+          </View>
         )}
       </View>
     );
@@ -1212,9 +1270,19 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
             <View
               style={{
                 height: Math.min(flatData.length * averageItemSize, 400),
+                position: 'relative',
               }}
             >
+              <IndentGuidesOverlay
+                flatData={flatData}
+                visibleRange={visibleRange}
+                scrollOffset={scrollOffset}
+                itemHeight={ITEM_HEIGHT}
+                indentWidth={10} // Match the indent width from INDENT_STYLES
+                activeLineIndex={activeLineIndex}
+              />
               <FlatList
+                ref={listRef}
                 sentry-label="ignore devtools data explorer collapsed list"
                 data={flatData}
                 renderItem={renderItem}
@@ -1225,6 +1293,10 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
                 maxToRenderPerBatch={10}
                 windowSize={10}
                 scrollEnabled={false}
+                onViewableItemsChanged={onViewableItemsChanged}
+                viewabilityConfig={viewabilityConfig}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
               />
             </View>
           )}
