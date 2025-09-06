@@ -25,20 +25,21 @@ import { IndentGuidesOverlay } from "./IndentGuidesOverlay";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const HIT_SLOP_10 = { top: 10, bottom: 10, left: 10, right: 10 };
-const ITEM_HEIGHT = 24; // Fixed height for better performance - reduced for tighter spacing
-const LONG_ITEM_HEIGHT = 36; // Height for items with long keys - reduced for tighter spacing
+const ITEM_HEIGHT = 24; // Fixed height per row for crisp guides
+const LONG_ITEM_HEIGHT = 24; // Keep uniform height to match VS Code tree
 const CHUNK_SIZE = 50; // Process data in chunks to avoid blocking UI
 const MAX_DEPTH_LIMIT = 15; // Prevent excessive nesting
 const MAX_ITEMS_PER_LEVEL = 500; // Limit items to prevent memory issues
 const LONG_KEY_THRESHOLD = 30; // Keys longer than this use vertical layout
 
-// Pre-computed indent styles with reduced indentation [[memory:4875251]]
+// Pre-computed indent styles (VS Code-style width)
+const INDENT_WIDTH = 16;
 const INDENT_STYLES = Array.from(
   { length: MAX_DEPTH_LIMIT + 1 },
   (_, depth) =>
     StyleSheet.create({
       container: {
-        marginLeft: depth * 10, // Reduced space for tighter tree lines
+        marginLeft: depth * INDENT_WIDTH,
       },
     }).container
 );
@@ -134,12 +135,13 @@ const STABLE_STYLES = StyleSheet.create({
     paddingLeft: 0, // Remove padding to align with tree lines
     paddingRight: 16,
     paddingVertical: 2, // Further reduced for even tighter spacing
-    borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.primary + "0D", // border-white/[0.05]
     minHeight: 24, // Match ITEM_HEIGHT for consistency
   },
   itemTouchablePressed: {
-    backgroundColor: gameUIColors.primary + "05", // bg-white/[0.02]
+    backgroundColor: gameUIColors.primary + "0A", // slightly more visible on press
+  },
+  itemSelected: {
+    backgroundColor: gameUIColors.primary + "14", // selected row highlight (subtle)
   },
   expanderContainer: {
     width: 16, // Reduced to minimize space
@@ -155,8 +157,7 @@ const STABLE_STYLES = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "flex-start",
-    paddingLeft: 2, // Reduced padding for tighter alignment
-    flexWrap: "wrap",
+    paddingLeft: 2,
   },
   labelContainerVertical: {
     flex: 1,
@@ -176,7 +177,6 @@ const STABLE_STYLES = StyleSheet.create({
     fontFamily: "monospace",
     marginRight: 8,
     flexShrink: 1,
-    flexWrap: "wrap",
   },
   labelTextTruncated: {
     color: gameUIColors.primary, // text-white
@@ -184,13 +184,6 @@ const STABLE_STYLES = StyleSheet.create({
     fontWeight: "500", // font-medium
     fontFamily: "monospace",
     flexShrink: 1,
-    flexWrap: "wrap",
-  },
-  valueTextVertical: {
-    fontSize: 12,
-    fontFamily: "monospace",
-    color: gameUIColors.primaryLight, // text-gray-300
-    paddingLeft: 16, // Indent the value
   },
   valueText: {
     fontSize: 12,
@@ -396,6 +389,7 @@ const TypeLegendComponent = ({
 };
 TypeLegendComponent.displayName = "TypeLegend";
 const TypeLegend = memo(TypeLegendComponent);
+
 
 // Optimized data flattening with chunked processing to prevent UI blocking [[memory:4875251]]
 const useDataFlattening = (
@@ -923,10 +917,16 @@ const VirtualizedItemComponent = ({
   item,
   onToggleExpanded,
   data,
+  index,
+  onSelect,
+  isSelected,
 }: {
   item: FlatDataItem;
   onToggleExpanded: (id: string) => void;
   data?: JsonValue;
+  index: number;
+  onSelect: (index: number) => void;
+  isSelected: boolean;
 }): ReactElement => {
   const [isPressed, setIsPressed] = useState(false);
   const [showFullKey, setShowFullKey] = useState(false);
@@ -936,21 +936,18 @@ const VirtualizedItemComponent = ({
     INDENT_STYLES[Math.min(item.depth, MAX_DEPTH_LIMIT)] || INDENT_STYLES[0];
   const color = getTypeColor(item.valueType);
 
-  // Check if key is long and needs special layout
-  const isLongKey = item.key.length > LONG_KEY_THRESHOLD;
+  // Uniform row layout: single-line like VS Code tree
+  const isLongKey = false;
 
   // Use inline handler since component is already memoized [[memory:4875251]]
   const handlePress = () => {
     if (item.isExpandable) {
       onToggleExpanded(item.id);
     }
+    onSelect(index);
   };
 
-  const handleKeyPress = () => {
-    if (isLongKey) {
-      setShowFullKey(!showFullKey);
-    }
-  };
+  const handleKeyPress = () => {};
 
   // Always show full key for better identification
   const displayKey = item.key;
@@ -962,6 +959,7 @@ const VirtualizedItemComponent = ({
         style={[
           STABLE_STYLES.itemTouchable,
           isPressed && STABLE_STYLES.itemTouchablePressed,
+          isSelected && STABLE_STYLES.itemSelected,
           isLongKey && { minHeight: LONG_ITEM_HEIGHT, paddingVertical: 2 },
         ]}
         onPress={handlePress}
@@ -971,78 +969,39 @@ const VirtualizedItemComponent = ({
         disabled={!item.isExpandable}
       >
         {item.isExpandable ? (
-          <Expander expanded={item.isExpanded} onPress={() => {}} />
+          <Expander expanded={item.isExpanded} onPress={handlePress} />
         ) : (
           <View style={STABLE_STYLES.expanderContainer} />
         )}
+        {/* Horizontal layout for all keys (single-line) */}
+        <View style={STABLE_STYLES.labelContainer}>
+          <Text style={STABLE_STYLES.labelText} numberOfLines={1}>
+            {item.key}:
+          </Text>
 
-        {isLongKey ? (
-          // Vertical layout for long keys
-          <View style={STABLE_STYLES.labelContainerVertical}>
-            <View style={STABLE_STYLES.labelContainerVerticalRow}>
-              <TouchableOpacity
-                sentry-label="ignore devtools data explorer key press"
-                onPress={handleKeyPress}
-                style={{ flex: 1 }}
-              >
-                <Text
-                  style={STABLE_STYLES.labelTextTruncated}
-                  numberOfLines={undefined}
-                >
-                  {displayKey}:
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {item.isExpandable ? (
+          {item.isExpandable ? (
+            <>
               <Text
-                style={[
-                  STABLE_STYLES.valueTextVertical,
-                  { color: gameUIColors.secondary },
-                ]}
+                style={[STABLE_STYLES.valueText, { color: gameUIColors.secondary }]}
+                numberOfLines={1}
               >
                 {item.valueType} ({item.childCount}{" "}
                 {item.childCount === 1 ? "item" : "items"})
               </Text>
-            ) : (
-              <Text style={[STABLE_STYLES.valueTextVertical, { color }]}>
-                {formatValue(item.value, item.valueType)}
-              </Text>
-            )}
-          </View>
-        ) : (
-          // Horizontal layout for normal keys
-          <View style={STABLE_STYLES.labelContainer}>
-            <Text style={STABLE_STYLES.labelText} numberOfLines={undefined}>
-              {item.key}:
+              {item.id === "root" && data && (
+                <CopyButton
+                  value={data}
+                  size={16}
+                  buttonStyle={{ marginLeft: 8 }}
+                />
+              )}
+            </>
+          ) : (
+            <Text style={[STABLE_STYLES.valueText, { color }]} numberOfLines={1}>
+              {formatValue(item.value, item.valueType)}
             </Text>
-
-            {item.isExpandable ? (
-              <>
-                <Text
-                  style={[
-                    STABLE_STYLES.valueText,
-                    { color: gameUIColors.secondary },
-                  ]}
-                >
-                  {item.valueType} ({item.childCount}{" "}
-                  {item.childCount === 1 ? "item" : "items"})
-                </Text>
-                {item.id === "root" && data && (
-                  <CopyButton
-                    value={data}
-                    size={16}
-                    buttonStyle={{ marginLeft: 8 }}
-                  />
-                )}
-              </>
-            ) : (
-              <Text style={[STABLE_STYLES.valueText, { color }]}>
-                {formatValue(item.value, item.valueType)}
-              </Text>
-            )}
-          </View>
-        )}
+          )}
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -1074,32 +1033,32 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
     maxDepth,
     initialExpanded
   );
-  
-  // State for indent guides overlay
-  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
-  const [scrollOffset, setScrollOffset] = useState(0);
-  const [activeLineIndex, setActiveLineIndex] = useState<number | undefined>(undefined);
+
+  // Track visible range for overlay rendering
   const listRef = useRef<FlatList>(null);
-  
-  // Track visible items for overlay optimization
-  const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
-    if (viewableItems && viewableItems.length > 0) {
-      const firstIndex = viewableItems[0].index || 0;
-      const lastIndex = viewableItems[viewableItems.length - 1].index || 0;
-      setVisibleRange({ start: firstIndex, end: lastIndex });
+  const [visibleRange, setVisibleRange] = useState<{ start: number; end: number }>({
+    start: 0,
+    end: Math.min(flatData.length - 1, Math.max(0, Math.ceil(400 / ITEM_HEIGHT) - 1)),
+  });
+  const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 1 });
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
+      const idx = viewableItems
+        .map((v) => v.index)
+        .filter((n): n is number => typeof n === 'number');
+      if (idx.length) {
+        setVisibleRange({ start: Math.min(...idx), end: Math.max(...idx) });
+      }
     }
-  }, []);
+  ).current;
+  useEffect(() => {
+    // When data changes, reset the presumed visible window
+    setVisibleRange({
+      start: 0,
+      end: Math.min(flatData.length - 1, Math.max(0, Math.ceil(400 / ITEM_HEIGHT) - 1)),
+    });
+  }, [flatData.length]);
   
-  // Track scroll position for precise overlay positioning
-  const onScroll = useCallback((event: any) => {
-    const offset = event.nativeEvent.contentOffset.y;
-    // Calculate the scroll offset within a single item for sub-pixel positioning
-    setScrollOffset(offset % ITEM_HEIGHT);
-  }, []);
-  
-  const viewabilityConfig = useMemo(() => ({
-    itemVisiblePercentThreshold: 10,
-  }), []);
 
   // Calculate visible types for the legend with single pass deduplication
   // Performance: Avoiding array.map() + Array.from(new Set()), using single loop for unique types
@@ -1119,27 +1078,22 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
   };
 
   // Stable renderItem using module-scope function [[memory:4875251]]
-  const renderItem = ({ item }: { item: FlatDataItem }) => (
-    <VirtualizedItem item={item} onToggleExpanded={toggleExpanded} data={data} />
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const activeDepth = selectedIndex != null ? flatData[selectedIndex]?.depth : undefined;
+
+  const renderItem = ({ item, index }: { item: FlatDataItem; index: number }) => (
+    <VirtualizedItem
+      item={item}
+      index={index}
+      onToggleExpanded={toggleExpanded}
+      data={data}
+      onSelect={setSelectedIndex}
+      isSelected={selectedIndex === index}
+    />
   );
 
-  // Calculate average item size for better FlatList performance with single pass
-  // Performance: Avoiding array.filter(), using single loop to count long keys
-  const averageItemSize = useMemo(() => {
-    if (flatData.length === 0) return ITEM_HEIGHT;
-
-    let longKeyCount = 0;
-    for (const item of flatData) {
-      if (item.key.length > LONG_KEY_THRESHOLD) {
-        longKeyCount++;
-      }
-    }
-
-    const normalKeyCount = flatData.length - longKeyCount;
-    const totalHeight =
-      longKeyCount * LONG_ITEM_HEIGHT + normalKeyCount * ITEM_HEIGHT;
-    return Math.round(totalHeight / flatData.length);
-  }, [flatData]);
+  // Uniform row height for crisp guide geometry
+  const averageItemSize = ITEM_HEIGHT;
 
   // Simple keyExtractor without useCallback [[memory:4875251]]
   const keyExtractor = (item: FlatDataItem) => item.id;
@@ -1178,14 +1132,13 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
             </Text>
           </View>
         ) : (
-          <View style={{ flex: 1, position: 'relative' }}>
+          <View style={{ position: 'relative', height: flatData.length * ITEM_HEIGHT }}>
             <IndentGuidesOverlay
-              flatData={flatData}
-              visibleRange={visibleRange}
-              scrollOffset={scrollOffset}
+              items={flatData}
+              visibleRange={{ start: 0, end: Math.max(0, flatData.length - 1) }}
               itemHeight={ITEM_HEIGHT}
-              indentWidth={10} // Match the indent width from INDENT_STYLES
-              activeLineIndex={activeLineIndex}
+              indentWidth={INDENT_WIDTH}
+              activeDepth={activeDepth}
             />
             <FlatList
               ref={listRef}
@@ -1199,10 +1152,6 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
               maxToRenderPerBatch={10}
               windowSize={10}
               scrollEnabled={false}
-              onViewableItemsChanged={onViewableItemsChanged}
-              viewabilityConfig={viewabilityConfig}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
             />
           </View>
         )}
@@ -1269,17 +1218,16 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
           ) : (
             <View
               style={{
-                height: Math.min(flatData.length * averageItemSize, 400),
+                height: Math.min(flatData.length * ITEM_HEIGHT, 400),
                 position: 'relative',
               }}
             >
               <IndentGuidesOverlay
-                flatData={flatData}
+                items={flatData}
                 visibleRange={visibleRange}
-                scrollOffset={scrollOffset}
                 itemHeight={ITEM_HEIGHT}
-                indentWidth={10} // Match the indent width from INDENT_STYLES
-                activeLineIndex={activeLineIndex}
+                indentWidth={INDENT_WIDTH}
+                activeDepth={activeDepth}
               />
               <FlatList
                 ref={listRef}
@@ -1294,9 +1242,7 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
                 windowSize={10}
                 scrollEnabled={false}
                 onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={viewabilityConfig}
-                onScroll={onScroll}
-                scrollEventThrottle={16}
+                viewabilityConfig={viewabilityConfigRef.current}
               />
             </View>
           )}
