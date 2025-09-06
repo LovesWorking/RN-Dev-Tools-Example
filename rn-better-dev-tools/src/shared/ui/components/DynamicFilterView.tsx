@@ -213,7 +213,7 @@ export function DynamicFilterView({
                     },
                   ]}
                 >
-                  <option.icon size={18} color={option.color} />
+                  <option.icon size={12} color={option.color} />
                 </View>
               )}
               {section.type === "method" && !option.icon && (
@@ -231,14 +231,17 @@ export function DynamicFilterView({
                   </Text>
                 </View>
               )}
-              {section.type !== "method" && (
+              {section.type !== "method" && !option.icon && (
                 <Text style={styles.filterLabel}>{option.label}</Text>
               )}
               {option.count !== undefined && (
                 <Text
                   style={[
                     styles.filterCount,
-                    { color: option.color || macOSColors.text.primary },
+                    option.isActive && { 
+                      backgroundColor: macOSColors.semantic.info + "20",
+                      color: macOSColors.semantic.info,
+                    },
                   ]}
                 >
                   {option.count}
@@ -493,66 +496,64 @@ const styles = StyleSheet.create({
   filterGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
-    marginTop: 12,
+    gap: 6,
+    marginTop: 8,
   },
   filterCard: {
     backgroundColor: macOSColors.background.card,
-    borderRadius: 12,
-    padding: 14,
-    minWidth: 104,
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1.5,
+    gap: 6,
+    borderWidth: 1,
     borderColor: macOSColors.border.default,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
+    minHeight: 32,
   },
   activeFilterCard: {
     backgroundColor: macOSColors.semantic.infoBackground,
     borderColor: macOSColors.semantic.info + "66",
-    borderWidth: 1.5,
-    shadowColor: macOSColors.semantic.info,
-    shadowOpacity: 0.2,
+    borderWidth: 1,
   },
   filterIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 20,
+    height: 20,
+    borderRadius: 4,
     backgroundColor: macOSColors.semantic.infoBackground,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
     borderWidth: 1,
     borderColor: macOSColors.semantic.info + "26",
   },
   filterLabel: {
     fontSize: 11,
     color: macOSColors.text.secondary,
-    marginBottom: 6,
     fontWeight: "500",
     textTransform: "capitalize",
   },
   filterCount: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 11,
+    fontWeight: "600",
     color: macOSColors.text.primary,
     fontFamily: "monospace",
+    backgroundColor: macOSColors.background.hover,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
   },
   methodBadge: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 8,
-    marginBottom: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: macOSColors.border.default,
   },
   methodText: {
-    fontSize: 13,
-    fontWeight: "700",
-    letterSpacing: 0.8,
+    fontSize: 11,
+    fontWeight: "600",
+    letterSpacing: 0.5,
     fontFamily: "monospace",
   },
   activeFiltersSection: {

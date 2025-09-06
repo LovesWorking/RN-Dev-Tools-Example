@@ -26,7 +26,7 @@ import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/Moda
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { NetworkEventItemCompact } from "./NetworkEventItemCompact";
-import { NetworkFilterViewV2 } from "./NetworkFilterViewV2";
+import { NetworkFilterViewV3 } from "./NetworkFilterViewV3";
 import { TickProvider } from "../../sentry/hooks/useTickEveryMinute";
 import { NetworkEventDetailView } from "./NetworkEventDetailView";
 import { useNetworkEvents } from "../hooks/useNetworkEvents";
@@ -417,7 +417,7 @@ function NetworkModalInner({
             }}
           />
         ) : showFilterView ? (
-          <NetworkFilterViewV2
+          <NetworkFilterViewV3
             events={events}
             filter={filter}
             onFilterChange={setFilter}
