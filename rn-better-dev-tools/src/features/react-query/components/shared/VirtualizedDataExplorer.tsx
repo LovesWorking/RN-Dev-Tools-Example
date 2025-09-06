@@ -20,6 +20,7 @@ import {
 import Svg, { Path } from "react-native-svg";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
+import { CopyButton } from "@/rn-better-dev-tools/src/shared/ui/components/CopyButton";
 
 // Stable constants to prevent re-renders [[memory:4875251]]
 const HIT_SLOP_10 = { top: 10, bottom: 10, left: 10, right: 10 };
@@ -791,8 +792,8 @@ const useDataFlattening = (
             string,
             { item: FlatDataItem; index: number }
           >();
-          newItems.forEach((item, idx) => {
-            newMap.set(item.id, { item, index: idx });
+          newItems.forEach((item, index) => {
+            newMap.set(item.id, { item, index });
           });
           flatDataMapRef.current = newMap;
 
@@ -831,8 +832,8 @@ const useDataFlattening = (
             string,
             { item: FlatDataItem; index: number }
           >();
-          newItems.forEach((item, idx) => {
-            newMap.set(item.id, { item, index: idx });
+          newItems.forEach((item, index) => {
+            newMap.set(item.id, { item, index });
           });
           flatDataMapRef.current = newMap;
 
@@ -879,9 +880,11 @@ const useDataFlattening = (
 const VirtualizedItemComponent = ({
   item,
   onToggleExpanded,
+  data,
 }: {
   item: FlatDataItem;
   onToggleExpanded: (id: string) => void;
+  data?: JsonValue;
 }): ReactElement => {
   const [isPressed, setIsPressed] = useState(false);
   const [showFullKey, setShowFullKey] = useState(false);
@@ -998,15 +1001,24 @@ const VirtualizedItemComponent = ({
             </Text>
 
             {item.isExpandable ? (
-              <Text
-                style={[
-                  STABLE_STYLES.valueText,
-                  { color: gameUIColors.secondary },
-                ]}
-              >
-                {item.valueType} ({item.childCount}{" "}
-                {item.childCount === 1 ? "item" : "items"})
-              </Text>
+              <>
+                <Text
+                  style={[
+                    STABLE_STYLES.valueText,
+                    { color: gameUIColors.secondary },
+                  ]}
+                >
+                  {item.valueType} ({item.childCount}{" "}
+                  {item.childCount === 1 ? "item" : "items"})
+                </Text>
+                {item.id === "root" && data && (
+                  <CopyButton
+                    value={data}
+                    size={16}
+                    buttonStyle={{ marginLeft: 8 }}
+                  />
+                )}
+              </>
             ) : (
               <Text style={[STABLE_STYLES.valueText, { color }]}>
                 {formatValue(item.value, item.valueType)}
@@ -1065,7 +1077,7 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
 
   // Stable renderItem using module-scope function [[memory:4875251]]
   const renderItem = ({ item }: { item: FlatDataItem }) => (
-    <VirtualizedItem item={item} onToggleExpanded={toggleExpanded} />
+    <VirtualizedItem item={item} onToggleExpanded={toggleExpanded} data={data} />
   );
 
   // Calculate average item size for better FlatList performance with single pass

@@ -1,10 +1,9 @@
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { RefreshCw, Copy, Trash2 } from "rn-better-dev-tools/icons";
+import { RefreshCw, Trash2 } from "rn-better-dev-tools/icons";
 import { useState, useCallback } from "react";
-import { stringify } from "superjson";
 import { StorageKeyInfo } from "../types";
-import { copyToClipboard } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
 import { clearAllStorageIncludingDevTools } from "../utils/clearAllStorage";
+import { CopyButton } from "@/rn-better-dev-tools/src/shared/ui/components/CopyButton";
 
 interface StorageActionsProps {
   storageKeys: StorageKeyInfo[];
@@ -13,8 +12,6 @@ interface StorageActionsProps {
   totalCount: number;
 }
 
-type CopyStatus = "idle" | "success" | "error";
-
 export function StorageActions({
   storageKeys,
   onClearAll,
@@ -22,7 +19,6 @@ export function StorageActions({
   totalCount,
 }: StorageActionsProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -33,71 +29,6 @@ export function StorageActions({
     }
   }, [onRefresh]);
 
-  const handleExport = () => {
-    Alert.alert("Export Storage Data", "Choose export format:", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Simple (Key-Value)",
-        onPress: handleCopySimple,
-      },
-      {
-        text: "Full (With Metadata)",
-        onPress: handleCopyFull,
-      },
-    ]);
-  };
-
-  const handleCopyFull = async () => {
-    try {
-      const storageData = storageKeys.reduce((acc, keyInfo) => {
-        acc[keyInfo.key] = {
-          value: keyInfo.value,
-          type: keyInfo.storageType,
-          status: keyInfo.status,
-          category: keyInfo.category,
-        };
-        return acc;
-      }, {} as Record<string, unknown>);
-
-      const serialized = stringify(storageData);
-      const success = await copyToClipboard(serialized);
-
-      if (success) {
-        setCopyStatus("success");
-        setTimeout(() => setCopyStatus("idle"), 2000);
-      } else {
-        throw new Error("Failed to copy to clipboard");
-      }
-    } catch (error) {
-      console.error("Failed to copy storage data:", error);
-      Alert.alert("Error", "Failed to copy storage data");
-    }
-  };
-
-  const handleCopySimple = async () => {
-    try {
-      const simpleData = storageKeys.reduce((acc, keyInfo) => {
-        acc[keyInfo.key] = keyInfo.value;
-        return acc;
-      }, {} as Record<string, unknown>);
-
-      const serialized = stringify(simpleData);
-      const success = await copyToClipboard(serialized);
-
-      if (success) {
-        setCopyStatus("success");
-        setTimeout(() => setCopyStatus("idle"), 2000);
-      } else {
-        throw new Error("Failed to copy to clipboard");
-      }
-    } catch (error) {
-      console.error("Failed to copy storage data:", error);
-      Alert.alert("Error", "Failed to copy storage data");
-    }
-  };
 
   const handleClear = () => {
     Alert.alert("Clear Storage", "Choose what to clear:", [
@@ -152,11 +83,6 @@ export function StorageActions({
         <Text style={styles.keyCount}>
           {totalCount} {totalCount === 1 ? "key" : "keys"} found
         </Text>
-        {copyStatus === "success" && (
-          <View style={styles.copiedBadge}>
-            <Text style={styles.copiedText}>Copied!</Text>
-          </View>
-        )}
       </View>
 
       <View style={styles.headerActions}>
@@ -169,14 +95,16 @@ export function StorageActions({
           <RefreshCw size={16} color={isRefreshing ? "#10B981" : "#9CA3AF"} />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          sentry-label="ignore storage export button"
-          onPress={handleExport}
-          style={styles.iconButton}
-          accessibilityLabel="Copy storage data"
-        >
-          <Copy size={16} color="#3B82F6" />
-        </TouchableOpacity>
+        <CopyButton
+          value={storageKeys}
+          size={16}
+          buttonStyle={styles.iconButton}
+          colors={{
+            idle: "#3B82F6",
+            success: "#10B981",
+            error: "#F87171",
+          }}
+        />
 
         <TouchableOpacity
           sentry-label="ignore storage clear button"

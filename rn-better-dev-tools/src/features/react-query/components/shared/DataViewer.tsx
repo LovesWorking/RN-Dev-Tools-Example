@@ -43,8 +43,8 @@ export const DataViewer: FC<DataViewerProps> = ({
       const type = Array.isArray(value)
         ? "array"
         : value === null
-          ? "null"
-          : typeof value;
+        ? "null"
+        : typeof value;
 
       types.push(type);
 
@@ -70,7 +70,7 @@ export const DataViewer: FC<DataViewerProps> = ({
       obj: JsonValue,
       targetType: string,
       path = "",
-      depth = 0,
+      depth = 0
     ) => {
       if (depth > 10 || itemCount > 100) return;
 
@@ -95,8 +95,8 @@ export const DataViewer: FC<DataViewerProps> = ({
           const valueType = Array.isArray(value)
             ? "array"
             : value === null
-              ? "null"
-              : typeof value;
+            ? "null"
+            : typeof value;
 
           if (valueType === targetType) {
             filteredObject[currentPath] = value;
@@ -148,11 +148,13 @@ export const DataViewer: FC<DataViewerProps> = ({
   return (
     <View style={styles.container}>
       {showTypeFilter && (
-        <TypeLegend
-          types={visibleTypes}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-        />
+        <View style={styles.header}>
+          <TypeLegend
+            types={visibleTypes}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+        </View>
       )}
       {renderContent()}
     </View>
@@ -162,5 +164,10 @@ export const DataViewer: FC<DataViewerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
