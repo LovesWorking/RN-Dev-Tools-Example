@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { StorageKeyInfo } from "../types";
-import { StorageKeyCard } from "./StorageKeyCard";
+import { StorageKeyRow } from "./StorageKeyRow";
 import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 
 interface StorageKeySectionProps {
@@ -27,18 +27,10 @@ export function StorageKeySection({
   emptyMessage,
   headerColor,
 }: StorageKeySectionProps) {
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
-  const toggleCardExpansion = useCallback((key: string) => {
-    setExpandedCards((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(key)) {
-        newSet.delete(key);
-      } else {
-        newSet.add(key);
-      }
-      return newSet;
-    });
+  const handleKeyPress = useCallback((storageKey: StorageKeyInfo) => {
+    setExpandedKey(prev => prev === storageKey.key ? null : storageKey.key);
   }, []);
 
   if (keys.length === 0 && title === "Required Keys") {
@@ -69,11 +61,11 @@ export function StorageKeySection({
       )}
       <View style={styles.sectionContent}>
         {keys.map((storageKey) => (
-          <StorageKeyCard
+          <StorageKeyRow
             key={storageKey.key}
             storageKey={storageKey}
-            isExpanded={expandedCards.has(storageKey.key)}
-            onToggle={() => toggleCardExpansion(storageKey.key)}
+            isExpanded={expandedKey === storageKey.key}
+            onPress={handleKeyPress}
           />
         ))}
       </View>
@@ -86,7 +78,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionContent: {
-    gap: 6,
+    // No gap needed, StorageKeyRow has its own margins
   },
   emptySection: {
     backgroundColor: "rgba(255, 255, 255, 0.02)",

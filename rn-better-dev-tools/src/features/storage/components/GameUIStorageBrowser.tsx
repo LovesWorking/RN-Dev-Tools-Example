@@ -8,16 +8,10 @@ import {
   Alert,
 } from "react-native";
 import {
-  AlertCircle,
-  CheckCircle2,
-  Shield,
   Database,
   RefreshCw,
   Trash2,
-  HardDrive,
-  Zap,
-  XCircle,
-  Server,
+  Search,
 } from "rn-better-dev-tools/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -30,18 +24,14 @@ import { StorageKeyInfo, RequiredStorageKey, StorageKeyStats } from "../types";
 import { isDevToolsStorageKey } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { clearAllAppStorage } from "../utils/clearAllStorage";
 import { StorageKeySection } from "./StorageKeySection";
+import { StorageFilterCards, type StorageFilterType } from "./StorageFilterCards";
 
 // Import shared Game UI components
 import {
-  GameUICollapsibleSection,
   GameUIStatusHeader,
-  GameUICompactStats,
-  GameUIIssuesList,
   useGameUIAlertState,
   gameUIColors,
   GAME_UI_ALERT_STATES,
-  type IssueItem,
-  type StatCardConfig,
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { copyToClipboard as copyToClipboardUtil } from "@/rn-better-dev-tools/src/shared/clipboard/copyToClipboard";
@@ -87,12 +77,7 @@ export function GameUIStorageBrowser({
 }: GameUIStorageBrowserProps) {
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // State for collapsible sections
-  const [issuesSectionExpanded, setIssuesSectionExpanded] = useState(true);
-  const [requiredSectionExpanded, setRequiredSectionExpanded] = useState(true);
-  const [optionalSectionExpanded, setOptionalSectionExpanded] = useState(false);
-  const [devToolsSectionExpanded, setDevToolsSectionExpanded] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<StorageFilterType>("all");
 
   // Get all storage queries from cache
   const allQueries = queryClient.getQueryCache().getAll();
@@ -221,8 +206,10 @@ export function GameUIStorageBrowser({
 
     // Calculate stats
     const keys = Array.from(keyInfoMap.values());
-    const storageStats: StorageKeyStats = {
-      totalCount: keys.length,
+    const devKeys = Array.from(devToolKeyInfoMap.values());
+    
+    const storageStats: StorageKeyStats & { devToolsCount: number } = {
+      totalCount: keys.length + devKeys.length,
       requiredCount: keys.filter((k) => k.category === "required").length,
       missingCount: keys.filter((k) => k.status === "required_missing").length,
       wrongValueCount: keys.filter((k) => k.status === "required_wrong_value")
@@ -232,12 +219,11 @@ export function GameUIStorageBrowser({
       presentRequiredCount: keys.filter((k) => k.status === "required_present")
         .length,
       optionalCount: keys.filter((k) => k.category === "optional").length,
-      mmkvCount: keys.filter((k) => k.storageType === "mmkv").length,
-      asyncCount: keys.filter((k) => k.storageType === "async").length,
-      secureCount: keys.filter((k) => k.storageType === "secure").length,
+      mmkvCount: [...keys, ...devKeys].filter((k) => k.storageType === "mmkv").length,
+      asyncCount: [...keys, ...devKeys].filter((k) => k.storageType === "async").length,
+      secureCount: [...keys, ...devKeys].filter((k) => k.storageType === "secure").length,
+      devToolsCount: devKeys.length,
     };
-
-    const devKeys = Array.from(devToolKeyInfoMap.values());
 
     return { storageKeys: keys, devToolKeys: devKeys, stats: storageStats };
   }, [storageQueriesData, requiredStorageKeys]);
@@ -245,6 +231,41 @@ export function GameUIStorageBrowser({
   // Group storage keys by status
   const requiredKeys = storageKeys.filter((k) => k.category === "required");
   const optionalKeys = storageKeys.filter((k) => k.category === "optional");
+  
+  // Combine all keys and sort by priority (issues first)
+  const allKeys = useMemo(() => {
+    const combined = [...requiredKeys, ...optionalKeys, ...devToolKeys];
+    
+    // Sort by status priority: errors first, then warnings, then valid
+    return combined.sort((a, b) => {
+      const priorityMap: Record<string, number> = {
+        "required_missing": 1,
+        "required_wrong_type": 2,
+        "required_wrong_value": 3,
+        "required_present": 4,
+        "optional_present": 5,
+      };
+      return (priorityMap[a.status] || 999) - (priorityMap[b.status] || 999);
+    });
+  }, [requiredKeys, optionalKeys, devToolKeys]);
+  
+  // Filter keys based on active filter
+  const filteredKeys = useMemo(() => {
+    switch (activeFilter) {
+      case "all":
+        return allKeys;
+      case "missing":
+        return allKeys.filter(k => k.status === "required_missing");
+      case "issues":
+        return allKeys.filter(k => 
+          k.status === "required_missing" || 
+          k.status === "required_wrong_type" || 
+          k.status === "required_wrong_value"
+        );
+      default:
+        return allKeys;
+    }
+  }, [allKeys, activeFilter]);
 
   // Use shared alert state hook
   const { alertConfig, alertAnimatedStyle } = useGameUIAlertState(
@@ -262,82 +283,7 @@ export function GameUIStorageBrowser({
     }
   }, []);
 
-  // Transform issues for GameUIIssuesList
-  const issues = useMemo<IssueItem[]>(() => {
-    return requiredKeys
-      .filter((k) => k.status !== "required_present")
-      .map((keyItem) => ({
-        key: keyItem.key,
-        status:
-          keyItem.status === "required_missing"
-            ? "missing"
-            : keyItem.status === "required_wrong_type"
-            ? "wrong_type"
-            : "wrong_value",
-        value: keyItem.value,
-        expectedType: keyItem.expectedType,
-        expectedValue: keyItem.expectedValue as string,
-        description: keyItem.description,
-        fixSuggestion:
-          keyItem.status === "required_missing"
-            ? `Store key: await AsyncStorage.setItem('${keyItem.key}', 'value')`
-            : keyItem.status === "required_wrong_type"
-            ? `Update to ${keyItem.expectedType} type for key: ${keyItem.key}`
-            : `Check valid values for key: ${keyItem.key}`,
-      }));
-  }, [requiredKeys]);
-
-  // Stats configuration for GameUICompactStats
-  const statsConfig = useMemo<StatCardConfig[]>(
-    () => [
-      {
-        key: "valid",
-        label: "VALID KEYS",
-        subtitle: "Properly stored",
-        icon: CheckCircle2,
-        color: gameUIColors.success,
-        value: stats.presentRequiredCount,
-        pulseDelay: 0,
-      },
-      {
-        key: "missing",
-        label: "MISSING KEYS",
-        subtitle: "Not in storage",
-        icon: AlertCircle,
-        color: gameUIColors.error,
-        value: stats.missingCount,
-        pulseDelay: 200,
-      },
-      {
-        key: "wrongValue",
-        label: "VALUE ERRORS",
-        subtitle: "Invalid values",
-        icon: XCircle,
-        color: gameUIColors.warning,
-        value: stats.wrongValueCount,
-        pulseDelay: 400,
-      },
-      {
-        key: "wrongType",
-        label: "TYPE ERRORS",
-        subtitle: "Wrong data type",
-        icon: Zap,
-        color: gameUIColors.info,
-        value: stats.wrongTypeCount,
-        pulseDelay: 600,
-      },
-      {
-        key: "optional",
-        label: "OPTIONAL KEYS",
-        subtitle: "User preferences",
-        icon: Server,
-        color: gameUIColors.optional,
-        value: stats.optionalCount,
-        pulseDelay: 800,
-      },
-    ],
-    [stats]
-  );
+  // Removed unused issues and statsConfig variables
 
   // Calculate health percentage
   const healthPercentage =
@@ -491,115 +437,52 @@ export function GameUIStorageBrowser({
         </View>
       </View>
 
-      {/* Stats Section using shared component */}
-      <GameUICompactStats
-        statsConfig={statsConfig}
-        totalCount={stats.totalCount}
-        header={{
-          title: "STORAGE OVERVIEW",
-          subtitle: "Runtime persistence layer",
-          healthPercentage,
-          healthStatus,
-          healthColor,
-        }}
-        bottomStats={[
-          { label: "TOTAL", value: stats.totalCount },
-          {
-            label: "MMKV",
-            value: stats.mmkvCount,
-            color: gameUIColors.info,
-          },
-          {
-            label: "ASYNC",
-            value: stats.asyncCount,
-            color: gameUIColors.warning,
-          },
-          {
-            label: "SECURE",
-            value: stats.secureCount,
-            color: gameUIColors.success,
-          },
-        ]}
+      {/* Filter Cards Section */}
+      <StorageFilterCards
+        stats={stats}
+        healthPercentage={healthPercentage}
+        healthStatus={healthStatus}
+        healthColor={healthColor}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
       />
 
-      {/* Issues Section using shared components */}
-      {issues.length > 0 && (
-        <GameUICollapsibleSection
-          icon={AlertCircle}
-          iconColor={gameUIColors.warning}
-          title="CRITICAL ISSUES"
-          count={issues.length}
-          subtitle="Storage keys that need immediate attention"
-          expanded={issuesSectionExpanded}
-          onToggle={() => setIssuesSectionExpanded(!issuesSectionExpanded)}
-        >
-          <GameUIIssuesList
-            issues={issues}
-            hintText="Tap any issue to view details"
-            statusLabels={{
-              missing: "Not stored",
-              wrong_type: "Type error",
-              wrong_value: "Invalid value",
-            }}
-          />
-        </GameUICollapsibleSection>
-      )}
-
-      {/* Required Storage Keys Section using shared component */}
-      <GameUICollapsibleSection
-        icon={Shield}
-        iconColor={gameUIColors.info}
-        title="REQUIRED KEYS"
-        count={stats.requiredCount}
-        subtitle="Data your app needs to function properly"
-        expanded={requiredSectionExpanded}
-        onToggle={() => setRequiredSectionExpanded(!requiredSectionExpanded)}
-      >
-        <StorageKeySection
-          title=""
-          count={-1}
-          keys={requiredKeys}
-          emptyMessage="No required storage keys configured"
-        />
-      </GameUICollapsibleSection>
-
-      {/* Optional Storage Keys Section using shared component */}
-      <GameUICollapsibleSection
-        icon={Database}
-        iconColor={gameUIColors.optional}
-        title="OPTIONAL KEYS"
-        count={stats.optionalCount}
-        subtitle="User preferences and non-critical data"
-        expanded={optionalSectionExpanded}
-        onToggle={() => setOptionalSectionExpanded(!optionalSectionExpanded)}
-      >
-        <StorageKeySection
-          title=""
-          count={-1}
-          keys={optionalKeys}
-          emptyMessage="No optional storage keys found"
-        />
-      </GameUICollapsibleSection>
-
-      {/* Dev Tools Keys Section using shared component */}
-      {devToolKeys.length > 0 && (
-        <GameUICollapsibleSection
-          icon={HardDrive}
-          iconColor={gameUIColors.storage}
-          title="DEV TOOLS DATA"
-          count={devToolKeys.length}
-          subtitle="Internal storage used by development tools"
-          expanded={devToolsSectionExpanded}
-          onToggle={() => setDevToolsSectionExpanded(!devToolsSectionExpanded)}
-        >
+      {/* Filtered Storage Keys */}
+      {filteredKeys.length > 0 ? (
+        <View style={styles.keysSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              {activeFilter === "all" ? "ALL STORAGE KEYS" : 
+               activeFilter === "missing" ? "MISSING KEYS" :
+               "ISSUES TO FIX"}
+            </Text>
+            <View style={styles.countBadge}>
+              <Text style={styles.countText}>{filteredKeys.length}</Text>
+            </View>
+          </View>
           <StorageKeySection
             title=""
             count={-1}
-            keys={devToolKeys}
+            keys={filteredKeys}
             emptyMessage=""
-            headerColor={gameUIColors.storage}
           />
-        </GameUICollapsibleSection>
+        </View>
+      ) : (
+        <View style={styles.emptyState}>
+          <Search size={32} color={macOSColors.text.muted} />
+          <Text style={styles.emptyTitle}>
+            {activeFilter === "all" ? "No storage keys" : 
+             activeFilter === "missing" ? "No missing keys" :
+             "No issues found"}
+          </Text>
+          <Text style={styles.emptySubtitle}>
+            {activeFilter === "all" 
+              ? "Your app hasn't stored any data yet"
+              : activeFilter === "missing"
+              ? "All required keys are present"
+              : "All storage keys are correctly configured"}
+          </Text>
+        </View>
       )}
 
       <Text style={styles.techFooter}>
@@ -682,5 +565,57 @@ const styles = StyleSheet.create({
     marginTop: 20,
     letterSpacing: 1,
     opacity: 0.5,
+  },
+  
+  // Keys section
+  keysSection: {
+    marginTop: 16,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+    paddingHorizontal: 8,
+  },
+  sectionTitle: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: macOSColors.text.muted,
+    letterSpacing: 1.2,
+    fontFamily: "monospace",
+  },
+  countBadge: {
+    backgroundColor: macOSColors.semantic.infoBackground,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 9999,
+    borderWidth: 1,
+    borderColor: macOSColors.border.default + "50",
+  },
+  countText: {
+    fontSize: 10,
+    fontWeight: "500",
+    color: macOSColors.semantic.info,
+    fontFamily: "monospace",
+  },
+  
+  // Empty state
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 48,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: macOSColors.text.primary,
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: macOSColors.text.secondary,
+    textAlign: "center",
   },
 });
