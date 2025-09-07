@@ -6,8 +6,6 @@
 export { NetworkModal } from "./components/NetworkModal";
 export { NetworkEventDetailView } from "./components/NetworkEventDetailView";
 export { NetworkEventItemCompact } from "./components/NetworkEventItemCompact";
-export { NetworkFilterView } from "./components/NetworkFilterView";
-export { NetworkFilterViewV2 } from "./components/NetworkFilterViewV2";
 
 // Hooks
 export { useNetworkEvents } from "./hooks/useNetworkEvents";
