@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, ReactNode } from "react";
+import { useEffect, useRef, useState, ReactNode, FC } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -8,14 +8,7 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import {
-  Globe,
-  EnvLaptopIcon,
-  WifiCircuitIcon,
-  StorageStackIcon,
-  ReactQueryIcon,
-} from "@/rn-better-dev-tools/icons";
-import { SentryBugIcon } from "@/rn-better-dev-tools/icons/SentryBugIcon";
+// Icons are provided by installedApps; no direct icon imports here.
 import { DialIcon } from "./DialIcon";
 import {
   gameUIColors,
@@ -26,12 +19,14 @@ import {
   type DevToolsSettings,
   useDevToolsSettings,
 } from "../DevToolsSettingsModal";
+import type { InstalledApp, FloatingMenuActions, FloatingMenuState } from "../types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
 const BUTTON_SIZE = 80; // Fixed button size
 
 export type IconType = {
+  id?: string; // optional; used for special behaviors like wifi toggle
   name: string;
   icon: ReactNode;
   color: string;
@@ -39,31 +34,23 @@ export type IconType = {
 };
 
 interface DialDevToolsProps {
-  onQueryPress: () => void;
-  onEnvPress: () => void;
-  onSentryPress: () => void;
-  onStoragePress: () => void;
-  onWifiToggle: () => void;
-  onNetworkPress?: () => void;
   onClose?: () => void;
   onSettingsPress?: () => void;
-  isWifiEnabled?: boolean;
   settings?: DevToolsSettings;
   autoOpenSettings?: boolean;
+  apps: InstalledApp[]; // required now
+  state?: FloatingMenuState;
+  actions?: FloatingMenuActions;
 }
 
 export const DialDevTools: FC<DialDevToolsProps> = ({
-  onQueryPress,
-  onEnvPress,
-  onSentryPress,
-  onStoragePress,
-  onWifiToggle,
-  onNetworkPress,
   onClose,
   onSettingsPress,
-  isWifiEnabled = true,
   settings: externalSettings,
   autoOpenSettings = false,
+  apps,
+  state,
+  actions,
 }) => {
   const [selectedIcon, setSelectedIcon] = useState(-1);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -115,123 +102,46 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
   const glitchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulseAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
 
-  const allIcons: IconType[] = [
-    {
-      name: "Query",
-      icon: (
-        <ReactQueryIcon
-          size={32}
-          color={gameUIColors.query}
-          glowColor={gameUIColors.query}
-          noBackground={true}
-        />
-      ),
-      color: gameUIColors.query,
-      onPress: onQueryPress,
-    },
-    {
-      name: "Env",
-      icon: (
-        <EnvLaptopIcon
-          size={32}
-          color={gameUIColors.env}
-          glowColor={gameUIColors.env}
-          noBackground={true}
-        />
-      ),
-      color: gameUIColors.env,
-      onPress: onEnvPress,
-    },
-    {
-      name: "Sentry",
-      icon: (
-        <SentryBugIcon
-          size={32}
-          color={gameUIColors.debug}
-          glowColor={gameUIColors.debug}
-          noBackground={true}
-        />
-      ),
-      color: gameUIColors.debug,
-      onPress: onSentryPress,
-    },
-    {
-      name: "Storage",
-      icon: (
-        <StorageStackIcon
-          size={32}
-          color={gameUIColors.storage}
-          glowColor={gameUIColors.storage}
-          noBackground={true}
-        />
-      ),
-      color: gameUIColors.storage,
-      onPress: onStoragePress,
-    },
-    {
-      name: "WiFi",
-      icon: (
-        <WifiCircuitIcon
-          size={32}
-          color={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
-          glowColor={isWifiEnabled ? gameUIColors.network : gameUIColors.error}
-          // When WiFi is off, keep the icon visible in red
-          strength={isWifiEnabled ? 4 : 4}
-          showSlash={!isWifiEnabled}
-          noBackground={true}
-        />
-      ),
-      // Use red to indicate WiFi is off in the dial accent as well
-      color: isWifiEnabled ? gameUIColors.network : gameUIColors.error,
-      onPress: onWifiToggle,
-    },
-    {
-      name: "Network",
-      icon: <Globe size={32} color={gameUIColors.network} />,
-      color: gameUIColors.network,
-      onPress: onNetworkPress || (() => {}),
-    },
-  ];
-
-  // Create icons array with empty spots for disabled tools
-  const icons = allIcons.map((icon) => {
-    if (!settings) {
-      return icon; // If no settings, show all icons
+  // Map data-driven apps to dial icons, inserting empty slots for disabled items
+  const dialApps = apps.filter((a) => (a.slot ?? 'both') !== 'row');
+  const isDialEnabled = (id: string) => {
+    if (!settings) return true;
+    switch (id) {
+      case 'query':
+        return settings.dialTools.query;
+      case 'env':
+        return settings.dialTools.env;
+      case 'sentry':
+        return settings.dialTools.sentry;
+      case 'storage':
+        return settings.dialTools.storage;
+      case 'wifi':
+        return settings.dialTools.wifi;
+      case 'network':
+        return settings.dialTools.network;
+      default:
+        return true;
     }
+  };
 
-    let isEnabled = true;
-    switch (icon.name) {
-      case "Query":
-        isEnabled = settings.dialTools.query;
-        break;
-      case "Env":
-        isEnabled = settings.dialTools.env;
-        break;
-      case "Sentry":
-        isEnabled = settings.dialTools.sentry;
-        break;
-      case "Storage":
-        isEnabled = settings.dialTools.storage;
-        break;
-      case "WiFi":
-        isEnabled = settings.dialTools.wifi;
-        break;
-      case "Network":
-        isEnabled = settings.dialTools.network;
-        break;
-    }
-
-    // Return empty spot for disabled tools
-    if (!isEnabled) {
+  const icons: IconType[] = dialApps.map((a) => {
+    const enabled = isDialEnabled(a.id);
+    if (!enabled) {
       return {
-        name: `empty-${icon.name}`,
+        id: a.id,
+        name: `empty-${a.id}`,
         icon: null,
-        color: "transparent",
-        onPress: () => {}, // No-op for empty spots
+        color: 'transparent',
+        onPress: () => {},
       };
     }
-
-    return icon;
+    return {
+      id: a.id,
+      name: a.name,
+      icon: typeof a.icon === 'function' ? a.icon({ slot: 'dial', size: 32, state, actions }) : a.icon,
+      color: a.color ?? gameUIColors.primary,
+      onPress: () => a.onPress({ state, actions }),
+    };
   });
 
   // Initialize animations on mount
@@ -455,8 +365,8 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
     // Trigger action
     setTimeout(() => {
       icons[index].onPress();
-      // Only close if it's not the WiFi toggle
-      if (icons[index].name !== "WiFi") {
+      // Only close if it's not the WiFi toggle (by id)
+      if (icons[index].id !== 'wifi') {
         handleClose();
       }
     }, 50);

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, FC } from "react";
 import {
   StyleSheet,
   Pressable,

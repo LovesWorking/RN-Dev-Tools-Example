@@ -27,14 +27,8 @@ import {
 // DevToolsSectionListModal removed - using Dial2 directly
 import { DialDevTools } from "./dial/DialDevTools";
 import { useDevToolsSettings } from "./DevToolsSettingsModal";
-import {
-  ReactQueryIcon,
-  EnvLaptopIcon,
-  StorageStackIcon,
-  WifiCircuitIcon,
-  Globe,
-} from "rn-better-dev-tools/icons";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+// Icons and colors are provided by installedApps; no direct icon imports here.
+import type { InstalledApp, FloatingMenuActions, FloatingMenuState } from "./types";
 
 // Re-export types that developers will need
 export type { UserRole } from "./floatingTools";
@@ -57,6 +51,7 @@ interface RnBetterDevToolsBubbleProps {
   hideStorageButton?: boolean;
   requiredStorageKeys?: RequiredStorageKey[];
   hideUserStatus?: boolean;
+  installedApps?: InstalledApp[]; // NEW: data-driven apps list
 }
 
 export function RnBetterDevToolsBubble({
@@ -73,12 +68,22 @@ export function RnBetterDevToolsBubble({
   hideEnvButton,
   hideSentryButton,
   hideStorageButton,
+  installedApps,
 }: RnBetterDevToolsBubbleProps) {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
   const { settings: devToolsSettings, refreshSettings } = useDevToolsSettings();
 
   // Use persisted WiFi state
   const { isOnline: isWifiEnabled, handleWifiToggle } = useWifiState();
+
+  // Data-driven pattern note
+  useEffect(() => {
+    if (!installedApps || installedApps.length === 0) {
+      console.warn(
+        "[RnBetterDevToolsBubble] No installedApps provided. Floating row will be empty; dial opens with zero tools."
+      );
+    }
+  }, []);
 
   // Using the default Dial menu exclusively
 
@@ -111,7 +116,6 @@ export function RnBetterDevToolsBubble({
     hideStorageButton,
   ]);
 
-
   // Initialize Sentry event listeners on mount
   useEffect(() => {
     setupSentryEventListeners();
@@ -143,6 +147,46 @@ export function RnBetterDevToolsBubble({
     handleTabChange,
     handleMutationSelect,
   } = useModalManager();
+
+  // Build generic state/actions for apps
+  const actions: FloatingMenuActions = {
+    openReactQuery: handleQueryPress,
+    openEnvironment: handleEnvPress,
+    openSentry: handleSentryPress,
+    openStorage: handleStoragePress,
+    openNetwork: handleNetworkPress,
+    toggleWifi: handleWifiToggle,
+  };
+
+  const state: FloatingMenuState = {
+    isWifiEnabled,
+  };
+
+  // Settings bridging: known ids map to existing settings keys
+  const isFloatingEnabled = (id: string) => {
+    const s = devToolsSettings?.floatingTools;
+    if (!s) return true;
+    switch (id) {
+      case "query":
+        return s.query && !hideQueryButton;
+      case "env":
+        return s.env && !hideEnvButton;
+      case "storage":
+        return s.storage && !hideStorageButton;
+      case "wifi":
+        return s.wifi && !hideWifiToggle;
+      case "network":
+        return s.network;
+      case "environment":
+        return s.environment && !hideEnvironment;
+      default:
+        return true; // Unknown/custom apps visible by default
+    }
+  };
+
+  const rowApps = (installedApps ?? []).filter(
+    (a) => (a.slot ?? "both") !== "dial"
+  );
 
   // Removed auto-open - Dial2 is now the primary selector
 
@@ -180,116 +224,42 @@ export function RnBetterDevToolsBubble({
                 userRole={userRole}
                 onPress={() => {
                   refreshSettings(); // Reload settings from storage
+                  if (!installedApps || installedApps.length === 0) {
+                    console.warn(
+                      "[RnBetterDevToolsBubble] No installedApps provided; opening dial with zero tools."
+                    );
+                  }
                   setShowFloatingMenu(true);
                 }}
               />
             )}
 
-            {/* Quick-access floating tool icons */}
-            {devToolsSettings.floatingTools.query && !hideQueryButton && (
-              <TouchableOpacity
-                accessibilityLabel="Open React Query DevTools"
-                onPress={handleQueryPress}
-                style={styles.fab}
-              >
-                <ReactQueryIcon
-                  size={16}
-                  color={gameUIColors.query}
-                  glowColor={gameUIColors.query}
-                  noBackground
-                />
-              </TouchableOpacity>
-            )}
-
-            {devToolsSettings.floatingTools.env && !hideEnvButton && (
-              <TouchableOpacity
-                accessibilityLabel="Open Environment Tools"
-                onPress={handleEnvPress}
-                style={styles.fab}
-              >
-                <EnvLaptopIcon
-                  size={16}
-                  color={gameUIColors.env}
-                  glowColor={gameUIColors.env}
-                  noBackground
-                />
-              </TouchableOpacity>
-            )}
-
-            {devToolsSettings.floatingTools.storage && !hideStorageButton && (
-              <TouchableOpacity
-                accessibilityLabel="Open Storage Tools"
-                onPress={handleStoragePress}
-                style={styles.fab}
-              >
-                <StorageStackIcon
-                  size={16}
-                  color={gameUIColors.storage}
-                  glowColor={gameUIColors.storage}
-                  noBackground
-                />
-              </TouchableOpacity>
-            )}
-
-            {devToolsSettings.floatingTools.wifi && !hideWifiToggle && (
-              <TouchableOpacity
-                accessibilityLabel="Toggle WiFi online/offline"
-                onPress={handleWifiToggle}
-                style={styles.fab}
-              >
-                <WifiCircuitIcon
-                  size={16}
-                  color={
-                    isWifiEnabled ? gameUIColors.network : gameUIColors.error
-                  }
-                  glowColor={
-                    isWifiEnabled ? gameUIColors.network : gameUIColors.error
-                  }
-                  strength={4}
-                  showSlash={!isWifiEnabled}
-                  noBackground
-                />
-              </TouchableOpacity>
-            )}
-
-            {devToolsSettings.floatingTools.network && (
-              <TouchableOpacity
-                accessibilityLabel="Open Network Monitor"
-                onPress={handleNetworkPress}
-                style={styles.fab}
-              >
-                <Globe size={16} color={gameUIColors.network} />
-              </TouchableOpacity>
-            )}
+            {/* Quick-access floating tool icons (data-driven only) */}
+            {rowApps.map((app) => {
+              if (!isFloatingEnabled(app.id)) return null;
+              return (
+                <TouchableOpacity
+                  key={`row-${app.id}`}
+                  accessibilityLabel={app.name}
+                  onPress={() => app.onPress({ state, actions })}
+                  style={styles.fab}
+                >
+                  {typeof app.icon === "function"
+                    ? app.icon({ slot: "row", size: 16, state, actions })
+                    : app.icon}
+                </TouchableOpacity>
+              );
+            })}
           </FloatingTools>
         </View>
 
         {/* Floating Dev Tools Menu - Multiple menu types */}
         {showFloatingMenu && (
           <DialDevTools
-            onQueryPress={() => {
-              setShowFloatingMenu(false);
-              handleQueryPress();
-            }}
-            onEnvPress={() => {
-              setShowFloatingMenu(false);
-              handleEnvPress();
-            }}
-            onSentryPress={() => {
-              setShowFloatingMenu(false);
-              handleSentryPress();
-            }}
-            onStoragePress={() => {
-              setShowFloatingMenu(false);
-              handleStoragePress();
-            }}
-            onWifiToggle={handleWifiToggle}
-            onNetworkPress={() => {
-              setShowFloatingMenu(false);
-              handleNetworkPress();
-            }}
+            apps={installedApps ?? []}
+            state={state}
+            actions={actions}
             onClose={() => setShowFloatingMenu(false)}
-            isWifiEnabled={isWifiEnabled}
             settings={devToolsSettings}
           />
         )}

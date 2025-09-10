@@ -20,7 +20,9 @@ import {
   RnBetterDevToolsBubble,
   UserRole,
   Environment,
+  type InstalledApp,
 } from "@/rn-better-dev-tools/src";
+import { EnvLaptopIcon } from "rn-better-dev-tools/icons";
 import {
   createEnvVarConfig,
   envVar,
@@ -198,22 +200,25 @@ function PokemonScreen() {
       // Test setItem
       await AsyncStorage.setItem("test_key_1", "test_value_1");
       console.log("Set test_key_1");
-      
+
       // Test multiSet
       await AsyncStorage.multiSet([
         ["test_key_2", "test_value_2"],
         ["test_key_3", JSON.stringify({ data: "object" })],
       ]);
       console.log("Set multiple keys");
-      
+
       // Test mergeItem
-      await AsyncStorage.mergeItem("test_key_3", JSON.stringify({ merged: true }));
+      await AsyncStorage.mergeItem(
+        "test_key_3",
+        JSON.stringify({ merged: true })
+      );
       console.log("Merged test_key_3");
-      
+
       // Test removeItem
       await AsyncStorage.removeItem("test_key_1");
       console.log("Removed test_key_1");
-      
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       console.error("AsyncStorage test error:", error);
@@ -274,7 +279,6 @@ function PokemonScreen() {
       setPokemonStack((prev) => [...prev, ...newPokemon]);
     }
   }, [currentIndex, pokemonStack.length]);
-
 
   // Handle input change with autocomplete
   const handleInputChange = useCallback((text: string) => {
@@ -343,6 +347,19 @@ function PokemonScreen() {
 
     envVar("EXPO_PUBLIC_ENABLE_TELEMETRY").withType("boolean").build(), // ⚠ Missing
   ]);
+
+  // DevTools: Pretend env is its own package and add it to the new menu
+  const installedApps: InstalledApp[] = [
+    {
+      id: "env",
+      name: "ENV",
+      slot: "both",
+      icon: ({ size }) => (
+        <EnvLaptopIcon size={size} color="#9f6" glowColor="#9f6" noBackground />
+      ),
+      onPress: ({ actions }) => actions?.openEnvironment?.(),
+    },
+  ];
   return (
     <View style={styles.container}>
       <RnBetterDevToolsBubble
@@ -350,6 +367,7 @@ function PokemonScreen() {
         environment={environment}
         userRole={userRole}
         requiredEnvVars={requiredEnvVars}
+        installedApps={installedApps}
       />
       {/* Premium Animated Background */}
       <LinearGradient
