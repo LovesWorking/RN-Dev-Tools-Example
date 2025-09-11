@@ -15,7 +15,7 @@ import {
 } from "../../react-query/utils/storageQueryUtils";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
-import { getEnvVarType } from "../../env/utils/envTypeDetector";
+import { getEnvVarType } from "@rn-dev-tools/react-native-env-manager";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 
 // Stable constants moved to module scope to prevent re-renders [[memory:4875251]]

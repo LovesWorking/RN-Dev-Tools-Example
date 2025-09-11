@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import { Settings } from "rn-better-dev-tools/icons";
 import { CyberpunkSectionButton } from "@/rn-better-dev-tools/src/shared/ui/console/CyberpunkSectionButton";
-import { RequiredEnvVar } from "../types";
+import { RequiredEnvVar } from "@rn-dev-tools/react-native-env-manager";
 import { GameUIEnvContent } from "./GameUIEnvContent";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 

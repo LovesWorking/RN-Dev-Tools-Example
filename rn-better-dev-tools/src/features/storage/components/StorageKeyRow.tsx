@@ -3,7 +3,7 @@ import { StorageKeyInfo } from "../types";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { CompactRow } from "@/rn-better-dev-tools/src/shared/ui/components/CompactRow";
 import { TypeBadge } from "@/rn-better-dev-tools/src/shared/ui/components/TypeBadge";
-import { getEnvVarType } from "../../env/utils/envTypeDetector";
+import { getEnvVarType } from "@rn-dev-tools/react-native-env-manager";
 import { getStorageTypeLabel } from "../../react-query/utils/storageQueryUtils";
 import { DataViewer } from "../../react-query/components/shared/DataViewer";
 

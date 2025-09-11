@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { EnvVarInfo } from "../types";
+import { EnvVarInfo } from "@rn-dev-tools/react-native-env-manager";
 import { EnvVarRow } from "./EnvVarRow";
 import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 

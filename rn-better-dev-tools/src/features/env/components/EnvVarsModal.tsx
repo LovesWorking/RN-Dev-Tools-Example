@@ -2,7 +2,7 @@ import {
   JsModal,
   type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
-import { RequiredEnvVar, EnvVarInfo } from "../types";
+import { RequiredEnvVar, EnvVarInfo } from "@rn-dev-tools/react-native-env-manager";
 import { devToolsStorageKeys } from "@/rn-better-dev-tools/src/shared/storage/devToolsStorageKeys";
 import { useCallback, useState, useRef, useEffect, useMemo } from "react";
 import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
@@ -12,8 +12,8 @@ import { Search, X } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { EnvStatsOverview, type EnvFilterType } from "./EnvStatsOverview";
-import { useDynamicEnv } from "../hooks/useDynamicEnv";
-import { processEnvVars, calculateStats } from "../utils";
+import { useDynamicEnv } from "@rn-dev-tools/react-native-env-manager";
+import { processEnvVars, calculateStats } from "@rn-dev-tools/react-native-env-manager";
 import { EnvVarSection } from "./EnvVarSection";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
 

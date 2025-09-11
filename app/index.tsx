@@ -19,15 +19,15 @@ import { PokemonCardSwipeable } from "./components/PokemonCardSwipeable";
 import {
   FloatingMenu,
   UserRole,
-  Environment,
   type InstalledApp,
 } from "@/rn-better-dev-tools/src";
-import { EnvVarsModal } from "@/rn-better-dev-tools/src/features/env";
-import { EnvLaptopIcon } from "rn-better-dev-tools/icons";
-import {
+import { 
+  EnvVarsModal,
+  Environment,
   createEnvVarConfig,
   envVar,
-} from "@rn-dev-tools/react-native-env-manager";
+} from "@/rn-better-dev-tools/src/features/env";
+import { EnvLaptopIcon } from "rn-better-dev-tools/icons";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { IconShowcase } from "@/docs/svg/IconShowCase";

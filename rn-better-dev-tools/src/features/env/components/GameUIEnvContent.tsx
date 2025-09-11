@@ -9,9 +9,9 @@ import {
 } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 // Local imports
-import { useDynamicEnv } from "../hooks/useDynamicEnv";
-import { RequiredEnvVar } from "../types";
-import { processEnvVars, calculateStats } from "../utils";
+import { useDynamicEnv } from "@rn-dev-tools/react-native-env-manager";
+import { RequiredEnvVar } from "@rn-dev-tools/react-native-env-manager";
+import { processEnvVars, calculateStats } from "@rn-dev-tools/react-native-env-manager";
 import { EnvVarSection } from "./EnvVarSection";
 import { EnvStatsOverview } from "./EnvStatsOverview";
 import { displayValue } from "@/rn-better-dev-tools/src/shared/utils/displayValue";
