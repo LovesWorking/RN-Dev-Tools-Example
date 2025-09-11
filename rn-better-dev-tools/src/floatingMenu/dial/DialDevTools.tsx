@@ -10,10 +10,7 @@ import {
 } from "react-native";
 // Icons are provided by installedApps; no direct icon imports here.
 import { DialIcon } from "./DialIcon";
-import {
-  gameUIColors,
-  dialColors,
-} from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { gameUIColors, dialColors } from "../colors";
 import {
   DevToolsSettingsModal,
   type DevToolsSettings,

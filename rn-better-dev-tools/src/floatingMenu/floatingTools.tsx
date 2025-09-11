@@ -21,9 +21,9 @@ import {
 import {
   useSafeAreaInsets as usePureJSSafeAreaInsets,
   getSafeAreaInsets as getPureJSSafeAreaInsets,
-} from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { DraggableHeader } from "@/rn-better-dev-tools/src/shared/ui/components/DraggableHeader";
+} from "./useSafeAreaInsets";
+import { gameUIColors } from "./colors";
+import { DraggableHeader } from "./DraggableHeader";
 
 // Using Views to render grip dots; no react-native-svg dependency
 

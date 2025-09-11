@@ -8,7 +8,7 @@ import {
   Animated,
 } from "react-native";
 import { IconType } from "./DialDevTools";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { gameUIColors } from "../colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const VIEW_SIZE = 60;

@@ -7,26 +7,75 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import {
-  ReactQueryIcon,
-  EnvLaptopIcon,
-  SentryBugIcon,
-  StorageStackIcon,
-  WifiCircuitIcon,
-  Globe,
-  Info,
-  ChevronRightIcon,
-} from "rn-better-dev-tools/icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { settingsBus } from "./settingsBus";
-import {
-  JsModal,
-  type ModalMode,
-} from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
-import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
-import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/ModalHeader";
-import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabSelector";
+import { SimpleBottomSheet } from "./ui/SimpleBottomSheet";
+import { gameUIColors } from "./colors";
+import { useSafeAreaInsets } from "./useSafeAreaInsets";
+import { ModalHeader } from "./ui/ModalHeader";
+import { TabSelector } from "./ui/TabSelector";
+// Local lightweight placeholder icons (to keep this folder portable)
+const SimpleDot = ({
+  size = 16,
+  color = "#8CA2C8",
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <View
+    style={{
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      backgroundColor: color,
+    }}
+  />
+);
+const ReactQueryIcon = SimpleDot;
+const EnvLaptopIcon = SimpleDot;
+const SentryBugIcon = SimpleDot;
+const StorageStackIcon = SimpleDot;
+const WifiCircuitIcon = SimpleDot;
+const Globe = SimpleDot as any;
+const Info = SimpleDot as any;
+const ChevronRightIcon = ({
+  size = 16,
+  color = "#8CA2C8",
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <View
+    style={{
+      width: size,
+      height: size,
+      borderRadius: 2,
+      borderWidth: 2,
+      borderColor: color,
+    }}
+  />
+);
+// Optional AsyncStorage dependency (fallback to no-op/memory)
+async function storageGetItem(key: string): Promise<string | null> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require("@react-native-async-storage/async-storage");
+    const S = mod.default || mod;
+    return await S.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+async function storageSetItem(key: string, value: string): Promise<void> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require("@react-native-async-storage/async-storage");
+    const S = mod.default || mod;
+    await S.setItem(key, value);
+  } catch {
+    // ignore
+  }
+}
 
 const STORAGE_KEY = "@rn_better_dev_tools_settings";
 
@@ -99,7 +148,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
 
   const loadSettings = async () => {
     try {
-      const savedSettings = await AsyncStorage.getItem(STORAGE_KEY);
+      const savedSettings = await storageGetItem(STORAGE_KEY);
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
         // Migrate old settings format to new format
@@ -120,7 +169,7 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
 
   const saveSettings = async (newSettings: DevToolsSettings) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
+      await storageSetItem(STORAGE_KEY, JSON.stringify(newSettings));
       setSettings(newSettings);
       onSettingsChange?.(newSettings);
       // Notify listeners (e.g., floating bubble) to refresh immediately
@@ -165,8 +214,8 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   };
 
   // Modal is fixed to bottom sheet mode
-  const handleModeChange = useCallback((_mode: ModalMode) => {
-    // Mode changes handled by JsModal
+  const handleModeChange = useCallback((_mode: any) => {
+    // No-op for simple sheet
   }, []);
 
   const getToolColor = (tool: string): string => {
@@ -380,42 +429,29 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   );
 
   return (
-    <JsModal
+    <SimpleBottomSheet
       visible={visible}
       onClose={onClose}
-      header={{
-        showToggleButton: false, // Hide toggle button since we're using bottom sheet only
-        customContent: (
-          <ModalHeader>
-            <ModalHeader.Content title="" noMargin>
-              <TabSelector
-                tabs={[
-                  { key: "dial", label: "DIAL MENU" },
-                  { key: "floating", label: "FLOATING" },
-                ]}
-                activeTab={activeTab}
-                onTabChange={(tab) => setActiveTab(tab as "dial" | "floating")}
-              />
-            </ModalHeader.Content>
-            <ModalHeader.Actions onClose={onClose} />
-          </ModalHeader>
-        ),
-      }}
-      initialMode="bottomSheet"
-      onModeChange={handleModeChange}
-      persistenceKey="devtools_settings"
-      enablePersistence={false} // Disable persistence for consistent behavior
-      // minHeight removed to allow drag to close
-      maxHeight={screenHeight - insets.top} // Allow resizing up to status bar
+      maxHeight={screenHeight - insets.top}
       initialHeight={modalHeight}
-      initialFloatingPosition={{
-        x: (screenWidth - modalWidth) / 2, // Center horizontally
-        y: insets.top + 20, // Position at top with safe area padding
-      }}
-      enableGlitchEffects={true}
+      header={
+        <ModalHeader>
+          <ModalHeader.Content title="" noMargin>
+            <TabSelector
+              tabs={[
+                { key: 'dial', label: 'DIAL MENU' },
+                { key: 'floating', label: 'FLOATING' },
+              ]}
+              activeTab={activeTab}
+              onTabChange={(tab) => setActiveTab(tab as 'dial' | 'floating')}
+            />
+          </ModalHeader.Content>
+          <ModalHeader.Actions onClose={onClose} />
+        </ModalHeader>
+      }
     >
       {renderContent()}
-    </JsModal>
+    </SimpleBottomSheet>
   );
 };
 
@@ -425,7 +461,7 @@ export const useDevToolsSettings = () => {
 
   const loadSettings = useCallback(async () => {
     try {
-      const savedSettings = await AsyncStorage.getItem(STORAGE_KEY);
+      const savedSettings = await storageGetItem(STORAGE_KEY);
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
         // Migrate old settings format to new format
