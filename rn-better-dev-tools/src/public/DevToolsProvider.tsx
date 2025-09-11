@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { Linking, Alert } from 'react-native';
 import type { LauncherItem, BuiltInActions, DevToolsContextType } from './types';
 

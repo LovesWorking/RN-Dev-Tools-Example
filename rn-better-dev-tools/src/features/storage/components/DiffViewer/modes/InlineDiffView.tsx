@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   },
   path: {
     fontSize: 11,
-    color: macOSColors.text.primaryLight,
+    color: macOSColors.text.primary,
     fontFamily: "monospace",
     flex: 1,
   },

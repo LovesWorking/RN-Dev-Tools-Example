@@ -1042,7 +1042,7 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
   });
   const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 1 });
   const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
+    ({ viewableItems }: { viewableItems: { index: number | null }[] }) => {
       const idx = viewableItems
         .map((v) => v.index)
         .filter((n): n is number => typeof n === 'number');

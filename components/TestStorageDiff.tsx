@@ -98,7 +98,6 @@ export function TestStorageDiff() {
 
       <StorageEventDetailContent
         conversation={mockConversation}
-        activeTab={activeTab}
         selectedEventIndex={selectedEventIndex}
         onEventIndexChange={setSelectedEventIndex}
         disableInternalFooter={false}

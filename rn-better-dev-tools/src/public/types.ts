@@ -1,4 +1,4 @@
-import type * as React from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import type { AppSlot, FloatingMenuRenderCtx } from '../floatingMenu/types';
 
 /**
@@ -6,7 +6,7 @@ import type { AppSlot, FloatingMenuRenderCtx } from '../floatingMenu/types';
  * This flexible union allows for different launch behaviors.
  */
 export type LauncherTarget =
-  | { kind: 'modal'; component: React.ComponentType<any>; props?: any }
+  | { kind: 'modal'; component: ComponentType<any>; props?: any }
   | { kind: 'screen'; navigate: () => void }
   | { kind: 'url'; url: string }
   | { kind: 'command'; run: () => void | Promise<void> };
@@ -19,8 +19,8 @@ export interface LauncherItem {
   id: string;
   label: string;
   icon?:
-    | React.ReactNode
-    | ((ctx: FloatingMenuRenderCtx) => React.ReactNode);
+    | ReactNode
+    | ((ctx: FloatingMenuRenderCtx) => ReactNode);
   target: LauncherTarget;
   slot?: AppSlot;
   color?: string;
@@ -31,7 +31,7 @@ export interface LauncherItem {
  * Built-in actions provided by the DevTools system
  */
 export interface BuiltInActions {
-  openModal: (component: React.ComponentType<any>, props?: any) => void;
+  openModal: (component: ComponentType<any>, props?: any) => void;
   openURL: (url: string) => Promise<void>;
   closeMenu: () => void;
   navigate: (screenName: string, params?: any) => void;

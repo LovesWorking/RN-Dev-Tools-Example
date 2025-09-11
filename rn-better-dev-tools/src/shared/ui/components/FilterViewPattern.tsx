@@ -17,7 +17,7 @@ import {
   FilterList,
 } from "./FilterComponents";
 import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react-native";
+import type { LucideIcon } from "rn-better-dev-tools/icons";
 
 export interface FilterViewPatternProps {
   patterns: Set<string>;

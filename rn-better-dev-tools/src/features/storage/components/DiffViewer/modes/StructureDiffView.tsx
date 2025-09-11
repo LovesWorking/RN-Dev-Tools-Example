@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   nodeName: {
     fontSize: 10,
     fontFamily: "monospace",
-    color: macOSColors.text.primaryLight,
+    color: macOSColors.text.primary,
     flex: 1,
   },
   typeChange: {

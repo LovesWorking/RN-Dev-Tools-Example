@@ -34,7 +34,7 @@ export function fromInstalledApp(app: InstalledApp): LauncherItem {
     slot: app.slot,
     target: {
       kind: 'command',
-      run: app.onPress,
+      run: () => app.onPress({ state: undefined, actions: undefined }),
     },
   };
 }

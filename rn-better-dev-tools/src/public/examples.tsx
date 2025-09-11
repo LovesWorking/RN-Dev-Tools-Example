@@ -5,7 +5,7 @@
  * with various types of launcher items.
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import {
   DevToolsProvider,
@@ -169,15 +169,13 @@ export const ExampleApp: React.FC = () => {
       <View style={styles.container}>
         <DevToolsBootstrap />
         <DevMenuSetup />
-        <StartMenu
-          layout="auto"
-        />
+        <StartMenu />
         <View style={styles.appContent}>
           <Text style={styles.title}>Your App Content Here</Text>
           <Text>The Start Menu is floating above your app!</Text>
           <Text style={styles.hint}>
             Shake device or press Cmd+D (iOS) / Cmd+M (Android) to open React Native Dev Menu,
-            then select "Open Dev Tools 🛠️"
+            then select &quot;Open Dev Tools 🛠️&quot;
           </Text>
         </View>
       </View>
@@ -203,7 +201,6 @@ export const ManualControlExample: React.FC = () => {
       <View style={styles.container}>
         <StartMenu
           items={manualItems}
-          layout="auto"
         />
         <Text>Manual items provided directly to StartMenu</Text>
       </View>

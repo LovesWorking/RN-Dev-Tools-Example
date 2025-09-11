@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { gameUIColors } from '@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors';
 
@@ -27,11 +27,11 @@ export const IndentGuidesOverlay = memo(
     const columns = useMemo(() => {
       const start = Math.max(0, visibleRange.start);
       const end = Math.min(items.length - 1, visibleRange.end);
-      if (start > end || items.length === 0) return [] as Array<{
+      if (start > end || items.length === 0) return [] as {
         depth: number;
         left: number;
-        segments: Array<{ startIndex: number; endIndex: number }>;
-      }>;
+        segments: { startIndex: number; endIndex: number }[];
+      }[];
 
       // Find max depth in visible range
       let maxDepth = 0;
@@ -40,16 +40,16 @@ export const IndentGuidesOverlay = memo(
         if (d > maxDepth) maxDepth = d;
       }
 
-      const results: Array<{
+      const results: {
         depth: number;
         left: number;
-        segments: Array<{ startIndex: number; endIndex: number }>;
-      }> = [];
+        segments: { startIndex: number; endIndex: number }[];
+      }[] = [];
 
       for (let depth = 1; depth <= maxDepth; depth++) {
         const leftTarget = (depth - 0.5) * indentWidth; // center of indent column
         const left = Math.round(leftTarget) + 0.5; // snap for crisp 1px
-        const segments: Array<{ startIndex: number; endIndex: number }> = [];
+        const segments: { startIndex: number; endIndex: number }[] = [];
 
         let segStart = -1;
         let segEnd = -1;
