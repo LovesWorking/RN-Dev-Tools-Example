@@ -33,6 +33,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
+    "@rn-dev-tools/react-native-env-manager": "file:./packages/react-native-env-manager",
     "@tanstack/query-async-storage-persister": "^5.83.1",
     "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-query-persist-client": "^5.84.1",

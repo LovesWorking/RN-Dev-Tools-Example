@@ -86,17 +86,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: gameUIColors.border,
+    borderBottomColor: (gameUIColors as any).border || gameUIColors.secondary,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: gameUIColors.text,
+    color: (gameUIColors as any).text || gameUIColors.primary,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: gameUIColors.textMuted,
+    color: (gameUIColors as any).textMuted || gameUIColors.muted,
   },
   gridContainer: {
     padding: 16,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    color: gameUIColors.text,
+    color: (gameUIColors as any).text || gameUIColors.primary,
     textAlign: 'center',
     paddingHorizontal: 4,
   },

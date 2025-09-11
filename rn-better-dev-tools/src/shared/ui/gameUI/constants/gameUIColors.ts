@@ -107,19 +107,16 @@ const activeTheme = macOSTheme; // macOS - Apple HIG design system
 // ============================================
 
 export const gameUIColors = {
-  // Defaults (dark-ish) which can be overridden by theme spreads
-  background: "rgba(8, 12, 21, 0.98)",
-  panel: "rgba(16, 22, 35, 0.98)",
-  backdrop: "rgba(0, 0, 0, 0.85)",
-  buttonBackground: "rgba(12, 16, 26, 0.9)",
-  pureBlack: "#000000",
-
-  // Default text colors for dark background
-  primary: "#FFFFFF",
-  primaryLight: "#F1F5F9",
-
-  // Theme-specific colors (later spread overrides defaults when present)
+  // Theme-specific colors (spread first)
   ...activeTheme,
+  // Any missing properties will use these defaults
+  background: activeTheme.background || "rgba(8, 12, 21, 0.98)",
+  panel: activeTheme.panel || "rgba(16, 22, 35, 0.98)",
+  backdrop: activeTheme.backdrop || "rgba(0, 0, 0, 0.85)",
+  buttonBackground: activeTheme.buttonBackground || "rgba(12, 16, 26, 0.9)",
+  pureBlack: activeTheme.pureBlack || "#000000",
+  primary: activeTheme.primary || "#FFFFFF",
+  primaryLight: activeTheme.primaryLight || "#F1F5F9",
 } as const;
 
 export type GameUIColorKey = keyof typeof gameUIColors;

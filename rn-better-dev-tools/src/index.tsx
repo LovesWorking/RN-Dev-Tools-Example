@@ -3,7 +3,8 @@ export { FloatingMenu } from "./floatingMenu/FloatingMenu";
 
 // Types
 export type { UserRole } from "./floatingMenu/floatingTools";
-export type { Environment, RequiredEnvVar } from "./features/env";
+export type { RequiredEnvVar } from "@rn-dev-tools/react-native-env-manager";
+export type { Environment } from "./features/env/components/EnvironmentIndicator";
 export type { RequiredStorageKey } from "./features/storage";
 export type { InstalledApp, AppSlot } from "./floatingMenu/types";
 export type { FloatingMenuActions, FloatingMenuState, FloatingMenuRenderCtx } from "./floatingMenu/types";

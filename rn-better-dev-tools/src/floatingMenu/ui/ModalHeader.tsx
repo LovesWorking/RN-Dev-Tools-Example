@@ -1,10 +1,10 @@
 import { FC, PropsWithChildren } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-export const ModalHeader: FC<PropsWithChildren<{ }>> & {
+export const ModalHeader: FC<PropsWithChildren<{}>> & {
   Content: FC<PropsWithChildren<{ title?: string; noMargin?: boolean }>>;
   Actions: FC<{ onClose?: () => void }>;
-} = (({ children }) => {
+} = (({ children }: PropsWithChildren) => {
   return <View style={{ padding: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>{children}</View>;
 }) as any;
 
