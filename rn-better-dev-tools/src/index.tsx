@@ -1,5 +1,5 @@
-// Main floating menu export
-export { RnBetterDevToolsBubble } from "./floatingMenu/RnBetterDevToolsBubble";
+// Main floating menu export (minimal, generic)
+export { FloatingMenu } from "./floatingMenu/FloatingMenu";
 
 // Types
 export type { UserRole } from "./floatingMenu/floatingTools";
@@ -13,3 +13,4 @@ export { JsModal } from "./components/modals/jsModal/JsModal";
 
 // Optional: expose dial menu for standalone usage
 export { DialDevTools } from "./floatingMenu/dial/DialDevTools";
+export { useDevToolsVisibility } from "./floatingMenu/useDevToolsVisibility";

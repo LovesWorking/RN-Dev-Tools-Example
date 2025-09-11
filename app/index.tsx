@@ -17,11 +17,12 @@ import { pokemonNames, searchPokemon } from "@/src/data/pokemonNames";
 import { useQueryClient } from "@tanstack/react-query";
 import { PokemonCardSwipeable } from "./components/PokemonCardSwipeable";
 import {
-  RnBetterDevToolsBubble,
+  FloatingMenu,
   UserRole,
   Environment,
   type InstalledApp,
 } from "@/rn-better-dev-tools/src";
+import { EnvVarsModal } from "@/rn-better-dev-tools/src/features/env";
 import { EnvLaptopIcon } from "rn-better-dev-tools/icons";
 import {
   createEnvVarConfig,
@@ -357,17 +358,35 @@ function PokemonScreen() {
       icon: ({ size }) => (
         <EnvLaptopIcon size={size} color="#9f6" glowColor="#9f6" noBackground />
       ),
-      onPress: ({ actions }) => actions?.openEnvironment?.(),
+      onPress: () =>
+        new Promise<void>((resolve) => {
+          setEnvOpen(true);
+          setEnvCloseResolver(() => resolve);
+        }),
     },
   ];
+  const [isEnvOpen, setEnvOpen] = useState(false);
+
+  const [envCloseResolver, setEnvCloseResolver] = useState<(() => void) | null>(null);
+
   return (
     <View style={styles.container}>
-      <RnBetterDevToolsBubble
-        queryClient={queryClient}
-        environment={environment}
-        userRole={userRole}
+      {/* Minimal floating menu with only Env app */}
+      <FloatingMenu
+        apps={installedApps}
+        actions={{}}
+      />
+
+      {/* Env modal controlled by app */}
+      <EnvVarsModal
+        visible={isEnvOpen}
+        onClose={() => {
+          setEnvOpen(false);
+          envCloseResolver?.();
+          setEnvCloseResolver(null);
+        }}
         requiredEnvVars={requiredEnvVars}
-        installedApps={installedApps}
+        enableSharedModalDimensions={true}
       />
       {/* Premium Animated Background */}
       <LinearGradient

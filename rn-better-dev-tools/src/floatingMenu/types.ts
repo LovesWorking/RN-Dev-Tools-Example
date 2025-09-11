@@ -15,7 +15,7 @@ export interface InstalledApp {
   id: string;
   name: string;
   icon: React.ReactNode | ((ctx: FloatingMenuRenderCtx) => React.ReactNode);
-  onPress: (ctx: { state?: FloatingMenuState; actions?: FloatingMenuActions }) => void;
+  onPress: (ctx: { state?: FloatingMenuState; actions?: FloatingMenuActions }) => void | Promise<void>;
   slot?: AppSlot; // default "both"
   color?: string;
 }
