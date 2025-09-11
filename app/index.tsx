@@ -26,7 +26,7 @@ import {
   Environment,
   createEnvVarConfig,
   envVar,
-} from "@/rn-better-dev-tools/src/features/env";
+} from "@/rn-better-dev-tools/src/components/env";
 import { EnvLaptopIcon } from "rn-better-dev-tools/icons";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import AsyncStorage from "@react-native-async-storage/async-storage";

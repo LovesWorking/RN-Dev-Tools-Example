@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import { FloatingTools, UserStatus, type UserRole } from './floatingTools';
 import type { InstalledApp, FloatingMenuActions, FloatingMenuState } from './types';
 import { useDevToolsSettings } from './DevToolsSettingsModal';
-import { EnvironmentIndicator, type Environment } from '../features/env/components/EnvironmentIndicator';
+import { EnvironmentIndicator, type Environment } from './components/EnvironmentIndicator';
 import { gameUIColors } from './colors';
 import { DialDevTools } from './dial/DialDevTools';
 

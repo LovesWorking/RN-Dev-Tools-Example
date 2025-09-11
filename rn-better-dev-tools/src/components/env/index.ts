@@ -4,9 +4,10 @@
  */
 
 // UI Components
-export { EnvVarsModal } from "./components/EnvVarsModal";
-export { EnvironmentIndicator } from "./components/EnvironmentIndicator";
-export type { Environment } from "./components/EnvironmentIndicator";
+export { EnvVarsModal } from "./EnvVarsModal";
+// Note: EnvironmentIndicator has been moved to floatingMenu/components
+// Re-export Environment type for backward compatibility
+export type { Environment } from "../../floatingMenu/components/EnvironmentIndicator";
 
 // Re-export core functionality from the env-manager package
 export type { 
