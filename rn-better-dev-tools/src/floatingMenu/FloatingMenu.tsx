@@ -1,7 +1,10 @@
 import { FC, useMemo, useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
-import { FloatingTools } from './floatingTools';
+import { FloatingTools, UserStatus, type UserRole } from './floatingTools';
 import type { InstalledApp, FloatingMenuActions, FloatingMenuState } from './types';
+import { useDevToolsSettings } from './DevToolsSettingsModal';
+import { EnvironmentIndicator, type Environment } from '@/rn-better-dev-tools/src/features/env';
+import { gameUIColors } from './colors';
 import { DialDevTools } from './dial/DialDevTools';
 
 export interface FloatingMenuProps {
@@ -9,19 +12,33 @@ export interface FloatingMenuProps {
   state?: FloatingMenuState;
   actions?: FloatingMenuActions;
   hidden?: boolean; // hide bubble when another dev app is open
+  environment?: Environment;
+  userRole?: UserRole;
 }
 
-export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidden }) => {
+export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidden, environment, userRole }) => {
   const [internalHidden, setInternalHidden] = useState(false);
   const [showDial, setShowDial] = useState(false);
   const isHidden = useMemo(
     () => Boolean(hidden ?? (internalHidden || showDial)),
     [hidden, internalHidden, showDial]
   );
+  const { settings: devToolsSettings } = useDevToolsSettings();
+
+  const mergedActions = useMemo(() => {
+    return {
+      ...(actions ?? {}),
+      closeMenu: () => setShowDial(false),
+      hideFloatingRow: () => setInternalHidden(true),
+      showFloatingRow: () => setInternalHidden(false),
+    } as FloatingMenuActions;
+  }, [actions]);
+
+  // Dial is the default/only layout
 
   const handlePress = (app: InstalledApp) => {
     try {
-      const result = app.onPress({ state, actions });
+      const result = app.onPress({ state, actions: mergedActions });
       if (result && typeof (result as Promise<void>).then === 'function') {
         setInternalHidden(true);
         (result as Promise<void>).finally(() => setInternalHidden(false));
@@ -35,16 +52,26 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidd
     <>
       <View pointerEvents={isHidden ? 'none' : 'auto'} style={{ opacity: isHidden ? 0 : 1 }}>
         <FloatingTools enablePositionPersistence>
-        {/* Always-present dial launcher so users can access settings */}
-        <TouchableOpacity
-          accessibilityLabel="Open Dev Tools Menu"
-          onPress={() => setShowDial(true)}
-          style={styles.fab}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuDots}>⋮</Text>
-          </View>
-        </TouchableOpacity>
+        {/* Environment badge (if enabled in settings) */}
+        {devToolsSettings?.floatingTools?.environment && environment ? (
+          <EnvironmentIndicator environment={environment} />
+        ) : null}
+
+        {/* Preferred: UserStatus as the dial launcher when a userRole is provided */}
+        {userRole ? (
+          <UserStatus userRole={userRole} onPress={() => setShowDial(true)} />
+        ) : (
+          // Fallback: small launcher icon to ensure settings are always accessible
+          <TouchableOpacity
+            accessibilityLabel="Open Dev Tools Menu"
+            onPress={() => setShowDial(true)}
+            style={styles.fab}
+          >
+            <View style={styles.menuButton}>
+              <MenuLauncherIcon size={14} />
+            </View>
+          </TouchableOpacity>
+        )}
 
         {apps
           .filter((a) => (a.slot ?? 'both') !== 'dial')
@@ -56,7 +83,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidd
               style={styles.fab}
             >
               {typeof app.icon === 'function'
-                ? app.icon({ slot: 'row', size: 16, state, actions })
+                ? app.icon({ slot: 'row', size: 16, state, actions: mergedActions })
                 : app.icon}
             </TouchableOpacity>
           ))}
@@ -67,7 +94,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidd
         <DialDevTools
           apps={apps}
           state={state}
-          actions={actions}
+          actions={mergedActions}
           onClose={() => {
             setShowDial(false);
           }}
@@ -102,3 +129,33 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
 });
+  const MenuLauncherIcon = ({ size = 14, color = gameUIColors.info }: { size?: number; color?: string }) => {
+    const dotSize = Math.max(2, Math.floor(size / 4));
+    const gap = Math.max(1, Math.floor(size / 16));
+    const items = Array.from({ length: 9 });
+    return (
+      <View
+        style={{
+          width: size,
+          height: size,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignContent: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {items.map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: dotSize,
+              height: dotSize,
+              margin: gap,
+              borderRadius: 2,
+              backgroundColor: color,
+            }}
+          />
+        ))}
+      </View>
+    );
+  };

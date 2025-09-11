@@ -375,6 +375,8 @@ function PokemonScreen() {
       <FloatingMenu
         apps={installedApps}
         actions={{}}
+        environment={environment}
+        userRole={userRole}
       />
 
       {/* Env modal controlled by app */}

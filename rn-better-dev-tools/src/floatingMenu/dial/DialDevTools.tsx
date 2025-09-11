@@ -27,7 +27,7 @@ export type IconType = {
   name: string;
   icon: ReactNode;
   color: string;
-  onPress: () => void;
+  onPress: () => void | Promise<void>;
 };
 
 interface DialDevToolsProps {
@@ -361,10 +361,18 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
 
     // Trigger action
     setTimeout(() => {
-      icons[index].onPress();
-      // Only close if it's not the WiFi toggle (by id)
-      if (icons[index].id !== 'wifi') {
-        handleClose();
+      try {
+        const result = icons[index].onPress();
+        // Use actions to signal floating row hide/show if provided
+        if (result && typeof (result as Promise<void>).then === 'function') {
+          (actions as any)?.hideFloatingRow?.();
+          (result as Promise<void>).finally(() => (actions as any)?.showFloatingRow?.());
+        }
+      } finally {
+        // Only close if it's not the WiFi toggle (by id)
+        if (icons[index].id !== 'wifi') {
+          handleClose();
+        }
       }
     }, 50);
   };
