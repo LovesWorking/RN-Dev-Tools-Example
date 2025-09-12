@@ -200,6 +200,14 @@ function PokemonScreen() {
   const testAsyncStorage = async () => {
     console.log("Testing AsyncStorage operations...");
     try {
+      // Debug: Check current dev tools settings
+      const currentSettings = await AsyncStorage.getItem("dev_tools_settings");
+      console.log("🔍 Current dev tools settings:", currentSettings);
+      
+      // Clear dev tools settings to reset
+      await AsyncStorage.removeItem("dev_tools_settings");
+      console.log("🗑️ Cleared dev tools settings");
+      
       // Test setItem
       await AsyncStorage.setItem("test_key_1", "test_value_1");
       console.log("Set test_key_1");
@@ -368,7 +376,7 @@ function PokemonScreen() {
     },
     {
       id: "network",
-      name: "Network",
+      name: "Network", 
       slot: "both",
       icon: ({ size }) => (
         <Globe size={size} color="#9f6" />

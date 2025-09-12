@@ -103,43 +103,21 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
   const dialApps = apps.filter((a) => (a.slot ?? 'both') !== 'row');
   const isDialEnabled = (id: string) => {
     if (!settings) return true;
-    switch (id) {
-      case 'query':
-        return settings.dialTools.query;
-      case 'env':
-        return settings.dialTools.env;
-      case 'sentry':
-        return settings.dialTools.sentry;
-      case 'storage':
-        return settings.dialTools.storage;
-      case 'wifi':
-        return settings.dialTools.wifi;
-      case 'network':
-        return settings.dialTools.network;
-      default:
-        return true;
-    }
+    // Default to enabled for new tools not in settings
+    return settings.dialTools[id] ?? true;
   };
 
-  const icons: IconType[] = dialApps.map((a) => {
-    const enabled = isDialEnabled(a.id);
-    if (!enabled) {
+  const icons: IconType[] = dialApps
+    .filter((a) => isDialEnabled(a.id))
+    .map((a) => {
       return {
         id: a.id,
-        name: `empty-${a.id}`,
-        icon: null,
-        color: 'transparent',
-        onPress: () => {},
+        name: a.name,
+        icon: typeof a.icon === 'function' ? a.icon({ slot: 'dial', size: 32, state, actions }) : a.icon,
+        color: a.color ?? gameUIColors.primary,
+        onPress: () => a.onPress({ state, actions }),
       };
-    }
-    return {
-      id: a.id,
-      name: a.name,
-      icon: typeof a.icon === 'function' ? a.icon({ slot: 'dial', size: 32, state, actions }) : a.icon,
-      color: a.color ?? gameUIColors.primary,
-      onPress: () => a.onPress({ state, actions }),
-    };
-  });
+    });
 
   // Initialize animations on mount
   useEffect(() => {
@@ -526,6 +504,7 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
           // Immediately update local settings for instant feedback
           setLocalSettings(newSettings);
         }}
+        availableApps={apps}
       />
     </View>
   );

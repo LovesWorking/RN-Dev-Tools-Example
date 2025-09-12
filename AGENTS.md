@@ -71,6 +71,7 @@ export interface InstalledApp {
 ## Dev Commands
 - `npm start` / `npm run dev` — start Expo dev server
 - `npm run ios` / `npm run android` — run on iOS/Android
+- `pnpm reload` / `npm run reload` — reload the Expo app (ALWAYS use before taking screenshots)
 - `npm run lint` — lint
 - `npm test` — run jest tests
 

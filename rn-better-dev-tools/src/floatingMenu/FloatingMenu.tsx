@@ -37,14 +37,8 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidd
   // Filter function for floating tools based on settings
   const isFloatingEnabled = (id: string) => {
     if (!devToolsSettings) return true;
-    switch (id) {
-      case 'env':
-        return devToolsSettings.floatingTools.env;
-      case 'network':
-        return devToolsSettings.floatingTools.network;
-      default:
-        return true;
-    }
+    // Default to enabled for new tools not in settings
+    return devToolsSettings.floatingTools[id] ?? true;
   };
 
   // Dial is the default/only layout

@@ -28,22 +28,9 @@ import { TabSelector } from "@/rn-better-dev-tools/src/shared/ui/components/TabS
 const STORAGE_KEY = "@rn_better_dev_tools_settings";
 
 export interface DevToolsSettings {
-  dialTools: {
-    query: boolean;
-    env: boolean;
-    sentry: boolean;
-    storage: boolean;
-    wifi: boolean;
-    network: boolean;
-  };
-  floatingTools: {
-    query: boolean;
-    env: boolean;
-    sentry: boolean;
-    storage: boolean;
-    wifi: boolean;
-    network: boolean;
-    environment: boolean;
+  dialTools: Record<string, boolean>;
+  floatingTools: Record<string, boolean> & {
+    environment: boolean; // Special setting for environment indicator
   };
 }
 
@@ -52,26 +39,39 @@ interface DevToolsSettingsModalProps {
   onClose: () => void;
   onSettingsChange?: (settings: DevToolsSettings) => void;
   initialSettings?: DevToolsSettings;
+  availableApps?: { id: string; name: string; slot?: 'dial' | 'row' | 'both' }[];
 }
 
-const defaultSettings: DevToolsSettings = {
-  dialTools: {
-    query: true,
-    env: true,
-    sentry: true,
-    storage: true,
-    wifi: true,
-    network: true,
-  },
-  floatingTools: {
-    query: false,
-    env: true,
-    sentry: false,
-    storage: false,
-    wifi: false,
-    network: false,
-    environment: true,
-  },
+// Generate default settings based on available apps
+const generateDefaultSettings = (availableApps: { id: string; name: string; slot?: 'dial' | 'row' | 'both' }[] = []): DevToolsSettings => {
+  const dialDefaults: Record<string, boolean> = {};
+  const floatingDefaults: Record<string, boolean> = {};
+  
+  // Default enabled states for known tools
+  const knownDefaults = {
+    dial: { query: true, env: true, sentry: true, storage: true, wifi: true, network: true },
+    floating: { query: false, env: true, sentry: false, storage: false, wifi: false, network: false }
+  };
+  
+  for (const app of availableApps) {
+    const { id, slot = 'both' } = app;
+    
+    if (slot === 'dial' || slot === 'both') {
+      dialDefaults[id] = knownDefaults.dial[id as keyof typeof knownDefaults.dial] ?? true;
+    }
+    
+    if (slot === 'row' || slot === 'both') {
+      floatingDefaults[id] = knownDefaults.floating[id as keyof typeof knownDefaults.floating] ?? false;
+    }
+  }
+  
+  return {
+    dialTools: dialDefaults,
+    floatingTools: {
+      ...floatingDefaults,
+      environment: true, // Special setting for environment indicator
+    },
+  };
 };
 
 export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
@@ -79,7 +79,9 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   onClose,
   onSettingsChange,
   initialSettings,
+  availableApps = [],
 }) => {
+  const defaultSettings = generateDefaultSettings(availableApps);
   const [settings, setSettings] = useState<DevToolsSettings>(
     initialSettings || defaultSettings
   );
@@ -99,15 +101,16 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
       const savedSettings = await AsyncStorage.getItem(STORAGE_KEY);
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
-        // Migrate old settings format to new format
-        if (parsed.floatingTools && !("query" in parsed.floatingTools)) {
-          parsed.floatingTools = {
-            ...defaultSettings.floatingTools,
-            environment: parsed.floatingTools.environment ?? true,
-          };
-          // Remove userStatus if it exists
-          delete parsed.floatingTools.userStatus;
-        }
+        // Merge saved settings with defaults for any new tools
+        parsed.dialTools = { ...basicDefaultSettings.dialTools, ...parsed.dialTools };
+        parsed.floatingTools = { 
+          ...basicDefaultSettings.floatingTools, 
+          ...parsed.floatingTools,
+          environment: parsed.floatingTools.environment ?? true,
+        };
+        
+        // Remove userStatus if it exists (legacy cleanup)
+        delete parsed.floatingTools.userStatus;
         setSettings(parsed);
       }
     } catch (error) {
@@ -415,24 +418,46 @@ export const DevToolsSettingsModal: FC<DevToolsSettingsModalProps> = ({
   );
 };
 
+// Basic default settings for the hook (when apps are not available)
+const basicDefaultSettings: DevToolsSettings = {
+  dialTools: {
+    query: true,
+    env: true, 
+    sentry: true,
+    storage: true,
+    wifi: true,
+    network: true,
+  },
+  floatingTools: {
+    query: false,
+    env: true,
+    sentry: false,
+    storage: false,
+    wifi: false,
+    network: false,
+    environment: true,
+  },
+};
+
 // Hook to use settings
 export const useDevToolsSettings = () => {
-  const [settings, setSettings] = useState<DevToolsSettings>(defaultSettings);
+  const [settings, setSettings] = useState<DevToolsSettings>(basicDefaultSettings);
 
   const loadSettings = useCallback(async () => {
     try {
       const savedSettings = await AsyncStorage.getItem(STORAGE_KEY);
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
-        // Migrate old settings format to new format
-        if (parsed.floatingTools && !("query" in parsed.floatingTools)) {
-          parsed.floatingTools = {
-            ...defaultSettings.floatingTools,
-            environment: parsed.floatingTools.environment ?? true,
-          };
-          // Remove userStatus if it exists
-          delete parsed.floatingTools.userStatus;
-        }
+        // Merge saved settings with defaults for any new tools
+        parsed.dialTools = { ...basicDefaultSettings.dialTools, ...parsed.dialTools };
+        parsed.floatingTools = { 
+          ...basicDefaultSettings.floatingTools, 
+          ...parsed.floatingTools,
+          environment: parsed.floatingTools.environment ?? true,
+        };
+        
+        // Remove userStatus if it exists (legacy cleanup)
+        delete parsed.floatingTools.userStatus;
         setSettings(parsed);
       } else {
         setSettings(defaultSettings);
