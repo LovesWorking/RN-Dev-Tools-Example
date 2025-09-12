@@ -1,7 +1,7 @@
 module.exports = {
   expo: {
-    name: "rn-dev-tools-exmaple",
-    slug: "rn-dev-tools-exmaple",
+    name: "rn-dev-tools-example",
+    slug: "rn-dev-tools-example",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
@@ -55,9 +55,6 @@ module.exports = {
     },
     extra: {
       router: {},
-      eas: {
-        projectId: "81a01d0d-b181-4026-a672-79ec142391eb",
-      },
     },
     owner: "lovesworking",
   },

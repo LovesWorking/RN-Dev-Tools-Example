@@ -68,10 +68,35 @@ export interface InstalledApp {
   - `onPress` returns a Promise; the Promise resolves in `EnvVarsModal`’s `onClose`.
   - Passes `environment` and `userRole` to `FloatingMenu`.
 
+## 🚨 CRITICAL: EXPO GO ONLY - NO DEV BUILDS 🚨
+
+**This project uses Expo Go exclusively. NEVER use development builds or prebuild.**
+
+### ❌ FORBIDDEN Commands (DO NOT USE):
+```bash
+expo prebuild              # NEVER
+expo run:ios             # NEVER  
+expo run:android          # NEVER
+npx react-native run-ios  # NEVER
+npx react-native run-android # NEVER
+cd ios && pod install     # NO iOS folder should exist
+```
+
+### ✅ ALLOWED Commands:
+```bash
+expo start               # Start for Expo Go
+expo start --go          # Auto-open in Expo Go
+expo start --clear       # Clear cache and start
+npm run nuke:go         # Full reset with Expo Go
+npm run build:packages   # Build local packages
+npm run start:go        # Build packages + start Expo Go
+```
+
 ## Dev Commands
-- `npm start` / `npm run dev` — start Expo dev server
-- `npm run ios` / `npm run android` — run on iOS/Android
-- `pnpm reload` / `npm run reload` — reload the Expo app (ALWAYS use before taking screenshots)
+- `npm start` / `npm run dev` — start Expo dev server (for Expo Go)
+- `npm run nuke:go` — Nuclear reset everything and start with Expo Go
+- `npm run reload` — reload the Expo app (ALWAYS use before taking screenshots)
+- `npm run build:packages` — Build local packages (env-manager, network-inspector)
 - `npm run lint` — lint
 - `npm test` — run jest tests
 

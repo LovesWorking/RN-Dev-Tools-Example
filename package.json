@@ -1,5 +1,5 @@
 {
-  "name": "rn-dev-tools-exmaple",
+  "name": "rn-dev-tools-example",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -32,7 +32,7 @@
     "build:network": "cd packages/react-native-network-inspector && npm run build",
     "build:all": "npm run build:packages",
     "start:full": "npm run build:packages && expo start --clear",
-    "start:go": "npm run build:packages && expo start --go --clear"
+    "nuke": "bash scripts/nuke-and-start.sh"
   },
   "jest": {
     "preset": "jest-expo"

@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "strict": true,
     "baseUrl": ".",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["*"],
       "rn-better-dev-tools/icons": ["rn-better-dev-tools/icons"]
