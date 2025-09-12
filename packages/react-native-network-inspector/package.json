@@ -42,7 +42,6 @@
     "lib",
     "src",
     "!**/__tests__",
-    "!**/__fixtures__",
     "!**/__mocks__"
   ],
   "sideEffects": false,

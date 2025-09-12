@@ -40,3 +40,9 @@ export {
 
 // Hooks
 export { useNetworkEvents } from "./hooks/useNetworkEvents";
+
+// UI Components
+export { SectionButton } from "./components/SectionButton";
+export type { SectionButtonProps } from "./components/SectionButton";
+export { SimpleNetworkModal } from "./components/SimpleNetworkModal";
+export type { SimpleNetworkModalProps } from "./components/SimpleNetworkModal";

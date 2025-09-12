@@ -371,7 +371,7 @@ class NetworkListener {
     };
 
     XMLHttpRequest.prototype.send = function (
-      data?: Document | XMLHttpRequestBodyInit | null,
+      data?: any,
     ) {
       const xhr = this as ExtendedXMLHttpRequest;
       const requestId = xhr._requestId;

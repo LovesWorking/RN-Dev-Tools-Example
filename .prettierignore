@@ -1,0 +1,13 @@
+# Ignore shell scripts
+*.sh
+**/*.sh
+
+# Common ignore patterns
+node_modules
+dist
+build
+coverage
+.expo
+.turbo
+ios
+android

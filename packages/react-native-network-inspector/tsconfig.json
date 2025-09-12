@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["dom", "es2020"],
+    "module": "ESNext",
+    "lib": ["es2020"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -10,10 +11,9 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "noEmit": false,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "lib",
+    "outDir": "lib/typescript",
     "rootDir": "src",
     "jsx": "react-native",
     "noImplicitAny": true,

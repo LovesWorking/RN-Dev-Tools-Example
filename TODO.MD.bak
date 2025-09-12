@@ -24,7 +24,7 @@ The package works but needs config updates for modern bundlers, TypeScript adjus
       ```
 
 ### Optimization
-- [x] [#010] Add 'sideEffects: false' to package.json
+- [ ] [#010] Add 'sideEffects: false' to package.json
       → Enables better tree-shaking in webpack/bundlers
       
 - [x] [#011] Add 'clean' script to package.json: `"clean": "rimraf lib"`
@@ -65,20 +65,20 @@ These all go in tsconfig.json as a batch update:
       → Should catch any `@/` or `rn-better-dev-tools/` imports
       → Add as `scripts/validate-imports.js`
       
-- [x] [#011] Add import validation to CI/CD pipeline [needs #010]
+- [ ] [#011] Add import validation to CI/CD pipeline [needs #010]
       → Prevent regression of bad imports
 
 ## UI Components (Investigation Needed)
 
-- [x] [#012] Review if any UI components should be extracted
+- [ ] [#012] Review if any UI components should be extracted
       → Package is currently headless (good!)
       → Check if minimal UI would help adoption
       
-- [x] [#013] Create SectionButton component for menu integration [needs #012]
+- [ ] [#013] Create SectionButton component for menu integration [needs #012]
       → Only if investigation shows it's needed
       → Keep dependency-free (react/react-native only)
       
-- [x] [#014] Create SimpleNetworkModal component [needs #012]
+- [ ] [#014] Create SimpleNetworkModal component [needs #012]
       → Minimal network event viewer
       → Only if investigation shows value
 

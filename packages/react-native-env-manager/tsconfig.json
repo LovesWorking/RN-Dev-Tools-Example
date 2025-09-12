@@ -30,6 +30,5 @@
     "lib",
     "**/__tests__/**/*",
     "**/__mocks__/**/*"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }

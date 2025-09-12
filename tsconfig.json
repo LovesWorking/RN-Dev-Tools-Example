@@ -4,13 +4,16 @@
     "jsx": "react-jsx",
     "strict": true,
     "baseUrl": ".",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["*"],
       "rn-better-dev-tools/icons": ["rn-better-dev-tools/icons"]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
   "exclude": ["node_modules", "dist", ".expo", ".expo-router", "web-build"]
