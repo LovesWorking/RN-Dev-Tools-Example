@@ -68,6 +68,9 @@ function PokemonScreen() {
   const queryClient = useQueryClient();
 
   const insets = useSafeAreaInsets();
+  
+  // State for current date and time
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   // Auto-open React Query modal for testing - removed due to Event not available in React Native
   const [pokemonStack, setPokemonStack] = useState(() => [
@@ -106,6 +109,15 @@ function PokemonScreen() {
         wobble: new Animated.Value(0),
       }))
   ).current;
+
+  // Update date and time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     // Floating animation for cards

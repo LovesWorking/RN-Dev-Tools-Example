@@ -32,7 +32,9 @@
     "build:network": "cd packages/react-native-network-inspector && npm run build",
     "build:all": "npm run build:packages",
     "start:full": "npm run build:packages && expo start --clear",
-    "nuke": "bash scripts/nuke-and-start.sh"
+    "nuke": "bash scripts/nuke-and-start.sh",
+    "task": "bash scripts/claude-task-new-window.sh",
+    "tasks": "bash scripts/todo-runner-simple.sh"
   },
   "jest": {
     "preset": "jest-expo"
@@ -81,6 +83,25 @@
     "react-query-external-sync": "^2.1.0",
     "typescript": "~5.8.3"
   },
+  "files": [
+    "app",
+    "assets",
+    "components",
+    "constants",
+    "hooks",
+    "modules",
+    "packages",
+    "rn-better-dev-tools",
+    "scripts",
+    "src",
+    "storage",
+    "types",
+    "app.config.js",
+    "babel.config.js",
+    "eslint.config.js",
+    "tsconfig.json",
+    "README.md"
+  ],
   "private": true,
   "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }

@@ -1,0 +1,125 @@
+# TODO — Network Inspector Package Compliance
+
+This document tracks what needs fixing in `@rn-dev-tools/react-native-network-inspector` to comply with our package standards. Tasks are formatted for both humans and AI agents to work on in parallel.
+
+## TL;DR
+The package works but needs config updates for modern bundlers, TypeScript adjustments, and possibly minimal UI components. All imports are already clean (no forbidden dependencies).
+
+## Package.json Configuration
+
+### Required Fields
+- [ ] [#001] Add 'files' field to package.json with `["lib", "src", "!**/__tests__", "!**/__mocks__"]`
+      → Ensures only necessary files get published to npm
+      
+- [ ] [#002] Add 'exports' field for modern module resolution
+      → Need to add:
+      ```json
+      "exports": {
+        ".": {
+          "types": "./lib/typescript/index.d.ts",
+          "import": "./lib/module/index.js",
+          "require": "./lib/commonjs/index.js"
+        }
+      }
+      ```
+
+### Optimization
+- [ ] [#010] Add 'sideEffects: false' to package.json
+      → Enables better tree-shaking in webpack/bundlers
+      
+- [ ] [#011] Add 'clean' script to package.json: `"clean": "rimraf lib"`
+      → Allows cleaning build output before fresh builds
+
+## TypeScript Configuration
+
+These all go in tsconfig.json as a batch update:
+
+- [ ] [#003] Remove "dom" from lib array in tsconfig.json
+      → React Native doesn't need DOM types
+      
+- [ ] [#004] Change "module" to "ESNext" in tsconfig.json
+      → Better for modern bundlers
+      
+- [ ] [#005] Update "outDir" to "lib/typescript" in tsconfig.json
+      → Matches react-native-builder-bob conventions
+      
+- [ ] [#006] Set "noUnusedLocals": true and "noUnusedParameters": true in tsconfig.json
+      → Catches unused code during build
+      
+- [ ] [#007] Remove "noEmit": false" from tsconfig.json
+      → Not needed with bob, it handles emit
+
+## Dependencies & Build Tools
+
+- [ ] [#008] Install rimraf@^5.0.0 as devDependency
+      → Needed for the clean script (#011)
+      → Command: `npm install --save-dev rimraf@^5.0.0`
+
+## Code Quality Checks
+
+- [ ] [#009] Verify no external dependencies beyond react/react-native
+      → Review all import statements
+      → Currently looks clean but need to confirm
+      
+- [ ] [#010] Create validation script to check for forbidden imports
+      → Should catch any `@/` or `rn-better-dev-tools/` imports
+      → Add as `scripts/validate-imports.js`
+      
+- [ ] [#011] Add import validation to CI/CD pipeline [needs #010]
+      → Prevent regression of bad imports
+
+## UI Components (Investigation Needed)
+
+- [ ] [#012] Review if any UI components should be extracted
+      → Package is currently headless (good!)
+      → Check if minimal UI would help adoption
+      
+- [ ] [#013] Create SectionButton component for menu integration [needs #012]
+      → Only if investigation shows it's needed
+      → Keep dependency-free (react/react-native only)
+      
+- [ ] [#014] Create SimpleNetworkModal component [needs #012]
+      → Minimal network event viewer
+      → Only if investigation shows value
+
+## Implementation Strategy
+
+**Quick Wins (do first):**
+1. Package.json updates (#001, #002, #010, #011) - all in one file
+2. TypeScript config (#003-#007) - all in one file
+3. Install rimraf (#008) - one command
+
+**Verification:**
+4. Check dependencies (#009) - quick review
+5. Build and test everything works
+
+**Future Improvements:**
+6. UI investigation (#012-#014) - only if needed
+7. Validation tooling (#010-#011) - nice to have
+
+## Notes for Agents
+
+- Tasks #001, #002, #010, #011 all modify package.json - can be done together
+- Tasks #003-#007 all modify tsconfig.json - can be done together  
+- Task #008 should be done after #011 (which adds the script that uses rimraf)
+- Tasks #013 and #014 depend on #012's investigation - may not be needed
+- The package already has clean imports (no @/ or cross-package refs) ✅
+
+## Status Tracking
+
+### In Progress
+<!-- AI agents will move tasks here when claiming them -->
+
+### Completed
+<!-- Completed tasks get moved here with timestamps -->
+
+### Blocked
+<!-- Tasks waiting on dependencies -->
+
+---
+
+When working on these tasks:
+1. Claim a task by marking it `[~]` with your session ID
+2. Complete the work and verify it builds
+3. Mark as `[x]` with completion time
+4. The package should remain fully functional throughout
