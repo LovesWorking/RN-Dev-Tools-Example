@@ -460,11 +460,11 @@ export const useDevToolsSettings = () => {
         delete parsed.floatingTools.userStatus;
         setSettings(parsed);
       } else {
-        setSettings(defaultSettings);
+        setSettings(basicDefaultSettings);
       }
     } catch (error) {
       console.error("Failed to load dev tools settings:", error);
-      setSettings(defaultSettings);
+      setSettings(basicDefaultSettings);
     }
   }, []);
 

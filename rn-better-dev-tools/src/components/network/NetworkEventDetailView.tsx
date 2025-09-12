@@ -27,10 +27,37 @@ import type { NetworkEvent } from "@rn-dev-tools/react-native-network-inspector"
 import {
   formatBytes,
   formatDuration,
-  formatHttpStatus,
 } from "@rn-dev-tools/react-native-network-inspector";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
+
+// Local helper function to get status styling info
+const getHttpStatusDetails = (status: number) => {
+  const getStatusColor = (code: number): string => {
+    if (code >= 200 && code < 300) return '#10B981'; // green for 2xx
+    if (code >= 300 && code < 400) return '#F59E0B'; // amber for 3xx
+    if (code >= 400 && code < 500) return '#EF4444'; // red for 4xx
+    if (code >= 500) return '#8B5CF6'; // purple for 5xx
+    return '#6B7280'; // gray for other
+  };
+
+  const getStatusText = (code: number): string => {
+    const statusTexts: Record<number, string> = {
+      200: 'OK', 201: 'Created', 204: 'No Content',
+      301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified',
+      400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found',
+      500: 'Internal Server Error', 502: 'Bad Gateway', 503: 'Service Unavailable',
+    };
+    return statusTexts[code] || 'Unknown';
+  };
+
+  return {
+    color: getStatusColor(status),
+    text: status.toString(),
+    meaning: getStatusText(status)
+  };
+};
+
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
@@ -139,7 +166,7 @@ export function NetworkEventDetailView({
   ignoredPatterns = new Set(),
   onTogglePattern = () => {},
 }: NetworkEventDetailViewProps) {
-  const status = event.status ? formatHttpStatus(event.status) : null;
+  const status = event.status ? getHttpStatusDetails(event.status) : null;
   const isPending = !event.status && !event.error;
 
   return (
