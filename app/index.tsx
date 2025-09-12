@@ -27,7 +27,9 @@ import {
   createEnvVarConfig,
   envVar,
 } from "@/rn-better-dev-tools/src/components/env";
-import { EnvLaptopIcon } from "rn-better-dev-tools/icons";
+import { NetworkModal } from "@/rn-better-dev-tools/src/components/network/NetworkModal";
+import { EnvLaptopIcon, Globe } from "rn-better-dev-tools/icons";
+import { startNetworkListener } from "@rn-dev-tools/react-native-network-inspector";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { IconShowcase } from "@/docs/svg/IconShowCase";
@@ -364,10 +366,30 @@ function PokemonScreen() {
           setEnvCloseResolver(() => resolve);
         }),
     },
+    {
+      id: "network",
+      name: "Network",
+      slot: "both",
+      icon: ({ size }) => (
+        <Globe size={size} color="#9f6" />
+      ),
+      onPress: () =>
+        new Promise<void>((resolve) => {
+          setNetworkOpen(true);
+          setNetworkCloseResolver(() => resolve);
+        }),
+    },
   ];
   const [isEnvOpen, setEnvOpen] = useState(false);
+  const [isNetworkOpen, setNetworkOpen] = useState(false);
 
   const [envCloseResolver, setEnvCloseResolver] = useState<(() => void) | null>(null);
+  const [networkCloseResolver, setNetworkCloseResolver] = useState<(() => void) | null>(null);
+
+  // Start network listener when component mounts
+  useEffect(() => {
+    startNetworkListener();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -389,6 +411,16 @@ function PokemonScreen() {
         }}
         requiredEnvVars={requiredEnvVars}
         enableSharedModalDimensions={true}
+      />
+
+      {/* Network modal controlled by app */}
+      <NetworkModal
+        visible={isNetworkOpen}
+        onClose={() => {
+          setNetworkOpen(false);
+          networkCloseResolver?.();
+          setNetworkCloseResolver(null);
+        }}
       />
       {/* Premium Animated Background */}
       <LinearGradient

@@ -34,6 +34,19 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidd
     } as FloatingMenuActions;
   }, [actions]);
 
+  // Filter function for floating tools based on settings
+  const isFloatingEnabled = (id: string) => {
+    if (!devToolsSettings) return true;
+    switch (id) {
+      case 'env':
+        return devToolsSettings.floatingTools.env;
+      case 'network':
+        return devToolsSettings.floatingTools.network;
+      default:
+        return true;
+    }
+  };
+
   // Dial is the default/only layout
 
   const handlePress = (app: InstalledApp) => {
@@ -74,7 +87,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({ apps, state, actions, hidd
         )}
 
         {apps
-          .filter((a) => (a.slot ?? 'both') !== 'dial')
+          .filter((a) => (a.slot ?? 'both') !== 'dial' && isFloatingEnabled(a.id))
           .map((app) => (
             <TouchableOpacity
               key={`row-${app.id}`}
