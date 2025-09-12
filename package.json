@@ -26,7 +26,13 @@
     "screenshot:ios": "bash scripts/screenshot.sh ios",
     "screenshot:android": "bash scripts/screenshot.sh android",
     "gpt5-zip-repo": "bash scripts/gpt5-zip-repo.sh",
-    "zip": "bash scripts/gpt5-zip-repo.sh"
+    "zip": "bash scripts/gpt5-zip-repo.sh",
+    "build:packages": "npm run build:env && npm run build:network",
+    "build:env": "cd packages/react-native-env-manager && npm run build",
+    "build:network": "cd packages/react-native-network-inspector && npm run build",
+    "build:all": "npm run build:packages",
+    "start:full": "npm run build:packages && expo start --clear",
+    "start:go": "npm run build:packages && expo start --go --clear"
   },
   "jest": {
     "preset": "jest-expo"
