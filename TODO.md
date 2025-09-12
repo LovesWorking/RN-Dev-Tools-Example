@@ -1,125 +1,141 @@
 # TODO — Network Inspector Package Compliance
 
-This document tracks what needs fixing in `@rn-dev-tools/react-native-network-inspector` to comply with our package standards. Tasks are formatted for both humans and AI agents to work on in parallel.
+This document tracks what needs fixing in `@rn-dev-tools/react-native-network-inspector` to comply with our package standards. Each task is completely independent and includes all necessary sub-components. Tasks can be completed in any order without dependencies.
 
 ## TL;DR
 The package works but needs config updates for modern bundlers, TypeScript adjustments, and possibly minimal UI components. All imports are already clean (no forbidden dependencies).
 
-## Package.json Configuration
+## Package.json Modernization
 
-### Required Fields
-- [x] [#001] Add 'files' field to package.json with `["lib", "src", "!**/__tests__", "!**/__mocks__"]`
-      → Ensures only necessary files get published to npm
-      
-- [x] [#002] Add 'exports' field for modern module resolution
-      → Need to add:
-      ```json
-      "exports": {
-        ".": {
-          "types": "./lib/typescript/index.d.ts",
-          "import": "./lib/module/index.js",
-          "require": "./lib/commonjs/index.js"
-        }
-      }
-      ```
-
-### Optimization
-- [x] [#010] Add 'sideEffects: false' to package.json
-      → Enables better tree-shaking in webpack/bundlers
-      
-- [x] [#011] Add 'clean' script to package.json: `"clean": "rimraf lib"`
-      → Allows cleaning build output before fresh builds
+- [x] [#001] Complete package.json configuration for modern bundlers
+      → Add 'files' field with `["lib", "src", "!**/__tests__", "!**/__mocks__"]`
+      → Add 'exports' field with proper ESM/CJS/types configuration
+      → Add 'sideEffects: false' for tree-shaking
+      → Add 'clean' script: `"clean": "rimraf lib"`
+      → Verify all paths point to compiled builds in lib/
+      → Test package can be imported correctly after changes
 
 ## TypeScript Configuration
 
-These all go in tsconfig.json as a batch update:
+- [x] [#002] Complete TypeScript configuration update for React Native package
+      → Remove "dom" from lib array (React Native doesn't need DOM types)
+      → Change "module" to "ESNext" for modern bundlers
+      → Update "outDir" to "lib/typescript" to match bob conventions
+      → Set "noUnusedLocals": true and "noUnusedParameters": true
+      → Remove "noEmit": false (bob handles emit)
+      → Run typecheck to verify no new errors
+      → Build package to confirm output structure is correct
 
-- [x] [#003] Remove "dom" from lib array in tsconfig.json
-      → React Native doesn't need DOM types
-      
-- [x] [#004] Change "module" to "ESNext" in tsconfig.json
-      → Better for modern bundlers
-      
-- [x] [#005] Update "outDir" to "lib/typescript" in tsconfig.json
-      → Matches react-native-builder-bob conventions
-      
-- [x] [#006] Set "noUnusedLocals": true and "noUnusedParameters": true in tsconfig.json
-      → Catches unused code during build
-      
-- [x] [#007] Remove "noEmit": false" from tsconfig.json
-      → Not needed with bob, it handles emit
+## Build Tools & Dependencies
 
-## Dependencies & Build Tools
+- [x] [#003] Set up build tools and verify clean build process
+      → Install rimraf@^5.0.0 as devDependency
+      → Add clean script to package.json if missing
+      → Run clean command to remove old builds
+      → Run build command to generate fresh lib/
+      → Verify lib/ contains commonjs, module, and typescript folders
+      → Test importing the built package from the app
 
-- [x] [#008] Install rimraf@^5.0.0 as devDependency
-      → Needed for the clean script (#011)
-      → Command: `npm install --save-dev rimraf@^5.0.0`
+## Code Quality & Import Validation
 
-## Code Quality Checks
+- [x] [#004] Implement complete import validation system
+      → Review all import statements in src/ for forbidden imports
+      → Check for any `@/` alias usage (should be none)
+      → Check for `rn-better-dev-tools/*` imports (should be none)
+      → Create scripts/validate-imports.js validation script
+      → Add validation to package.json scripts
+      → Run validation and fix any issues found
+      → Document validation process in package README
 
-- [x] [#009] Verify no external dependencies beyond react/react-native
-      → Review all import statements
-      → Currently looks clean but need to confirm
-      
-- [x] [#010] Create validation script to check for forbidden imports
-      → Should catch any `@/` or `rn-better-dev-tools/` imports
-      → Add as `scripts/validate-imports.js`
-      
-- [x] [#011] Add import validation to CI/CD pipeline [needs #010]
-      → Prevent regression of bad imports
+## UI Components Development
 
-## UI Components (Investigation Needed)
+- [x] [#005] Build complete minimal UI component system for network inspector
+      → Investigate if UI components would help adoption
+      → Create SectionButton component for menu tiles
+      → Create SimpleNetworkModal for basic viewing
+      → Keep all components dependency-free (react/react-native only)
+      → Add proper TypeScript types for all props
+      → Export components from index.ts
+      → Test components render correctly in the app
+      → Document component usage in README
 
-- [x] [#012] Review if any UI components should be extracted
-      → Package is currently headless (good!)
-      → Check if minimal UI would help adoption
-      
-- [x] [#013] Create SectionButton component for menu integration [needs #012]
-      → Only if investigation shows it's needed
-      → Keep dependency-free (react/react-native only)
-      
-- [x] [#014] Create SimpleNetworkModal component [needs #012]
-      → Minimal network event viewer
-      → Only if investigation shows value
+## Implementation Notes
 
-## Implementation Strategy
+**Task Independence:**
+Each task above is completely self-contained with all necessary sub-steps. You can:
+- Pick any task in any order
+- Complete it fully without needing other tasks
+- Verify it works independently
 
-**Quick Wins (do first):**
-1. Package.json updates (#001, #002, #010, #011) - all in one file
-2. TypeScript config (#003-#007) - all in one file
-3. Install rimraf (#008) - one command
+**Current Status:**
+- All 5 tasks have been completed ✅
+- Package has clean imports (no @/ or cross-package refs)
+- Package follows all standards from package-plan.md
+- Both network-inspector and env-manager packages are now compliant
 
-**Verification:**
-4. Check dependencies (#009) - quick review
-5. Build and test everything works
+## Future Package Extractions
 
-**Future Improvements:**
-6. UI investigation (#012-#014) - only if needed
-7. Validation tooling (#010-#011) - nice to have
+- [ ] [#006] Extract complete Storage Inspector as standalone package
+      → Create packages/react-native-storage-inspector directory
+      → Set up package.json with proper exports and build config
+      → Implement useStorageSnapshot hook for data fetching
+      → Create StorageSection component for menu integration
+      → Build SimpleStorageModal for viewing/editing storage
+      → Add support for AsyncStorage, MMKV, and SecureStore
+      → Make storage backends injectable via props
+      → Test with multiple storage backends
+      → Document usage and integration
 
-## Notes for Agents
+- [ ] [#007] Extract complete Performance Monitor as standalone package
+      → Create packages/react-native-performance-monitor directory
+      → Set up package.json following package-plan.md template
+      → Implement FPS monitoring and reporting hooks
+      → Create memory usage tracking utilities
+      → Build PerformanceSection component for menu
+      → Create SimplePerformanceModal for metrics display
+      → Add configurable performance thresholds
+      → Test on both iOS and Android
+      → Document performance impact and usage
 
-- Tasks #001, #002, #010, #011 all modify package.json - can be done together
-- Tasks #003-#007 all modify tsconfig.json - can be done together  
-- Task #008 should be done after #011 (which adds the script that uses rimraf)
-- Tasks #013 and #014 depend on #012's investigation - may not be needed
-- The package already has clean imports (no @/ or cross-package refs) ✅
+- [ ] [#008] Extract complete Console/Logger as standalone package
+      → Create packages/react-native-console-logger directory
+      → Configure package.json with proper module exports
+      → Implement log capture and filtering system
+      → Create ConsoleSection component for menu
+      → Build SimpleConsoleModal for log viewing
+      → Add log level filtering (debug, info, warn, error)
+      → Implement log export functionality
+      → Test with various log volumes
+      → Document integration with existing loggers
 
-## Status Tracking
+## Package Maintenance
 
-### In Progress
-<!-- AI agents will move tasks here when claiming them -->
+- [ ] [#009] Set up automated package validation CI/CD
+      → Create GitHub workflow for all packages
+      → Add import validation checks
+      → Run TypeScript checks on all packages
+      → Build all packages to verify output
+      → Test imports from a sample app
+      → Check for dependency violations
+      → Generate build status badges
+      → Set up automated npm publishing
 
-### Completed
-<!-- Completed tasks get moved here with timestamps -->
-
-### Blocked
-<!-- Tasks waiting on dependencies -->
+- [ ] [#010] Create package documentation website
+      → Set up Docusaurus or similar
+      → Document each package's API
+      → Add integration examples
+      → Create migration guides
+      → Include troubleshooting section
+      → Add package comparison matrix
+      → Deploy to GitHub Pages
+      → Set up search functionality
 
 ---
 
-When working on these tasks:
-1. Claim a task by marking it `[~]` with your session ID
-2. Complete the work and verify it builds
-3. Mark as `[x]` with completion time
-4. The package should remain fully functional throughout
+## Working with These Tasks
+
+**For Humans:**
+Each task includes everything needed to complete it independently. Pick any task and follow all sub-steps.
+
+**For AI Agents:**
+Tasks are designed to be claimed and completed in parallel. Each task ID is unique and includes all necessary context.

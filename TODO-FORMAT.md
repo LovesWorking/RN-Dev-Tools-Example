@@ -4,9 +4,12 @@
 
 Tasks MUST follow this exact format for the automated runner to work:
 ```markdown
-- [ ] [#001] Task description here
-- [ ] [#002] Another task description
-- [x] [#003] Completed task example
+- [ ] [#001] Complete self-contained task description
+      → First sub-task that needs to be done
+      → Second sub-task to complete
+      → Third sub-task with specific details
+      → Verification step to ensure it works
+      → Documentation or cleanup step
 ```
 
 ## Key Requirements
@@ -15,7 +18,9 @@ Tasks MUST follow this exact format for the automated runner to work:
 - **MUST** start with `- [ ]` for uncompleted tasks
 - **MUST** have task ID in format `[#XXX]` immediately after checkbox
 - Task ID should be 3 digits with leading zeros (e.g., `[#001]`, `[#010]`, `[#100]`)
-- Description comes after the task ID
+- Main description should be complete and self-contained
+- **MUST** include all necessary sub-tasks with `→` prefix
+- Each task should be completable without waiting for other tasks
 
 ### 2. Task States
 - `[ ]` = Not started (will be picked up by runner)
@@ -23,26 +28,55 @@ Tasks MUST follow this exact format for the automated runner to work:
 - `[~]` = In progress (optional - for manual tracking)
 - `[!]` = Blocked (optional - for manual tracking)
 
-### 3. File Structure
-Tasks can be organized with headers and details, but the task lines must follow the format:
+### 3. Sub-Task Requirements (IMPORTANT - Prevents Blockers)
+- **Every task MUST include ALL necessary sub-tasks**
+- Sub-tasks use `→` prefix on indented lines below main task
+- Include setup, implementation, verification, and cleanup steps
+- No task should depend on another task being completed first
+- If a task seems to need another task, combine them or include all steps
+
+### 4. File Structure
+Tasks can be organized with headers, but each task must be self-contained:
 
 ```markdown
 # TODO: Project Name
 
-## Section Name
+## Feature Implementation
 
-### Subsection (optional)
-- [ ] [#001] First task in this section
-- [ ] [#002] Second task in this section
-      → Optional details on next line
-      → More details can go here
-      
-- [ ] [#003] Third task with inline details - keep it on one line for the task
+- [ ] [#001] Implement complete user authentication system
+      → Set up auth context and provider
+      → Create login form with validation
+      → Create signup form with validation  
+      → Implement JWT token handling
+      → Add secure token storage
+      → Create auth API endpoints
+      → Add error handling and user feedback
+      → Test login/logout flow
+      → Document auth usage in README
 
-## Another Section
-- [ ] [#004] Task in different section
-- [x] [#005] Completed task (will be skipped)
-- [ ] [#006] Another pending task
+- [ ] [#002] Build complete profile management interface
+      → Create profile data model
+      → Design profile edit form UI
+      → Implement image upload functionality
+      → Add form validation rules
+      → Create API endpoints for profile updates
+      → Handle loading and error states
+      → Add success notifications
+      → Test with various user inputs
+      → Update user documentation
+
+## Infrastructure
+
+- [ ] [#003] Set up complete CI/CD pipeline
+      → Create GitHub Actions workflow file
+      → Configure build steps for all packages
+      → Add test execution stage
+      → Set up linting and type checking
+      → Configure deployment to staging
+      → Add environment variable handling
+      → Set up notification webhooks
+      → Test pipeline with sample PR
+      → Document CI/CD process
 ```
 
 ## Running Tasks
@@ -111,15 +145,52 @@ npm run tasks 10-15 TODO.md
 
 ## Tips for Task Descriptions
 
-### Good Task Descriptions (Clear & Actionable)
-✅ `- [ ] [#001] Add 'files' field to package.json with ["lib", "src"]`
-✅ `- [ ] [#002] Install rimraf@^5.0.0 as devDependency`
-✅ `- [ ] [#003] Create user authentication endpoint at POST /api/auth/login`
+### Good Task Descriptions (Self-Contained & Complete)
+✅ **Complete task with all steps:**
+```markdown
+- [ ] [#001] Implement complete package.json configuration
+      → Add 'files' field with ["lib", "src", "!**/__tests__"]
+      → Add 'exports' field for ESM/CJS support
+      → Update main/module paths to include .js extensions
+      → Add rimraf@^5.0.0 as devDependency
+      → Add clean script using rimraf
+      → Run build to verify configuration
+      → Test package can be imported
+```
 
-### Poor Task Descriptions (Too Vague)
-❌ `- [ ] [#001] Fix the thing`
-❌ `- [ ] [#002] Update stuff`
-❌ `- [ ] [#003] Make it work`
+✅ **All dependencies included:**
+```markdown
+- [ ] [#002] Create complete user authentication system
+      → Install bcrypt and jsonwebtoken packages
+      → Create user model with password hashing
+      → Build login endpoint with validation
+      → Build signup endpoint with validation
+      → Implement JWT token generation
+      → Add token verification middleware
+      → Create protected route examples
+      → Test all auth flows
+```
+
+### Poor Task Descriptions (Incomplete or Dependent)
+❌ **Missing sub-tasks:**
+```markdown
+- [ ] [#001] Fix the authentication bug
+```
+
+❌ **Has hidden dependencies:**
+```markdown
+- [ ] [#002] Deploy to production (needs #001, #003, #005 first)
+```
+
+❌ **Too vague:**
+```markdown
+- [ ] [#003] Update the configuration files
+```
+
+❌ **Requires external context:**
+```markdown
+- [ ] [#004] Implement the feature we discussed
+```
 
 ## Task Details Section (Optional)
 
@@ -144,13 +215,51 @@ Steps:
 3. Test connection on startup
 ```
 
+## Avoiding Blocker Tasks (CRITICAL)
+
+### Why Self-Contained Tasks Matter
+When tasks depend on each other, you create bottlenecks:
+- AI agents sit idle waiting for dependencies
+- Humans get blocked and context-switch
+- Progress slows dramatically
+- Debugging becomes harder
+
+### How to Make Tasks Independent
+1. **Include ALL setup steps** - Don't assume previous work
+2. **Add installation commands** - Include all npm/yarn installs needed
+3. **Provide file paths** - Be explicit about where to make changes
+4. **Include verification** - Add steps to test the work
+5. **Combine related work** - If tasks are tightly coupled, make them one task
+
+### Example: Converting Dependent Tasks to Independent
+
+**BAD (Has Dependencies):**
+```markdown
+- [ ] [#001] Create user model
+- [ ] [#002] Add authentication to user model (needs #001)
+- [ ] [#003] Create login endpoint (needs #001 and #002)
+```
+
+**GOOD (Self-Contained):**
+```markdown
+- [ ] [#001] Implement complete user authentication backend
+      → Create user model with all fields
+      → Add password hashing to model
+      → Create login endpoint with validation
+      → Create signup endpoint
+      → Add JWT token generation
+      → Test all endpoints work
+```
+
 ## Important Notes
 
 1. **Task IDs must be unique** - Each task needs its own number
-2. **Keep task descriptions on one line** - Details go on indented lines below
-3. **Task numbers can be any 1-3 digit number** - The runner finds tasks by their ID, not position
-4. **Completed tasks stay in the file** - They're just marked with `[x]`
-5. **The runner updates the file automatically** - No manual marking needed
+2. **Main task on one line** - Sub-tasks go on indented lines with `→`
+3. **Every task is independent** - Can be done without waiting for others
+4. **Include ALL sub-steps** - No hidden dependencies or assumptions
+5. **Task numbers can be any 1-3 digit number** - Runner finds by ID
+6. **Completed tasks stay in file** - Marked with `[x]`
+7. **Runner updates automatically** - No manual marking needed
 
 ## Automation Features
 
