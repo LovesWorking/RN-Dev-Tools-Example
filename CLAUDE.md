@@ -39,6 +39,22 @@ These packages must be built before running the app:
 - Use iOS Simulator with Expo Go app installed
 - No native builds = no native testing required
 
+## React Native Code Rules
+
+### ❌ DO NOT import React separately
+React Native with Expo SDK 50+ includes React in the global scope. Never do:
+```javascript
+import React from 'react'; // ❌ WRONG
+```
+
+Instead, use React directly without importing:
+```javascript
+// ✅ CORRECT - React is available globally
+export const Component: React.FC<Props> = () => {
+  return <View>...</View>;
+};
+```
+
 ## Project Structure
 ```
 /
