@@ -16,7 +16,11 @@ import {
   type DevToolsSettings,
   useDevToolsSettings,
 } from "../DevToolsSettingsModal";
-import type { InstalledApp, FloatingMenuActions, FloatingMenuState } from "../types";
+import type {
+  InstalledApp,
+  FloatingMenuActions,
+  FloatingMenuState,
+} from "../types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CIRCLE_SIZE = Math.min(SCREEN_WIDTH * 0.75, 320); // Max 320px for better fit
@@ -100,7 +104,7 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
   const pulseAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
 
   // Map data-driven apps to dial icons, inserting empty slots for disabled items
-  const dialApps = apps.filter((a) => (a.slot ?? 'both') !== 'row');
+  const dialApps = apps.filter((a) => (a.slot ?? "both") !== "row");
   const isDialEnabled = (id: string) => {
     if (!settings) return true;
     // Default to enabled for new tools not in settings
@@ -113,7 +117,10 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
       return {
         id: a.id,
         name: a.name,
-        icon: typeof a.icon === 'function' ? a.icon({ slot: 'dial', size: 32, state, actions }) : a.icon,
+        icon:
+          typeof a.icon === "function"
+            ? a.icon({ slot: "dial", size: 32, state, actions })
+            : a.icon,
         color: a.color ?? gameUIColors.primary,
         onPress: () => a.onPress({ state, actions }),
       };
@@ -342,13 +349,15 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
       try {
         const result = icons[index].onPress();
         // Use actions to signal floating row hide/show if provided
-        if (result && typeof (result as Promise<void>).then === 'function') {
+        if (result && typeof (result as Promise<void>).then === "function") {
           (actions as any)?.hideFloatingRow?.();
-          (result as Promise<void>).finally(() => (actions as any)?.showFloatingRow?.());
+          (result as Promise<void>).finally(() =>
+            (actions as any)?.showFloatingRow?.()
+          );
         }
       } finally {
         // Only close if it's not the WiFi toggle (by id)
-        if (icons[index].id !== 'wifi') {
+        if (icons[index].id !== "wifi") {
           handleClose();
         }
       }
@@ -433,7 +442,6 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
           {/* Icon items */}
           {icons.map((icon, i) => (
             <DialIcon
-              selectedIcon={selectedIcon}
               onPress={handleIconPress}
               iconsProgress={iconsProgress}
               icon={icon}
@@ -509,7 +517,6 @@ export const DialDevTools: FC<DialDevToolsProps> = ({
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

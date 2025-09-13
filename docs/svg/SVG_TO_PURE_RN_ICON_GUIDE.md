@@ -217,7 +217,7 @@ const PurePolyline = ({ points, stroke, strokeWidth = 2 }) => {
         y2={y2}
         stroke={stroke}
         strokeWidth={strokeWidth}
-      />,
+      />
     );
   }
 
@@ -382,7 +382,7 @@ class SVGToPureRN {
 
   static convertRect(
     { x, y, width, height, rx },
-    { stroke, strokeWidth, fill },
+    { stroke, strokeWidth, fill }
   ) {
     return (
       <PureRect
@@ -734,7 +734,6 @@ export const ActivityIconFont = ({ size = 24, color = "black" }) => (
 
 ```javascript
 // PureRNIcons.js
-import React from "react";
 import { View, Image } from "react-native";
 
 // Base Components

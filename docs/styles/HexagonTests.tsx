@@ -1,6 +1,4 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet, ViewStyle } from "react-native";
-
 const hexagonColor = "#FFD700"; // Yellow for visibility
 
 // Test 1: Much thicker rectangles

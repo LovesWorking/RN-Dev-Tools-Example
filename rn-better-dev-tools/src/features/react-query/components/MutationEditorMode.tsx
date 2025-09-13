@@ -79,7 +79,6 @@ export function MutationEditorMode({
               onClick={action.onPress}
               text={action.label}
               bgColorClass={action.bgColorClass}
-              _textColorClass={action.textColorClass}
               disabled={action.disabled}
             />
           ))}

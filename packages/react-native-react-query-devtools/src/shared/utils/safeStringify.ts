@@ -160,7 +160,7 @@ export function safeStringify(
   }
 
   // Custom replacer for special types
-  const replacer = (key: string, value: JsonValue): JsonValue => {
+  const replacer = (_key: string, value: JsonValue): JsonValue => {
     // Handle primitives that JSON.stringify can't handle
     if (typeof value === 'bigint') return `${value.toString()}n`;
     if (typeof value === 'symbol') return value.toString();

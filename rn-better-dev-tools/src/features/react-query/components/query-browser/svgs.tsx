@@ -51,7 +51,7 @@ export function Copier() {
   );
 }
 
-export function CopiedCopier(props: { theme: "light" | "dark" }) {
+export function CopiedCopier() {
   return (
     <Svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <Path
@@ -1168,7 +1168,6 @@ export function ReactQueryButton() {
 export function CyberpunkBorderBox({
   color = "#FF006E",
   secondaryColor = "#FF4081",
-  accentColor = "#FF80AB",
 }) {
   return (
     <Svg
@@ -1313,7 +1312,7 @@ export function AnimatedCyberpunkBorderBox({
               duration: 1500,
               useNativeDriver: false,
             }),
-          ]),
+          ])
         ).start();
         break;
 
@@ -1324,7 +1323,7 @@ export function AnimatedCyberpunkBorderBox({
             toValue: 1,
             duration: 2000,
             useNativeDriver: false,
-          }),
+          })
         ).start();
         break;
 
@@ -1380,7 +1379,7 @@ export function AnimatedCyberpunkBorderBox({
             toValue: 1,
             duration: 4000,
             useNativeDriver: false,
-          }),
+          })
         ).start();
         break;
     }
@@ -1726,13 +1725,7 @@ export function AnimatedCyberpunkBorderBox({
   }
 
   // Default static version
-  return (
-    <CyberpunkBorderBox
-      color={color}
-      secondaryColor={secondaryColor}
-      accentColor={accentColor}
-    />
-  );
+  return <CyberpunkBorderBox color={color} secondaryColor={secondaryColor} />;
 }
 
 // React Native compatible version of ReactQueryButton - now uses the border box

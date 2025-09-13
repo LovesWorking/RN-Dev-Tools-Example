@@ -39,7 +39,7 @@ export function useUnmountAwareTimeout() {
       timeoutIds.forEach((id) => global.clearTimeout(id));
       timeoutIds.clear();
     },
-    [timeoutIds],
+    [timeoutIds]
   );
 
   const setTimeoutSafe = (cb: () => void, delay: number) => {
@@ -80,7 +80,7 @@ export function useUnmountAwareAnimationFrame() {
       requestIds.forEach((id) => cancelAnimationFrame(id));
       requestIds.clear();
     },
-    [requestIds],
+    [requestIds]
   );
 
   const requestAnimationFrameSafe = useCallback(
@@ -91,7 +91,7 @@ export function useUnmountAwareAnimationFrame() {
       });
       requestIds.add(id);
     },
-    [requestIds],
+    [requestIds]
   );
 
   return { requestAnimationFrame: requestAnimationFrameSafe };
@@ -153,7 +153,7 @@ class VelocityTracker {
     newOffset: number,
     oldOffset: number,
     isHorizontal: boolean,
-    onUpdate: (v: { x: number; y: number }, momentumEnd: boolean) => void,
+    onUpdate: (v: { x: number; y: number }, momentumEnd: boolean) => void
   ) {
     this.clean();
     const now = Date.now();
@@ -248,7 +248,7 @@ function round(value: number) {
 export function measureRelative(
   view: View,
   relativeTo: View,
-  old?: { width: number; height: number },
+  old?: { width: number; height: number }
 ) {
   const layout = { x: 0, y: 0, width: 0, height: 0 };
   view.measureLayout(relativeTo, (x, y, w, h) => {
@@ -328,13 +328,13 @@ export function ScrollAnchor({
   useImperativeHandle(
     anchorRef,
     () => ({ scrollBy: (d) => setOffset((p) => p + d) }),
-    [],
+    []
   );
   const anchor = useMemo(
     () => (
       <View style={{ position: "absolute", height: 0, top: offset, left: 0 }} />
     ),
-    [offset],
+    [offset]
   );
   return anchor;
 }
@@ -359,7 +359,7 @@ export function ScrollAnchor({
 function reportVisibleWithDelay(
   indices: number[],
   delay = 250,
-  fire: (i: number[]) => void,
+  fire: (i: number[]) => void
 ) {
   const id = setTimeout(() => fire(indices), delay);
   return () => clearTimeout(id); // cancel if state changes before delay elapses
@@ -388,7 +388,7 @@ export function useLayoutState<T>(initial: T): [T, Setter<T>] {
   const [state, setState] = React.useState(initial);
   const setLayoutState: Setter<T> = (next, skip) => {
     setState((prev) =>
-      typeof next === "function" ? (next as any)(prev) : next,
+      typeof next === "function" ? (next as any)(prev) : next
     );
     if (!skip) {
       // optionally call a parent layout recalculation here
@@ -416,7 +416,7 @@ export function useLayoutState<T>(initial: T): [T, Setter<T>] {
 // Derived from: src/recyclerview/hooks/useRecyclingState.ts
 export function useRecyclingState<T>(
   initial: T | (() => T),
-  deps: React.DependencyList,
+  deps: React.DependencyList
 ) {
   const store = React.useRef<T>();
   const [_, trigger] = useLayoutState(0);
@@ -475,7 +475,7 @@ const AnimatedContainer = React.useMemo(() => {
 ```ts
 // From: src/recyclerview/utils/componentUtils.ts
 export function getValidComponent(
-  c: React.ComponentType | React.ReactElement | null | undefined,
+  c: React.ComponentType | React.ReactElement | null | undefined
 ) {
   if (React.isValidElement(c)) return c;
   if (typeof c === "function") return React.createElement(c);
@@ -529,7 +529,7 @@ if (PlatformConfig.supportsOffsetCorrection) {
 export function adjustOffsetForRTL(
   offset: number,
   contentSize: number,
-  windowSize: number,
+  windowSize: number
 ) {
   return contentSize - offset - windowSize;
 }
@@ -599,7 +599,6 @@ export function ModalRouter({
 ## Putting it together: minimal bottom sheet drag flow
 
 ```tsx
-import React from "react";
 import { PanResponder, View } from "react-native";
 import { useUnmountAwareAnimationFrame, useUnmountFlag } from "./scheduling";
 
@@ -629,7 +628,7 @@ export function useSheetDrag(onSnap: (open: boolean) => void) {
           });
         },
       }),
-    [requestAnimationFrame, vt],
+    [requestAnimationFrame, vt]
   );
 
   return { panHandlers: pan.panHandlers };

@@ -106,7 +106,6 @@ For more control, use the `useModal` hook:
 [//]: # "HookExample"
 
 ```tsx
-import React from "react";
 import { Button, Text, View } from "react-native";
 import { useModal } from "@yourscope/react-native-pure-modal";
 
@@ -121,7 +120,7 @@ export default function HookExample() {
       <View style={{ padding: 20 }}>
         <Text>Modal Content</Text>
         <Button title="Close" onPress={modal.dismiss} />
-      </View>,
+      </View>
     );
   };
 
@@ -145,7 +144,6 @@ For global modal management, wrap your app with `ModalProvider`:
 [//]: # "ProviderExample"
 
 ```tsx
-import React from "react";
 import { Button, Text } from "react-native";
 import {
   ModalProvider,

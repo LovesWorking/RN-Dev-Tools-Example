@@ -1,9 +1,7 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet, ViewStyle } from "react-native";
 
 // Color for all variations
 const activeColor = "#FF3366";
-const activeGlow = "#FF3366";
 
 // Variation 1: Single filled hexagon (simpler approach)
 const ReactQueryV1: React.FC<{ size: number }> = ({ size }) => {

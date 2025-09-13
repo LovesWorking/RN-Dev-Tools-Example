@@ -71,7 +71,6 @@ const getRandomInt = (min: number, max: number) => {
 };
 
 const generateRandomShape = (): ShapeStyle => {
-  const shapeType = Math.random();
   let shape: ShapeStyle = {};
 
   // Base dimensions
@@ -213,6 +212,7 @@ export const RandomShapeGenerator = () => {
   // Generate 100 random shapes
   const shapes = useMemo(() => {
     return Array.from({ length: 100 }, () => generateRandomShape());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regenerateKey]);
 
   const regenerateShapes = useCallback(() => {

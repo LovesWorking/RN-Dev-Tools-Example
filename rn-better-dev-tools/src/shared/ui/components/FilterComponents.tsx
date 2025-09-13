@@ -92,9 +92,12 @@ export function AddFilterInput({
       />
       <View style={styles.inputButtons}>
         {value.trim() && (
-          <TouchableOpacity 
-            onPress={onSubmit} 
-            style={[styles.inlineAddButton, { backgroundColor: `${color}15`, borderColor: `${color}40` }]}
+          <TouchableOpacity
+            onPress={onSubmit}
+            style={[
+              styles.inlineAddButton,
+              { backgroundColor: `${color}15`, borderColor: `${color}40` },
+            ]}
           >
             <Text style={[styles.inlineAddButtonText, { color }]}>Add</Text>
           </TouchableOpacity>
@@ -132,14 +135,12 @@ export function AddFilterButton({
 interface FilterListProps {
   filters: Set<string> | string[];
   onRemoveFilter?: (filter: string) => void;
-  activeFilters?: Set<string>;
   color?: string;
 }
 
 export function FilterList({
   filters,
   onRemoveFilter,
-  activeFilters,
   color = "#E5E7EB",
 }: FilterListProps) {
   const filterArray = Array.from(filters);
@@ -153,10 +154,7 @@ export function FilterList({
           onPress={() => onRemoveFilter?.(filter)}
           activeOpacity={0.8}
         >
-          <Text 
-            style={[styles.filterItemText, { color }]} 
-            numberOfLines={1}
-          >
+          <Text style={[styles.filterItemText, { color }]} numberOfLines={1}>
             {filter}
           </Text>
           <X size={12} color={`${color}80`} />

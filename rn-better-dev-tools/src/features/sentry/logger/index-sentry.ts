@@ -54,7 +54,7 @@ export class SentryLogger {
    * Capture a Sentry transaction before it's sent
    */
   captureTransaction = (event: SentryEvent) => {
-    this.logSentryEvent("transaction", event as unknown as SentryEventData);
+    this.logSentryEvent(event as unknown as SentryEventData);
     return event;
   };
 
@@ -62,7 +62,7 @@ export class SentryLogger {
    * Capture a Sentry span before it's sent
    */
   captureSpan = (span: SentryEvent) => {
-    this.logSentryEvent("span", span as unknown as SentryEventData);
+    this.logSentryEvent(span as unknown as SentryEventData);
     return span;
   };
 
@@ -70,7 +70,7 @@ export class SentryLogger {
    * Capture a Sentry event before it's sent
    */
   captureEvent = (event: SentryEvent) => {
-    this.logSentryEvent("event", event as unknown as SentryEventData);
+    this.logSentryEvent(event as unknown as SentryEventData);
     return event;
   };
 
@@ -78,7 +78,7 @@ export class SentryLogger {
    * Capture a Sentry log before it's sent
    */
   captureLog = (log: SentryLog) => {
-    this.logSentryEvent("console", {
+    this.logSentryEvent({
       message: log.message || "Log entry",
       level: log.level,
       category: "console",
@@ -118,7 +118,7 @@ export class SentryLogger {
     if (breadcrumb.message?.includes("Touch event within element:")) {
       breadcrumb.message = breadcrumb.message.replace(
         "Touch event within element:",
-        "",
+        ""
       );
     }
 
@@ -154,17 +154,14 @@ export class SentryLogger {
       breadcrumb.data = enrichedData;
     }
 
-    this.logSentryEvent("breadcrumb", breadcrumb as unknown as SentryEventData);
+    this.logSentryEvent(breadcrumb as unknown as SentryEventData);
     return breadcrumb;
   };
 
   /**
    * Internal method to log Sentry events to memory
    */
-  private logSentryEvent(
-    type: "transaction" | "span" | "event" | "breadcrumb" | "console",
-    data: SentryEventData,
-  ) {
+  private logSentryEvent(data: SentryEventData) {
     // Determine log type based on Sentry category
     let logType = LogType.Generic;
     const category = data.category;
@@ -253,7 +250,6 @@ export class SentryLogger {
    * Extract metadata from Sentry data
    */
   private getSentryMetadata(data: SentryEventData): Record<string, unknown> {
-     
     const { message, level, type, ...metadata } = data;
     return metadata;
   }

@@ -1,6 +1,4 @@
-import React from "react";
 import { ScrollView, View, Text, StyleSheet } from "react-native";
-
 export const ReactNativeShapesShowcase = () => {
   return (
     <ScrollView style={styles.container}>

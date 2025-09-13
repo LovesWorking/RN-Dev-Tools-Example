@@ -16,6 +16,9 @@ export function UnifiedDiffView({
   differences,
   debugMode,
 }: UnifiedDiffViewProps) {
+  console.log("TODO:  oldValue not used", oldValue);
+  console.log("TODO:  newValue not used", newValue);
+
   const formatPath = (path: (string | number)[]): string => {
     if (path.length === 0) return "@root";
     return (
@@ -125,17 +128,23 @@ export function UnifiedDiffView({
       {/* Stats bar */}
       <View style={styles.statsBar}>
         <View style={styles.stat}>
-          <Text style={[styles.statText, { color: macOSColors.semantic.success }]}>
+          <Text
+            style={[styles.statText, { color: macOSColors.semantic.success }]}
+          >
             +{differences.filter((d) => d.type === "CREATE").length}
           </Text>
         </View>
         <View style={styles.stat}>
-          <Text style={[styles.statText, { color: macOSColors.semantic.error }]}>
+          <Text
+            style={[styles.statText, { color: macOSColors.semantic.error }]}
+          >
             -{differences.filter((d) => d.type === "REMOVE").length}
           </Text>
         </View>
         <View style={styles.stat}>
-          <Text style={[styles.statText, { color: macOSColors.semantic.warning }]}>
+          <Text
+            style={[styles.statText, { color: macOSColors.semantic.warning }]}
+          >
             ~{differences.filter((d) => d.type === "CHANGE").length}
           </Text>
         </View>

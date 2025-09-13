@@ -190,7 +190,6 @@ yarn build
 ```
 
 5. **Use it in your app** (without publishing):
-
    - If you’re in a monorepo (Yarn/PNPM workspaces), the app can import `@rn-dev-tools/react-native-<tool-name>` directly and Metro will pick up the compiled `lib/`.
    - If Metro cache gets sticky: `yarn start --reset-cache`.
 
@@ -306,7 +305,6 @@ export function useStorageSnapshot(readers: StorageReaders) {
 `src/components/SectionButton.tsx`:
 
 ```tsx
-import React from "react";
 import { Pressable, View, Text, StyleSheet } from "react-native";
 
 export function SectionButton({
@@ -360,7 +358,6 @@ const styles = StyleSheet.create({
 `src/components/StorageSection.tsx` (menu tile):
 
 ```tsx
-import React from "react";
 import { Text } from "react-native";
 import { SectionButton } from "./SectionButton";
 import { useStorageSnapshot } from "../hooks/useStorageSnapshot";
@@ -390,7 +387,6 @@ export function StorageSection({
 `src/components/SimpleStorageModal.tsx` (minimal viewer):
 
 ```tsx
-import React from "react";
 import {
   Modal,
   View,

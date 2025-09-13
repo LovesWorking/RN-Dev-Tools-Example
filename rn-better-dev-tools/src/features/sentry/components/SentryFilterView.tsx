@@ -63,12 +63,10 @@ const ALL_LOG_LEVELS = [
 ];
 
 export function SentryFilterView({
-  _entries,
   selectedTypes,
   selectedLevels,
   onToggleTypeFilter,
   onToggleLevelFilter,
-  _onBack,
 }: SentryFilterViewProps) {
   // Use reactive counts hook for real-time updates
   const counts = useSentryEventCounts();
@@ -94,7 +92,7 @@ export function SentryFilterView({
     isSelected: boolean,
     onPress: () => void,
     Icon?: ComponentType<{ size?: number; color?: string }>,
-    color?: string,
+    color?: string
   ) => (
     <TouchableOpacity
       accessibilityLabel={`${label} filter ${count} items`}
@@ -180,7 +178,7 @@ export function SentryFilterView({
                 selectedLevels.has(level),
                 () => onToggleLevelFilter(level),
                 undefined,
-                color,
+                color
               );
             })}
           </View>
@@ -217,7 +215,7 @@ export function SentryFilterView({
                 selectedTypes.has(type),
                 () => onToggleTypeFilter(type),
                 Icon,
-                color,
+                color
               );
             })}
           </View>

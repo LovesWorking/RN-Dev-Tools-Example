@@ -33,7 +33,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
       .map(() => ({
         rotate: new Animated.Value(0),
         scale: new Animated.Value(1),
-      })),
+      }))
   ).current;
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
           duration: 3000,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // 3D rotation animation
@@ -88,7 +88,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
             useNativeDriver: true,
           }),
         ]),
-      ]),
+      ])
     ).start();
 
     // Glow pulse
@@ -104,7 +104,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     ).start();
 
     // Shimmer effect
@@ -113,7 +113,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
         toValue: 1,
         duration: 3000,
         useNativeDriver: true,
-      }),
+      })
     ).start();
 
     // Orbiting elements
@@ -137,7 +137,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
               useNativeDriver: true,
             }),
           ]),
-        ]),
+        ])
       ).start();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -329,7 +329,7 @@ export function FloatingPokemonCard({ pokemon }: FloatingPokemonCardProps) {
 
               {/* Animated type badges */}
               <View style={styles.typesContainer}>
-                {pokemon.types.map((type, index) => (
+                {pokemon.types.map((type) => (
                   <Animated.View
                     key={type}
                     style={[

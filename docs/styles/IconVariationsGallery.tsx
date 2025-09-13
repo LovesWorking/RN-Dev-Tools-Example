@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { EnvLaptopIcon } from "@/rn-better-dev-tools/icons/EnvLaptopIcon";
 import { WifiCircuitIcon } from "@/rn-better-dev-tools/icons/WifiCircuitIcon";
@@ -8,7 +7,6 @@ import { ReactQueryIcon } from "@/rn-better-dev-tools/icons/ReactQueryIcon";
 import { IconBackground } from "@/rn-better-dev-tools/icons/shared/IconBackground";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import * as LucideIcons from "@/rn-better-dev-tools/icons/lucide-icons";
-
 const IconVariationsGallery: React.FC = () => {
   const iconSize = 50;
 

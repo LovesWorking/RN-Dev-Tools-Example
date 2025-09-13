@@ -3,8 +3,7 @@
  * Converts SVG elements to pure React Native Views without native dependencies
  */
 
-import React from "react";
-import { View, Text, Image, ViewStyle } from "react-native";
+import { View, Text, Image } from "react-native";
 
 // ============================================================================
 // Base Components - Building blocks for SVG elements
@@ -146,7 +145,7 @@ export const PurePolyline: React.FC<PurePolylineProps> = ({
         y2={pointsArray[i + 1].y}
         stroke={stroke}
         strokeWidth={strokeWidth}
-      />,
+      />
     );
   }
 
@@ -215,7 +214,7 @@ export const PurePolygon: React.FC<PurePolygonProps> = ({
         y2={pointsArray[next].y}
         stroke={stroke || "black"}
         strokeWidth={strokeWidth}
-      />,
+      />
     );
   }
 
@@ -348,14 +347,12 @@ interface PurePathProps {
   d: string;
   stroke?: string;
   strokeWidth?: number;
-  fill?: string;
 }
 
 export const PurePath: React.FC<PurePathProps> = ({
   d,
   stroke = "black",
   strokeWidth = 2,
-  fill,
 }) => {
   const segments = parseSimplePath(d);
 
@@ -666,8 +663,6 @@ export const WifiIconPure: React.FC<IconProps> = ({
   color = "black",
   strokeWidth = 2,
 }) => {
-  const scale = size / 24;
-
   return (
     <PureSvg width={size} height={size} viewBox="0 0 24 24">
       {/* WiFi signal waves - using arcs approximated with lines */}
@@ -938,7 +933,6 @@ export const ShieldIconPure: React.FC<IconProps> = ({
   strokeWidth = 2,
 }) => {
   // Shield shape approximated with lines
-  const scale = size / 24;
 
   return (
     <PureSvg width={size} height={size} viewBox="0 0 24 24">

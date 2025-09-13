@@ -47,7 +47,6 @@ export function SentryLogsContent({
   selectedLevels,
   onToggleTypeFilter,
   onToggleLevelFilter,
-  isLoggingEnabled,
 }: {
   selectedEntry: ConsoleTransportEntry | null;
   onSelectEntry: (entry: ConsoleTransportEntry | null) => void;
@@ -57,7 +56,6 @@ export function SentryLogsContent({
   selectedLevels?: Set<LogLevel>;
   onToggleTypeFilter?: (type: LogType) => void;
   onToggleLevelFilter?: (level: LogLevel) => void;
-  isLoggingEnabled?: boolean;
 }) {
   return (
     <SentryLogsDetailContent

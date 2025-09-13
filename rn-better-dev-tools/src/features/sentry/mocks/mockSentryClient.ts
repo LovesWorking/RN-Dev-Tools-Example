@@ -37,7 +37,10 @@ export function createMockSentryClient(): MockSentryClient {
   const activeTimeouts = new Set<ReturnType<typeof setTimeout>>();
 
   // Helper function to manage timeouts with automatic cleanup
-  const managedSetTimeout = (callback: () => void, delay: number): ReturnType<typeof setTimeout> => {
+  const managedSetTimeout = (
+    callback: () => void,
+    delay: number
+  ): ReturnType<typeof setTimeout> => {
     const timeoutId = setTimeout(() => {
       activeTimeouts.delete(timeoutId);
       if (isRunning && client._isRunning) {
@@ -58,14 +61,14 @@ export function createMockSentryClient(): MockSentryClient {
 
     off: (event: string, callback?: (arg: unknown) => unknown) => {
       const index = listeners.findIndex(
-        (l) => l.event === event && (!callback || l.callback === callback),
+        (l) => l.event === event && (!callback || l.callback === callback)
       );
       if (index >= 0) {
         listeners.splice(index, 1);
       }
     },
 
-    emit: (event: string, data: unknown, hint?: unknown) => {
+    emit: (event: string, data: unknown) => {
       listeners
         .filter((l) => l.event === event)
         .forEach((l) => {
@@ -313,7 +316,7 @@ export function createMockSentryClient(): MockSentryClient {
                 ...spanStart.data,
                 "http.response.status_code": status,
                 "http.response_content_length": Math.floor(
-                  Math.random() * 50000,
+                  Math.random() * 50000
                 ),
               },
             };
@@ -372,7 +375,7 @@ export function createMockSentryClient(): MockSentryClient {
                       "url.full": `/api/resource-${i}`,
                       "http.response.status_code": 200,
                     },
-                  }) as SpanJSON,
+                  }) as SpanJSON
               ),
             };
 

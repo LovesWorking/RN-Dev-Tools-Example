@@ -1,5 +1,9 @@
-import type { LauncherItem, LauncherTarget } from './types';
-import type { InstalledApp, FloatingMenuState, FloatingMenuActions } from '../floatingMenu/types';
+import type { LauncherItem, LauncherTarget } from "./types";
+import type {
+  InstalledApp,
+  FloatingMenuState,
+  FloatingMenuActions,
+} from "../floatingMenu/types";
 
 /**
  * Convert a LauncherItem to the legacy InstalledApp format
@@ -13,8 +17,11 @@ export function toLauncherApp(
     id: item.id,
     name: item.label,
     icon: item.icon,
-    slot: item.slot || 'both',
-    onPress: (ctx: { state?: FloatingMenuState; actions?: FloatingMenuActions }) => handleTarget(item.target),
+    slot: item.slot || "both",
+    onPress: (_ctx: {
+      state?: FloatingMenuState;
+      actions?: FloatingMenuActions;
+    }) => handleTarget(item.target),
   };
 }
 
@@ -23,17 +30,17 @@ export function toLauncherApp(
  * This allows existing apps to work with the new system
  */
 export function fromInstalledApp(app: InstalledApp): LauncherItem {
-  if ('target' in app && (app as any).target) {
+  if ("target" in app && (app as any).target) {
     return app as any as LauncherItem;
   }
-  
+
   return {
     id: app.id,
     label: app.name,
     icon: app.icon,
     slot: app.slot,
     target: {
-      kind: 'command',
+      kind: "command",
       run: () => app.onPress({ state: undefined, actions: undefined }),
     },
   };
@@ -47,8 +54,8 @@ export function createModalLauncher(
   label: string,
   component: React.ComponentType<any>,
   options?: {
-    icon?: LauncherItem['icon'];
-    slot?: LauncherItem['slot'];
+    icon?: LauncherItem["icon"];
+    slot?: LauncherItem["slot"];
     props?: any;
     description?: string;
   }
@@ -57,10 +64,10 @@ export function createModalLauncher(
     id,
     label,
     icon: options?.icon,
-    slot: options?.slot || 'both',
+    slot: options?.slot || "both",
     description: options?.description,
     target: {
-      kind: 'modal',
+      kind: "modal",
       component,
       props: options?.props,
     },
@@ -75,8 +82,8 @@ export function createScreenLauncher(
   label: string,
   navigate: () => void,
   options?: {
-    icon?: LauncherItem['icon'];
-    slot?: LauncherItem['slot'];
+    icon?: LauncherItem["icon"];
+    slot?: LauncherItem["slot"];
     description?: string;
   }
 ): LauncherItem {
@@ -84,10 +91,10 @@ export function createScreenLauncher(
     id,
     label,
     icon: options?.icon,
-    slot: options?.slot || 'both',
+    slot: options?.slot || "both",
     description: options?.description,
     target: {
-      kind: 'screen',
+      kind: "screen",
       navigate,
     },
   };
@@ -101,8 +108,8 @@ export function createURLLauncher(
   label: string,
   url: string,
   options?: {
-    icon?: LauncherItem['icon'];
-    slot?: LauncherItem['slot'];
+    icon?: LauncherItem["icon"];
+    slot?: LauncherItem["slot"];
     description?: string;
   }
 ): LauncherItem {
@@ -110,10 +117,10 @@ export function createURLLauncher(
     id,
     label,
     icon: options?.icon,
-    slot: options?.slot || 'both',
+    slot: options?.slot || "both",
     description: options?.description,
     target: {
-      kind: 'url',
+      kind: "url",
       url,
     },
   };
@@ -127,8 +134,8 @@ export function createCommandLauncher(
   label: string,
   run: () => void | Promise<void>,
   options?: {
-    icon?: LauncherItem['icon'];
-    slot?: LauncherItem['slot'];
+    icon?: LauncherItem["icon"];
+    slot?: LauncherItem["slot"];
     description?: string;
   }
 ): LauncherItem {
@@ -136,10 +143,10 @@ export function createCommandLauncher(
     id,
     label,
     icon: options?.icon,
-    slot: options?.slot || 'both',
+    slot: options?.slot || "both",
     description: options?.description,
     target: {
-      kind: 'command',
+      kind: "command",
       run,
     },
   };

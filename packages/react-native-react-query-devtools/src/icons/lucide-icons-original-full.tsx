@@ -1,6 +1,6 @@
-import { Fragment } from "react";
-import { View, ViewStyle, ViewProps } from "react-native";
-import { gameUIColors } from "../shared/ui/gameUI/constants/gameUIColors";
+import { Fragment } from 'react';
+import { View, ViewStyle, ViewProps } from 'react-native';
+import { gameUIColors } from '../shared/ui/gameUI/constants/gameUIColors';
 
 interface IconProps {
   size?: number;
@@ -26,7 +26,7 @@ const PureSvg = ({
   style,
   ...props
 }: PureSvgProps) => {
-  const [, , vbWidth, vbHeight] = viewBox.split(" ").map(Number);
+  const [, , vbWidth, vbHeight] = viewBox.split(' ').map(Number);
   const scaleX = width / vbWidth;
   const scaleY = height / vbHeight;
 
@@ -36,8 +36,8 @@ const PureSvg = ({
         {
           width,
           height,
-          position: "relative",
-          overflow: "hidden",
+          position: 'relative',
+          overflow: 'hidden',
         },
         style,
       ]}
@@ -46,7 +46,7 @@ const PureSvg = ({
       <View
         style={{
           transform: [{ scaleX }, { scaleY }],
-          transformOrigin: "top left",
+          transformOrigin: 'top left',
           width: vbWidth,
           height: vbHeight,
         }}
@@ -66,21 +66,28 @@ interface PureLineProps {
   strokeWidth?: number;
 }
 
-const PureLine = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }: PureLineProps) => {
+const PureLine = ({
+  x1,
+  y1,
+  x2,
+  y2,
+  stroke,
+  strokeWidth = 2,
+}: PureLineProps) => {
   const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
   return (
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: x1,
         top: y1 - strokeWidth / 2,
         width: length,
         height: strokeWidth,
         backgroundColor: stroke,
         transform: [{ rotate: `${angle}deg` }],
-        transformOrigin: "left center",
+        transformOrigin: 'left center',
       }}
     />
   );
@@ -95,18 +102,25 @@ interface PureCircleProps {
   strokeWidth?: number;
 }
 
-const PureCircle = ({ cx, cy, r, fill, stroke, strokeWidth = 2 }: PureCircleProps) => {
+const PureCircle = ({
+  cx,
+  cy,
+  r,
+  fill,
+  stroke,
+  strokeWidth = 2,
+}: PureCircleProps) => {
   const diameter = r * 2;
   return (
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: cx - r,
         top: cy - r,
         width: diameter,
         height: diameter,
         borderRadius: r,
-        backgroundColor: fill || "transparent",
+        backgroundColor: fill || 'transparent',
         borderColor: stroke,
         borderWidth: stroke ? strokeWidth : 0,
       }}
@@ -137,12 +151,12 @@ const PureRect = ({
 }: PureRectProps) => (
   <View
     style={{
-      position: "absolute",
+      position: 'absolute',
       left: x,
       top: y,
       width,
       height,
-      backgroundColor: fill || "transparent",
+      backgroundColor: fill || 'transparent',
       borderColor: stroke,
       borderWidth: stroke ? strokeWidth : 0,
       borderRadius: rx,
@@ -153,18 +167,18 @@ const PureRect = ({
 // IMPROVED WIFI ICON - Using cone shape for perfect WiFi arcs
 export const WifiIcon = ({
   size = 1,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
 }: IconProps) => {
   const strength = 4;
   const scale = 45 / 60;
   strokeWidth = 3 * scale;
   return (
-    <View style={{ position: "relative", width: size, height: size }}>
+    <View style={{ position: 'relative', width: size, height: size }}>
       {/* Center dot */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           width: 5 * scale,
           height: 5 * scale,
           borderRadius: 2.5 * scale,
@@ -179,10 +193,10 @@ export const WifiIcon = ({
       {strength >= 2 && (
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: -8 * scale, // Move down to show more arc
             left: size / 2 - 10 * scale,
-            transform: [{ rotate: "180deg" }], // Rotate to show bottom half
+            transform: [{ rotate: '180deg' }], // Rotate to show bottom half
           }}
         >
           <View
@@ -192,9 +206,9 @@ export const WifiIcon = ({
               borderRadius: 10 * scale,
               borderWidth: strokeWidth * scale,
               borderColor: color,
-              borderTopColor: "transparent", // Hide top after rotation
-              borderLeftColor: "transparent",
-              borderRightColor: "transparent",
+              borderTopColor: 'transparent', // Hide top after rotation
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
             }}
           />
         </View>
@@ -203,10 +217,10 @@ export const WifiIcon = ({
       {strength >= 3 && (
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: -14 * scale,
             left: size / 2 - 17 * scale,
-            transform: [{ rotate: "180deg" }],
+            transform: [{ rotate: '180deg' }],
           }}
         >
           <View
@@ -216,9 +230,9 @@ export const WifiIcon = ({
               borderRadius: 17 * scale,
               borderWidth: strokeWidth * scale,
               borderColor: color,
-              borderTopColor: "transparent",
-              borderLeftColor: "transparent",
-              borderRightColor: "transparent",
+              borderTopColor: 'transparent',
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
             }}
           />
         </View>
@@ -227,10 +241,10 @@ export const WifiIcon = ({
       {strength >= 4 && (
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: -22 * scale,
             left: size / 2 - 25 * scale,
-            transform: [{ rotate: "180deg" }],
+            transform: [{ rotate: '180deg' }],
           }}
         >
           <View
@@ -240,9 +254,9 @@ export const WifiIcon = ({
               borderRadius: 25 * scale,
               borderWidth: strokeWidth * scale,
               borderColor: color,
-              borderTopColor: "transparent",
-              borderLeftColor: "transparent",
-              borderRightColor: "transparent",
+              borderTopColor: 'transparent',
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
             }}
           />
         </View>
@@ -254,7 +268,7 @@ export const WifiIcon = ({
 // SIMPLIFIED WIFI OFF ICON
 export const WifiOffIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -300,7 +314,7 @@ export const WifiOffIcon = ({
 // SIMPLIFIED SETTINGS ICON - Minimal gear
 export const SettingsIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -362,7 +376,7 @@ export const SettingsIcon = ({
 // SIMPLIFIED CLOUD ICON
 export const CloudIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -392,7 +406,7 @@ export const CloudIcon = ({
 // SIMPLIFIED PHONE ICON
 export const PhoneIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -431,7 +445,7 @@ export const PhoneIcon = ({
 // SIMPLIFIED VOLUME ICON
 export const VolumeIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -503,7 +517,7 @@ export const VolumeIcon = ({
 // SIMPLIFIED EYE ICON
 export const EyeIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -532,7 +546,7 @@ export const EyeIcon = ({
 // SIMPLIFIED EYE OFF ICON
 export const EyeOffIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -568,7 +582,7 @@ export const EyeOffIcon = ({
 // SIMPLIFIED REFRESH ICON
 export const RefreshCwIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -621,7 +635,7 @@ export const RefreshCwIcon = ({
 // SIMPLIFIED SHIELD ICON
 export const ShieldIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -699,7 +713,7 @@ export const ShieldIcon = ({
 // SIMPLIFIED PALETTE ICON
 export const PaletteIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -733,7 +747,7 @@ export const PaletteIcon = ({
 // SIMPLIFIED HAND ICON
 export const HandIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -792,7 +806,7 @@ export const HandIcon = ({
 
 export const ActivityIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -843,7 +857,7 @@ export const ActivityIcon = ({
 // SIMPLIFIED DATABASE ICON
 export const DatabaseIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -900,26 +914,21 @@ export const DatabaseIcon = ({
   </PureSvg>
 );
 
-export const BugIcon = ({
-  size = 24,
-  color = "currentColor",
-  strokeWidth = 2,
-  ...props
-}: IconProps) => {
+export const BugIcon = ({ size = 24, color = 'currentColor' }: IconProps) => {
   const scale = 20 / 30;
   return (
     <View
       style={{
         width: size * 1.5,
         height: size * 1,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       <View
         style={{
-          transform: [{ rotate: "20deg" }],
-          position: "relative",
+          transform: [{ rotate: '20deg' }],
+          position: 'relative',
         }}
       >
         {/* Bug body - oval shape */}
@@ -940,7 +949,7 @@ export const BugIcon = ({
         {/* Head */}
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 12 * scale,
             height: 8 * scale,
             backgroundColor: color,
@@ -953,34 +962,34 @@ export const BugIcon = ({
         {/* Antennae */}
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 2 * scale,
             height: 8 * scale,
             backgroundColor: color,
             top: -10 * scale,
             left: 6 * scale,
-            transform: [{ rotate: "-15deg" }],
+            transform: [{ rotate: '-15deg' }],
           }}
         />
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 2 * scale,
             height: 8 * scale,
             backgroundColor: color,
             top: -10 * scale,
             right: 6 * scale,
-            transform: [{ rotate: "15deg" }],
+            transform: [{ rotate: '15deg' }],
           }}
         />
 
         {/* Eyes (white dots on head) */}
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 3 * scale,
             height: 3 * scale,
-            backgroundColor: "#fff",
+            backgroundColor: '#fff',
             borderRadius: 1.5 * scale,
             top: -2 * scale,
             left: 6 * scale,
@@ -988,10 +997,10 @@ export const BugIcon = ({
         />
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             width: 3 * scale,
             height: 3 * scale,
-            backgroundColor: "#fff",
+            backgroundColor: '#fff',
             borderRadius: 1.5 * scale,
             top: -2 * scale,
             right: 6 * scale,
@@ -1004,25 +1013,25 @@ export const BugIcon = ({
             {/* Left leg */}
             <View
               style={{
-                position: "absolute",
+                position: 'absolute',
                 width: 8 * scale,
                 height: 2 * scale,
                 backgroundColor: color,
                 top: (6 + index * 6) * scale,
                 left: -6 * scale,
-                transform: [{ rotate: "-45deg" }],
+                transform: [{ rotate: '-45deg' }],
               }}
             />
             {/* Right leg */}
             <View
               style={{
-                position: "absolute",
+                position: 'absolute',
                 width: 8 * scale,
                 height: 2 * scale,
                 backgroundColor: color,
                 top: (6 + index * 6) * scale,
                 right: -6 * scale,
-                transform: [{ rotate: "45deg" }],
+                transform: [{ rotate: '45deg' }],
               }}
             />
           </Fragment>
@@ -1033,9 +1042,7 @@ export const BugIcon = ({
 };
 export const ServerIcon = ({
   size = 24,
-  color = "currentColor",
-  strokeWidth = 2,
-  ...props
+  color = 'currentColor',
 }: IconProps) => {
   const scale = 20 / 30;
   return (
@@ -1043,8 +1050,8 @@ export const ServerIcon = ({
       style={{
         width: size,
         height: size,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       {/* Screen */}
@@ -1061,10 +1068,10 @@ export const ServerIcon = ({
       {/* Screen display */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           width: 24 * scale,
           height: 14 * scale,
-          backgroundColor: "#fff",
+          backgroundColor: '#fff',
           borderRadius: 1 * scale,
           top: 11 * scale,
           opacity: 0.2,
@@ -1084,10 +1091,10 @@ export const ServerIcon = ({
       {/* Notch/opening indicator */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           width: 8 * scale,
           height: 1 * scale,
-          backgroundColor: "#fff",
+          backgroundColor: '#fff',
           bottom: 17 * scale,
           opacity: 0.3,
         }}
@@ -1099,8 +1106,6 @@ export const ServerIcon = ({
 export const GlobeIcon = ({
   size = 24,
   color = gameUIColors.env,
-  strokeWidth = 2,
-  ...props
 }: IconProps) => {
   color = gameUIColors.env;
   const scale = size / 24;
@@ -1116,7 +1121,7 @@ export const GlobeIcon = ({
       {/* Main globe with glow */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           width: globeSize,
           height: globeSize,
           borderWidth: 2 * scale,
@@ -1135,7 +1140,7 @@ export const GlobeIcon = ({
       {/* Vertical meridian */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           width: globeSize,
           height: globeSize,
           borderWidth: 2 * scale,
@@ -1151,7 +1156,7 @@ export const GlobeIcon = ({
       {/* Horizontal equator */}
       <View
         style={{
-          position: "absolute",
+          position: 'absolute',
           width: globeSize,
           height: globeSize,
           borderWidth: 2 * scale,
@@ -1169,7 +1174,7 @@ export const GlobeIcon = ({
 
 export const XIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1196,7 +1201,7 @@ export const XIcon = ({
 // IMPROVED CHECK CIRCLE ICON
 export const CheckCircle2Icon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1231,7 +1236,7 @@ export const CheckCircle2Icon = ({
 // IMPROVED X CIRCLE ICON
 export const XCircleIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1266,7 +1271,7 @@ export const XCircleIcon = ({
 // SIMPLIFIED FILE CODE ICON
 export const FileCodeIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1347,7 +1352,7 @@ export const FileCodeIcon = ({
 // IMPROVED FILE TEXT ICON
 export const FileTextIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1365,7 +1370,7 @@ export const FileTextIcon = ({
     {/* File corner */}
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 14,
         top: 2,
         width: 0,
@@ -1373,7 +1378,7 @@ export const FileTextIcon = ({
         borderLeftWidth: 4,
         borderTopWidth: 4,
         borderLeftColor: color,
-        borderTopColor: "transparent",
+        borderTopColor: 'transparent',
       }}
     />
     <PureLine
@@ -1415,7 +1420,7 @@ export const FileTextIcon = ({
 // SIMPLIFIED FILE JSON ICON
 export const FileJsonIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1513,7 +1518,7 @@ export const FileJsonIcon = ({
 // SIMPLIFIED TEST TUBE ICON
 export const TestTube2Icon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1557,7 +1562,7 @@ export const TestTube2Icon = ({
 // SIMPLIFIED FLASK ICON
 export const FlaskConicalIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1631,7 +1636,7 @@ export const FlaskConicalIcon = ({
 // IMPROVED TRASH ICON
 export const Trash2Icon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1688,7 +1693,7 @@ export const Trash2Icon = ({
 // IMPROVED HASH ICON
 export const HashIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1733,7 +1738,7 @@ export const HashIcon = ({
 // IMPROVED USERS ICON
 export const UsersIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1743,7 +1748,7 @@ export const UsersIcon = ({
     {/* First user body */}
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 4,
         top: 14,
         width: 10,
@@ -1751,7 +1756,7 @@ export const UsersIcon = ({
         borderRadius: 5,
         borderWidth: strokeWidth,
         borderColor: color,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
       }}
     />
     {/* Second user head */}
@@ -1759,7 +1764,7 @@ export const UsersIcon = ({
     {/* Second user body */}
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 13,
         top: 12,
         width: 6,
@@ -1767,7 +1772,7 @@ export const UsersIcon = ({
         borderRadius: 3,
         borderWidth: strokeWidth,
         borderColor: color,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
       }}
     />
   </PureSvg>
@@ -1776,7 +1781,7 @@ export const UsersIcon = ({
 // SIMPLIFIED BOX ICON
 export const BoxIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1832,7 +1837,7 @@ export const BoxIcon = ({
 // SIMPLIFIED KEY ICON
 export const KeyIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1873,7 +1878,7 @@ export const KeyIcon = ({
 // SIMPLIFIED ROUTE ICON
 export const RouteIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1920,7 +1925,7 @@ export const RouteIcon = ({
 // SIMPLIFIED TRIANGLE ALERT ICON
 export const TriangleAlertIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -1967,7 +1972,7 @@ export const TriangleAlertIcon = ({
 // SIMPLIFIED UNLOCK ICON
 export const UnlockIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2009,7 +2014,7 @@ export const UnlockIcon = ({
 // SIMPLIFIED IMAGE ICON
 export const ImageIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2051,7 +2056,7 @@ export const ImageIcon = ({
 // SIMPLIFIED FILM ICON
 export const FilmIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2087,7 +2092,7 @@ export const FilmIcon = ({
 // SIMPLIFIED MUSIC ICON
 export const MusicIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2136,7 +2141,7 @@ export const MusicIcon = ({
 // SIMPLIFIED TIMER ICON
 export const TimerIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2183,7 +2188,7 @@ export const TimerIcon = ({
 // SIMPLIFIED SMARTPHONE ICON
 export const SmartphoneIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2232,7 +2237,7 @@ export const SmartphoneIcon = ({
 // SIMPLIFIED LAYERS ICON
 export const LayersIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2272,7 +2277,7 @@ export const LayersIcon = ({
 // SIMPLIFIED NAVIGATION ICON
 export const NavigationIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2316,7 +2321,7 @@ export const NavigationIcon = ({
 // SIMPLIFIED TOUCHPAD ICON
 export const TouchpadIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2347,7 +2352,7 @@ export const TouchpadIcon = ({
 // IMPROVED BAR CHART ICON
 export const AlertCircleIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2369,7 +2374,7 @@ export const AlertCircleIcon = ({
     />
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 11,
         top: 15,
         width: 2,
@@ -2385,7 +2390,7 @@ export const AlertTriangleIcon = TriangleAlertIcon;
 
 export const CheckIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2413,7 +2418,7 @@ export const CheckCircleIcon = CheckCircle2Icon;
 
 export const ChevronDownIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2439,7 +2444,7 @@ export const ChevronDownIcon = ({
 
 export const ChevronLeftIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2465,7 +2470,7 @@ export const ChevronLeftIcon = ({
 
 export const ChevronRightIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2491,7 +2496,7 @@ export const ChevronRightIcon = ({
 
 export const ChevronUpIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2517,7 +2522,7 @@ export const ChevronUpIcon = ({
 
 export const ClockIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2550,7 +2555,7 @@ export const ClockIcon = ({
 
 export const CopyIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2566,7 +2571,7 @@ export const CopyIcon = ({
     />
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 4,
         top: 4,
         width: 12,
@@ -2574,9 +2579,9 @@ export const CopyIcon = ({
         borderRadius: 1,
         borderWidth: strokeWidth,
         borderColor: color,
-        borderRightColor: "transparent",
-        borderBottomColor: "transparent",
-        backgroundColor: "transparent",
+        borderRightColor: 'transparent',
+        borderBottomColor: 'transparent',
+        backgroundColor: 'transparent',
       }}
     />
   </PureSvg>
@@ -2584,7 +2589,7 @@ export const CopyIcon = ({
 
 export const DownloadIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2651,7 +2656,7 @@ export const DownloadIcon = ({
 // SIMPLIFIED FILTER ICON
 export const FilterIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2703,7 +2708,7 @@ export const FilterIcon = ({
 // SIMPLIFIED GIT BRANCH ICON
 export const GitBranchIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2746,7 +2751,7 @@ export const GitBranchIcon = ({
 // SIMPLIFIED LINK ICON
 export const LinkIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2788,7 +2793,7 @@ export const LinkIcon = ({
 
 export const PauseIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2800,14 +2805,14 @@ export const PauseIcon = ({
 
 export const PlayIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
   <PureSvg width={size} height={size} viewBox="0 0 24 24" {...props}>
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 7,
         top: 4,
         width: 0,
@@ -2816,8 +2821,8 @@ export const PlayIcon = ({
         borderTopWidth: 8,
         borderBottomWidth: 8,
         borderLeftColor: color,
-        borderTopColor: "transparent",
-        borderBottomColor: "transparent",
+        borderTopColor: 'transparent',
+        borderBottomColor: 'transparent',
       }}
     />
   </PureSvg>
@@ -2825,7 +2830,7 @@ export const PlayIcon = ({
 
 export const PlusIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2853,7 +2858,7 @@ export const TrashIcon = Trash2Icon;
 
 export const UploadIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2920,7 +2925,7 @@ export const UploadIcon = ({
 // SIMPLIFIED ZAP ICON
 export const ZapIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2987,7 +2992,7 @@ export const ZapIcon = ({
 
 export const UserIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -2995,7 +3000,7 @@ export const UserIcon = ({
     <PureCircle cx={12} cy={7} r={4} stroke={color} strokeWidth={strokeWidth} />
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 5,
         top: 14,
         width: 14,
@@ -3004,8 +3009,8 @@ export const UserIcon = ({
         borderTopRightRadius: 7,
         borderWidth: strokeWidth,
         borderColor: color,
-        borderBottomColor: "transparent",
-        backgroundColor: "transparent",
+        borderBottomColor: 'transparent',
+        backgroundColor: 'transparent',
       }}
     />
   </PureSvg>
@@ -3013,7 +3018,7 @@ export const UserIcon = ({
 
 export const LockIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3029,7 +3034,7 @@ export const LockIcon = ({
     />
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 7,
         top: 4,
         width: 10,
@@ -3038,13 +3043,13 @@ export const LockIcon = ({
         borderTopRightRadius: 5,
         borderWidth: strokeWidth,
         borderColor: color,
-        borderBottomColor: "transparent",
-        backgroundColor: "transparent",
+        borderBottomColor: 'transparent',
+        backgroundColor: 'transparent',
       }}
     />
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 11,
         top: 15,
         width: 2,
@@ -3058,7 +3063,7 @@ export const LockIcon = ({
 // SIMPLIFIED POWER ICON
 export const PowerIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3086,7 +3091,7 @@ export const PowerIcon = ({
 
 export const SearchIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3111,7 +3116,7 @@ export const SearchIcon = ({
 
 export const InfoIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3133,7 +3138,7 @@ export const InfoIcon = ({
     />
     <View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 11,
         top: 7,
         width: 2,
@@ -3147,7 +3152,7 @@ export const InfoIcon = ({
 
 export const MinusIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3165,7 +3170,7 @@ export const MinusIcon = ({
 
 export const BarChart3Icon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3198,7 +3203,7 @@ export const BarChart3Icon = ({
 // IMPROVED HARD DRIVE ICON
 export const HardDriveIcon = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (
@@ -3320,7 +3325,7 @@ export const Zap = ZapIcon;
 // Additional aliases for commonly used icons
 export const Edit3 = ({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   ...props
 }: IconProps) => (

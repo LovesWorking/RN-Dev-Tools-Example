@@ -1,7 +1,5 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { StorageStackIcon } from "@/rn-better-dev-tools/icons/StorageStackIcon";
-
 // Color presets
 const StorageColors = {
   yellow: "#FFD700",

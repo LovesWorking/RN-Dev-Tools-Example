@@ -1,7 +1,5 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { SentryBugIcon } from "@/rn-better-dev-tools/icons/SentryBugIcon";
-
 // Color presets
 const BugColors = {
   red: "#FF3366",

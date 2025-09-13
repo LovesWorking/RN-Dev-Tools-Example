@@ -1314,7 +1314,7 @@ export function AnimatedCyberpunkBorderBox({
             }),
           ])
         ).start();
-        break;
+        return;
 
       case 'scan':
         // Scanning line effect
@@ -1325,7 +1325,7 @@ export function AnimatedCyberpunkBorderBox({
             useNativeDriver: false,
           })
         ).start();
-        break;
+        return;
 
       case 'glitch':
         // Random glitch effect with more intensity
@@ -1370,7 +1370,7 @@ export function AnimatedCyberpunkBorderBox({
           ]).start(() => glitchLoop());
         };
         glitchLoop();
-        break;
+        return;
 
       case 'rotate':
         // Rotating corner accents
@@ -1381,7 +1381,10 @@ export function AnimatedCyberpunkBorderBox({
             useNativeDriver: false,
           })
         ).start();
-        break;
+        return;
+
+      default:
+        return;
     }
   }, [animationType, pulseAnim, scanAnim, glitchAnim, rotateAnim]);
 

@@ -96,7 +96,6 @@ export function DataEditorMode({
                 onClick={action.onPress}
                 text={action.label}
                 bgColorClass={action.bgColorClass}
-                _textColorClass={action.textColorClass}
                 disabled={action.disabled}
               />
             ))}
@@ -134,7 +133,6 @@ export function DataEditorActionsFooter({
             onClick={action.onPress}
             text={action.label}
             bgColorClass={action.bgColorClass}
-            _textColorClass={action.textColorClass}
             disabled={action.disabled}
           />
         ))}

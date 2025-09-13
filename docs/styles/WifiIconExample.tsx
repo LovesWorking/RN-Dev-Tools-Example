@@ -1,6 +1,5 @@
-import React from "react";
+import { Fragment } from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
-
 // Game UI Color Palette
 const gameUIColors = {
   // Fixed backgrounds
@@ -291,7 +290,7 @@ export const BugIcon: React.FC<IconProps> = ({
 
         {/* Legs */}
         {[0, 1, 2].map((index) => (
-          <React.Fragment key={index}>
+          <Fragment key={index}>
             <View
               style={{
                 position: "absolute",
@@ -316,7 +315,7 @@ export const BugIcon: React.FC<IconProps> = ({
                 opacity: 0.7,
               }}
             />
-          </React.Fragment>
+          </Fragment>
         ))}
       </View>
     </View>

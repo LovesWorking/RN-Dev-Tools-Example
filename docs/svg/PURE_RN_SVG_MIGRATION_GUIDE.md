@@ -584,7 +584,7 @@ function createArc(cx, cy, radius, startAngle, endAngle, segments = 20) {
           backgroundColor: "black",
           borderRadius: 1,
         }}
-      />,
+      />
     );
   }
 
@@ -709,7 +709,6 @@ const Svg = ({ width, height, viewBox, children }) => {
 ## 🚀 Example: Complete Pure RN SVG Implementation
 
 ```javascript
-import React from "react";
 import { View, Text, Animated } from "react-native";
 
 // Pure RN SVG-like components

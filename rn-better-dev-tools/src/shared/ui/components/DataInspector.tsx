@@ -16,8 +16,6 @@ interface DataInspectorProps {
   data: any;
   mode?: "view" | "edit" | "diff";
   syntax?: "json" | "xml" | "text";
-  theme?: "dark" | "light";
-  collapsible?: boolean;
   searchable?: boolean;
   onEdit?: (newData: any) => void;
   style?: ViewStyle;
@@ -28,8 +26,6 @@ export function DataInspector({
   data,
   mode = "view",
   syntax = "json",
-  theme = "dark",
-  collapsible = true,
   searchable = true,
   onEdit,
   style,

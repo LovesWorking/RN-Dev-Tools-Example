@@ -9,7 +9,7 @@ interface IconProps {
   style?: ViewStyle;
 }
 
-interface PureSvgProps extends Omit<ViewProps, 'style'> {
+interface PureSvgProps extends Omit<ViewProps, "style"> {
   width: number;
   height: number;
   viewBox: string;
@@ -66,7 +66,14 @@ interface PureLineProps {
   strokeWidth?: number;
 }
 
-const PureLine = ({ x1, y1, x2, y2, stroke, strokeWidth = 2 }: PureLineProps) => {
+const PureLine = ({
+  x1,
+  y1,
+  x2,
+  y2,
+  stroke,
+  strokeWidth = 2,
+}: PureLineProps) => {
   const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
@@ -95,7 +102,14 @@ interface PureCircleProps {
   strokeWidth?: number;
 }
 
-const PureCircle = ({ cx, cy, r, fill, stroke, strokeWidth = 2 }: PureCircleProps) => {
+const PureCircle = ({
+  cx,
+  cy,
+  r,
+  fill,
+  stroke,
+  strokeWidth = 2,
+}: PureCircleProps) => {
   const diameter = r * 2;
   return (
     <View
@@ -900,12 +914,7 @@ export const DatabaseIcon = ({
   </PureSvg>
 );
 
-export const BugIcon = ({
-  size = 24,
-  color = "currentColor",
-  strokeWidth = 2,
-  ...props
-}: IconProps) => {
+export const BugIcon = ({ size = 24, color = "currentColor" }: IconProps) => {
   const scale = 20 / 30;
   return (
     <View
@@ -1034,8 +1043,6 @@ export const BugIcon = ({
 export const ServerIcon = ({
   size = 24,
   color = "currentColor",
-  strokeWidth = 2,
-  ...props
 }: IconProps) => {
   const scale = 20 / 30;
   return (
@@ -1099,8 +1106,6 @@ export const ServerIcon = ({
 export const GlobeIcon = ({
   size = 24,
   color = gameUIColors.env,
-  strokeWidth = 2,
-  ...props
 }: IconProps) => {
   color = gameUIColors.env;
   const scale = size / 24;

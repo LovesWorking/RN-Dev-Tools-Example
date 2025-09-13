@@ -1,4 +1,11 @@
-import { useState, useRef, useMemo, useCallback, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {
   View,
   Text,
@@ -17,9 +24,7 @@ import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 interface Props {
   selectedMutation: Mutation | undefined;
-  setSelectedMutation: Dispatch<
-    SetStateAction<Mutation | undefined>
-  >;
+  setSelectedMutation: Dispatch<SetStateAction<Mutation | undefined>>;
   activeFilter?: string | null;
   hideInfoPanel?: boolean;
   contentContainerStyle?: ViewStyle;
@@ -66,7 +71,7 @@ export default function MutationsList({
   // Pan responder for dragging the mutation information panel
   const infoPanResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
+      onMoveShouldSetPanResponder: (_evt, gestureState) => {
         return (
           Math.abs(gestureState.dy) > Math.abs(gestureState.dx) &&
           Math.abs(gestureState.dy) > 10
@@ -79,22 +84,22 @@ export default function MutationsList({
           infoHeightAnim.setValue(value);
         });
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         // Use the ref value which is always current
         const newHeight = currentInfoHeightRef.current - gestureState.dy;
         const clampedHeight = Math.max(
           minInfoHeight,
-          Math.min(maxInfoHeight, newHeight),
+          Math.min(maxInfoHeight, newHeight)
         );
         infoHeightAnim.setValue(clampedHeight);
       },
-      onPanResponderRelease: (evt, gestureState) => {
+      onPanResponderRelease: (_evt, gestureState) => {
         const finalHeight = Math.max(
           minInfoHeight,
           Math.min(
             maxInfoHeight,
-            currentInfoHeightRef.current - gestureState.dy,
-          ),
+            currentInfoHeightRef.current - gestureState.dy
+          )
         );
         setCurrentInfoHeight(finalHeight);
         currentInfoHeightRef.current = finalHeight;
@@ -110,17 +115,20 @@ export default function MutationsList({
           currentInfoHeightRef.current = finalHeight;
         });
       },
-    }),
+    })
   ).current;
 
   // Optimize FlatList performance - memoize renderItem to prevent re-renders
-  const renderMutation = useCallback(({ item }: { item: Mutation }) => (
-    <MutationButton
-      selected={selectedMutation}
-      setSelectedMutation={setSelectedMutation}
-      mutation={item}
-    />
-  ), [selectedMutation, setSelectedMutation]);
+  const renderMutation = useCallback(
+    ({ item }: { item: Mutation }) => (
+      <MutationButton
+        selected={selectedMutation}
+        setSelectedMutation={setSelectedMutation}
+        mutation={item}
+      />
+    ),
+    [selectedMutation, setSelectedMutation]
+  );
 
   return (
     <View style={styles.container}>

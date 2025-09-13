@@ -1,5 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
-import { EnvVarInfo , getEnvVarType } from "@rn-dev-tools/react-native-env-manager";
+import {
+  EnvVarInfo,
+  getEnvVarType,
+} from "@rn-dev-tools/react-native-env-manager";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { CompactRow } from "@/rn-better-dev-tools/src/shared/ui/components/CompactRow";
@@ -11,7 +14,10 @@ interface EnvVarRowProps {
   onPress?: (envVar: EnvVarInfo) => void;
 }
 
-const getStatusConfig = (status: EnvVarInfo["status"], expectedType?: string) => {
+const getStatusConfig = (
+  status: EnvVarInfo["status"],
+  _expectedType?: string
+) => {
   switch (status) {
     case "required_present":
       return {
@@ -46,7 +52,6 @@ const getStatusConfig = (status: EnvVarInfo["status"], expectedType?: string) =>
   }
 };
 
-
 const formatValue = (value: unknown): string => {
   if (value === undefined || value === null) {
     return "undefined";
@@ -57,12 +62,12 @@ const formatValue = (value: unknown): string => {
 
 export function EnvVarRow({ envVar, isExpanded, onPress }: EnvVarRowProps) {
   const config = getStatusConfig(envVar.status, envVar.expectedType);
-  
+
   // Format primary text like React Query does: "section › subsection"
   // For env vars, we'll show the key formatted nicely
   const keyParts = envVar.key.split("_");
-  const primaryText = keyParts.map(part => part.toLowerCase()).join(" › ");
-  
+  const primaryText = keyParts.map((part) => part.toLowerCase()).join(" › ");
+
   // Create expanded content for value and expected value
   const expandedContent = (
     <View style={styles.expandedContainer}>
@@ -95,14 +100,12 @@ export function EnvVarRow({ envVar, isExpanded, onPress }: EnvVarRowProps) {
       {envVar.description && (
         <View style={styles.expandedRow}>
           <Text style={styles.expandedLabel}>Info:</Text>
-          <Text style={styles.expandedDescription}>
-            {envVar.description}
-          </Text>
+          <Text style={styles.expandedDescription}>{envVar.description}</Text>
         </View>
       )}
     </View>
   );
-  
+
   return (
     <CompactRow
       statusDotColor={config.color}
@@ -113,7 +116,11 @@ export function EnvVarRow({ envVar, isExpanded, onPress }: EnvVarRowProps) {
       expandedContent={expandedContent}
       isExpanded={isExpanded}
       expandedGlowColor={config.color}
-      customBadge={envVar.expectedType ? <TypeBadge type={envVar.expectedType} /> : undefined}
+      customBadge={
+        envVar.expectedType ? (
+          <TypeBadge type={envVar.expectedType} />
+        ) : undefined
+      }
       showChevron={true}
       onPress={onPress ? () => onPress(envVar) : undefined}
     />

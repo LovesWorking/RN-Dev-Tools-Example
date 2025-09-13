@@ -53,6 +53,7 @@ export function SentryLogsModal({
   const [isLoggingEnabled, setIsLoggingEnabled] = useState(true);
 
   const handleModeChange = useCallback((mode: ModalMode) => {
+    console.log("SentryLogsModal mode change:", mode);
     // Handle mode change - previously logged mode value
   }, []);
 
@@ -211,7 +212,6 @@ export function SentryLogsModal({
             return newSet;
           });
         }}
-        isLoggingEnabled={isLoggingEnabled}
       />
     </JsModal>
   );

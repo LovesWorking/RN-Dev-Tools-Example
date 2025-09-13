@@ -18,14 +18,12 @@ import { DataViewer } from "../../../../react-query/components/shared/DataViewer
 import type { DiffItem } from "../../../utils/objectDiff";
 
 interface InlineDiffViewProps {
-  oldValue: unknown;
   newValue: unknown;
   differences: DiffItem[];
   debugMode?: boolean;
 }
 
 export function InlineDiffView({
-  oldValue,
   newValue,
   differences,
   debugMode,
@@ -89,7 +87,7 @@ export function InlineDiffView({
       acc[pathStr] = diff;
       return acc;
     },
-    {} as Record<string, DiffItem>,
+    {} as Record<string, DiffItem>
   );
 
   return (

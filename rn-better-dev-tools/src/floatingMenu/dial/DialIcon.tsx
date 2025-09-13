@@ -21,7 +21,6 @@ type Props = {
   icon: IconType;
   iconsProgress: Animated.Value;
   onPress: (index: number) => void;
-  selectedIcon: number;
   totalIcons: number;
 };
 
@@ -30,7 +29,6 @@ export const DialIcon: FC<Props> = ({
   icon,
   iconsProgress,
   onPress,
-  selectedIcon,
   totalIcons,
 }) => {
   const ANGLE_PER_VIEW = (2 * Math.PI) / totalIcons;
@@ -93,12 +91,12 @@ export const DialIcon: FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.cos(angle), Math.cos(angle + Math.PI * 2)],
-      }),
+      })
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalX - radius * Math.cos(angle + Math.PI * 2)],
-    }),
+    })
   );
 
   const translateY = Animated.add(
@@ -107,12 +105,12 @@ export const DialIcon: FC<Props> = ({
       spiralRotation.interpolate({
         inputRange: [0, Math.PI * 2],
         outputRange: [Math.sin(angle), Math.sin(angle + Math.PI * 2)],
-      }),
+      })
     ),
     staggeredProgress.interpolate({
       inputRange: [0, 1],
       outputRange: [0, finalY - radius * Math.sin(angle + Math.PI * 2)],
-    }),
+    })
   );
 
   // Opacity animation

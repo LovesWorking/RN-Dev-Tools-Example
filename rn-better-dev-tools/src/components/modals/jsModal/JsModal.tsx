@@ -66,7 +66,7 @@ interface PersistedModalState {
 
 /**
  * Utility class for persisting modal state to AsyncStorage
- * 
+ *
  * Handles saving and loading modal state including mode, dimensions,
  * and position with memory caching for performance.
  */
@@ -75,7 +75,7 @@ class ModalStorage {
 
   /**
    * Save modal state to AsyncStorage with memory caching
-   * 
+   *
    * @param key - Storage key for the modal state
    * @param value - Modal state to persist
    */
@@ -90,7 +90,7 @@ class ModalStorage {
 
   /**
    * Load modal state from AsyncStorage with memory cache fallback
-   * 
+   *
    * @param key - Storage key for the modal state
    * @returns Persisted modal state or null if not found
    */
@@ -207,6 +207,7 @@ const CornerHandle = memo(function CornerHandle({
   position: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
   isActive: boolean;
 }) {
+  console.log("TODO:  position", position);
   return (
     <View style={[styles.cornerHandle]}>
       <View style={[styles.handler, isActive && styles.handlerActive]} />
@@ -292,14 +293,17 @@ const ModalHeader = memo(function ModalHeader({
 
     if (isCompleteReplacement) {
       // Clone the element and pass the necessary props
-      return cloneElement(header.customContent as ReactElement<any>, {
-        onToggleMode,
-        onClose,
-        mode,
-        panHandlers: headerProps,
-        showToggleButton: header?.showToggleButton !== false,
-        hideCloseButton: header?.hideCloseButton,
-      } as any);
+      return cloneElement(
+        header.customContent as ReactElement<any>,
+        {
+          onToggleMode,
+          onClose,
+          mode,
+          panHandlers: headerProps,
+          showToggleButton: header?.showToggleButton !== false,
+          hideCloseButton: header?.hideCloseButton,
+        } as any
+      );
     }
 
     // Otherwise, render custom content within the standard header structure
@@ -368,11 +372,11 @@ const ModalHeader = memo(function ModalHeader({
 // ============================================================================
 /**
  * JsModal - Ultra-optimized modal component for true 60FPS performance
- * 
+ *
  * This modal component is designed for maximum performance using native driver
  * animations, transforms instead of layout properties, and minimal JavaScript
  * thread work. It supports two modes: bottom sheet and floating window.
- * 
+ *
  * Key Performance Features:
  * - Uses native driver for all animations (useNativeDriver: true)
  * - Transform-based positioning instead of layout changes
@@ -380,10 +384,10 @@ const ModalHeader = memo(function ModalHeader({
  * - Minimal PanResponder JavaScript work
  * - State persistence with AsyncStorage
  * - Drag and resize functionality in both modes
- * 
+ *
  * @param props - Modal configuration and content
  * @returns JSX.Element representing the modal
- * 
+ *
  * @example
  * ```typescript
  * <JsModal
@@ -399,7 +403,7 @@ const ModalHeader = memo(function ModalHeader({
  *   <SettingsContent />
  * </JsModal>
  * ```
- * 
+ *
  * @performance All animations use native driver for 60FPS performance
  * @performance Uses transform-based positioning for optimal rendering
  * @performance Includes state persistence and restoration capabilities
@@ -457,7 +461,6 @@ const JsModalComponent: FC<JsModalProps> = ({
     new Animated.Value(initialHeight)
   ).current;
 
-
   // Save state with debounce
   useEffect(() => {
     if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
@@ -491,7 +494,6 @@ const JsModalComponent: FC<JsModalProps> = ({
       // Set external height
     }
   }, [externalAnimatedHeight, initialHeight, isResizing]);
-
 
   // Update refs when dimensions change
   useEffect(() => {
@@ -618,7 +620,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   // Mode toggle handler
   /**
    * Toggle between bottom sheet and floating modal modes
-   * 
+   *
    * Clears active dragging and resizing states to prevent visual artifacts
    * when switching between modes with different interaction patterns.
    */
@@ -626,7 +628,7 @@ const JsModalComponent: FC<JsModalProps> = ({
     // Avoid carrying active styling across modes
     setIsDragging(false);
     setIsResizing(false);
-    
+
     const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
     setMode(newMode);
     onModeChange?.(newMode);
@@ -736,13 +738,13 @@ const JsModalComponent: FC<JsModalProps> = ({
   // Following the documentation pattern for proper resize
   // ============================================================================
   const headerTouchOffsetRef = useRef(0);
-  
+
   const bottomSheetPanResponder = useMemo(
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () =>
           !isExternallyControlled && mode === "bottomSheet",
-        onMoveShouldSetPanResponder: (evt, gestureState) =>
+        onMoveShouldSetPanResponder: (_evt, gestureState) =>
           !isExternallyControlled &&
           mode === "bottomSheet" &&
           Math.abs(gestureState.dy) > 3,
@@ -750,10 +752,10 @@ const JsModalComponent: FC<JsModalProps> = ({
 
         onPanResponderGrant: (evt) => {
           setIsResizing(true);
-          
+
           // Where inside the header the finger grabbed
           headerTouchOffsetRef.current = evt.nativeEvent.locationY || 0;
-          
+
           // Stop any in-flight animations so we start from truth
           animatedBottomPosition.stopAnimation((val: number) => {
             currentHeightRef.current = val;
@@ -768,7 +770,10 @@ const JsModalComponent: FC<JsModalProps> = ({
           let targetHeight = SCREEN.height - sheetTop;
 
           // Clamp
-          targetHeight = Math.max(minHeight, Math.min(targetHeight, effectiveMaxHeight));
+          targetHeight = Math.max(
+            minHeight,
+            Math.min(targetHeight, effectiveMaxHeight)
+          );
 
           // Push to UI (no React state!)
           animatedBottomPosition.setValue(targetHeight);
@@ -778,7 +783,7 @@ const JsModalComponent: FC<JsModalProps> = ({
           }
         },
 
-        onPanResponderRelease: (evt, gestureState) => {
+        onPanResponderRelease: (_evt, gestureState) => {
           setIsResizing(false);
 
           const finalHeight = currentHeightRef.current;
@@ -807,7 +812,8 @@ const JsModalComponent: FC<JsModalProps> = ({
 
           // We're already at the finger-tracked height; avoid re-animating it.
           setPanelHeight(finalHeight);
-          if (externalAnimatedHeight) externalAnimatedHeight.setValue(finalHeight);
+          if (externalAnimatedHeight)
+            externalAnimatedHeight.setValue(finalHeight);
         },
 
         onPanResponderTerminate: () => {
@@ -833,14 +839,14 @@ const JsModalComponent: FC<JsModalProps> = ({
   // ============================================================================
   /**
    * Create a PanResponder for handling corner-based resizing in floating mode
-   * 
+   *
    * This function generates resize handlers for each corner that allow users to
    * resize the floating modal by dragging from any corner. It includes boundary
    * checking and minimum size constraints.
-   * 
+   *
    * @param corner - Which corner this handler is for
    * @returns PanResponder configured for that corner's resize behavior
-   * 
+   *
    * @performance Uses direct animated value updates for smooth resizing
    * @performance Includes safe area boundary checking for all corners
    */
@@ -853,9 +859,11 @@ const JsModalComponent: FC<JsModalProps> = ({
           const currentDims = currentDimensionsRef.current;
 
           // If any animation is in-flight, stop and capture final XY to keep math consistent
-          floatingPosition.stopAnimation(({ x, y }: { x: number; y: number }) => {
-            floatingPosition.setValue({ x, y });
-          });
+          floatingPosition.stopAnimation(
+            ({ x, y }: { x: number; y: number }) => {
+              floatingPosition.setValue({ x, y });
+            }
+          );
 
           setIsResizing(true);
           // Snapshot starting rect
@@ -874,9 +882,11 @@ const JsModalComponent: FC<JsModalProps> = ({
 
           // Safe-area–aware bounds
           const minLeft = Math.max(0, insets.left || 0);
-          const maxRight = containerBounds.width - Math.max(0, insets.right || 0);
+          const maxRight =
+            containerBounds.width - Math.max(0, insets.right || 0);
           const minTop = Math.max(0, insets.top || 0);
-          const maxBottom = containerBounds.height - Math.max(0, insets.bottom || 0);
+          const maxBottom =
+            containerBounds.height - Math.max(0, insets.bottom || 0);
 
           const start = startDimensionsRef.current;
           const startRight = start.left + start.width;
@@ -890,30 +900,66 @@ const JsModalComponent: FC<JsModalProps> = ({
           switch (corner) {
             case "topLeft": {
               // Move left & top; anchor right & bottom
-              const newLeft = Math.max(minLeft, Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH));
-              const newTop  = Math.max(minTop,  Math.min(start.top + dy,  startBottom - FLOATING_MIN_HEIGHT));
-              left = newLeft; top = newTop; right = startRight; bottom = startBottom;
+              const newLeft = Math.max(
+                minLeft,
+                Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH)
+              );
+              const newTop = Math.max(
+                minTop,
+                Math.min(start.top + dy, startBottom - FLOATING_MIN_HEIGHT)
+              );
+              left = newLeft;
+              top = newTop;
+              right = startRight;
+              bottom = startBottom;
               break;
             }
             case "topRight": {
               // Move right & top; anchor left & bottom
-              const newRight = Math.min(maxRight, Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH));
-              const newTop   = Math.max(minTop,  Math.min(start.top + dy,  startBottom - FLOATING_MIN_HEIGHT));
-              left = start.left; top = newTop; right = newRight; bottom = startBottom;
+              const newRight = Math.min(
+                maxRight,
+                Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH)
+              );
+              const newTop = Math.max(
+                minTop,
+                Math.min(start.top + dy, startBottom - FLOATING_MIN_HEIGHT)
+              );
+              left = start.left;
+              top = newTop;
+              right = newRight;
+              bottom = startBottom;
               break;
             }
             case "bottomLeft": {
               // Move left & bottom; anchor right & top
-              const newLeft   = Math.max(minLeft,   Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH));
-              const newBottom = Math.min(maxBottom, Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT));
-              left = newLeft; top = start.top; right = startRight; bottom = newBottom;
+              const newLeft = Math.max(
+                minLeft,
+                Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH)
+              );
+              const newBottom = Math.min(
+                maxBottom,
+                Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT)
+              );
+              left = newLeft;
+              top = start.top;
+              right = startRight;
+              bottom = newBottom;
               break;
             }
             case "bottomRight": {
               // Move right & bottom; anchor left & top
-              const newRight  = Math.min(maxRight,  Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH));
-              const newBottom = Math.min(maxBottom, Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT));
-              left = start.left; top = start.top; right = newRight; bottom = newBottom;
+              const newRight = Math.min(
+                maxRight,
+                Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH)
+              );
+              const newBottom = Math.min(
+                maxBottom,
+                Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT)
+              );
+              left = start.left;
+              top = start.top;
+              right = newRight;
+              bottom = newBottom;
               break;
             }
           }
@@ -987,7 +1033,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   const handleFloatingDragEnd = useCallback(
     (finalPosition: { x: number; y: number }) => {
       setIsDragging(false);
-      
+
       // Update dimensions state to match final position
       const currentDims = currentDimensionsRef.current;
       const newDimensions = {

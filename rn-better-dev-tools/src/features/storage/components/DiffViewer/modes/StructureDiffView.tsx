@@ -31,8 +31,6 @@ interface StructureNode {
 }
 
 export function StructureDiffView({
-  oldValue,
-  newValue,
   differences,
   debugMode,
 }: StructureDiffViewProps) {
@@ -56,7 +54,7 @@ export function StructureDiffView({
             path: pathKey,
             type: isLast
               ? getValueType(
-                  diff.type === "REMOVE" ? diff.oldValue : diff.value,
+                  diff.type === "REMOVE" ? diff.oldValue : diff.value
                 )
               : "object",
             children: new Map(),
@@ -128,10 +126,7 @@ export function StructureDiffView({
     }
   };
 
-  const renderNode = (
-    node: StructureNode,
-    depth: number = 0,
-  ): ReactNode => {
+  const renderNode = (node: StructureNode, depth: number = 0): ReactNode => {
     const indent = depth * 16;
     const hasChildren = node.children.size > 0;
 

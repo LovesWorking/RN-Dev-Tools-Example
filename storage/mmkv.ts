@@ -77,9 +77,9 @@ class StorageWrapper {
 
   // Synchronous methods that MMKV supports but we'll make async
   // The callers will need to be updated to handle promises
-  contains(key: string): boolean {
+  contains(_key: string): boolean {
     console.warn(
-      "Synchronous contains() not supported in pure JS mode. Use async methods.",
+      "Synchronous contains() not supported in pure JS mode. Use async methods."
     );
     return false;
   }

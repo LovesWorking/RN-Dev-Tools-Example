@@ -126,7 +126,7 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
             duration: 1500,
             useNativeDriver: true,
           }),
-        ]),
+        ])
       ).start();
     } else {
       Animated.timing(statusPulse, {
@@ -238,7 +238,7 @@ export function GameUIStorageStats({ stats }: GameUIStorageStatsProps) {
 
       {/* Storage Stats Grid */}
       <View style={styles.statsGrid}>
-        {storageTypeData.map((item, index) => {
+        {storageTypeData.map((item) => {
           let count = 0;
           let isActive = false;
 

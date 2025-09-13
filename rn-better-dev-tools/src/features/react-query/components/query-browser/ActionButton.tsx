@@ -45,14 +45,12 @@ interface Props {
   onClick: () => void;
   text: string;
   bgColorClass: keyof typeof buttonConfigs;
-  _textColorClass: keyof typeof buttonConfigs;
   disabled: boolean;
 }
 
 export default function ActionButton({
   onClick,
   text,
-  _textColorClass,
   bgColorClass,
   disabled,
 }: Props) {

@@ -22,7 +22,7 @@ import {
   ReactElement,
   ReactNode,
   FC,
-} from "react";
+} from 'react';
 import {
   View,
   StyleSheet,
@@ -34,16 +34,16 @@ import {
   Text,
   ViewStyle,
   GestureResponderHandlers,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSafeAreaInsets } from "../shared/hooks/useSafeAreaInsets";
-import { gameUIColors } from "../shared/ui/gameUI";
-import { DraggableHeader } from "../shared/ui/components/DraggableHeader";
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSafeAreaInsets } from '../shared/hooks/useSafeAreaInsets';
+import { gameUIColors } from '../shared/ui/gameUI';
+import { DraggableHeader } from '../shared/ui/components/DraggableHeader';
 
 // ============================================================================
 // CONSTANTS - Modal dimensions and configuration
 // ============================================================================
-const SCREEN = Dimensions.get("window");
+const SCREEN = Dimensions.get('window');
 const MIN_HEIGHT = 100;
 const DEFAULT_HEIGHT = 400;
 const FLOATING_WIDTH = 380;
@@ -68,7 +68,7 @@ interface PersistedModalState {
 
 /**
  * Utility class for persisting modal state to AsyncStorage
- * 
+ *
  * Handles saving and loading modal state including mode, dimensions,
  * and position with memory caching for performance.
  */
@@ -77,7 +77,7 @@ class ModalStorage {
 
   /**
    * Save modal state to AsyncStorage with memory caching
-   * 
+   *
    * @param key - Storage key for the modal state
    * @param value - Modal state to persist
    */
@@ -86,13 +86,13 @@ class ModalStorage {
       this.memoryCache[key] = value;
       await AsyncStorage.setItem(`@modal_state_${key}`, JSON.stringify(value));
     } catch (error) {
-      console.warn("Failed to save modal state:", error);
+      console.warn('Failed to save modal state:', error);
     }
   }
 
   /**
    * Load modal state from AsyncStorage with memory cache fallback
-   * 
+   *
    * @param key - Storage key for the modal state
    * @returns Persisted modal state or null if not found
    */
@@ -111,7 +111,7 @@ class ModalStorage {
         return parsed;
       }
     } catch (error) {
-      console.warn("Failed to load modal state:", error);
+      console.warn('Failed to load modal state:', error);
     }
     return null;
   }
@@ -120,7 +120,7 @@ class ModalStorage {
 // ============================================================================
 // TYPE DEFINITIONS - Interface contracts for the modal
 // ============================================================================
-export type ModalMode = "bottomSheet" | "floating";
+export type ModalMode = 'bottomSheet' | 'floating';
 
 interface HeaderConfig {
   title?: string;
@@ -183,12 +183,12 @@ const DragIndicator = memo(function DragIndicator({
       <View
         style={[
           styles.dragIndicator,
-          mode === "floating" && styles.floatingDragIndicator,
+          mode === 'floating' && styles.floatingDragIndicator,
           isResizing && styles.dragIndicatorActive,
         ]}
       />
       {/* Add resize grip lines for better visual feedback in bottom sheet */}
-      {isResizing && mode === "bottomSheet" && (
+      {isResizing && mode === 'bottomSheet' && (
         <View style={styles.resizeGripContainer}>
           <View style={styles.resizeGripLine} />
           <View style={styles.resizeGripLine} />
@@ -206,9 +206,10 @@ const CornerHandle = memo(function CornerHandle({
   position,
   isActive,
 }: {
-  position: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
+  position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
   isActive: boolean;
 }) {
+  console.log('TODO:  position', position);
   return (
     <View style={[styles.cornerHandle]}>
       <View style={[styles.handler, isActive && styles.handlerActive]} />
@@ -289,19 +290,22 @@ const ModalHeader = memo(function ModalHeader({
     // by checking if it's a React element with specific props
     const isCompleteReplacement =
       isValidElement(header.customContent) &&
-      typeof header.customContent.type === "function" &&
-      header.customContent.type.name === "CyberpunkModalHeader";
+      typeof header.customContent.type === 'function' &&
+      header.customContent.type.name === 'CyberpunkModalHeader';
 
     if (isCompleteReplacement) {
       // Clone the element and pass the necessary props
-      return cloneElement(header.customContent as ReactElement<any>, {
-        onToggleMode,
-        onClose,
-        mode,
-        panHandlers: headerProps,
-        showToggleButton: header?.showToggleButton !== false,
-        hideCloseButton: header?.hideCloseButton,
-      } as any);
+      return cloneElement(
+        header.customContent as ReactElement<any>,
+        {
+          onToggleMode,
+          onClose,
+          mode,
+          panHandlers: headerProps,
+          showToggleButton: header?.showToggleButton !== false,
+          hideCloseButton: header?.hideCloseButton,
+        } as any
+      );
     }
 
     // Otherwise, render custom content within the standard header structure
@@ -351,7 +355,7 @@ const ModalHeader = memo(function ModalHeader({
 
   return (
     <View
-      style={[styles.header, mode === "floating" && styles.floatingModeHeader]}
+      style={[styles.header, mode === 'floating' && styles.floatingModeHeader]}
       {...headerProps}
     >
       {shouldHandleTap ? (
@@ -370,11 +374,11 @@ const ModalHeader = memo(function ModalHeader({
 // ============================================================================
 /**
  * JsModal - Ultra-optimized modal component for true 60FPS performance
- * 
+ *
  * This modal component is designed for maximum performance using native driver
  * animations, transforms instead of layout properties, and minimal JavaScript
  * thread work. It supports two modes: bottom sheet and floating window.
- * 
+ *
  * Key Performance Features:
  * - Uses native driver for all animations (useNativeDriver: true)
  * - Transform-based positioning instead of layout changes
@@ -382,10 +386,10 @@ const ModalHeader = memo(function ModalHeader({
  * - Minimal PanResponder JavaScript work
  * - State persistence with AsyncStorage
  * - Drag and resize functionality in both modes
- * 
+ *
  * @param props - Modal configuration and content
  * @returns JSX.Element representing the modal
- * 
+ *
  * @example
  * ```typescript
  * <JsModal
@@ -401,7 +405,7 @@ const ModalHeader = memo(function ModalHeader({
  *   <SettingsContent />
  * </JsModal>
  * ```
- * 
+ *
  * @performance All animations use native driver for 60FPS performance
  * @performance Uses transform-based positioning for optimal rendering
  * @performance Includes state persistence and restoration capabilities
@@ -416,7 +420,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   maxHeight,
   initialHeight = DEFAULT_HEIGHT,
   animatedHeight: externalAnimatedHeight,
-  initialMode = "bottomSheet",
+  initialMode = 'bottomSheet',
   onModeChange,
   persistenceKey,
   enablePersistence = true,
@@ -459,7 +463,6 @@ const JsModalComponent: FC<JsModalProps> = ({
     new Animated.Value(initialHeight)
   ).current;
 
-
   // Save state with debounce
   useEffect(() => {
     if (!enablePersistence || !persistenceKey || !isStateLoaded) return;
@@ -493,7 +496,6 @@ const JsModalComponent: FC<JsModalProps> = ({
       // Set external height
     }
   }, [externalAnimatedHeight, initialHeight, isResizing]);
-
 
   // Update refs when dimensions change
   useEffect(() => {
@@ -607,7 +609,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   const modalOpacity = visibilityProgress.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
-    extrapolate: "clamp",
+    extrapolate: 'clamp',
   });
 
   // ============================================================================
@@ -620,7 +622,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   // Mode toggle handler
   /**
    * Toggle between bottom sheet and floating modal modes
-   * 
+   *
    * Clears active dragging and resizing states to prevent visual artifacts
    * when switching between modes with different interaction patterns.
    */
@@ -628,8 +630,8 @@ const JsModalComponent: FC<JsModalProps> = ({
     // Avoid carrying active styling across modes
     setIsDragging(false);
     setIsResizing(false);
-    
-    const newMode = mode === "bottomSheet" ? "floating" : "bottomSheet";
+
+    const newMode = mode === 'bottomSheet' ? 'floating' : 'bottomSheet';
     setMode(newMode);
     onModeChange?.(newMode);
   }, [mode, onModeChange]);
@@ -654,7 +656,7 @@ const JsModalComponent: FC<JsModalProps> = ({
       visibilityProgress.setValue(0);
 
       // Open animations
-      if (mode === "bottomSheet") {
+      if (mode === 'bottomSheet') {
         // Parallel animations for smooth opening
         openAnimation = Animated.parallel([
           // Slide up from bottom
@@ -684,7 +686,7 @@ const JsModalComponent: FC<JsModalProps> = ({
       }
     } else {
       // Close animations
-      if (mode === "bottomSheet") {
+      if (mode === 'bottomSheet') {
         closeAnimation = Animated.parallel([
           // Slide down
           Animated.spring(bottomSheetTranslateY, {
@@ -738,24 +740,24 @@ const JsModalComponent: FC<JsModalProps> = ({
   // Following the documentation pattern for proper resize
   // ============================================================================
   const headerTouchOffsetRef = useRef(0);
-  
+
   const bottomSheetPanResponder = useMemo(
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () =>
-          !isExternallyControlled && mode === "bottomSheet",
-        onMoveShouldSetPanResponder: (evt, gestureState) =>
+          !isExternallyControlled && mode === 'bottomSheet',
+        onMoveShouldSetPanResponder: (_evt, gestureState) =>
           !isExternallyControlled &&
-          mode === "bottomSheet" &&
+          mode === 'bottomSheet' &&
           Math.abs(gestureState.dy) > 3,
         onPanResponderTerminationRequest: () => false,
 
         onPanResponderGrant: (evt) => {
           setIsResizing(true);
-          
+
           // Where inside the header the finger grabbed
           headerTouchOffsetRef.current = evt.nativeEvent.locationY || 0;
-          
+
           // Stop any in-flight animations so we start from truth
           animatedBottomPosition.stopAnimation((val: number) => {
             currentHeightRef.current = val;
@@ -770,7 +772,10 @@ const JsModalComponent: FC<JsModalProps> = ({
           let targetHeight = SCREEN.height - sheetTop;
 
           // Clamp
-          targetHeight = Math.max(minHeight, Math.min(targetHeight, effectiveMaxHeight));
+          targetHeight = Math.max(
+            minHeight,
+            Math.min(targetHeight, effectiveMaxHeight)
+          );
 
           // Push to UI (no React state!)
           animatedBottomPosition.setValue(targetHeight);
@@ -780,7 +785,7 @@ const JsModalComponent: FC<JsModalProps> = ({
           }
         },
 
-        onPanResponderRelease: (evt, gestureState) => {
+        onPanResponderRelease: (_evt, gestureState) => {
           setIsResizing(false);
 
           const finalHeight = currentHeightRef.current;
@@ -809,7 +814,8 @@ const JsModalComponent: FC<JsModalProps> = ({
 
           // We're already at the finger-tracked height; avoid re-animating it.
           setPanelHeight(finalHeight);
-          if (externalAnimatedHeight) externalAnimatedHeight.setValue(finalHeight);
+          if (externalAnimatedHeight)
+            externalAnimatedHeight.setValue(finalHeight);
         },
 
         onPanResponderTerminate: () => {
@@ -835,29 +841,31 @@ const JsModalComponent: FC<JsModalProps> = ({
   // ============================================================================
   /**
    * Create a PanResponder for handling corner-based resizing in floating mode
-   * 
+   *
    * This function generates resize handlers for each corner that allow users to
    * resize the floating modal by dragging from any corner. It includes boundary
    * checking and minimum size constraints.
-   * 
+   *
    * @param corner - Which corner this handler is for
    * @returns PanResponder configured for that corner's resize behavior
-   * 
+   *
    * @performance Uses direct animated value updates for smooth resizing
    * @performance Includes safe area boundary checking for all corners
    */
   const createResizeHandler = useCallback(
-    (corner: "topLeft" | "topRight" | "bottomLeft" | "bottomRight") => {
+    (corner: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight') => {
       return PanResponder.create({
-        onStartShouldSetPanResponder: () => mode === "floating",
-        onMoveShouldSetPanResponder: () => mode === "floating",
+        onStartShouldSetPanResponder: () => mode === 'floating',
+        onMoveShouldSetPanResponder: () => mode === 'floating',
         onPanResponderGrant: () => {
           const currentDims = currentDimensionsRef.current;
 
           // If any animation is in-flight, stop and capture final XY to keep math consistent
-          floatingPosition.stopAnimation(({ x, y }: { x: number; y: number }) => {
-            floatingPosition.setValue({ x, y });
-          });
+          floatingPosition.stopAnimation(
+            ({ x, y }: { x: number; y: number }) => {
+              floatingPosition.setValue({ x, y });
+            }
+          );
 
           setIsResizing(true);
           // Snapshot starting rect
@@ -876,9 +884,11 @@ const JsModalComponent: FC<JsModalProps> = ({
 
           // Safe-area–aware bounds
           const minLeft = Math.max(0, insets.left || 0);
-          const maxRight = containerBounds.width - Math.max(0, insets.right || 0);
+          const maxRight =
+            containerBounds.width - Math.max(0, insets.right || 0);
           const minTop = Math.max(0, insets.top || 0);
-          const maxBottom = containerBounds.height - Math.max(0, insets.bottom || 0);
+          const maxBottom =
+            containerBounds.height - Math.max(0, insets.bottom || 0);
 
           const start = startDimensionsRef.current;
           const startRight = start.left + start.width;
@@ -890,32 +900,68 @@ const JsModalComponent: FC<JsModalProps> = ({
           let bottom = startBottom;
 
           switch (corner) {
-            case "topLeft": {
+            case 'topLeft': {
               // Move left & top; anchor right & bottom
-              const newLeft = Math.max(minLeft, Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH));
-              const newTop  = Math.max(minTop,  Math.min(start.top + dy,  startBottom - FLOATING_MIN_HEIGHT));
-              left = newLeft; top = newTop; right = startRight; bottom = startBottom;
+              const newLeft = Math.max(
+                minLeft,
+                Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH)
+              );
+              const newTop = Math.max(
+                minTop,
+                Math.min(start.top + dy, startBottom - FLOATING_MIN_HEIGHT)
+              );
+              left = newLeft;
+              top = newTop;
+              right = startRight;
+              bottom = startBottom;
               break;
             }
-            case "topRight": {
+            case 'topRight': {
               // Move right & top; anchor left & bottom
-              const newRight = Math.min(maxRight, Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH));
-              const newTop   = Math.max(minTop,  Math.min(start.top + dy,  startBottom - FLOATING_MIN_HEIGHT));
-              left = start.left; top = newTop; right = newRight; bottom = startBottom;
+              const newRight = Math.min(
+                maxRight,
+                Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH)
+              );
+              const newTop = Math.max(
+                minTop,
+                Math.min(start.top + dy, startBottom - FLOATING_MIN_HEIGHT)
+              );
+              left = start.left;
+              top = newTop;
+              right = newRight;
+              bottom = startBottom;
               break;
             }
-            case "bottomLeft": {
+            case 'bottomLeft': {
               // Move left & bottom; anchor right & top
-              const newLeft   = Math.max(minLeft,   Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH));
-              const newBottom = Math.min(maxBottom, Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT));
-              left = newLeft; top = start.top; right = startRight; bottom = newBottom;
+              const newLeft = Math.max(
+                minLeft,
+                Math.min(start.left + dx, startRight - FLOATING_MIN_WIDTH)
+              );
+              const newBottom = Math.min(
+                maxBottom,
+                Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT)
+              );
+              left = newLeft;
+              top = start.top;
+              right = startRight;
+              bottom = newBottom;
               break;
             }
-            case "bottomRight": {
+            case 'bottomRight': {
               // Move right & bottom; anchor left & top
-              const newRight  = Math.min(maxRight,  Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH));
-              const newBottom = Math.min(maxBottom, Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT));
-              left = start.left; top = start.top; right = newRight; bottom = newBottom;
+              const newRight = Math.min(
+                maxRight,
+                Math.max(startRight + dx, start.left + FLOATING_MIN_WIDTH)
+              );
+              const newBottom = Math.min(
+                maxBottom,
+                Math.max(startBottom + dy, start.top + FLOATING_MIN_HEIGHT)
+              );
+              left = start.left;
+              top = start.top;
+              right = newRight;
+              bottom = newBottom;
               break;
             }
           }
@@ -972,10 +1018,10 @@ const JsModalComponent: FC<JsModalProps> = ({
 
   const resizeHandlers = useMemo(() => {
     return {
-      topLeft: createResizeHandler("topLeft"),
-      topRight: createResizeHandler("topRight"),
-      bottomLeft: createResizeHandler("bottomLeft"),
-      bottomRight: createResizeHandler("bottomRight"),
+      topLeft: createResizeHandler('topLeft'),
+      topRight: createResizeHandler('topRight'),
+      bottomLeft: createResizeHandler('bottomLeft'),
+      bottomRight: createResizeHandler('bottomRight'),
     };
   }, [createResizeHandler]);
 
@@ -989,7 +1035,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   const handleFloatingDragEnd = useCallback(
     (finalPosition: { x: number; y: number }) => {
       setIsDragging(false);
-      
+
       // Update dimensions state to match final position
       const currentDims = currentDimensionsRef.current;
       const newDimensions = {
@@ -1056,7 +1102,7 @@ const JsModalComponent: FC<JsModalProps> = ({
   }
 
   // Render floating mode
-  if (mode === "floating") {
+  if (mode === 'floating') {
     return (
       <Animated.View
         style={[
@@ -1083,7 +1129,7 @@ const JsModalComponent: FC<JsModalProps> = ({
           elementSize={dimensions}
           minPosition={{ x: 0, y: insets.top }}
           style={styles.floatingHeader}
-          enabled={mode === "floating" && !isResizing}
+          enabled={mode === 'floating' && !isResizing}
         >
           <ModalHeader
             header={header}
@@ -1219,7 +1265,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   bottomSheetWrapper: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
@@ -1237,7 +1283,7 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   floatingModal: {
-    position: "absolute",
+    position: 'absolute',
     backgroundColor: gameUIColors.panel,
     borderRadius: 16,
     borderWidth: 1,
@@ -1255,7 +1301,7 @@ const styles = StyleSheet.create({
   floatingModalDragging: {
     borderColor: gameUIColors.success,
     borderWidth: 2,
-    shadowColor: gameUIColors.success + "99",
+    shadowColor: gameUIColors.success + '99',
     shadowOpacity: 0.8,
     shadowRadius: 12,
   },
@@ -1267,7 +1313,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: gameUIColors.border, // Theme border
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   floatingHeader: {
     borderTopLeftRadius: 14,
@@ -1279,22 +1325,22 @@ const styles = StyleSheet.create({
   },
   headerInner: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   dragIndicatorContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 8,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   dragIndicatorContainerCustom: {
     paddingTop: 6,
     paddingBottom: 2,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   dragIndicator: {
     width: 40,
     height: 3,
-    backgroundColor: gameUIColors.info + "99", // Theme indicator
+    backgroundColor: gameUIColors.info + '99', // Theme indicator
     borderRadius: 2,
     shadowColor: gameUIColors.info,
     shadowOffset: { width: 0, height: 0 },
@@ -1311,8 +1357,8 @@ const styles = StyleSheet.create({
     width: 40,
   },
   resizeGripContainer: {
-    position: "absolute",
-    flexDirection: "row",
+    position: 'absolute',
+    flexDirection: 'row',
     gap: 2,
     marginTop: 12,
   },
@@ -1324,18 +1370,18 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     paddingHorizontal: 16,
-    alignItems: "center",
+    alignItems: 'center',
   },
   headerControls: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     right: 16,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: gameUIColors.primary,
   },
   headerSubtitle: {
@@ -1344,45 +1390,45 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   headerHintText: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   hintText: {
     fontSize: 10,
     color: gameUIColors.muted,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   controlButton: {
     width: 28,
     height: 28,
     borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: 8,
   },
   toggleButton: {
-    backgroundColor: gameUIColors.info + "1A",
+    backgroundColor: gameUIColors.info + '1A',
     borderWidth: 1,
-    borderColor: gameUIColors.info + "33",
+    borderColor: gameUIColors.info + '33',
   },
   closeButton: {
     width: 28,
     height: 28,
     borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: gameUIColors.error + "1A",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: gameUIColors.error + '1A',
     borderWidth: 1,
-    borderColor: gameUIColors.error + "33",
+    borderColor: gameUIColors.error + '33',
     marginLeft: 8,
   },
   iconLine: {
-    position: "absolute",
+    position: 'absolute',
     top: 7.25,
     left: 2,
     width: 12,
@@ -1394,14 +1440,14 @@ const styles = StyleSheet.create({
     backgroundColor: gameUIColors.background,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   cornerHandle: {
-    position: "absolute",
+    position: 'absolute',
     zIndex: 1,
   },
   cornerHandleWrapper: {
-    position: "absolute",
+    position: 'absolute',
     width: 30,
     height: 30,
     zIndex: 1000,
@@ -1409,16 +1455,16 @@ const styles = StyleSheet.create({
   handler: {
     width: 20,
     height: 20,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     borderRadius: 10,
     borderWidth: 0,
-    borderColor: "transparent",
+    borderColor: 'transparent',
   },
   handlerActive: {
-    backgroundColor: gameUIColors.success + "1A",
+    backgroundColor: gameUIColors.success + '1A',
     borderColor: gameUIColors.success,
     borderWidth: 2,
-    shadowColor: gameUIColors.success + "99",
+    shadowColor: gameUIColors.success + '99',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -1428,7 +1474,7 @@ const styles = StyleSheet.create({
 // Footer container styles (absolute within modal content area)
 const footerStyles = StyleSheet.create({
   footerContainer: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,

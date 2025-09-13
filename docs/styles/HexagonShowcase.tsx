@@ -1,6 +1,4 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-
 const HexagonShowcase: React.FC = () => {
   return (
     <ScrollView style={styles.container}>

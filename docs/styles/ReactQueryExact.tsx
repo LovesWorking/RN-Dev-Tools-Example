@@ -1,6 +1,4 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet, ViewStyle } from "react-native";
-
 // Exact colors from React Query logo
 const hexagonColor = "#FFD700"; // Yellow/gold for center
 const orbitalColor = "#FF5A5F"; // Red/coral for orbital lines

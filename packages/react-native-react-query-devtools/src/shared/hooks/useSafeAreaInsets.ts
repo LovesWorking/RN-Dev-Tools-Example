@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Platform, Dimensions, StatusBar } from "react-native";
+import { useState, useEffect } from 'react';
+import { Platform, Dimensions, StatusBar } from 'react-native';
 
 // Types
 export interface SafeAreaInsets {
@@ -19,23 +19,23 @@ export interface SafeAreaInsetsOptions {
 // Device detection map for iOS
 const iPhoneDimensionMap: Record<
   string,
-  Omit<SafeAreaInsets, "left" | "right">
+  Omit<SafeAreaInsets, 'left' | 'right'>
 > = {
   // iPhone 14 Pro, 14 Pro Max, 15, 15 Plus, 15 Pro, 15 Pro Max, 16 series (Dynamic Island)
-  "393,852": { top: 59, bottom: 34 }, // 14 Pro, 15, 15 Pro, 16, 16 Pro
-  "430,932": { top: 59, bottom: 34 }, // 14 Pro Max, 15 Plus, 15 Pro Max, 16 Plus, 16 Pro Max
+  '393,852': { top: 59, bottom: 34 }, // 14 Pro, 15, 15 Pro, 16, 16 Pro
+  '430,932': { top: 59, bottom: 34 }, // 14 Pro Max, 15 Plus, 15 Pro Max, 16 Plus, 16 Pro Max
 
   // iPhone 12, 12 Pro, 13, 13 Pro, 14
-  "390,844": { top: 47, bottom: 34 },
+  '390,844': { top: 47, bottom: 34 },
 
   // iPhone 12 Pro Max, 13 Pro Max, 14 Plus
-  "428,926": { top: 47, bottom: 34 },
+  '428,926': { top: 47, bottom: 34 },
 
   // iPhone 12 mini, 13 mini (newer value takes precedence)
-  "375,812": { top: 50, bottom: 34 },
+  '375,812': { top: 50, bottom: 34 },
 
   // iPhone XR, 11
-  "414,896": { top: 48, bottom: 34 },
+  '414,896': { top: 48, bottom: 34 },
 };
 
 /**
@@ -48,7 +48,7 @@ const iPhoneDimensionMap: Record<
  * Device recognition uses screen dimensions as lookup key
  */
 const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
-  if (Platform.OS === "android") {
+  if (Platform.OS === 'android') {
     const androidVersion = Platform.Version;
     const statusBarHeight = StatusBar.currentHeight || 0;
 
@@ -64,7 +64,7 @@ const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
   }
 
   // iOS
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get('window');
   const dimensionKey = `${width},${height}`;
 
   const deviceInsets = iPhoneDimensionMap[dimensionKey];
@@ -104,21 +104,22 @@ let SafeAreaContextModule: SafeAreaContextModuleType | null = null;
 
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  SafeAreaContextModule = require("react-native-safe-area-context");
+  SafeAreaContextModule = require('react-native-safe-area-context');
   if (SafeAreaContextModule?.useSafeAreaInsets) {
     hasNativePackage = true;
     // react-native-safe-area-context package found - using native implementation
   }
 } catch {
   console.warn(
-    "⚠️ react-native-safe-area-context not found - using pure JS fallback implementation"
+    '⚠️ react-native-safe-area-context not found - using pure JS fallback implementation'
   );
 }
 
 // Create a wrapper hook that always exists
-const useNativeSafeAreaInsets = hasNativePackage && SafeAreaContextModule?.useSafeAreaInsets
-  ? SafeAreaContextModule.useSafeAreaInsets
-  : () => null;
+const useNativeSafeAreaInsets =
+  hasNativePackage && SafeAreaContextModule?.useSafeAreaInsets
+    ? SafeAreaContextModule.useSafeAreaInsets
+    : () => null;
 
 /**
  * Custom hook for accessing safe area insets with automatic fallback
@@ -171,12 +172,13 @@ export const useSafeAreaInsets = (
         setFallbackInsets(getPureJSSafeAreaInsets());
       };
 
-      const subscription = Dimensions.addEventListener("change", updateInsets);
+      const subscription = Dimensions.addEventListener('change', updateInsets);
 
       return () => {
         subscription?.remove();
       };
     }
+    return undefined;
   }, [nativeInsets]); // Dependency on nativeInsets
 
   const baseInsets = nativeInsets || fallbackInsets;
@@ -220,7 +222,7 @@ export const useSafeAreaInsets = (
 export const hasNotch = (): boolean => {
   const insets = getPureJSSafeAreaInsets();
 
-  if (Platform.OS === "android") {
+  if (Platform.OS === 'android') {
     // Android with tall status bar might have notch
     return insets.top > 24;
   }
@@ -244,7 +246,7 @@ export const SafeAreaConfig = {
   hasNativeSupport: (): boolean => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require("react-native-safe-area-context");
+      require('react-native-safe-area-context');
       return true;
     } catch {
       return false;
@@ -262,9 +264,9 @@ export const SafeAreaConfig = {
    *
    * @returns "native" if using react-native-safe-area-context, "pure-js" if using fallback
    */
-  getImplementationType: (): "native" | "pure-js" => {
-    if (SafeAreaConfig.forcePureJS) return "pure-js";
-    return SafeAreaConfig.hasNativeSupport() ? "native" : "pure-js";
+  getImplementationType: (): 'native' | 'pure-js' => {
+    if (SafeAreaConfig.forcePureJS) return 'pure-js';
+    return SafeAreaConfig.hasNativeSupport() ? 'native' : 'pure-js';
   },
 };
 
@@ -276,7 +278,7 @@ export const SafeAreaConfig = {
  * @deprecated Use Dimensions.get("window") directly instead
  */
 export const useSafeAreaFrame = () => {
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get('window');
   return { x: 0, y: 0, width, height };
 };
 

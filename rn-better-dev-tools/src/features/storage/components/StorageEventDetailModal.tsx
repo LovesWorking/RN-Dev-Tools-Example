@@ -83,7 +83,7 @@ export function StorageEventDetailModal({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const insets = useSafeAreaInsets();
 
-  const handleModeChange = useCallback((mode: ModalMode) => {
+  const handleModeChange = useCallback((_mode: ModalMode) => {
     // Modal mode changed to: mode
   }, []);
 
@@ -173,7 +173,6 @@ export function StorageEventDetailModal({
     setKeyStats(stats);
   }, [event, allEvents, visible]);
 
-
   const formatTimestamp = (date: Date): string => {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
@@ -188,8 +187,8 @@ export function StorageEventDetailModal({
       parsed === null
         ? "null"
         : parsed === undefined
-        ? "undefined"
-        : typeof parsed;
+          ? "undefined"
+          : typeof parsed;
 
     if (type === "boolean") {
       const isTrue = parsed === true;

@@ -67,17 +67,17 @@ export function MutationBrowserModal({
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
+      onMoveShouldSetPanResponder: (_evt, gestureState) => {
         // Only capture horizontal swipes
         return Math.abs(gestureState.dx) > 5 && Math.abs(gestureState.dy) < 10;
       },
 
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         // Update translation for visual feedback
         translationX.setValue(gestureState.dx);
       },
 
-      onPanResponderRelease: (evt, gestureState) => {
+      onPanResponderRelease: (_evt, gestureState) => {
         const { dx, vx } = gestureState;
         const swipeThreshold = 80; // Match EDGE_THRESHOLD from SwipeIndicator
         const velocityThreshold = 0.5;

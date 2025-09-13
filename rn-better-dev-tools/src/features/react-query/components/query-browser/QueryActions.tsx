@@ -35,7 +35,6 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
           }}
           bgColorClass="btnRefetch"
           text="Refetch"
-          _textColorClass="btnRefetch"
         />
         <ActionButton
           sentry-label="ignore devtools query invalidate action"
@@ -45,7 +44,6 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
           }}
           bgColorClass="btnInvalidate"
           text="Invalidate"
-          _textColorClass="btnInvalidate"
         />
         <ActionButton
           sentry-label="ignore devtools query reset action"
@@ -55,7 +53,6 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
           }}
           bgColorClass="btnReset"
           text="Reset"
-          _textColorClass="btnReset"
         />
         <ActionButton
           sentry-label="ignore devtools query remove action"
@@ -66,7 +63,6 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
           }}
           bgColorClass="btnRemove"
           text="Remove"
-          _textColorClass="btnRemove"
         />
         <ActionButton
           sentry-label="ignore devtools query trigger loading action"
@@ -80,7 +76,6 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
               ? "Restore Loading"
               : "Trigger Loading"
           }
-          _textColorClass="btnTriggerLoading"
         />
         <ActionButton
           sentry-label="ignore devtools query trigger error action"
@@ -90,7 +85,6 @@ export default function QueryActions({ query, setSelectedQuery }: Props) {
           }}
           bgColorClass="btnTriggerLoadiError"
           text={queryStatus === "error" ? "Restore Error" : "Trigger Error"}
-          _textColorClass="btnTriggerLoadiError"
         />
       </View>
     </View>

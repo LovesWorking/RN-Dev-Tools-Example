@@ -1,11 +1,9 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { EnvLaptopIcon } from "@/rn-better-dev-tools/icons/EnvLaptopIcon";
 import { WifiCircuitIcon } from "@/rn-better-dev-tools/icons/WifiCircuitIcon";
 import { StorageStackIcon } from "@/rn-better-dev-tools/icons/StorageStackIcon";
 import { SentryBugIcon } from "@/rn-better-dev-tools/icons/SentryBugIcon";
 import { ReactQueryIcon } from "@/rn-better-dev-tools/icons/ReactQueryIcon";
-
 const CyberpunkIconGallery: React.FC = () => {
   const iconSize = 60;
 

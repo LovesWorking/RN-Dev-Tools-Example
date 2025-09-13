@@ -1,7 +1,5 @@
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { ReactQueryIcon } from "@/rn-better-dev-tools/icons/ReactQueryIcon";
-
 // Color presets
 const QueryColors = {
   red: "#FF3366",

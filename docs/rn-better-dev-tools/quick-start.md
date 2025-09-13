@@ -30,7 +30,6 @@ Add the dev tools bubble to your app's root component:
 [//]: # "QuickSetup"
 
 ```tsx
-import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RnBetterDevToolsBubble } from "rn-better-dev-tools";
 
