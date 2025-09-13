@@ -1,7 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Query } from "@tanstack/react-query";
 import { QueryBrowser } from "./query-browser/index";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface QueryBrowserModeProps {

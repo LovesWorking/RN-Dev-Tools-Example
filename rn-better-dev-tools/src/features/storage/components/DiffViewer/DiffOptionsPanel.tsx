@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from "react-native";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import {
   Settings,

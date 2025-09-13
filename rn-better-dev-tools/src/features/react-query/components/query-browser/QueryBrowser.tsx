@@ -4,7 +4,6 @@ import { Query } from "@tanstack/react-query";
 import QueryRow from "./QueryRow";
 import useAllQueries from "../../hooks/useAllQueries";
 import { getQueryStatusLabel } from "../../utils/getQueryStatusLabel";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface Props {

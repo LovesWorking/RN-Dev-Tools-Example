@@ -1,3 +1,5 @@
+import { Platform, Dimensions, StatusBar } from 'react-native';
+
 export interface SafeAreaInsets {
   top: number;
   bottom: number;
@@ -15,7 +17,6 @@ export interface SafeAreaInsetsOptions {
 // Basic pure-JS fallback for safe area insets
 const getPureJSSafeAreaInsets = (): SafeAreaInsets => {
   try {
-    const { Platform, Dimensions, StatusBar } = require('react-native');
     if (Platform.OS === 'android') {
       const statusBarHeight = StatusBar?.currentHeight || 0;
       const hasGestureNav = (Platform.Version as number) >= 29;

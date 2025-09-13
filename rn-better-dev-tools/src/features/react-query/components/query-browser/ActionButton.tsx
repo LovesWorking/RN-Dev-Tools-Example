@@ -1,5 +1,4 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 // Define the color mappings using Game UI colors

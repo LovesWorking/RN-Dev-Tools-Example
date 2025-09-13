@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import {
   JsModal,
-  type ModalMode,
 } from "@/rn-better-dev-tools/src/components/modals/jsModal/JsModal";
 import { RequiredStorageKey } from "../types";
 import { StorageBrowserMode } from "./StorageBrowserMode";
@@ -90,7 +89,7 @@ export function StorageModalWithTabs({
   const hasLoadedTabState = useRef(false);
   const hasLoadedMonitoringState = useRef(false);
 
-  const handleModeChange = useCallback((_mode: ModalMode) => {
+  const handleModeChange = useCallback(() => {
     // Mode changes handled by JsModal
   }, []);
 
@@ -464,8 +463,6 @@ export function StorageModalWithTabs({
     if (activeTab === "browser") {
       return (
         <StorageBrowserMode
-          selectedQuery={undefined}
-          onQuerySelect={() => {}}
           requiredStorageKeys={requiredStorageKeys}
         />
       );

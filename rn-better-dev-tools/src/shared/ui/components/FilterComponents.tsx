@@ -5,7 +5,6 @@ import {
   TextInput,
   StyleSheet,
   ViewStyle,
-  ScrollView,
 } from "react-native";
 import type { ReactNode } from "react";
 import { X, Plus } from "rn-better-dev-tools/icons";

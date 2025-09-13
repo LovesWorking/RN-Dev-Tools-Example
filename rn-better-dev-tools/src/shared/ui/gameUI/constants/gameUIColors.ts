@@ -13,6 +13,7 @@ import { macOSGameUIColors } from './macOSDesignSystemColors';
 // THEME DEFINITIONS
 // ============================================
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const defaultTheme = {
   // Base colors
   border: "#00B8E666",

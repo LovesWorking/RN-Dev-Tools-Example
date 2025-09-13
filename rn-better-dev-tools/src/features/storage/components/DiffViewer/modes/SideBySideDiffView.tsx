@@ -1,5 +1,4 @@
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { DataViewer } from "../../../../react-query/components/shared/DataViewer";
 import type { DiffItem } from "../../../utils/objectDiff";

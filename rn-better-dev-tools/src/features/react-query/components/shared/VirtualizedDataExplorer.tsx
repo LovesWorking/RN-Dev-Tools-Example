@@ -26,11 +26,9 @@ import { IndentGuidesOverlay } from "./IndentGuidesOverlay";
 // Stable constants to prevent re-renders [[memory:4875251]]
 const HIT_SLOP_10 = { top: 10, bottom: 10, left: 10, right: 10 };
 const ITEM_HEIGHT = 24; // Fixed height per row for crisp guides
-const LONG_ITEM_HEIGHT = 24; // Keep uniform height to match VS Code tree
 const CHUNK_SIZE = 50; // Process data in chunks to avoid blocking UI
 const MAX_DEPTH_LIMIT = 15; // Prevent excessive nesting
 const MAX_ITEMS_PER_LEVEL = 500; // Limit items to prevent memory issues
-const LONG_KEY_THRESHOLD = 30; // Keys longer than this use vertical layout
 
 // Pre-computed indent styles (VS Code-style width)
 const INDENT_WIDTH = 16;
@@ -929,7 +927,6 @@ const VirtualizedItemComponent = ({
   isSelected: boolean;
 }): ReactElement => {
   const [isPressed, setIsPressed] = useState(false);
-  const [showFullKey, setShowFullKey] = useState(false);
 
   // Use pre-computed styles to avoid inline calculations [[memory:4875251]]
   const indentStyle =
@@ -937,7 +934,6 @@ const VirtualizedItemComponent = ({
   const color = getTypeColor(item.valueType);
 
   // Uniform row layout: single-line like VS Code tree
-  const isLongKey = false;
 
   // Use inline handler since component is already memoized [[memory:4875251]]
   const handlePress = () => {
@@ -947,10 +943,6 @@ const VirtualizedItemComponent = ({
     onSelect(index);
   };
 
-  const handleKeyPress = () => {};
-
-  // Always show full key for better identification
-  const displayKey = item.key;
 
   return (
     <View style={[STABLE_STYLES.itemContainer, indentStyle]}>
@@ -960,7 +952,6 @@ const VirtualizedItemComponent = ({
           STABLE_STYLES.itemTouchable,
           isPressed && STABLE_STYLES.itemTouchablePressed,
           isSelected && STABLE_STYLES.itemSelected,
-          isLongKey && { minHeight: LONG_ITEM_HEIGHT, paddingVertical: 2 },
         ]}
         onPress={handlePress}
         onPressIn={() => setIsPressed(true)}
@@ -1093,7 +1084,6 @@ export const VirtualizedDataExplorer: FC<VirtualizedDataExplorerProps> = ({
   );
 
   // Uniform row height for crisp guide geometry
-  const averageItemSize = ITEM_HEIGHT;
 
   // Simple keyExtractor without useCallback [[memory:4875251]]
   const keyExtractor = (item: FlatDataItem) => item.id;

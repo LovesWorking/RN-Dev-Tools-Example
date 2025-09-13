@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-export const ModalHeader: FC<PropsWithChildren<{}>> & {
+export const ModalHeader: FC<PropsWithChildren<Record<string, never>>> & {
   Content: FC<PropsWithChildren<{ title?: string; noMargin?: boolean }>>;
   Actions: FC<{ onClose?: () => void }>;
 } = (({ children }: PropsWithChildren) => {

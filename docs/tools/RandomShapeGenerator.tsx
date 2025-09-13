@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -146,7 +146,7 @@ const generateRandomShape = (): ShapeStyle => {
       // Uniform radius
       shape.borderRadius = getRandomInt(
         0,
-        Math.min(shape.width, shape.height) / 2,
+        Math.min(shape.width, shape.height) / 2
       );
     } else if (radiusType < 0.7) {
       // Different radius on each corner
@@ -240,7 +240,7 @@ const shapeStyle = ${JSON.stringify(cleanStyle, null, 2).replace(/"([^"]+)":/g, 
     Alert.alert(
       "Shape Copied!",
       `Shape #${index + 1} style has been copied to clipboard`,
-      [{ text: "OK" }],
+      [{ text: "OK" }]
     );
   }, []);
 
@@ -311,7 +311,7 @@ const shapeStyle = ${JSON.stringify(cleanStyle, null, 2).replace(/"([^"]+)":/g, 
           🎨{" "}
           {
             shapes.filter(
-              (s) => s.backgroundColor && s.backgroundColor !== "transparent",
+              (s) => s.backgroundColor && s.backgroundColor !== "transparent"
             ).length
           }{" "}
           colored

@@ -2,9 +2,6 @@ import { FC, ReactNode } from "react";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { QueryClient } from "@tanstack/react-query";
 // import { useSyncQueriesExternal } from "react-query-external-sync";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
 import { asyncStoragePersister } from "@/src/storage/queryPersister";
 
 interface QueryClientWrapperProps {

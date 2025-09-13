@@ -80,7 +80,7 @@ export const IndentGuidesOverlay = memo(
       }
 
       return results;
-    }, [items, visibleRange, itemHeight, indentWidth]);
+    }, [items, visibleRange, indentWidth]);
 
     return (
       <View pointerEvents="none" style={styles.overlay}>

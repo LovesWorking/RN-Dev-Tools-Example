@@ -1,7 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import QueryStatusCount from "../query-browser/QueryStatusCount";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface QueryBrowserFooterProps {

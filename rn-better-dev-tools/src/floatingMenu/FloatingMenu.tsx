@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { FloatingTools, UserStatus, type UserRole } from './floatingTools';
 import type { InstalledApp, FloatingMenuActions, FloatingMenuState } from './types';
 import { useDevToolsSettings } from './DevToolsSettingsModal';

@@ -13,7 +13,7 @@
  * />
  */
 
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -146,7 +146,7 @@ function isEqual(a: any, b: any): boolean {
 function computeDiff(
   oldValue: any,
   newValue: any,
-  path: string[] = [],
+  path: string[] = []
 ): DiffNode[] {
   const result: DiffNode[] = [];
 
@@ -208,7 +208,7 @@ function computeDiff(
                 children: computeDiff(
                   Array.isArray(newItem) ? [] : {},
                   newItem,
-                  itemPath,
+                  itemPath
                 ),
                 expanded: false,
               }
@@ -227,7 +227,7 @@ function computeDiff(
                 children: computeDiff(
                   oldItem,
                   Array.isArray(oldItem) ? [] : {},
-                  itemPath,
+                  itemPath
                 ),
                 expanded: false,
               }
@@ -302,7 +302,7 @@ function computeDiff(
               children: computeDiff(
                 Array.isArray(newVal) ? [] : {},
                 newVal,
-                keyPath,
+                keyPath
               ),
               expanded: false,
             }
@@ -321,7 +321,7 @@ function computeDiff(
               children: computeDiff(
                 oldVal,
                 Array.isArray(oldVal) ? [] : {},
-                keyPath,
+                keyPath
               ),
               expanded: false,
             }
@@ -482,7 +482,7 @@ export default function TreeDiffViewer({
 
   const renderDiffNode = (
     node: DiffNode,
-    depth: number = 0,
+    depth: number = 0
   ): React.ReactNode => {
     if (!showUnchanged && node.type === "unchanged") {
       return null;
@@ -768,7 +768,7 @@ export default function TreeDiffViewer({
   };
 
   const countChanges = (
-    nodes: DiffNode[],
+    nodes: DiffNode[]
   ): { added: number; removed: number; changed: number } => {
     let added = 0,
       removed = 0,

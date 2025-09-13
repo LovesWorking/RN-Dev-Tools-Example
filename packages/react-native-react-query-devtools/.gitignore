@@ -3,9 +3,17 @@ node_modules/
 
 # Build outputs
 lib/
+dist/
+build/
 
 # TypeScript
 *.tsbuildinfo
+*.d.ts
+*.d.ts.map
+*.js.map
+
+# Generated files
+update-imports.sh
 
 # IDE
 .vscode/

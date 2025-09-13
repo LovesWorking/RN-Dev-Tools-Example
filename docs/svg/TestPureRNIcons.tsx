@@ -3,7 +3,6 @@
  * This demonstrates the requested icons working without any native dependencies
  */
 
-import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import {
   WifiIconPure,
@@ -119,7 +118,7 @@ const TestPureRNIcons: React.FC = () => {
                 <Text style={styles.iconLabel}>{iconName}</Text>
                 <Text style={styles.iconStatus}>✅</Text>
               </View>
-            ),
+            )
           )}
         </View>
       </View>
@@ -147,7 +146,7 @@ const TestPureRNIcons: React.FC = () => {
                 <NetworkIconPure size={40} color={color} strokeWidth={2} />
                 <Text style={styles.iconLabel}>{color}</Text>
               </View>
-            ),
+            )
           )}
         </View>
       </View>

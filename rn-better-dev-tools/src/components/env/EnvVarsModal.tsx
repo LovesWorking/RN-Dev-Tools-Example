@@ -9,7 +9,6 @@ import { ModalHeader } from "@/rn-better-dev-tools/src/shared/ui/components/Moda
 import { HeaderSearchButton } from "@/rn-better-dev-tools/src/shared/ui/components/HeaderSearchButton";
 import { View, TextInput, TouchableOpacity, StyleSheet, ScrollView, Text } from "react-native";
 import { Search, X } from "rn-better-dev-tools/icons";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { EnvStatsOverview, type EnvFilterType } from "./EnvStatsOverview";
 import { EnvVarSection } from "./EnvVarSection";
@@ -138,7 +137,7 @@ export function EnvVarsModal({
     }
     
     return vars;
-  }, [allVars, optionalVars, activeFilter, searchQuery]);
+  }, [allVars, activeFilter, searchQuery]);
 
   // Calculate health percentage
   const healthPercentage =

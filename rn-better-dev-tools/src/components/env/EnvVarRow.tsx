@@ -46,10 +46,6 @@ const getStatusConfig = (status: EnvVarInfo["status"], expectedType?: string) =>
   }
 };
 
-const formatEnvKey = (key: string): string => {
-  // Format key similar to React Query: "section > subsection"
-  return key.split("_").join(" › ");
-};
 
 const formatValue = (value: unknown): string => {
   if (value === undefined || value === null) {
@@ -61,7 +57,6 @@ const formatValue = (value: unknown): string => {
 
 export function EnvVarRow({ envVar, isExpanded, onPress }: EnvVarRowProps) {
   const config = getStatusConfig(envVar.status, envVar.expectedType);
-  const hasValue = envVar.value !== undefined && envVar.value !== null;
   
   // Format primary text like React Query does: "section › subsection"
   // For env vars, we'll show the key formatted nicely

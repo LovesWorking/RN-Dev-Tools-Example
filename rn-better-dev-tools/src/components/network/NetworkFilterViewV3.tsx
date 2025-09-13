@@ -13,11 +13,10 @@ import {
 import type { NetworkEvent } from "@rn-dev-tools/react-native-network-inspector";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { CompactFilterChips, type FilterChipGroup } from "@/rn-better-dev-tools/src/shared/ui/components/CompactFilterChips";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { SectionHeader } from "@/rn-better-dev-tools/src/shared/ui/components/SectionHeader";
 import { FilterList, AddFilterInput, AddFilterButton } from "@/rn-better-dev-tools/src/shared/ui/components/FilterComponents";
 import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
-import { useMemo } from "react";
 
 interface NetworkFilter {
   status?: "all" | "success" | "error" | "pending";
@@ -112,7 +111,7 @@ export function NetworkFilterViewV3({
     }
   };
 
-  const handleChipPress = (groupId: string, chipId: string, value: any) => {
+  const handleChipPress = (groupId: string, _chipId: string, value: any) => {
     if (groupId === "status") {
       if (value === "all") {
         onFilterChange({ ...filter, status: undefined });

@@ -13,7 +13,6 @@ import type { NetworkEvent } from "@rn-dev-tools/react-native-network-inspector"
 import { formatBytes, formatDuration } from "@rn-dev-tools/react-native-network-inspector";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { useTickEveryMinute } from "@/rn-better-dev-tools/src/features/sentry/hooks/useTickEveryMinute";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface NetworkEventItemCompactProps {

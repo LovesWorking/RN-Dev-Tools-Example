@@ -6,7 +6,6 @@ import QueryDetails from "./query-browser/QueryDetails";
 import ActionButton from "./query-browser/ActionButton";
 import { getQueryStatusLabel } from "../utils/getQueryStatusLabel";
 import { useActionButtons } from "../hooks/useActionButtons";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 import { DataViewer } from "./shared/DataViewer";
 import { useEffect, useRef, useState } from "react";

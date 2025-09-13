@@ -238,7 +238,7 @@ export function StorageKeyCard({
           {storageKey.lastUpdated && (
             <View style={styles.metaInfo}>
               <Text style={styles.metaLabel}>
-                Last updated123: {storageKey.lastUpdated.toLocaleString()}
+                Last updated: {storageKey.lastUpdated.toLocaleString()}
               </Text>
             </View>
           )}

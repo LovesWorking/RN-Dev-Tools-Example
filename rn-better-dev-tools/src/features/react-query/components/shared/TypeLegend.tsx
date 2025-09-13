@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface TypeLegendProps {
@@ -35,7 +34,7 @@ export const getTypeColor = (type: string): string => {
  * - Decompose by Responsibility: Single purpose type filtering UI
  * - Extract Reusable Logic: Shared between Sentry logs and storage views
  */
-export const TypeLegend: FC<TypeLegendProps> = ({
+export const TypeLegend: React.FC<TypeLegendProps> = ({
   types,
   activeFilter,
   onFilterChange,

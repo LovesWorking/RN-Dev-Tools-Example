@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from "react";
 import { View, StyleSheet } from "react-native";
 import { Mutation } from "@tanstack/react-query";
 import MutationsList from "./query-browser/MutationsList";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface MutationBrowserModeProps {

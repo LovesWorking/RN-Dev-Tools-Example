@@ -14,24 +14,30 @@ import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { pokemonNames, searchPokemon } from "@/src/data/pokemonNames";
-import { useQueryClient } from "@tanstack/react-query";
 import { PokemonCardSwipeable } from "./components/PokemonCardSwipeable";
 import {
   FloatingMenu,
   UserRole,
   type InstalledApp,
 } from "@/rn-better-dev-tools/src";
-import { 
+import {
   EnvVarsModal,
   Environment,
   createEnvVarConfig,
   envVar,
 } from "@/rn-better-dev-tools/src/components/env";
 import { NetworkModal } from "@/rn-better-dev-tools/src/components/network/NetworkModal";
-import { EnvLaptopIcon, Globe } from "rn-better-dev-tools/icons";
+import { ReactQueryModal } from "@rn-dev-tools/react-native-react-query-devtools";
+import {
+  EnvLaptopIcon,
+  Globe,
+  ReactQueryIcon,
+} from "rn-better-dev-tools/icons";
 import { startNetworkListener } from "@rn-dev-tools/react-native-network-inspector";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { usePokemon } from "@/src/hooks/usePokemon";
+import { usePosts, useCreatePost } from "@/src/hooks/useRealAPIs";
 // import { IconShowcase } from "@/docs/svg/IconShowCase";
 // import { ReactNativeShapesShowcase } from "@/docs/svg/ReactNativeShapesShowcase";
 // import { AutoDiffTest } from "@/components/AutoDiffTest";
@@ -65,12 +71,7 @@ export default function TestScreen() {
 // Original PokemonScreen component
 // export default function PokemonScreen() {
 function PokemonScreen() {
-  const queryClient = useQueryClient();
-
   const insets = useSafeAreaInsets();
-  
-  // State for current date and time
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   // Auto-open React Query modal for testing - removed due to Event not available in React Native
   const [pokemonStack, setPokemonStack] = useState(() => [
@@ -110,14 +111,6 @@ function PokemonScreen() {
       }))
   ).current;
 
-  // Update date and time every second
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     // Floating animation for cards
@@ -212,7 +205,6 @@ function PokemonScreen() {
   const testAsyncStorage = async () => {
     console.log("Testing AsyncStorage operations...");
     try {
-      
       // Test setItem
       await AsyncStorage.setItem("test_key_1", "test_value_1");
       console.log("Set test_key_1");
@@ -381,28 +373,83 @@ function PokemonScreen() {
     },
     {
       id: "network",
-      name: "Network", 
+      name: "Network",
       slot: "both",
-      icon: ({ size }) => (
-        <Globe size={size} color="#9f6" />
-      ),
+      icon: ({ size }) => <Globe size={size} color="#9f6" />,
       onPress: () =>
         new Promise<void>((resolve) => {
           setNetworkOpen(true);
           setNetworkCloseResolver(() => resolve);
         }),
     },
+    {
+      id: "query",
+      name: "React Query",
+      slot: "both",
+      icon: ({ size }) => (
+        <ReactQueryIcon
+          size={size}
+          color="#9f6"
+          glowColor="#9f6"
+          noBackground
+        />
+      ),
+      onPress: () =>
+        new Promise<void>((resolve) => {
+          setReactQueryOpen(true);
+          setReactQueryCloseResolver(() => resolve);
+        }),
+    },
   ];
   const [isEnvOpen, setEnvOpen] = useState(false);
   const [isNetworkOpen, setNetworkOpen] = useState(false);
+  const [isReactQueryOpen, setReactQueryOpen] = useState(false);
+  const [reactQueryTab, setReactQueryTab] = useState<"queries" | "mutations">(
+    "queries"
+  );
 
-  const [envCloseResolver, setEnvCloseResolver] = useState<(() => void) | null>(null);
-  const [networkCloseResolver, setNetworkCloseResolver] = useState<(() => void) | null>(null);
+  const [envCloseResolver, setEnvCloseResolver] = useState<(() => void) | null>(
+    null
+  );
+  const [networkCloseResolver, setNetworkCloseResolver] = useState<
+    (() => void) | null
+  >(null);
+  const [reactQueryCloseResolver, setReactQueryCloseResolver] = useState<
+    (() => void) | null
+  >(null);
 
   // Start network listener when component mounts
   useEffect(() => {
     startNetworkListener();
+
+    // Generate some test network requests for Network Inspector
+    const testNetworkRequests = async () => {
+      try {
+        await fetch("https://httpbin.org/get");
+        await fetch("https://httpbin.org/headers");
+        await fetch("https://httpbin.org/status/404"); // This will fail
+      } catch (error) {
+        console.log("Test network requests completed:", error);
+      }
+    };
+
+    // Run test requests after a short delay
+    setTimeout(testNetworkRequests, 2000);
   }, []);
+
+  // Test React Query hooks - generate some queries and mutations for testing
+  const pokemonQuery = usePokemon("pikachu");
+  const charizardQuery = usePokemon("charizard");
+  const postsQuery = usePosts();
+  const createPostMutation = useCreatePost();
+
+  // Log the queries for debugging (prevents unused variable warnings)
+  console.log("React Query test data:", {
+    pikachu: pokemonQuery.status,
+    charizard: charizardQuery.status,
+    posts: postsQuery.status,
+    createPost: createPostMutation.status,
+  });
 
   return (
     <View style={styles.container}>
@@ -434,6 +481,20 @@ function PokemonScreen() {
           networkCloseResolver?.();
           setNetworkCloseResolver(null);
         }}
+      />
+
+      {/* React Query modal controlled by app */}
+      <ReactQueryModal
+        visible={isReactQueryOpen}
+        onClose={() => {
+          setReactQueryOpen(false);
+          reactQueryCloseResolver?.();
+          setReactQueryCloseResolver(null);
+        }}
+        onQuerySelect={() => {}} // Empty callback for now
+        onMutationSelect={() => {}} // Empty callback for now
+        activeTab={reactQueryTab}
+        onTabChange={setReactQueryTab}
       />
       {/* Premium Animated Background */}
       <LinearGradient

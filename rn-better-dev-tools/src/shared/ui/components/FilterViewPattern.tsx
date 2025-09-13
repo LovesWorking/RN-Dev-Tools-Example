@@ -4,9 +4,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  ViewStyle,
 } from "react-native";
-import { useState } from "react";
 import { Plus } from "rn-better-dev-tools/icons";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/gameUIColors";
 import { useFilterManager } from "@/rn-better-dev-tools/src/shared/hooks/useFilterManager";
@@ -16,7 +14,6 @@ import {
   AddFilterButton,
   FilterList,
 } from "./FilterComponents";
-import type { ReactNode } from "react";
 import type { LucideIcon } from "rn-better-dev-tools/icons";
 
 export interface FilterViewPatternProps {

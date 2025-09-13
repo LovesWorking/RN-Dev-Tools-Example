@@ -22,7 +22,7 @@ export function CyberpunkSectionButton({
   subtitle,
   icon: Icon,
   iconColor,
-  iconBackgroundColor,
+  iconBackgroundColor: _iconBackgroundColor,
   onPress,
   index = 0,
 }: CyberpunkSectionButtonProps) {
