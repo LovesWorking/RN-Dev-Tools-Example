@@ -14,6 +14,8 @@ const http = require("http");
 
 const DEFAULT_METRO_PORT = 8081;
 const DEFAULT_HOST = "localhost";
+const DEFAULT_CONNECT_TIMEOUT_MS = 1500; // Fast connect timeout for WS/HTTP
+const DEFAULT_OVERALL_TIMEOUT_MS = 6000; // Prevent hangs in CI/sandbox
 
 // Common Metro server hosts to try
 const COMMON_HOSTS = [
@@ -29,6 +31,10 @@ class ExpoReloader {
     this.port = options.port || DEFAULT_METRO_PORT;
     this.verbose = options.verbose || false;
     this.autoDetect = options.autoDetect !== false; // Auto-detect by default
+    this.connectTimeoutMs =
+      options.connectTimeoutMs || DEFAULT_CONNECT_TIMEOUT_MS;
+    this.overallTimeoutMs =
+      options.overallTimeoutMs || DEFAULT_OVERALL_TIMEOUT_MS;
   }
 
   log(message) {
@@ -74,7 +80,7 @@ class ExpoReloader {
           port: port,
           path: "/",
           method: "GET",
-          timeout: 2000,
+          timeout: this.connectTimeoutMs,
         },
         (res) => {
           resolve(true);
@@ -98,7 +104,15 @@ class ExpoReloader {
       const WebSocket = require("ws");
       const ws = new WebSocket(`ws://${server.host}:${server.port}/message`);
 
+      const connectTimeout = setTimeout(() => {
+        try {
+          ws.terminate();
+        } catch {}
+        reject(new Error("WS connect timeout"));
+      }, this.connectTimeoutMs);
+
       ws.on("open", () => {
+        clearTimeout(connectTimeout);
         this.log(
           `Connected to Metro message socket at ${server.host}:${server.port}/message`
         );
@@ -121,8 +135,9 @@ class ExpoReloader {
       });
 
       ws.on("error", (error) => {
+        clearTimeout(connectTimeout);
         reject(
-          `WebSocket error: ${error.message}. Make sure "ws" package is installed: npm install ws`
+          `WebSocket error: ${error.message}. Ensure Metro is running or try --method=http`
         );
       });
 
@@ -187,7 +202,7 @@ class ExpoReloader {
           port: server.port,
           path: endpoint.path,
           method: endpoint.method,
-          timeout: 5000,
+          timeout: this.connectTimeoutMs,
           headers:
             endpoint.method === "POST"
               ? {
@@ -259,6 +274,12 @@ class ExpoReloader {
   async reload() {
     // Pre-detect server to share across HTTP methods
     let serverInfo = null;
+    const watchdog = setTimeout(() => {
+      console.warn(
+        `Reload watchdog timed out after ${this.overallTimeoutMs}ms. Continuing without reload.`
+      );
+      // Do not throw; allow caller to proceed (e.g., screenshots)
+    }, this.overallTimeoutMs);
     if (this.autoDetect) {
       try {
         serverInfo = await this.detectMetroServer();
@@ -285,6 +306,7 @@ class ExpoReloader {
         this.log(`Trying reload method: ${name}`);
         const result = await method();
         console.log(`✅ Success: ${result}`);
+        clearTimeout(watchdog);
         return;
       } catch (error) {
         this.log(`${name} failed: ${error.message}`);
@@ -296,6 +318,7 @@ class ExpoReloader {
       "❌ All reload methods failed. Make sure your Expo dev server is running."
     );
     console.error("   Try running: npx expo start");
+    clearTimeout(watchdog);
   }
 }
 
@@ -311,7 +334,29 @@ if (require.main === module) {
     DEFAULT_HOST;
   const method = args.find((arg) => arg.startsWith("--method="))?.split("=")[1];
 
-  const reloader = new ExpoReloader({ host, port: parseInt(port), verbose });
+  const fast = args.includes("--fast");
+  const timeoutArg = args.find((arg) => arg.startsWith("--timeout="));
+  const connectTimeoutMs = timeoutArg
+    ? parseInt(timeoutArg.split("=")[1], 10)
+    : fast
+      ? 800
+      : DEFAULT_CONNECT_TIMEOUT_MS;
+  const overallTimeoutArg = args.find((arg) =>
+    arg.startsWith("--overall-timeout=")
+  );
+  const overallTimeoutMs = overallTimeoutArg
+    ? parseInt(overallTimeoutArg.split("=")[1], 10)
+    : fast
+      ? 3500
+      : DEFAULT_OVERALL_TIMEOUT_MS;
+
+  const reloader = new ExpoReloader({
+    host,
+    port: parseInt(port),
+    verbose,
+    connectTimeoutMs,
+    overallTimeoutMs,
+  });
 
   if (method) {
     // Use specific method

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+#!/usr/bin/env bash
 # screenshots/screenshot.sh
 # Cross-platform (iOS Simulator / Android Emulator or device) screenshot helper.
 # Usage:
@@ -17,6 +18,12 @@ DEFAULT_OUT="./screenshots/sim-${TIMESTAMP}.png"
 OUT="${2:-$DEFAULT_OUT}"
 
 mkdir -p "$(dirname "$OUT")"
+
+# Always attempt a fast reload before capturing to ensure fresh UI
+if [ -f "scripts/reload.js" ]; then
+  echo "Attempting fast reload before screenshot..."
+  node scripts/reload.js --fast || echo "Reload attempt failed or not available; continuing."
+fi
 
 have_cmd() { command -v "$1" >/dev/null 2>&1; }
 
@@ -68,4 +75,3 @@ case "$MODE" in
     exit 1
     ;;
 esac
-

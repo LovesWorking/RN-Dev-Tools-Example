@@ -1,165 +1,186 @@
-# AGENTS.md — Working With RN Dev Tools Example
+# Codex Development Guidelines
 
-This file tells future agents how this repo is organized, how the floating dev tools work now, and the key patterns to keep intact. Please follow these rules when changing related code.
+## Permissions and Autonomy
 
-## TL;DR
-- Floating menu is now data‑driven and self‑contained.
-- Use `FloatingMenu` with an `installedApps` array. If an app opens a modal, return a Promise from `onPress` and resolve it on modal close — the row auto‑hides while pending.
-- Dial and settings are always accessible: the row uses `UserStatus` as the dial launcher when `userRole` is provided, otherwise a small launcher icon is shown.
-- Environment badge on the row is controlled by the settings toggle and by an `environment` prop to `FloatingMenu`.
+Codex has full permission to:
 
-## Project Layout (relevant parts)
-- `app/` — Expo app entry; see `app/index.tsx` for how we integrate the tools.
-- `rn-better-dev-tools/src/floatingMenu/` — Self‑contained floating tools module.
-  - `FloatingMenu.tsx` — Main entry for the row.
-  - `floatingTools.tsx` — Draggable row UI.
-  - `dial/` — Dial overlay (menu of icons).
-  - `DevToolsSettingsModal.tsx` — Settings UI (original look, uses JsModal).
-  - `types.ts` — InstalledApp + rendering context.
-  - `useSafeAreaInsets.ts`, `DraggableHeader.tsx`, `colors.ts` — local utilities to keep portability.
-  - `ui/` — small local components used by the modal if needed.
-- `rn-better-dev-tools/src/features/env/` — Environment feature (badge + modal + helpers).
+- Read any file in the codebase
+- Modify any file in the codebase
+- Create new files and directories as needed
+- Run any commands for development, testing, and debugging
+- Install dependencies and packages
+- Execute build and test scripts
+- Take screenshots and verify UI changes
+- Use all available tools without asking for permission
 
-## Floating Menu Rules
-- Always pass apps via `installedApps: InstalledApp[]` to `FloatingMenu`.
-- To open a dev modal/tool from the row or dial, define:
-  - `icon: ReactNode | (ctx) => ReactNode` (ctx carries `{slot, size, state?, actions?}`)
-  - `onPress: (ctx) => void | Promise<void>`
-- If `onPress` returns a Promise, the row auto‑hides until the Promise resolves. Resolve the Promise in your modal’s `onClose`.
-- Row content order: Environment badge (if settings allow and `environment` prop passed), launcher (UserStatus if `userRole` present; grid icon otherwise), then app icons (slot `'row'|'both'`).
+Codex must NOT without explicit user permission:
 
-## InstalledApp Contract
-```
-export interface InstalledApp {
-  id: string;
-  name: string;
-  icon: React.ReactNode | ((ctx: { slot: 'row'|'dial'; size: number; state?: any; actions?: any }) => React.ReactNode);
-  onPress: (ctx: { state?: any; actions?: any }) => void | Promise<void>;
-  slot?: 'row' | 'dial' | 'both';
-  color?: string;
-}
-```
+- Create git commits (NEVER use `git commit` unless explicitly asked by the user)
+- Push commits to remote repositories
+- Create or merge pull requests
+- Deploy to production environments
+- Delete entire directories or critical files
+- Modify git configuration or user settings
+- Execute destructive database operations
+- Share code or data externally
 
-## Dial & Settings
-- Dial layout is the default overlay for app discovery; it reads the same `installedApps` (slot `'dial'|'both'`).
-- Settings modal is accessible from the dial center button and uses the original `JsModal` UI.
-- Settings visibility is bridged for known ids (`query`, `env`, `sentry`, `storage`, `wifi`, `network`); unknown ids default to visible.
+IMPORTANT Git Commit Rules:
 
-## Visibility & Hiding
-- Row hides when:
-  - An app’s `onPress` returned a Promise (while pending).
-  - Dial is open.
-- Row reappears when:
-  - The Promise resolves (modal closed), or the dial closes.
+- NEVER commit changes unless the user explicitly asks you to
+- When asked to commit, always run lint and typecheck commands first
+- If lint/typecheck commands are unknown, ask the user and suggest saving them to CODEX.md
+- Only commit when explicitly requested with phrases like "commit this", "create a commit", etc.
 
-## Environment Badge
-- To show the badge, pass `environment` to `FloatingMenu` and ensure the settings toggle for environment badge is ON.
-- Component lives at `rn-better-dev-tools/src/features/env/components/EnvironmentIndicator.tsx` and is re‑exported via `features/env`.
+Codex should work autonomously and efficiently, making all necessary changes to complete tasks without constantly asking for permission. Only pause for user input when the task requirements are unclear or when about to perform restricted actions listed above.
 
-## Portability Guidelines
-- The `floatingMenu` folder is self‑contained: you can copy it to another repo without shared imports.
-- We still use shared pieces for the settings modal (icons, JsModal, etc.) to preserve the original look in this repo. If you copy out the folder, either:
-  - Keep the original settings (requires shared UI + AsyncStorage), or
-  - Swap the settings modal to the local `ui/` components (previous variant is preserved in git history as reference).
+## Code Quality
 
-## App Integration — Example
-- See `app/index.tsx` for a working example:
-  - Builds `installedApps` with the Env app.
-  - `onPress` returns a Promise; the Promise resolves in `EnvVarsModal`’s `onClose`.
-  - Passes `environment` and `userRole` to `FloatingMenu`.
+- Always use descriptive variable names
+- Every variable name should clearly communicate its purpose and content
+- Prefer longer, descriptive names over abbreviated ones (e.g., `userAuthenticationToken` over `authTok`)
+- Use consistent naming conventions throughout the codebase
+- **NEVER use default exports** - Always use named exports (e.g., `export const ComponentName`)
+  - Exception: Only use default exports for route files (e.g., app routes in Next.js or file-based routing)
+  - This improves refactoring, tree-shaking, and IDE support
 
-## 🚨 CRITICAL: EXPO GO ONLY - NO DEV BUILDS 🚨
+## Development Environment
 
-**This project uses Expo Go exclusively. NEVER use development builds or prebuild.**
+### React Native App Management
 
-### ❌ FORBIDDEN Commands (DO NOT USE):
-```bash
-expo prebuild              # NEVER
-expo run:ios             # NEVER  
-expo run:android          # NEVER
-npx react-native run-ios  # NEVER
-npx react-native run-android # NEVER
-cd ios && pod install     # NO iOS folder should exist
-```
+- **ALWAYS CHECK if the app is already running before attempting to build/run it again**
+- The user typically has the app running in their main terminal
+- Check for running processes or ask the user before running `npm run ios` or `npm run android`
+- If the app is already running, proceed directly with testing/debugging
 
-### ✅ ALLOWED Commands:
-```bash
-expo start               # Start for Expo Go
-expo start --go          # Auto-open in Expo Go
-expo start --clear       # Clear cache and start
-npm run nuke:go         # Full reset with Expo Go
-npm run build:packages   # Build local packages
-npm run start:go        # Build packages + start Expo Go
-```
+## React Component Composition Principles
 
-## Dev Commands
-- `npm start` / `npm run dev` — start Expo dev server (for Expo Go)
-- `npm run nuke:go` — Nuclear reset everything and start with Expo Go
-- `npm run reload` — reload the Expo app (ALWAYS use before taking screenshots)
-- `npm run build:packages` — Build local packages (env-manager, network-inspector)
-- `npm run lint` — lint
-- `npm test` — run jest tests
+### Core Principles
 
-## Code Style
-- TypeScript, strict; 2‑space indent; single quotes.
-- Minimalist changes; preserve animations & UX when modifying dial/menu.
+- **Decompose by Responsibility**: Break down large, complex components into smaller, single-purpose components. A component should either handle business logic/state OR render UI, never both simultaneously
+- **Prefer Composition over Configuration**: Instead of using numerous boolean flags, props, or conditional rendering to configure a single component, create multiple specialized components and compose them together
+- **Extract Reusable Logic**: Move reusable state management and logic into dedicated custom hooks or pure functions to reduce complexity and promote separation of concerns
+- **Utilize Render Props**: For advanced customization, use "component as a prop" or "render prop" patterns to allow parent components to control rendering logic without child components knowing parent implementation details
 
-## Testing Guidance
-- If you add a new app:
-  - Verify icon render at size 16 (row) and 32 (dial).
-  - Verify `onPress` behavior and auto‑hide via Promise.
-  - Verify settings visibility toggles for known ids.
-- Don’t introduce network/timer reliance in tests.
+### Implementation Requirements
 
-## Plan — Extract Env to Its Own Package (Bob)
-We want `features/env` as a standalone library using `react-native-builder-bob`.
+- **Rigorous Justification**: Every design choice and code implementation must be logically sound with clear explanations rooted in component composition principles
+- **Complete Solutions Only**: Never guess or create solutions that appear correct but contain hidden flaws. Present only rigorously justified implementations or significant partial results with clear reasoning
+- **Technical Documentation**: Include high-level strategy narratives and precise technical statements for key implementation steps
+- **Design Decision Documentation**: Explicitly describe key decisions like extracting custom hooks or creating wrapper components
 
-1) Scaffold a local library with Bob
-- `npx create-react-native-library@latest rn-better-dev-env --local`
-- Answer prompts: TypeScript, no example app (local template), no native code if you only need JS.
+## React Performance Optimization
 
-2) Move Env code
-- Copy from `rn-better-dev-tools/src/features/env/` to `modules/rn-better-dev-env/src/`:
-  - `components/` (EnvVarsModal, EnvironmentIndicator, etc.)
-  - `types/` (export only public types)
-  - `utils/` & `hooks/` (helpers used by the modal)
-  - Create an `index.ts` that re‑exports the public API:
-    - `EnvVarsModal`, `EnvironmentIndicator`, `createEnvVarConfig`, `envVar`, `types`
+### Memoization Guidelines
 
-3) Fix imports
-- Replace `@/rn-better-dev-tools/...` with local imports inside the new package.
-- Keep icons as peer‑deps if needed, OR vendor minimal icons locally.
-- Keep `JsModal` as a peer (or ship a minimal variant if you need portability).
+- **Default to Plain Functions**: Avoid premature optimization. Don't wrap every handler or value in `useCallback`/`useMemo` unless there's a proven bottleneck
+- **Composition Over Memo**: Leverage React's natural component composition (lift state, split components, pass stable `children`) instead of wrapping subtrees in fragile `React.memo`
 
-4) Configure package.json
-- Set `name`, `version`, `main` (dist entry), `types`.
-- Ensure `react`, `react-native` as peerDependencies.
-- Configure `bob` build scripts (`prepare`, `build`):
-  - Example: `"prepare": "bob build"`
+### Specific Patterns
 
-5) Build & link
-- `npm install`
-- `npm run prepare` (bob builds to `lib/`)
-- Add dependency in app `package.json` using a local link:
-  - npm: `"rn-better-dev-env": "file:./modules/rn-better-dev-env"`
-  - yarn: `"rn-better-dev-env": "link:./modules/rn-better-dev-env"`
-- `npm install` to link it, then import from `'rn-better-dev-env'` in the app.
+- **Avoid Inline Props**: Never pass newly created objects, arrays, or functions as props to memoized children. Instead:
+  - Move them outside render (module-scope or custom hooks)
+  - Co-locate handlers in child components via context or event patterns
+- **UseMemo for Heavy Computations Only**: Wrap expensive calculations in `useMemo` only when profiling confirms CPU time exceeds memoization overhead
+- **Limit React.memo to Leaf Nodes**: Reserve `React.memo` for leaf components with demonstrable render cost
+- **Latest Ref Pattern for Effects**: Store user-provided props in refs updated on every render instead of adding them to effect dependencies
+- **External State Management**: For global state causing full-app re-renders, use external solutions (Zustand, React Query) for targeted re-renders
 
-6) Verify
-- Launch the app, open the modal from `FloatingMenu` → Env app.
-- Check types & lint.
+### Documentation Requirements
 
-7) (Optional) Publish later
-- Remove local link, publish to npm with `release-it` or similar.
+- **Justify Every Optimization**: Each use of `useCallback`, `useMemo`, or `React.memo` must include an inline comment with:
+  - Link to profiling output or ticket demonstrating measurable benefit
+  - Clear rationale based on performance metrics
+  - Explanation of why composition patterns weren't sufficient
 
-## Quick Checklist
-- [ ] `FloatingMenu` + `installedApps` used (no hardcoded tools)
-- [ ] `onPress` returns a Promise for modal apps
-- [ ] Row auto‑hides during pending Promise
-- [ ] `environment` prop passed and settings toggle ON to show ENV badge
-- [ ] `userRole` passed to use `UserStatus` as dial launcher (fallback launcher otherwise)
-- [ ] Dial + Settings accessible and look correct
-- [ ] Env extraction plan with Bob followed when packaging
+## Code Implementation Standards
 
-When in doubt, keep the visuals identical and the logic data‑driven.
+### TypeScript Requirements
 
+- All code must be properly typed with TypeScript
+- Avoid `any` types unless absolutely necessary with justification
+- Use proper type inference where possible
+- Define explicit return types for complex functions
+
+### Error Handling
+
+- Always handle potential error cases explicitly
+- Provide meaningful error messages that help with debugging
+- Use proper try-catch blocks for async operations
+- Never silently swallow errors
+
+### Testing Considerations
+
+- Write code with testability in mind
+- Keep functions pure when possible
+- Minimize side effects and isolate them when necessary
+- Consider edge cases during implementation
+
+## Project-Specific Patterns
+
+### File Organization
+
+- Follow existing project structure and conventions
+- Group related functionality together
+- Keep components close to where they're used
+- Maintain consistent file naming patterns
+
+### State Management
+
+- Prefer local state when data is component-specific
+- Lift state only when necessary for sharing
+- Use context sparingly and with clear boundaries
+- Document state flow and dependencies
+
+### Code Review Checklist
+
+Before finalizing any implementation:
+
+1. Verify all variable names are descriptive
+2. Ensure component composition principles are followed
+3. Confirm performance optimizations are justified
+4. Check that all code is properly typed
+5. Validate error handling is comprehensive
+6. Review that existing patterns are followed
+
+## Screenshots
+
+Preferred: use the project scripts to capture simulator screenshots.
+
+### Usage:
+
+- Take iOS screenshot: `npm run screenshot:ios`
+- Take Android screenshot: `npm run screenshot:android`
+- Generic helper (auto-detect): `npm run screenshot`
+
+These wrap `scripts/screenshot.sh` and save images under `./screenshots/`. The
+script automatically runs `npm run reload` (fast mode) before capturing to ensure
+UI state is fresh.
+
+### When to use:
+
+- After making UI/styling changes to verify they look correct
+- Before completing UI-related tasks to ensure quality
+- When debugging visual issues
+- To document the current state of the application
+- To verify that UI elements are properly positioned and styled
+
+### Requirements:
+
+- iOS: Xcode command-line tools installed (`xcrun` available)
+- Android: Platform tools installed (`adb` available) and a device/emulator connected
+
+### Best Practices:
+
+- **ALWAYS reload the app before taking screenshots** using `pnpm reload` or `npm run reload`
+- Always take a screenshot after significant UI changes
+- Use screenshots to verify responsive design on different devices
+- Capture before/after states when refactoring UI components
+- Save screenshots with descriptive names for reference
+
+### iOS Simulator Interaction:
+
+- Avoid brittle UI scripting. Prefer small code toggles for deterministic states:
+  - Open test modals by default
+  - Auto-start flows in `useEffect`
+  - Add debug flags (e.g., `AUTO_RUN_TEST`)
+  - Use timeouts to sequence actions when needed

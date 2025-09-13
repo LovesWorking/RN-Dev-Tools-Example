@@ -35,6 +35,11 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Package build outputs
+packages/*/lib/
+packages/*/dist/
+packages/*/build/
+
 # Android/iOS build directories
 android/
 ios/
