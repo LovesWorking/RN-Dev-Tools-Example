@@ -158,20 +158,6 @@ class NetworkListener {
     };
   }
 
-  // Get response body size
-  private getResponseSize(body: unknown): number {
-    if (!body) return 0;
-    if (typeof body === "string") return body.length;
-    if (typeof body === "object") {
-      try {
-        return JSON.stringify(body).length;
-      } catch {
-        return 0;
-      }
-    }
-    return 0;
-  }
-
   /**
    * Start intercepting network operations by swizzling fetch and XMLHttpRequest
    * 

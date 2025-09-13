@@ -1,18 +1,37 @@
-# Build outputs
-lib/
+# Dependencies
 node_modules/
 
-# Logs
-*.log
+# Build outputs
+lib/
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
+# Testing
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Temporary files
 *.tmp
 *.temp
+.cache/
+
+# Local env files
+.env.local
+.env.*.local
