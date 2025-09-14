@@ -1,0 +1,111 @@
+{
+  "name": "@rn-dev-tools/react-native-storage-inspector",
+  "version": "0.1.0",
+  "description": "React Native Storage Inspector - Dev tool for inspecting and managing storage (AsyncStorage, MMKV, SecureStore)",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "types": "./lib/typescript/index.d.ts"
+    }
+  },
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__mocks__"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "clean": "rimraf lib",
+    "build": "bob build",
+    "prepare": "bob build",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajktown/rn-dev-tools.git",
+    "directory": "packages/react-native-storage-inspector"
+  },
+  "keywords": [
+    "react-native",
+    "storage",
+    "asyncstorage",
+    "mmkv",
+    "secure-store",
+    "dev-tools",
+    "debugging",
+    "inspector"
+  ],
+  "author": "AJ Kim <aj@ajktown.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ajktown/rn-dev-tools/issues"
+  },
+  "homepage": "https://github.com/ajktown/rn-dev-tools#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-native": "^0.72.8",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "prettier": "^3.1.1",
+    "react": "18.2.0",
+    "react-native": "0.73.1",
+    "react-native-builder-bob": "^0.37.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "es5",
+    "printWidth": 100
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "prettier"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "semi": true,
+          "singleQuote": false,
+          "trailingComma": "es5",
+          "printWidth": 100
+        }
+      ]
+    }
+  }
+}
