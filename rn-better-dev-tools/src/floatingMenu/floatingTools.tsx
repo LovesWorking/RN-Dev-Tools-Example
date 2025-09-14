@@ -220,9 +220,6 @@ function useFloatingToolsPosition({
   visibleHandleWidth?: number;
 }) {
   const isInitialized = useRef(false);
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
-  );
 
   useEffect(() => {
     if (enabled) initializeStorage();
@@ -241,14 +238,6 @@ function useFloatingToolsPosition({
       }
     },
     [enabled]
-  );
-
-  const debouncedSavePosition = useCallback(
-    (x: number, y: number) => {
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = setTimeout(() => savePosition(x, y), 500);
-    },
-    [savePosition]
   );
 
   const loadPosition = useCallback(async (): Promise<{
