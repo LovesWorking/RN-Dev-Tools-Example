@@ -336,16 +336,8 @@ function useFloatingToolsPosition({
     bubbleHeight,
   ]);
 
-  useEffect(() => {
-    if (!enabled || !isInitialized.current) return;
-    const listener = animatedPosition.addListener((value) => {
-      debouncedSavePosition(value.x, value.y);
-    });
-    return () => {
-      animatedPosition.removeListener(listener);
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    };
-  }, [enabled, animatedPosition, debouncedSavePosition]);
+  // Removed automatic position listener - position is now only saved
+  // when explicitly called (e.g., on drag end)
 
   return {
     savePosition,
@@ -521,7 +513,7 @@ export function FloatingTools({
     animatedPosition,
     bubbleWidth: bubbleSize.width,
     bubbleHeight: bubbleSize.height,
-    enabled: enablePositionPersistence && !isDragging, // don't listen while dragging
+    enabled: enablePositionPersistence,
     visibleHandleWidth: 32,
   });
 
