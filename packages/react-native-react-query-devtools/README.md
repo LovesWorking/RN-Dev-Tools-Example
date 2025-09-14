@@ -86,28 +86,19 @@ function App() {
 <ReactQueryDevTools
   visible={devToolsOpen}
   onClose={() => setDevToolsOpen(false)}
-  
+
   // Start with mutations tab
   initialTab="mutations"
-  
-  // Custom theme colors
-  theme={{
-    primary: '#007AFF',
-    background: '#000000',
-    surface: '#1C1C1E',
-    text: '#FFFFFF',
-    success: '#34C759',
-    error: '#FF3B30',
-    warning: '#FF9500',
-  }}
-  
+  onTabChange={(tab) => console.log('tab changed:', tab)}
+
   // Filter queries by default
   defaultFilter="user"
-  
-  // Enable persistence features
-  enablePersistence={true}
-  
-  // Custom position for floating button
+
+  // Use shared modal size between query/mutation modals
+  enableSharedModalDimensions={true}
+
+  // Custom position for floating button (uncontrolled mode)
+  showFloatingButton={true}
   floatingButtonPosition={{ bottom: 100, right: 20 }}
 />
 ```
@@ -121,9 +112,9 @@ function App() {
 | `visible` | `boolean` | `false` | Controls modal visibility |
 | `onClose` | `() => void` | Required | Callback when modal closes |
 | `initialTab` | `'queries' \| 'mutations'` | `'queries'` | Initial tab to display |
-| `theme` | `DevToolsTheme` | Default theme | Custom color theme |
-| `defaultFilter` | `string` | `null` | Default filter string |
-| `enablePersistence` | `boolean` | `true` | Enable AsyncStorage features |
+| `onTabChange` | `(tab) => void` | `-` | Callback when tab changes |
+| `defaultFilter` | `string \| null` | `null` | Default filter string |
+| `enableSharedModalDimensions` | `boolean` | `false` | Share modal size between views |
 | `floatingButtonPosition` | `{ bottom?: number, right?: number }` | `{ bottom: 50, right: 20 }` | Position of floating trigger |
 | `showFloatingButton` | `boolean` | `true` | Show floating trigger button |
 

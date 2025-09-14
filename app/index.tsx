@@ -27,7 +27,7 @@ import {
   envVar,
 } from "@/rn-better-dev-tools/src/components/env";
 import { NetworkModal } from "@/rn-better-dev-tools/src/components/network/NetworkModal";
-import { ReactQueryModal } from "@rn-dev-tools/react-native-react-query-devtools";
+import { ReactQueryDevTools } from "@rn-dev-tools/react-native-react-query-devtools";
 import {
   EnvLaptopIcon,
   Globe,
@@ -110,7 +110,6 @@ function PokemonScreen() {
         wobble: new Animated.Value(0),
       }))
   ).current;
-
 
   useEffect(() => {
     // Floating animation for cards
@@ -404,9 +403,6 @@ function PokemonScreen() {
   const [isEnvOpen, setEnvOpen] = useState(false);
   const [isNetworkOpen, setNetworkOpen] = useState(false);
   const [isReactQueryOpen, setReactQueryOpen] = useState(false);
-  const [reactQueryTab, setReactQueryTab] = useState<"queries" | "mutations">(
-    "queries"
-  );
 
   const [envCloseResolver, setEnvCloseResolver] = useState<(() => void) | null>(
     null
@@ -483,18 +479,16 @@ function PokemonScreen() {
         }}
       />
 
-      {/* React Query modal controlled by app */}
-      <ReactQueryModal
+      {/* React Query DevTools (wrapper) controlled by app */}
+      <ReactQueryDevTools
         visible={isReactQueryOpen}
         onClose={() => {
           setReactQueryOpen(false);
           reactQueryCloseResolver?.();
           setReactQueryCloseResolver(null);
         }}
-        onQuerySelect={() => {}} // Empty callback for now
-        onMutationSelect={() => {}} // Empty callback for now
-        activeTab={reactQueryTab}
-        onTabChange={setReactQueryTab}
+        enableSharedModalDimensions={true}
+        showFloatingButton={false}
       />
       {/* Premium Animated Background */}
       <LinearGradient

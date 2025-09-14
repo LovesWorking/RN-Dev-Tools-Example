@@ -20,6 +20,9 @@ importers:
       '@rn-dev-tools/react-native-network-inspector':
         specifier: file:./packages/react-native-network-inspector
         version: file:packages/react-native-network-inspector(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@rn-dev-tools/react-native-react-query-devtools':
+        specifier: file:./packages/react-native-react-query-devtools
+        version: file:packages/react-native-react-query-devtools(@react-native-async-storage/async-storage@2.2.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)))(@tanstack/react-query@5.84.1(react@19.0.0))(react-native-safe-area-context@5.4.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-svg@15.11.2(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@tanstack/query-async-storage-persister':
         specifier: ^5.83.1
         version: 5.83.1
@@ -1063,6 +1066,21 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  '@rn-dev-tools/react-native-react-query-devtools@file:packages/react-native-react-query-devtools':
+    resolution: {directory: packages/react-native-react-query-devtools, type: directory}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': '*'
+      '@tanstack/react-query': '>=4.0.0 || >=5.0.0'
+      react: '*'
+      react-native: '*'
+      react-native-safe-area-context: '*'
+      react-native-svg: '*'
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
+      react-native-svg:
+        optional: true
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -6223,6 +6241,16 @@ snapshots:
     dependencies:
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
+
+  '@rn-dev-tools/react-native-react-query-devtools@file:packages/react-native-react-query-devtools(@react-native-async-storage/async-storage@2.2.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)))(@tanstack/react-query@5.84.1(react@19.0.0))(react-native-safe-area-context@5.4.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-svg@15.11.2(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      '@tanstack/react-query': 5.84.1(react@19.0.0)
+      react: 19.0.0
+      react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
+      react-native-safe-area-context: 5.4.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+    optionalDependencies:
+      '@react-native-async-storage/async-storage': 2.2.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))
+      react-native-svg: 15.11.2(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
 
   '@rtsao/scc@1.1.0': {}
 
