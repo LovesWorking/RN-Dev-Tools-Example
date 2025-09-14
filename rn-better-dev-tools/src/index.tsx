@@ -5,9 +5,13 @@ export { FloatingMenu } from "./floatingMenu/FloatingMenu";
 export type { UserRole } from "./floatingMenu/floatingTools";
 export type { RequiredEnvVar } from "@rn-dev-tools/react-native-env-manager";
 export type { Environment } from "./floatingMenu/components/EnvironmentIndicator";
-export type { RequiredStorageKey } from "./features/storage";
+export type { RequiredStorageKey } from "../../packages/react-native-storage-inspector/src";
 export type { InstalledApp, AppSlot } from "./floatingMenu/types";
-export type { FloatingMenuActions, FloatingMenuState, FloatingMenuRenderCtx } from "./floatingMenu/types";
+export type {
+  FloatingMenuActions,
+  FloatingMenuState,
+  FloatingMenuRenderCtx,
+} from "./floatingMenu/types";
 
 // Modal components
 export { JsModal } from "./components/modals/jsModal/JsModal";

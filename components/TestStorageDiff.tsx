@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { StorageEventDetailContent } from "@/rn-better-dev-tools/src/features/storage/components/StorageEventDetailContent";
+import { StorageEventDetailContent } from "@/packages/react-native-storage-inspector/src/components/StorageEventDetailContent";
 import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
 
 const mockConversation = {

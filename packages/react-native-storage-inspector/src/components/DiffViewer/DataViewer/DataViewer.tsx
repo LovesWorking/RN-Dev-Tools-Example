@@ -1,8 +1,8 @@
-import { useState, useMemo, FC } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { VirtualizedDataExplorer } from './VirtualizedDataExplorer';
-import { TypeLegend } from './TypeLegend';
-import { JsonValue, isPlainObject } from '../../types/types';
+import { useState, useMemo, FC } from "react";
+import { View, StyleSheet } from "react-native";
+import { VirtualizedDataExplorer } from "./VirtualizedDataExplorer";
+import { TypeLegend } from "./TypeLegend";
+import { JsonValue, isPlainObject } from "./types";
 
 interface DataViewerProps {
   title: string;
@@ -40,15 +40,11 @@ export const DataViewer: FC<DataViewerProps> = ({
     const processValue = (value: JsonValue, depth = 0) => {
       if (depth > 3) return; // Limit depth for performance
 
-      const type = Array.isArray(value)
-        ? 'array'
-        : value === null
-          ? 'null'
-          : typeof value;
+      const type = Array.isArray(value) ? "array" : value === null ? "null" : typeof value;
 
       types.push(type);
 
-      if (type === 'object' && isPlainObject(value)) {
+      if (type === "object" && isPlainObject(value)) {
         Object.values(value).forEach((v) => processValue(v, depth + 1));
       } else if (Array.isArray(value)) {
         value.forEach((v: JsonValue) => processValue(v, depth + 1));
@@ -66,18 +62,13 @@ export const DataViewer: FC<DataViewerProps> = ({
     const filteredObject: Record<string, JsonValue> = {};
     let itemCount = 0;
 
-    const flattenByType = (
-      obj: JsonValue,
-      targetType: string,
-      path = '',
-      depth = 0
-    ) => {
+    const flattenByType = (obj: JsonValue, targetType: string, path = "", depth = 0) => {
       if (depth > 10 || itemCount > 100) return;
 
       if (Array.isArray(obj)) {
         obj.forEach((item, index) => {
           const currentPath = path ? `${path}[${index}]` : `[${index}]`;
-          const itemType = item === null ? 'null' : typeof item;
+          const itemType = item === null ? "null" : typeof item;
 
           if (itemType === targetType) {
             filteredObject[currentPath] = item;
@@ -85,18 +76,14 @@ export const DataViewer: FC<DataViewerProps> = ({
           }
 
           // Recurse into nested structures
-          if ((itemType === 'object' && item !== null) || Array.isArray(item)) {
+          if ((itemType === "object" && item !== null) || Array.isArray(item)) {
             flattenByType(item, targetType, currentPath, depth + 1);
           }
         });
-      } else if (obj && typeof obj === 'object') {
+      } else if (obj && typeof obj === "object") {
         Object.entries(obj).forEach(([key, value]) => {
           const currentPath = path ? `${path}.${key}` : key;
-          const valueType = Array.isArray(value)
-            ? 'array'
-            : value === null
-              ? 'null'
-              : typeof value;
+          const valueType = Array.isArray(value) ? "array" : value === null ? "null" : typeof value;
 
           if (valueType === targetType) {
             filteredObject[currentPath] = value;
@@ -104,10 +91,7 @@ export const DataViewer: FC<DataViewerProps> = ({
           }
 
           // Recurse into nested structures
-          if (
-            (valueType === 'object' && value !== null) ||
-            valueType === 'array'
-          ) {
+          if ((valueType === "object" && value !== null) || valueType === "array") {
             flattenByType(value, targetType, currentPath, depth + 1);
           }
         });
@@ -166,8 +150,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
