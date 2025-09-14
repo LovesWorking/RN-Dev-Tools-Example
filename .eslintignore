@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.expo/
+.expo-router/
+web-build/
+ios/
+android/
+*.config.js
+*.config.ts
