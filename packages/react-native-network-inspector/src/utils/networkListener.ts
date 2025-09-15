@@ -93,7 +93,7 @@ class NetworkListener {
 
   constructor() {
     // Store original methods
-    this.originalFetch = global.fetch;
+    this.originalFetch = (globalThis as any).fetch;
     this.originalXHROpen = XMLHttpRequest.prototype.open;
     this.originalXHRSend = XMLHttpRequest.prototype.send;
     this.originalXHRSetRequestHeader =
@@ -179,7 +179,7 @@ class NetworkListener {
     const self = this;
 
     // Swizzle fetch
-    global.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    (globalThis as any).fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
       const url =
         typeof input === "string"
           ? input
@@ -189,7 +189,7 @@ class NetworkListener {
 
       // Skip ignored URLs
       if (self.shouldIgnoreUrl(url)) {
-        return self.originalFetch(input, init);
+        return self.originalFetch(input as RequestInfo, init);
       }
 
       const startTime = Date.now();
@@ -242,7 +242,7 @@ class NetworkListener {
       });
 
       try {
-        const response = await this.originalFetch(input, init);
+        const response = await this.originalFetch(input as RequestInfo, init);
         const duration = Date.now() - startTime;
 
         // Clone response to read body
@@ -573,7 +573,7 @@ class NetworkListener {
     }
 
     // Restore original methods
-    global.fetch = this.originalFetch;
+    (globalThis as any).fetch = this.originalFetch;
     XMLHttpRequest.prototype.open = this.originalXHROpen;
     XMLHttpRequest.prototype.send = this.originalXHRSend;
     XMLHttpRequest.prototype.setRequestHeader =

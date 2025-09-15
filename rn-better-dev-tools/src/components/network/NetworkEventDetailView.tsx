@@ -22,7 +22,6 @@ import {
   Link,
 } from "rn-better-dev-tools/icons";
 import { InlineCopyButton } from "@/rn-better-dev-tools/src/shared/ui/components";
-import { DataViewer } from "@/rn-better-dev-tools/src/features/react-query/components/shared/DataViewer";
 import type { NetworkEvent } from "@rn-dev-tools/react-native-network-inspector";
 import {
   formatBytes,
@@ -30,34 +29,42 @@ import {
 } from "@rn-dev-tools/react-native-network-inspector";
 import { formatRelativeTime } from "@/rn-better-dev-tools/src/shared/utils/time/formatRelativeTime";
 import { macOSColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI/constants/macOSDesignSystemColors";
-
+import { DataViewer } from "./dataViewer/DataViewer";
 // Local helper function to get status styling info
 const getHttpStatusDetails = (status: number) => {
   const getStatusColor = (code: number): string => {
-    if (code >= 200 && code < 300) return '#10B981'; // green for 2xx
-    if (code >= 300 && code < 400) return '#F59E0B'; // amber for 3xx
-    if (code >= 400 && code < 500) return '#EF4444'; // red for 4xx
-    if (code >= 500) return '#8B5CF6'; // purple for 5xx
-    return '#6B7280'; // gray for other
+    if (code >= 200 && code < 300) return "#10B981"; // green for 2xx
+    if (code >= 300 && code < 400) return "#F59E0B"; // amber for 3xx
+    if (code >= 400 && code < 500) return "#EF4444"; // red for 4xx
+    if (code >= 500) return "#8B5CF6"; // purple for 5xx
+    return "#6B7280"; // gray for other
   };
 
   const getStatusText = (code: number): string => {
     const statusTexts: Record<number, string> = {
-      200: 'OK', 201: 'Created', 204: 'No Content',
-      301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified',
-      400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found',
-      500: 'Internal Server Error', 502: 'Bad Gateway', 503: 'Service Unavailable',
+      200: "OK",
+      201: "Created",
+      204: "No Content",
+      301: "Moved Permanently",
+      302: "Found",
+      304: "Not Modified",
+      400: "Bad Request",
+      401: "Unauthorized",
+      403: "Forbidden",
+      404: "Not Found",
+      500: "Internal Server Error",
+      502: "Bad Gateway",
+      503: "Service Unavailable",
     };
-    return statusTexts[code] || 'Unknown';
+    return statusTexts[code] || "Unknown";
   };
 
   return {
     color: getStatusColor(status),
     text: status.toString(),
-    meaning: getStatusText(status)
+    meaning: getStatusText(status),
   };
 };
-
 
 interface NetworkEventDetailViewProps {
   event: NetworkEvent;
@@ -170,9 +177,7 @@ export function NetworkEventDetailView({
   const isPending = !event.status && !event.error;
 
   return (
-    <ScrollView
-      style={styles.container}
-    >
+    <ScrollView style={styles.container}>
       {/* Request Details - Always visible */}
       <View style={styles.requestDetailsSection}>
         <View style={styles.httpHeader}>
@@ -367,7 +372,11 @@ export function NetworkEventDetailView({
                   <View style={styles.filterOptionLeft}>
                     <Globe
                       size={16}
-                      color={isDomainIgnored ? macOSColors.semantic.warning : macOSColors.text.muted}
+                      color={
+                        isDomainIgnored
+                          ? macOSColors.semantic.warning
+                          : macOSColors.text.muted
+                      }
                     />
                     <View style={styles.filterOptionContent}>
                       <Text style={styles.filterOptionLabel}>
@@ -406,7 +415,11 @@ export function NetworkEventDetailView({
                   <View style={styles.filterOptionLeft}>
                     <Link
                       size={16}
-                      color={isUrlIgnored ? macOSColors.semantic.warning : macOSColors.text.muted}
+                      color={
+                        isUrlIgnored
+                          ? macOSColors.semantic.warning
+                          : macOSColors.text.muted
+                      }
                     />
                     <View style={styles.filterOptionContent}>
                       <Text style={styles.filterOptionLabel}>

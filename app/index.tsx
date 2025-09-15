@@ -28,10 +28,12 @@ import {
 } from "@/rn-better-dev-tools/src/components/env";
 import { NetworkModal } from "@/rn-better-dev-tools/src/components/network/NetworkModal";
 import { ReactQueryDevTools } from "@rn-dev-tools/react-native-react-query-devtools";
+import { StorageModalWithTabs } from "@rn-dev-tools/react-native-storage-inspector";
 import {
   EnvLaptopIcon,
   Globe,
   ReactQueryIcon,
+  StorageStackIcon,
 } from "rn-better-dev-tools/icons";
 import { startNetworkListener } from "@rn-dev-tools/react-native-network-inspector";
 import { useSafeAreaInsets } from "@/rn-better-dev-tools/src/shared/hooks/useSafeAreaInsets";
@@ -399,10 +401,29 @@ function PokemonScreen() {
           setReactQueryCloseResolver(() => resolve);
         }),
     },
+    {
+      id: "storage",
+      name: "Storage",
+      slot: "both",
+      icon: ({ size }) => (
+        <StorageStackIcon
+          size={size}
+          color="#9f6"
+          glowColor="#9f6"
+          noBackground
+        />
+      ),
+      onPress: () =>
+        new Promise<void>((resolve) => {
+          setStorageOpen(true);
+          setStorageCloseResolver(() => resolve);
+        }),
+    },
   ];
   const [isEnvOpen, setEnvOpen] = useState(false);
   const [isNetworkOpen, setNetworkOpen] = useState(false);
   const [isReactQueryOpen, setReactQueryOpen] = useState(false);
+  const [isStorageOpen, setStorageOpen] = useState(false);
 
   const [envCloseResolver, setEnvCloseResolver] = useState<(() => void) | null>(
     null
@@ -411,6 +432,9 @@ function PokemonScreen() {
     (() => void) | null
   >(null);
   const [reactQueryCloseResolver, setReactQueryCloseResolver] = useState<
+    (() => void) | null
+  >(null);
+  const [storageCloseResolver, setStorageCloseResolver] = useState<
     (() => void) | null
   >(null);
 
@@ -489,6 +513,14 @@ function PokemonScreen() {
         }}
         enableSharedModalDimensions={true}
         showFloatingButton={false}
+      />
+      <StorageModalWithTabs
+        visible={isStorageOpen}
+        onClose={() => {
+          setStorageOpen(false);
+          storageCloseResolver?.();
+          setStorageCloseResolver(null);
+        }}
       />
       {/* Premium Animated Background */}
       <LinearGradient

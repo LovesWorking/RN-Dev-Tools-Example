@@ -1,6 +1,6 @@
-import { Fragment } from "react";
+import { Fragment, ComponentType } from "react";
 import { View, ViewStyle, ViewProps } from "react-native";
-import { gameUIColors } from "../src/shared/ui/gameUI/constants/gameUIColors";
+import { gameUIColors } from "../shared/ui/gameUI/constants/gameUIColors";
 
 interface IconProps {
   size?: number;

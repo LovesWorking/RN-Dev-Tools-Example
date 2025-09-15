@@ -1,10 +1,10 @@
 import { useMemo, useCallback, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
-import { Database, RefreshCw, Trash2, Search } from "../../src/icons";
+import { Database, RefreshCw, Trash2, Search } from "../icons";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { StorageKeyInfo, RequiredStorageKey, StorageKeyStats, StorageType } from "../types";
-import { isDevToolsStorageKey } from "../../src/shared/storage/devToolsStorageKeys";
+import { isDevToolsStorageKey } from "../shared/storage/devToolsStorageKeys";
 import { clearAllAppStorage } from "../utils/clearAllStorage";
 import { StorageKeySection } from "./StorageKeySection";
 import {

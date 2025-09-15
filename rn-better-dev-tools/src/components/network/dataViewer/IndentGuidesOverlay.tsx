@@ -1,6 +1,6 @@
-import { memo, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { gameUIColors } from '../../../shared/ui/gameUI';
+import { memo, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
+import { gameUIColors } from "../../../shared/ui/gameUI";
 
 interface GuideItem {
   depth: number;
@@ -20,8 +20,8 @@ interface IndentGuidesOverlayProps<T extends GuideItem = GuideItem> {
   activeDepth?: number; // optional: highlight this depth
 }
 
-const NORMAL_ALPHA = '4D'; // ~30%
-const ACTIVE_ALPHA = '80'; // ~50%
+const NORMAL_ALPHA = "4D"; // ~30%
+const ACTIVE_ALPHA = "80"; // ~50%
 export const IndentGuidesOverlay = memo(
   ({
     items,
@@ -87,7 +87,7 @@ export const IndentGuidesOverlay = memo(
       }
 
       return results;
-    }, [items, visibleRange, indentWidth]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [items, visibleRange, itemHeight, indentWidth]);
 
     return (
       <View pointerEvents="none" style={styles.overlay}>
@@ -117,11 +117,11 @@ export const IndentGuidesOverlay = memo(
   }
 );
 
-IndentGuidesOverlay.displayName = 'IndentGuidesOverlay';
+IndentGuidesOverlay.displayName = "IndentGuidesOverlay";
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   line: {
-    position: 'absolute',
+    position: "absolute",
     width: 1,
   },
 });

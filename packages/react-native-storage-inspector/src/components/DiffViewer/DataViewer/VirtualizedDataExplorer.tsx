@@ -2,7 +2,7 @@ import { JsonValue } from "./types";
 
 import { useState, useMemo, useCallback, useRef, useEffect, memo, FC, ReactElement } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, FlatList } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import { ChevronRight } from "../../../icons/lucide-icons";
 import { displayValue } from "../../../utils/displayValue";
 import { gameUIColors } from "../../../shared/ui/gameUI/constants/gameUIColors";
 import { CopyButton } from "../../../shared/ui/components/CopyButton";
@@ -306,20 +306,12 @@ const ExpanderComponent = ({ expanded, onPress }: { expanded: boolean; onPress: 
       onPress={onPress}
       hitSlop={HIT_SLOP_10}
     >
-      <View style={STABLE_STYLES.expanderIcon}>
-        <Svg
-          width={12}
-          height={12}
-          viewBox="0 0 16 16"
-          style={{ transform: [{ rotate: expanded ? "90deg" : "0deg" }] }}
-        >
-          <Path
-            d="M6 12l4-4-4-4"
-            strokeWidth={2}
-            stroke={gameUIColors.secondary} // text-gray-400
-            fill="none"
-          />
-        </Svg>
+      <View style={[STABLE_STYLES.expanderIcon, { transform: [{ rotate: expanded ? "90deg" : "0deg" }] }]}>
+        <ChevronRight
+          size={12}
+          color={gameUIColors.secondary}
+          strokeWidth={2}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -586,7 +578,7 @@ const useDataFlattening = (data: JsonValue, maxDepth = 10, autoExpandFirstLevel 
       }, 5000);
       // Small delay to debounce rapid changes
       // Small delay to batch rapid changes
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise<void>((resolve) => setTimeout(resolve, 10));
 
       if (isCancelled) {
         processingRef.current = false;

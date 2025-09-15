@@ -15,7 +15,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { gameUIColors } from "../shared/ui/gameUI";
 
 // ============================================
 // TYPES & INTERFACES

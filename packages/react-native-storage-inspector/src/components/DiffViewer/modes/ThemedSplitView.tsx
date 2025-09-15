@@ -225,7 +225,7 @@ export function ThemedSplitView({
     <View
       style={[
         dynamicStyles.container,
-        theme.glowColor && {
+        theme.glowColor ? {
           shadowColor: theme.glowColor,
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity:
@@ -240,7 +240,7 @@ export function ThemedSplitView({
               : theme.neonIntensity && theme.neonIntensity > 0.3
                 ? 5
                 : 2,
-        },
+        } : undefined,
       ]}
     >
       {showThemeName && (

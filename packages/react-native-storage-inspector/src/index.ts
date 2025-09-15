@@ -8,6 +8,9 @@ export { StorageBrowserMode } from "./components/StorageBrowserMode";
 export { StorageEventsSection } from "./components/StorageEventsSection";
 export { StorageEventDetailModal } from "./components/StorageEventDetailModal";
 
+// DiffViewer components
+export { DataViewer } from "./components/DiffViewer/DataViewer/DataViewer";
+
 // Storage types
 export * from "./types";
 

@@ -173,6 +173,8 @@ export const useSafeAreaInsets = (options: SafeAreaInsetsOptions = {}): SafeArea
         subscription?.remove();
       };
     }
+    // Add explicit return for when nativeInsets is truthy
+    return undefined;
   }, [nativeInsets]); // Dependency on nativeInsets
 
   const baseInsets = nativeInsets || fallbackInsets;

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Plus, Minus, Edit3, GitBranch, ChevronRight } from "../../src/icons";
+import { Plus, Minus, Edit3, GitBranch, ChevronRight } from "../icons";
 import { objectDiff, type DiffItem } from "../utils/objectDiff";
-import { formatValue, getTypeColor, formatPath } from "../../src/shared/utils/valueFormatting";
+import { formatValue, getTypeColor, formatPath } from "../shared/utils/valueFormatting";
 import { macOSColors } from "../shared/ui/gameUI/constants/macOSDesignSystemColors";
 
 interface DiffViewerProps {

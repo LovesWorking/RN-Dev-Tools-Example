@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { gameUIColors } from "../gameUI";
 
 interface TypeBadgeProps {
   type: string;

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { ReactNode } from "react";
-import { ChevronDown, ChevronRight } from "rn-better-dev-tools/icons";
-import { gameUIColors } from "@/rn-better-dev-tools/src/shared/ui/gameUI";
+import { ChevronDown, ChevronRight } from "../../../icons/lucide-icons";
+import { gameUIColors } from "../gameUI";
 
 export interface CompactRowProps {
   // Status section
