@@ -53,6 +53,7 @@
   "devDependencies": {
     "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.73.1",
+    "@types/node": "^20.0.0",
     "@types/react": "^18.2.44",
     "@types/react-native": "^0.72.8",
     "rimraf": "^5.0.5",
@@ -66,7 +67,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "@react-native-async-storage/async-storage": "*"
   },
   "dependencies": {},
   "prettier": {

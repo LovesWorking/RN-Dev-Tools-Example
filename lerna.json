@@ -1,0 +1,18 @@
+{
+  "packages": ["packages/*"],
+  "npmClient": "pnpm",
+  "useWorkspaces": true,
+  "version": "independent",
+  "command": {
+    "publish": {
+      "graphType": "all",
+      "syncWorkspaceLock": true,
+      "allowBranch": "main",
+      "allowPeerDependenciesUpdate": true,
+      "conventionalCommits": true,
+      "createRelease": "github",
+      "changelogIncludeCommitsClientLogin": " - by @%l",
+      "message": "chore: publish"
+    }
+  }
+}
