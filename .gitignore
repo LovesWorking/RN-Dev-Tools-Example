@@ -35,8 +35,27 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Package build outputs
+packages/*/lib/
+packages/*/dist/
+packages/*/build/
+packages/*/*.d.ts
+packages/*/*.d.ts.map
+packages/*/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+packages/*/src/**/*.js.map
+
+# Temporary/generated scripts
+packages/*/update-imports.sh
+packages/*/*.sh
+
 # Android/iOS build directories
 android/
 ios/
 
 app-example
+
+# yalc
+.yalc/
+yalc.lock

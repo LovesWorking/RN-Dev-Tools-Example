@@ -1,0 +1,15 @@
+{
+  "api": {
+    "baseUrl": "http://localhost:3000",
+    "timeout": 5000,
+    "retries": 3
+  },
+  "features": {
+    "darkMode": false,
+    "analytics": true
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432
+  }
+}

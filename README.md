@@ -6,9 +6,7 @@ Enhanced developer tools for React Native applications, supporting React Query D
 
 https://github.com/user-attachments/assets/fce3cba3-b30a-409a-8f8f-db2bd28579be
 
-
 https://github.com/user-attachments/assets/24183264-fff2-4e7d-86f7-2775362cf485
-
 
 ## ✨ Features
 
@@ -30,6 +28,17 @@ https://github.com/user-attachments/assets/24183264-fff2-4e7d-86f7-2775362cf485
 3. Start the development server: `npm start`
 4. Download and launch the [React Native DevTools](https://github.com/LovesWorking/rn-better-dev-tools) desktop app
 5. The app will automatically connect and sync React Query state, storage, and environment variables
+
+## 🖼️ Quick Screenshot Helper
+
+- `npm run screenshot` auto-detects iOS/Android and saves to `./screenshots/sim-<timestamp>.png`.
+- `npm run screenshot:ios` forces iOS Simulator capture.
+- `npm run screenshot:android` captures from Android device/emulator via `adb`.
+
+Requirements:
+
+- iOS: Xcode Command Line Tools (`xcrun`) and a booted Simulator.
+- Android: Android Platform Tools (`adb`) and a connected device/emulator.
 
 ## 💾 Storage Demo
 
@@ -96,8 +105,6 @@ MIT
 ---
 
 Made with ❤️ by [LovesWorking](https://github.com/LovesWorking)
-
-
 
 ## 🚀 More
 

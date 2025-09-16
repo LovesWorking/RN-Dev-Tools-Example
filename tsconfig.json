@@ -1,17 +1,39 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "rootDir": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@rn-dev-tools/react-native-env-manager": ["./packages/react-native-env-manager/src"],
+      "@rn-dev-tools/react-native-network-inspector": ["./packages/react-native-network-inspector/src"],
+      "@rn-dev-tools/react-native-react-query-devtools": ["./packages/react-native-react-query-devtools/src"],
+      "@rn-dev-tools/react-native-storage-inspector": ["./packages/react-native-storage-inspector/src"]
+    },
+    "outDir": "./typescript",
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "jsx": "react-native",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true,
+    "declarationMap": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+  "exclude": [
+    "**/lib",
+    "**/node_modules",
+    "packages/*/templates",
+    "**/build",
+    "**/dist",
+    "**/__tests__/**/*",
+    "**/__mocks__/**/*"
   ]
 }

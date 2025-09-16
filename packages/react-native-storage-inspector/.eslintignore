@@ -1,0 +1,6 @@
+lib/
+node_modules/
+*.config.js
+coverage/
+.turbo/
+dist/

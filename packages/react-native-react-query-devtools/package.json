@@ -1,0 +1,87 @@
+{
+  "name": "@rn-dev-tools/react-native-react-query-devtools",
+  "version": "0.1.0",
+  "description": "React Query DevTools for React Native",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "types": "./lib/typescript/index.d.ts"
+    }
+  },
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "bob build",
+    "typecheck": "tsc --noEmit",
+    "prepare": "bob build",
+    "clean": "rimraf lib",
+    "test": "pnpm run typecheck"
+  },
+  "keywords": [
+    "react-native",
+    "react-query",
+    "tanstack-query",
+    "devtools",
+    "debugging",
+    "developer-tools",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/rn-dev-tools.git",
+    "directory": "packages/react-native-react-query-devtools"
+  },
+  "author": "Your Organization",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-org/rn-dev-tools/issues"
+  },
+  "homepage": "https://github.com/your-org/rn-dev-tools/tree/main/packages/react-native-react-query-devtools#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "*",
+    "@tanstack/react-query": ">=4.0.0 || >=5.0.0",
+    "react": "*",
+    "react-native": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*",
+    "fast-deep-equal": "*",
+    "superjson": "*"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    }
+  },
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": ["commonjs", "module"]
+  }
+}

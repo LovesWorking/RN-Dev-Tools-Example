@@ -1,0 +1,72 @@
+{
+  "name": "@rn-dev-tools/react-native-env-manager",
+  "version": "0.1.0",
+  "description": "Environment variable management for React Native",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js",
+      "types": "./lib/typescript/index.d.ts"
+    }
+  },
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "bob build",
+    "typecheck": "tsc --noEmit",
+    "prepare": "bob build",
+    "clean": "rimraf lib",
+    "test": "pnpm run typecheck"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "env",
+    "environment",
+    "variables"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aj/react-native-env-manager.git"
+  },
+  "author": "AJ <aj@example.com> (https://github.com/aj)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aj/react-native-env-manager/issues"
+  },
+  "homepage": "https://github.com/aj/react-native-env-manager#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "@react-native-async-storage/async-storage": "*"
+  },
+  "dependencies": {},
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": ["commonjs", "module"]
+  }
+}

@@ -1,121 +1,88 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Mock MMKV implementation for Expo Go compatibility
-// In a real app with development builds, you would use the actual MMKV package
-
-class MockMMKV {
-  private id: string;
-  private encryptionKey?: string;
-
-  constructor(config: { id: string; encryptionKey?: string }) {
-    this.id = config.id;
-    this.encryptionKey = config.encryptionKey;
+// Pure JS storage wrapper that mimics MMKV API
+class StorageWrapper {
+  async set(key: string, value: string | number | boolean): Promise<void> {
+    try {
+      const stringValue =
+        typeof value === "string" ? value : JSON.stringify(value);
+      await AsyncStorage.setItem(key, stringValue);
+    } catch (error) {
+      console.error("Storage set error:", error);
+    }
   }
 
-  private getKey(key: string): string {
-    return `mmkv_${this.id}_${key}`;
+  async getString(key: string): Promise<string | undefined> {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return value ?? undefined;
+    } catch (error) {
+      console.error("Storage getString error:", error);
+      return undefined;
+    }
   }
 
-  set(key: string, value: string | number | boolean): void {
-    const storageKey = this.getKey(key);
-    const stringValue =
-      typeof value === "string" ? value : JSON.stringify(value);
-    AsyncStorage.setItem(storageKey, stringValue).catch(console.error);
+  async getNumber(key: string): Promise<number | undefined> {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      if (value) {
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? undefined : parsed;
+      }
+      return undefined;
+    } catch (error) {
+      console.error("Storage getNumber error:", error);
+      return undefined;
+    }
   }
 
-  async setAsync(key: string, value: string | number | boolean): Promise<void> {
-    const storageKey = this.getKey(key);
-    const stringValue =
-      typeof value === "string" ? value : JSON.stringify(value);
-    await AsyncStorage.setItem(storageKey, stringValue);
+  async getBoolean(key: string): Promise<boolean | undefined> {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      if (value) {
+        return value === "true";
+      }
+      return undefined;
+    } catch (error) {
+      console.error("Storage getBoolean error:", error);
+      return undefined;
+    }
   }
 
-  getString(key: string): string | undefined {
-    // Note: This is synchronous in real MMKV, but async in our mock
-    // For demo purposes, we'll return undefined and handle async in the components
-    return undefined;
+  async delete(key: string): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.error("Storage delete error:", error);
+    }
   }
 
-  async getStringAsync(key: string): Promise<string | null> {
-    const storageKey = this.getKey(key);
-    return await AsyncStorage.getItem(storageKey);
+  async getAllKeys(): Promise<string[]> {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      return [...keys]; // Create a mutable copy
+    } catch (error) {
+      console.error("Storage getAllKeys error:", error);
+      return [];
+    }
   }
 
-  getNumber(key: string): number | undefined {
-    return undefined;
+  async clearAll(): Promise<void> {
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error("Storage clearAll error:", error);
+    }
   }
 
-  async getNumberAsync(key: string): Promise<number | null> {
-    const storageKey = this.getKey(key);
-    const value = await AsyncStorage.getItem(storageKey);
-    return value ? parseFloat(value) : null;
-  }
-
-  getBoolean(key: string): boolean | undefined {
-    return undefined;
-  }
-
-  async getBooleanAsync(key: string): Promise<boolean | null> {
-    const storageKey = this.getKey(key);
-    const value = await AsyncStorage.getItem(storageKey);
-    return value ? JSON.parse(value) : null;
-  }
-
-  delete(key: string): void {
-    const storageKey = this.getKey(key);
-    AsyncStorage.removeItem(storageKey).catch(console.error);
-  }
-
-  async deleteAsync(key: string): Promise<void> {
-    const storageKey = this.getKey(key);
-    await AsyncStorage.removeItem(storageKey);
-  }
-
-  getAllKeys(): string[] {
-    // In real MMKV this is synchronous, but we'll need to handle this async
-    return [];
-  }
-
-  async getAllKeysAsync(): Promise<string[]> {
-    const allKeys = await AsyncStorage.getAllKeys();
-    const prefix = `mmkv_${this.id}_`;
-    return allKeys
-      .filter((key) => key.startsWith(prefix))
-      .map((key) => key.replace(prefix, ""));
-  }
-
-  clearAll(): void {
-    this.getAllKeysAsync()
-      .then((keys) => {
-        keys.forEach((key) => this.delete(key));
-      })
-      .catch(console.error);
+  // Synchronous methods that MMKV supports but we'll make async
+  // The callers will need to be updated to handle promises
+  contains(_key: string): boolean {
+    console.warn(
+      "Synchronous contains() not supported in pure JS mode. Use async methods."
+    );
+    return false;
   }
 }
 
-// Create mock MMKV storage instance
-export const storage = new MockMMKV({
-  id: "rn-dev-tools-example",
-  encryptionKey: "demo-encryption-key", // In production, use a secure key
-});
-
-// Helper functions for easier usage with async operations
-export const mmkvStorage = {
-  setItem: async (key: string, value: string): Promise<void> => {
-    await storage.setAsync(key, value);
-  },
-  getItem: async (key: string): Promise<string | null> => {
-    return await storage.getStringAsync(key);
-  },
-  removeItem: async (key: string): Promise<void> => {
-    await storage.deleteAsync(key);
-  },
-  clear: () => {
-    storage.clearAll();
-  },
-  getAllKeys: async (): Promise<string[]> => {
-    return await storage.getAllKeysAsync();
-  },
-};
-
-export default storage;
+export const storage = new StorageWrapper();
