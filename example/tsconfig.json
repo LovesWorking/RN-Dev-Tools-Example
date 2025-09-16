@@ -8,6 +8,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["*"],
+      "@/src/*": ["src/*"],
       "rn-better-dev-tools/icons": ["rn-better-dev-tools/icons"]
     },
     "experimentalDecorators": true,
